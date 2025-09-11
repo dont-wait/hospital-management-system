@@ -1,0 +1,88 @@
+"use client";
+
+import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Heart, User, LogOut, Home, UserCheck } from "lucide-react";
+
+export function Navigation() {
+  const { user, logout, isAuthenticated } = useAuth();
+
+  return (
+    <nav className="bg-white shadow-md border-b">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-2">
+              <Heart className="h-8 w-8 text-blue-600" />
+              <span className="font-bold text-xl text-gray-900">
+                Medica Hospital
+              </span>
+            </Link>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <Link href="/">
+              <Button variant="ghost" className="flex items-center space-x-2">
+                <Home className="h-4 w-4" />
+                <span>Home</span>
+              </Button>
+            </Link>
+
+            {isAuthenticated ? (
+              <>
+                {user?.role.role_description.toLowerCase() === "doctor" && (
+                  <Link href="/doctor">
+                    <Button
+                      variant="ghost"
+                      className="flex items-center space-x-2"
+                    >
+                      <UserCheck className="h-4 w-4" />
+                      <span>Doctor Panel</span>
+                    </Button>
+                  </Link>
+                )}
+
+                {user?.role.role_description.toLowerCase() === "patient" && (
+                  <Link href="/patient">
+                    <Button
+                      variant="ghost"
+                      className="flex items-center space-x-2"
+                    >
+                      <User className="h-4 w-4" />
+                      <span>Patient Portal</span>
+                    </Button>
+                  </Link>
+                )}
+
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-700">
+                    Welcome,{" "}
+                    {user?.profile
+                      ? "pt_firstname" in user.profile
+                        ? `${user.profile.pt_firstname} ${user.profile.pt_lastname}`
+                        : `${user.profile.ep_firstname} ${user.profile.ep_lastname}`
+                      : "User"}
+                  </span>
+                  <Button onClick={logout} variant="outline" size="sm">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link href="/login">
+                  <Button variant="outline">Login</Button>
+                </Link>
+                <Link href="/register">
+                  <Button>Register</Button>
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
