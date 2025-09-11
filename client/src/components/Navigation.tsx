@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,7 @@ export function Navigation() {
             <Link href="/" className="flex items-center space-x-2">
               <Heart className="h-8 w-8 text-blue-600" />
               <span className="font-bold text-xl text-gray-900">
-                Medica Hospital
+                Medica
               </span>
             </Link>
           </div>
@@ -25,7 +24,7 @@ export function Navigation() {
             <Link href="/">
               <Button variant="ghost" className="flex items-center space-x-2">
                 <Home className="h-4 w-4" />
-                <span>Home</span>
+                <span>Trang chủ</span>
               </Button>
             </Link>
 
@@ -38,7 +37,7 @@ export function Navigation() {
                       className="flex items-center space-x-2"
                     >
                       <UserCheck className="h-4 w-4" />
-                      <span>Doctor Panel</span>
+                      <span>Bảng điều khiển Bác sĩ</span>
                     </Button>
                   </Link>
                 )}
@@ -50,33 +49,33 @@ export function Navigation() {
                       className="flex items-center space-x-2"
                     >
                       <User className="h-4 w-4" />
-                      <span>Patient Portal</span>
+                      <span>Cổng thông tin Bệnh nhân</span>
                     </Button>
                   </Link>
                 )}
 
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-700">
-                    Welcome,{" "}
+                    Chào mừng,{" "}
                     {user?.profile
                       ? "pt_firstname" in user.profile
                         ? `${user.profile.pt_firstname} ${user.profile.pt_lastname}`
                         : `${user.profile.ep_firstname} ${user.profile.ep_lastname}`
-                      : "User"}
+                      : "Người dùng"}
                   </span>
                   <Button onClick={logout} variant="outline" size="sm">
                     <LogOut className="h-4 w-4 mr-2" />
-                    Logout
+                    Đăng xuất
                   </Button>
                 </div>
               </>
             ) : (
               <div className="flex items-center space-x-2">
                 <Link href="/login">
-                  <Button variant="outline">Login</Button>
+                  <Button variant="outline">Đăng nhập</Button>
                 </Link>
                 <Link href="/register">
-                  <Button>Register</Button>
+                  <Button>Đăng ký</Button>
                 </Link>
               </div>
             )}

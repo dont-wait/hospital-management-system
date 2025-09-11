@@ -24,19 +24,19 @@ export default function HomePage() {
             <Heart className="h-16 w-16 text-blue-600" />
           </div>
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Welcome to MediCare Hospital
+            Chào mừng đến với Bệnh viện MediCare
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Your health is our priority. Experience world-class medical care
-            with our dedicated team of professionals, state-of-the-art
-            facilities, and comprehensive healthcare services.
+            Sức khỏe của bạn là ưu tiên hàng đầu của chúng tôi. Trải nghiệm dịch
+            vụ chăm sóc y tế đẳng cấp thế giới với đội ngũ chuyên gia tận tâm,
+            cơ sở vật chất hiện đại và các dịch vụ chăm sóc sức khỏe toàn diện.
           </p>
 
           {!isAuthenticated ? (
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/register">
                 <Button size="lg" className="w-full sm:w-auto">
-                  Get Started
+                  Bắt đầu ngay
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -46,26 +46,26 @@ export default function HomePage() {
                   size="lg"
                   className="w-full sm:w-auto"
                 >
-                  Sign In
+                  Đăng nhập
                 </Button>
               </Link>
             </div>
           ) : (
             <div className="space-y-4">
               <p className="text-lg text-gray-700">
-                Welcome back,{" "}
+                Chào mừng trở lại,{" "}
                 {user?.profile
                   ? "pt_firstname" in user.profile
                     ? `${user.profile.pt_firstname} ${user.profile.pt_lastname}`
                     : `${user.profile.ep_firstname} ${user.profile.ep_lastname}`
-                  : "User"}
+                  : "Người dùng"}
                 !
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 {user?.role.role_description.toLowerCase() === "doctor" && (
                   <Link href="/doctor">
                     <Button size="lg">
-                      Go to Doctor Dashboard
+                      Đi tới Bảng điều khiển Bác sĩ
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
@@ -73,7 +73,7 @@ export default function HomePage() {
                 {user?.role.role_description.toLowerCase() === "patient" && (
                   <Link href="/patient">
                     <Button size="lg">
-                      Go to Patient Portal
+                      Đi tới Cổng thông tin Bệnh nhân
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
@@ -88,19 +88,19 @@ export default function HomePage() {
       <section className="py-16 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Why Choose MediCare Hospital?
+            Tại sao chọn Bệnh viện MediCare?
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="text-center">
               <CardHeader>
                 <Shield className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <CardTitle>Expert Care</CardTitle>
+                <CardTitle>Chăm sóc chuyên nghiệp</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Our team of experienced doctors and specialists provide the
-                  highest quality medical care.
+                  Đội ngũ bác sĩ và chuyên gia giàu kinh nghiệm cung cấp dịch vụ
+                  chăm sóc y tế chất lượng cao nhất.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -108,12 +108,12 @@ export default function HomePage() {
             <Card className="text-center">
               <CardHeader>
                 <Clock className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <CardTitle>24/7 Emergency</CardTitle>
+                <CardTitle>Cấp cứu 24/7</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Round-the-clock emergency services ensure you get help when
-                  you need it most.
+                  Dịch vụ cấp cứu suốt ngày đêm đảm bảo bạn được hỗ trợ khi cần
+                  thiết nhất.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -121,12 +121,12 @@ export default function HomePage() {
             <Card className="text-center">
               <CardHeader>
                 <Users className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-                <CardTitle>Comprehensive Care</CardTitle>
+                <CardTitle>Chăm sóc toàn diện</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  From preventive care to specialized treatments, we offer a
-                  full range of medical services.
+                  Từ chăm sóc dự phòng đến điều trị chuyên khoa, chúng tôi cung
+                  cấp đầy đủ các dịch vụ y tế.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -134,12 +134,12 @@ export default function HomePage() {
             <Card className="text-center">
               <CardHeader>
                 <Star className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-                <CardTitle>Patient Satisfaction</CardTitle>
+                <CardTitle>Hài lòng bệnh nhân</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Consistently rated 5 stars by our patients for exceptional
-                  care and service.
+                  Liên tục được bệnh nhân đánh giá 5 sao cho dịch vụ chăm sóc và
+                  phục vụ tuyệt vời.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -151,29 +151,32 @@ export default function HomePage() {
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Our Services
+            Dịch vụ của chúng tôi
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              "Cardiology",
-              "Neurology",
-              "Orthopedics",
-              "Pediatrics",
-              "Oncology",
-              "Emergency Medicine",
-              "Surgery",
-              "Radiology",
-              "Laboratory Services",
+              { en: "Cardiology", vi: "Tim mạch" },
+              { en: "Neurology", vi: "Thần kinh" },
+              { en: "Orthopedics", vi: "Chấn thương chỉnh hình" },
+              { en: "Pediatrics", vi: "Nhi khoa" },
+              { en: "Oncology", vi: "Ung bướu" },
+              { en: "Emergency Medicine", vi: "Y học cấp cứu" },
+              { en: "Surgery", vi: "Phẫu thuật" },
+              { en: "Radiology", vi: "Chẩn đoán hình ảnh" },
+              { en: "Laboratory Services", vi: "Dịch vụ xét nghiệm" },
             ].map((service) => (
-              <Card key={service} className="hover:shadow-lg transition-shadow">
+              <Card
+                key={service.vi}
+                className="hover:shadow-lg transition-shadow"
+              >
                 <CardHeader>
-                  <CardTitle className="text-lg">{service}</CardTitle>
+                  <CardTitle className="text-lg">{service.vi}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription>
-                    Specialized care and treatment in {service.toLowerCase()}{" "}
-                    with state-of-the-art equipment.
+                    Chăm sóc và điều trị chuyên khoa {service.vi.toLowerCase()}
+                    với thiết bị hiện đại nhất.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -187,15 +190,15 @@ export default function HomePage() {
         <section className="py-16 px-4 bg-blue-600 text-white">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-6">
-              Ready to Experience Quality Healthcare?
+              Sẵn sàng trải nghiệm dịch vụ chăm sóc sức khỏe chất lượng?
             </h2>
             <p className="text-xl mb-8">
-              Join thousands of patients who trust MediCare Hospital for their
-              healthcare needs.
+              Tham gia cùng hàng nghìn bệnh nhân tin tưởng Bệnh viện MediCare
+              cho nhu cầu chăm sóc sức khỏe của họ.
             </p>
             <Link href="/register">
               <Button size="lg" variant="secondary">
-                Register Today
+                Đăng ký ngay hôm nay
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
