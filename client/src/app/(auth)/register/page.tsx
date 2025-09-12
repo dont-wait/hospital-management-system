@@ -23,17 +23,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { IdCardScanner } from "@/components/IdCardScanner";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, Heart, Eye, EyeOff } from "lucide-react";
 
 const registerSchema = z
   .object({
-    username: z
-      .string()
-      .min(1, "Username is required")
-      .email("Invalid email format"),
+    username: z.string().min(1, "Username is required"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(6, "Please confirm your password"),
     email: z.string().email("Invalid email format"),
@@ -48,47 +44,13 @@ const registerSchema = z
     contactNumber: z
       .string()
       .min(10, "Contact number must be at least 10 digits"),
-    userType: z
-      .union([z.literal("patient"), z.literal("employee")])
-      .refine((val) => val !== undefined, {
-        message: "Please select user type",
-      }),
-    certificateNumber: z.string().optional(),
     nationality: z.string().optional(),
     placeOfResidence: z.string().optional(),
-    isInsurance: z.boolean().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
-  })
-  .refine(
-    (data) => {
-      if (data.userType === "employee" && !data.certificateNumber) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Certificate number is required for employees",
-      path: ["certificateNumber"],
-    },
-  )
-  .refine(
-    (data) => {
-      if (
-        data.userType === "patient" &&
-        (!data.nationality || !data.placeOfResidence)
-      ) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Nationality and place of residence are required for patients",
-      path: ["nationality"],
-    },
-  );
+  });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -102,15 +64,11 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
-
-  const userType = watch("userType");
-  const isInsurance = watch("isInsurance");
 
   const onSubmit = async (data: RegisterFormData) => {
     const success = await registerUser(data);
@@ -128,7 +86,7 @@ export default function RegisterPage() {
           </div>
           <CardTitle className="text-2xl text-center">Create Account</CardTitle>
           <CardDescription className="text-center">
-            Join MediCare Hospital - Register as a patient or employee
+            Join MediCare Hospital - Register Now!
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -137,30 +95,6 @@ export default function RegisterPage() {
               onCardScanned={setIdCardFile}
               scannedFile={idCardFile}
             />
-            {/* User Type Selection */}
-            <div className="space-y-2">
-              <Label>Account Type</Label>
-              <Select
-                onValueChange={(value: "patient" | "employee") =>
-                  setValue("userType", value)
-                }
-              >
-                <SelectTrigger
-                  className={errors.userType ? "border-red-500" : ""}
-                >
-                  <SelectValue placeholder="Select account type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="patient">Patient</SelectItem>
-                  <SelectItem value="employee">Employee</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.userType && (
-                <p className="text-sm text-red-600">
-                  {errors.userType.message}
-                </p>
-              )}
-            </div>
 
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -215,7 +149,7 @@ export default function RegisterPage() {
                 <Input
                   id="username"
                   type="email"
-                  placeholder="Enter username (email)"
+                  placeholder="Enter username"
                   {...register("username")}
                   className={errors.username ? "border-red-500" : ""}
                 />
@@ -352,72 +286,37 @@ export default function RegisterPage() {
               )}
             </div>
 
-            {/* Conditional Fields */}
-            {userType === "employee" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="certificateNumber">Certificate Number</Label>
+                <Label htmlFor="nationality">Nationality</Label>
                 <Input
-                  id="certificateNumber"
-                  placeholder="Enter professional certificate number"
-                  {...register("certificateNumber")}
-                  className={errors.certificateNumber ? "border-red-500" : ""}
+                  id="nationality"
+                  placeholder="Enter nationality"
+                  {...register("nationality")}
+                  className={errors.nationality ? "border-red-500" : ""}
                 />
-                {errors.certificateNumber && (
+                {errors.nationality && (
                   <p className="text-sm text-red-600">
-                    {errors.certificateNumber.message}
+                    {errors.nationality.message}
                   </p>
                 )}
               </div>
-            )}
 
-            {userType === "patient" && (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="nationality">Nationality</Label>
-                    <Input
-                      id="nationality"
-                      placeholder="Enter nationality"
-                      {...register("nationality")}
-                      className={errors.nationality ? "border-red-500" : ""}
-                    />
-                    {errors.nationality && (
-                      <p className="text-sm text-red-600">
-                        {errors.nationality.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="placeOfResidence">Place of Residence</Label>
-                    <Input
-                      id="placeOfResidence"
-                      placeholder="Enter place of residence"
-                      {...register("placeOfResidence")}
-                      className={
-                        errors.placeOfResidence ? "border-red-500" : ""
-                      }
-                    />
-                    {errors.placeOfResidence && (
-                      <p className="text-sm text-red-600">
-                        {errors.placeOfResidence.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="isInsurance"
-                    checked={isInsurance}
-                    onCheckedChange={(checked) =>
-                      setValue("isInsurance", !!checked)
-                    }
-                  />
-                  <Label htmlFor="isInsurance">I have health insurance</Label>
-                </div>
-              </>
-            )}
+              <div className="space-y-2">
+                <Label htmlFor="placeOfResidence">Place of Residence</Label>
+                <Input
+                  id="placeOfResidence"
+                  placeholder="Enter place of residence"
+                  {...register("placeOfResidence")}
+                  className={errors.placeOfResidence ? "border-red-500" : ""}
+                />
+                {errors.placeOfResidence && (
+                  <p className="text-sm text-red-600">
+                    {errors.placeOfResidence.message}
+                  </p>
+                )}
+              </div>
+            </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (

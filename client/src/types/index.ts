@@ -63,10 +63,6 @@ export interface RegisterData {
   dob: string;
   gender: "Male" | "Female" | "Other";
   contactNumber: string;
-  userType: "patient" | "employee";
-  // Additional fields for employees
-  certificateNumber?: string;
-  // Additional fields for patients
   nationality?: string;
   placeOfResidence?: string;
   isInsurance?: boolean;
