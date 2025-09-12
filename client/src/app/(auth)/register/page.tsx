@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { IdCardScanner } from "@/components/IdCardScanner";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, Heart, Eye, EyeOff } from "lucide-react";
 
@@ -94,6 +95,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [idCardFile, setIdCardFile] = useState<File | undefined>();
   const { register: registerUser, isLoading } = useAuth();
   const router = useRouter();
 
@@ -131,6 +133,10 @@ export default function RegisterPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <IdCardScanner
+              onCardScanned={setIdCardFile}
+              scannedFile={idCardFile}
+            />
             {/* User Type Selection */}
             <div className="space-y-2">
               <Label>Account Type</Label>
