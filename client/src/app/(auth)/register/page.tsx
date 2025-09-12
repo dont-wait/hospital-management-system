@@ -169,7 +169,7 @@ export default function RegisterPage() {
                 <div className="relative">
                   <Input
                     id="password"
-                    type={showPassword ? "text" : "password"}
+                    type={!showPassword ? "text" : "password"}
                     placeholder="Enter password"
                     {...register("password")}
                     className={
@@ -202,7 +202,7 @@ export default function RegisterPage() {
                 <div className="relative">
                   <Input
                     id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={!showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm password"
                     {...register("confirmPassword")}
                     className={
