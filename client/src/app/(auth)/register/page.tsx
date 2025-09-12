@@ -46,6 +46,8 @@ const registerSchema = z
       .min(10, "Contact number must be at least 10 digits"),
     nationality: z.string().optional(),
     placeOfResidence: z.string().optional(),
+    placeOfOrigin: z.string().min(1, "Username is required"),
+    address: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -148,7 +150,6 @@ export default function RegisterPage() {
                 <Label htmlFor="username">Username</Label>
                 <Input
                   id="username"
-                  type="email"
                   placeholder="Enter username"
                   {...register("username")}
                   className={errors.username ? "border-red-500" : ""}
@@ -269,24 +270,7 @@ export default function RegisterPage() {
                   </p>
                 )}
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="contactNumber">Contact Number</Label>
-              <Input
-                id="contactNumber"
-                placeholder="Enter contact number"
-                {...register("contactNumber")}
-                className={errors.contactNumber ? "border-red-500" : ""}
-              />
-              {errors.contactNumber && (
-                <p className="text-sm text-red-600">
-                  {errors.contactNumber.message}
-                </p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="nationality">Nationality</Label>
                 <Input
@@ -316,6 +300,51 @@ export default function RegisterPage() {
                   </p>
                 )}
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="placeOfResidence">Place of Origin</Label>
+                <Input
+                  id="placeOfOrigin"
+                  placeholder="Enter place of origin"
+                  {...register("placeOfOrigin")}
+                  className={errors.placeOfResidence ? "border-red-500" : ""}
+                />
+                {errors.placeOfResidence && (
+                  <p className="text-sm text-red-600">
+                    {errors.placeOfResidence.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="placeOfResidence">Address</Label>
+                <Input
+                  id="address"
+                  placeholder="Enter place of address"
+                  {...register("address")}
+                  className={errors.placeOfResidence ? "border-red-500" : ""}
+                />
+                {errors.placeOfResidence && (
+                  <p className="text-sm text-red-600">
+                    {errors.placeOfResidence.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="contactNumber">Contact Number</Label>
+              <Input
+                id="contactNumber"
+                placeholder="Enter contact number"
+                {...register("contactNumber")}
+                className={errors.contactNumber ? "border-red-500" : ""}
+              />
+              {errors.contactNumber && (
+                <p className="text-sm text-red-600">
+                  {errors.contactNumber.message}
+                </p>
+              )}
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
