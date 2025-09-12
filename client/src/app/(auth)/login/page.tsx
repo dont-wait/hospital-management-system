@@ -17,7 +17,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
-import { IdCardScanner } from "@/components/IdCardScanner";
 import { Loader2, Heart, Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
@@ -32,7 +31,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [idCardFile, setIdCardFile] = useState<File | undefined>();
   const { login, isLoading } = useAuth();
   const router = useRouter();
 
@@ -48,7 +46,6 @@ export default function LoginPage() {
     const success = await login({
       username: data.username,
       password: data.password,
-      idCard: idCardFile,
     });
 
     if (success) {
@@ -117,11 +114,6 @@ export default function LoginPage() {
                 </p>
               )}
             </div>
-
-            <IdCardScanner
-              onCardScanned={setIdCardFile}
-              scannedFile={idCardFile}
-            />
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
