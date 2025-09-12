@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // On first visit, check if user is logged in. If yes, fetch previous data 
+    // On first visit, check if user is logged in. If yes, fetch previous data
     // for processing, else do nothing.
     const savedUser = localStorage.getItem("hospital_user");
     if (savedUser) {
@@ -113,6 +113,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.success("Đăng nhập thành công! Xin chào Jane!");
         setIsLoading(false);
         return true;
+      } else if (
+        credentials.username === "admin@hospital.com" &&
+        credentials.password === "admin123"
+      ) {
+        const mockUser: AuthUser = {
+          userAccount: {
+            ua_id: "3",
+            ua_username: "123@hospital.com",
+            ua_password: "",
+            is_active: true,
+            ep_id: "3",
+          },
+          profile: {
+            ep_id: "3",
+            ep_firstname: "Dr. John",
+            ep_lastname: "Smith",
+            ep_dob: "1985-03-15",
+            ep_gender: "Male",
+            ep_phonenumber: "+1234567890",
+            ep_hire_date: "2020-01-15",
+            ep_certificate_number: "DOC12345",
+            email: "doctor@hospital.com",
+            role_id: "1",
+          },
+          role: {
+            role_id: "1",
+            role_description: "Admin",
+          },
+        };
+
+        setUser(mockUser);
+        localStorage.setItem("hospital_user", JSON.stringify(mockUser));
+        toast.success("Đăng nhập thành công! Chào bạn, Dr. Smith!");
+        setIsLoading(false);
+        return true;
       }
 
       toast.error("Mật khẩu hoặc tên đăng nhập không chính xác!");
@@ -132,9 +167,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      toast.success(
-        "Đăng ký thành công!.",
-      );
+      toast.success("Đăng ký thành công!.");
       setIsLoading(false);
       return true;
     } catch {

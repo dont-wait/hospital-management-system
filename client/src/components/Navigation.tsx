@@ -14,9 +14,7 @@ export function Navigation() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <Heart className="h-8 w-8 text-blue-600" />
-              <span className="font-bold text-xl text-gray-900">
-                MediCare
-              </span>
+              <span className="font-bold text-xl text-gray-900">MediCare</span>
             </Link>
           </div>
 
@@ -54,9 +52,21 @@ export function Navigation() {
                   </Link>
                 )}
 
+                {user?.role.role_description.toLowerCase() === "admin" && (
+                  <Link href="/admin">
+                    <Button
+                      variant="ghost"
+                      className="flex items-center space-x-2"
+                    >
+                      <User className="h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Button>
+                  </Link>
+                )}
+
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-700">
-                    Chào mừng,{" "}
+                    Hi,{" "}
                     {user?.profile
                       ? "pt_firstname" in user.profile
                         ? `${user.profile.pt_firstname} ${user.profile.pt_lastname}`

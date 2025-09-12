@@ -138,6 +138,7 @@ export default function LoginPage() {
               <p className="font-medium">Demo Credentials:</p>
               <p>Doctor: doctor@hospital.com / doctor123</p>
               <p>Patient: patient@hospital.com / patient123</p>
+              <p>Admin: admin@hospital.com / admin123</p>
             </div>
           </div>
         </CardContent>
