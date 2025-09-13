@@ -11,11 +11,15 @@ if (dbProvider == "SqlServer")
 {
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDb")));
+
+    Console.WriteLine("Đã kết nối với SQL Server");
 }
 else if (dbProvider == "Oracle")
 {
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseOracle(builder.Configuration.GetConnectionString("OracleDb")));
+
+    Console.WriteLine("Đã kết nối với Oracle Database");
 }
 else
 {
