@@ -1,28 +1,3 @@
-export interface UserAccount {
-  ua_id: string;
-  ua_avatar?: string;
-  ua_username: string;
-  ua_password: string;
-  is_active: boolean;
-  pt_id?: string;
-  ep_id?: string;
-}
-
-export interface Patient {
-  pt_id: string;
-  pt_firstname: string;
-  pt_lastname: string;
-  pt_dob: string;
-  pt_nationality: string;
-  email: string;
-  pt_gender: "Male" | "Female" | "Other";
-  pt_place_of_residence: string;
-  pt_is_insurance: boolean;
-  pt_contact_number: string;
-  pt_registration_date: string;
-  role_id: string;
-}
-
 export interface Employee {
   ep_id: string;
   ep_firstname: string;
@@ -42,8 +17,8 @@ export interface Role {
 }
 
 export interface AuthUser {
-  userAccount: UserAccount;
-  profile: Patient | Employee;
+  userAccount: Account;
+  profile: Employee;
   role: Role;
 }
 
@@ -53,17 +28,47 @@ export interface LoginCredentials {
   idCard?: File;
 }
 
-export interface RegisterData {
+export interface Account {
+  avatar?: string;
   username: string;
   password: string;
-  confirmPassword: string;
-  email: string;
+  isActive?: number;
+}
+
+export type Gender = "Male" | "Female" | "Other";
+
+export interface Patient {
   firstName: string;
   lastName: string;
-  dob: string;
-  gender: "Male" | "Female" | "Other";
+  dateOfBirth: string;
+  nationality: string;
+  email: string;
+  gender: Gender;
+  placeOfResidence: string;
+  address: string;
+  insurance?: number;
   contactNumber: string;
-  nationality?: string;
-  placeOfResidence?: string;
-  isInsurance?: boolean;
+  roleId?: string;
+}
+
+export interface PatientRegisterData {
+  patientInfo: Patient;
+  accountInfo: Account;
+}
+
+export interface PatientRegisterSchema {
+  // account info
+  username: string;
+  password: string;
+
+  // patient info
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  nationality: string;
+  email: string;
+  gender: Gender;
+  placeOfResidence: string;
+  address: string;
+  contactNumber: string;
 }
