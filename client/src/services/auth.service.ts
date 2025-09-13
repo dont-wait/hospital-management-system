@@ -1,6 +1,7 @@
 import { LoginCredentials, PatientRegisterData, AuthUser } from "@/types";
 import { mockUsers } from "@/mock-data";
 
+// Response types
 export interface LoginResponse {
   user: AuthUser;
   token: string;
@@ -13,39 +14,32 @@ export interface RegisterResponse {
 }
 
 class AuthService {
+  // Configuration
   private readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
-  private readonly TOKEN_KEY = "hospital_access_token";
-  private readonly REFRESH_TOKEN_KEY = "hospital_refresh_token";
-  private readonly USER_KEY = "hospital_user";
+  private readonly STORAGE_KEYS = {
+    TOKEN: "hospital_access_token",
+    REFRESH_TOKEN: "hospital_refresh_token",
+    USER: "hospital_user",
+  } as const;
 
-  // Simulate API delay
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  // Simulate network delay
+  private delay = (ms: number): Promise<void> =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
+  // Authentication methods
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     await this.delay(1000);
 
-    // Mock authentication logic - replace with actual API call
-    const mockUser = mockUsers.find(
-      (user) =>
-        user.userAccount.username === credentials.username &&
-        this.validatePassword(credentials.password, user.userAccount.password),
-    );
-
-    if (!mockUser) {
+    // In real implementation: make API call to server
+    const user = this.validateCredentials(credentials);
+    if (!user) {
       throw new Error("Invalid credentials");
     }
 
-    // Generate mock tokens
-    const token = "";
-    const refreshToken = "";
-
-    const authUser: AuthUser = {
-      ...mockUser,
-      token,
-      refreshToken,
-    };
+    // Mock tokens - in real app, these come from server response
+    const token = "mock_jwt_token_from_server";
+    const refreshToken = "mock_refresh_token_from_server";
+    const authUser: AuthUser = { ...user, token, refreshToken };
 
     return {
       user: authUser,
@@ -57,7 +51,7 @@ class AuthService {
   async register(data: PatientRegisterData): Promise<RegisterResponse> {
     await this.delay(1500);
 
-    // Mock registration logic - replace with actual API call
+    // In real implementation: make API call to server
     console.log("Registering patient:", data);
 
     return {
@@ -70,86 +64,102 @@ class AuthService {
     await this.delay(500);
 
     const refreshToken = this.getRefreshToken();
-    if (!refreshToken) {
-      throw new Error("No refresh token available");
-    }
-
-    // Mock refresh logic - replace with actual API call
     const storedUser = this.getStoredUser();
-    if (!storedUser) {
-      throw new Error("No user data available");
+
+    if (!refreshToken || !storedUser) {
+      throw new Error("Authentication data unavailable");
     }
 
-    const newToken = "";
-    const newRefreshToken = "";
+    // In real implementation: make API call with refresh token
+
+    // Mock new tokens from server response
+    const newToken = "new_mock_jwt_token_from_server";
+    const newRefreshToken = "new_mock_refresh_token_from_server";
+    const user = {
+      ...storedUser,
+      token: newToken,
+      refreshToken: newRefreshToken,
+    };
 
     return {
-      user: { ...storedUser, token: newToken, refreshToken: newRefreshToken },
+      user,
       token: newToken,
       refreshToken: newRefreshToken,
     };
   }
 
-  // Token management methods
+  // Token management
   saveTokens(token: string, refreshToken: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
-    localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+    localStorage.setItem(this.STORAGE_KEYS.TOKEN, token);
+    localStorage.setItem(this.STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return localStorage.getItem(this.STORAGE_KEYS.TOKEN);
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+    return localStorage.getItem(this.STORAGE_KEYS.REFRESH_TOKEN);
   }
 
   clearTokens(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    Object.values(this.STORAGE_KEYS).forEach((key) =>
+      localStorage.removeItem(key),
+    );
   }
 
   // User data management
   saveUser(user: AuthUser): void {
-    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    localStorage.setItem(this.STORAGE_KEYS.USER, JSON.stringify(user));
   }
 
   getStoredUser(): AuthUser | null {
-    const savedUser = localStorage.getItem(this.USER_KEY);
-    if (savedUser) {
-      try {
-        return JSON.parse(savedUser);
-      } catch {
-        this.clearStoredUser();
-        return null;
-      }
+    try {
+      const userData = localStorage.getItem(this.STORAGE_KEYS.USER);
+      return userData ? JSON.parse(userData) : null;
+    } catch {
+      this.clearStoredUser();
+      return null;
     }
-    return null;
   }
 
   clearStoredUser(): void {
-    localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.STORAGE_KEYS.USER);
   }
 
-  // Helper methods
-  private validatePassword(
-    inputPassword: string,
-    storedPassword: string,
-  ): boolean {
-    return inputPassword === storedPassword;
-  }
-
+  // Utility methods
   isTokenExpired(token: string): boolean {
     try {
       if (token.startsWith("mock_jwt_")) {
         const payload = JSON.parse(atob(token.replace("mock_jwt_", "")));
-        return payload.exp < Math.floor(Date.now() / 1000);
+        return payload.exp < Date.now() / 1000;
       }
-      // For real JWT tokens, use a proper JWT library
+      // TODO: Use proper JWT library for real tokens
       return false;
     } catch {
       return true;
     }
+  }
+
+  // Authentication cleanup - call when user logs out
+  logout(): void {
+    this.clearTokens();
+    this.clearStoredUser();
+  }
+
+  // Check if user is authenticated
+  isAuthenticated(): boolean {
+    const token = this.getToken();
+    return token !== null && !this.isTokenExpired(token);
+  }
+
+  // Private helpers
+  private validateCredentials(credentials: LoginCredentials) {
+    return mockUsers.find(
+      (user) =>
+        user.userAccount.username === credentials.username &&
+        user.userAccount.password === credentials.password,
+    );
   }
 }
 
