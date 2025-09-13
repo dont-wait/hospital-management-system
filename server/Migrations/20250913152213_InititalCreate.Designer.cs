@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250913145311_Add_Related_Account_Table")]
-    partial class Add_Related_Account_Table
+    [Migration("20250913152213_InititalCreate")]
+    partial class InititalCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,7 +43,7 @@ namespace server.Migrations
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
-                    b.ToTable("Doctor");
+                    b.ToTable("doctors");
                 });
 
             modelBuilder.Entity("Employee", b =>
@@ -89,7 +89,7 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employee");
+                    b.ToTable("employees");
                 });
 
             modelBuilder.Entity("Nurse", b =>
@@ -111,7 +111,7 @@ namespace server.Migrations
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
-                    b.ToTable("Nurse");
+                    b.ToTable("nurses");
                 });
 
             modelBuilder.Entity("Patient", b =>
@@ -169,7 +169,7 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Patient");
+                    b.ToTable("patients");
                 });
 
             modelBuilder.Entity("UserAccount", b =>
@@ -211,13 +211,13 @@ namespace server.Migrations
                         .IsUnique()
                         .HasFilter("[PatientId] IS NOT NULL");
 
-                    b.ToTable("UserAccount");
+                    b.ToTable("user_accounts");
                 });
 
             modelBuilder.Entity("Doctor", b =>
                 {
                     b.HasOne("Employee", "Employee")
-                        .WithOne()
+                        .WithOne("Doctor")
                         .HasForeignKey("Doctor", "EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -228,7 +228,7 @@ namespace server.Migrations
             modelBuilder.Entity("Nurse", b =>
                 {
                     b.HasOne("Employee", "Employee")
-                        .WithOne()
+                        .WithOne("Nurse")
                         .HasForeignKey("Nurse", "EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -253,6 +253,10 @@ namespace server.Migrations
 
             modelBuilder.Entity("Employee", b =>
                 {
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Nurse");
+
                     b.Navigation("UserAccount");
                 });
 

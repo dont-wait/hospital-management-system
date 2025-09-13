@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace server.Migrations
 {
     /// <inheritdoc />
-    public partial class Add_Related_Account_Table : Migration
+    public partial class InititalCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Employee",
+                name: "employees",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -27,11 +27,11 @@ namespace server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employee", x => x.Id);
+                    table.PrimaryKey("PK_employees", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Patient",
+                name: "patients",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -49,11 +49,11 @@ namespace server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Patient", x => x.Id);
+                    table.PrimaryKey("PK_patients", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Doctor",
+                name: "doctors",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -62,17 +62,17 @@ namespace server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Doctor", x => x.Id);
+                    table.PrimaryKey("PK_doctors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Doctor_Employee_EmployeeId",
+                        name: "FK_doctors_employees_EmployeeId",
                         column: x => x.EmployeeId,
-                        principalTable: "Employee",
+                        principalTable: "employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Nurse",
+                name: "nurses",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -81,17 +81,17 @@ namespace server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Nurse", x => x.Id);
+                    table.PrimaryKey("PK_nurses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Nurse_Employee_EmployeeId",
+                        name: "FK_nurses_employees_EmployeeId",
                         column: x => x.EmployeeId,
-                        principalTable: "Employee",
+                        principalTable: "employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserAccount",
+                name: "user_accounts",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -104,41 +104,41 @@ namespace server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserAccount", x => x.Id);
+                    table.PrimaryKey("PK_user_accounts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserAccount_Employee_EmployeeId",
+                        name: "FK_user_accounts_employees_EmployeeId",
                         column: x => x.EmployeeId,
-                        principalTable: "Employee",
+                        principalTable: "employees",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_UserAccount_Patient_PatientId",
+                        name: "FK_user_accounts_patients_PatientId",
                         column: x => x.PatientId,
-                        principalTable: "Patient",
+                        principalTable: "patients",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Doctor_EmployeeId",
-                table: "Doctor",
+                name: "IX_doctors_EmployeeId",
+                table: "doctors",
                 column: "EmployeeId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Nurse_EmployeeId",
-                table: "Nurse",
+                name: "IX_nurses_EmployeeId",
+                table: "nurses",
                 column: "EmployeeId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAccount_EmployeeId",
-                table: "UserAccount",
+                name: "IX_user_accounts_EmployeeId",
+                table: "user_accounts",
                 column: "EmployeeId",
                 unique: true,
                 filter: "[EmployeeId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAccount_PatientId",
-                table: "UserAccount",
+                name: "IX_user_accounts_PatientId",
+                table: "user_accounts",
                 column: "PatientId",
                 unique: true,
                 filter: "[PatientId] IS NOT NULL");
@@ -148,19 +148,19 @@ namespace server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Doctor");
+                name: "doctors");
 
             migrationBuilder.DropTable(
-                name: "Nurse");
+                name: "nurses");
 
             migrationBuilder.DropTable(
-                name: "UserAccount");
+                name: "user_accounts");
 
             migrationBuilder.DropTable(
-                name: "Employee");
+                name: "employees");
 
             migrationBuilder.DropTable(
-                name: "Patient");
+                name: "patients");
         }
     }
 }

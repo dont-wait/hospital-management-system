@@ -18,12 +18,12 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Doctor>()
             .HasOne(d => d.Employee)
-            .WithOne()
+            .WithOne(e => e.Doctor)
             .HasForeignKey<Doctor>(d => d.EmployeeId);
 
         modelBuilder.Entity<Nurse>()
             .HasOne(n => n.Employee)
-            .WithOne()
+            .WithOne(e => e.Nurse)
             .HasForeignKey<Nurse>(n => n.EmployeeId);
 
         base.OnModelCreating(modelBuilder);

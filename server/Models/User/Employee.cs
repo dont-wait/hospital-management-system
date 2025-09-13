@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+[Table("employees")]
 public class Employee
 {
     [Key]
@@ -34,4 +36,6 @@ public class Employee
     public char CertificateNumber { get; set; } = string.Empty[0];
 
     public UserAccount? UserAccount { get; set; }
+    public Doctor? Doctor { get; set; }
+    public Nurse? Nurse { get; set; }
 }
