@@ -20,6 +20,8 @@ export interface AuthUser {
   userAccount: Account;
   profile: Employee;
   role: Role;
+  token?: string;
+  refreshToken?: string;
 }
 
 export interface LoginCredentials {

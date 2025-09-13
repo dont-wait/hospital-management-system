@@ -1,204 +1,186 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { AuthUser, LoginCredentials, RegisterData } from "@/types";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import { AuthUser, LoginCredentials, PatientRegisterData } from "@/types";
+import { authService } from "@/services/auth.service";
 import { toast } from "sonner";
 
 interface AuthContextType {
   user: AuthUser | null;
   isLoading: boolean;
-  login: (credentials: LoginCredentials) => Promise<boolean>;
-  register: (data: RegisterData) => Promise<boolean>;
-  logout: () => void;
   isAuthenticated: boolean;
+  login: (credentials: LoginCredentials) => Promise<boolean>;
+  register: (data: PatientRegisterData) => Promise<boolean>;
+  logout: () => void;
+  refreshToken: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Token expiration check interval and role display mappings
+const TOKEN_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
+const ROLE_DISPLAY_NAMES: Record<string, string> = {
+  doctor: "Dr.",
+  patient: "",
+  admin: "Admin",
+} as const;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // On first visit, check if user is logged in. If yes, fetch previous data
-    // for processing, else do nothing.
-    const savedUser = localStorage.getItem("hospital_user");
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch {
-        localStorage.removeItem("hospital_user");
-      }
-    }
-    setIsLoading(false);
+  // Clear all authentication data from state and storage
+  const clearAuthState = useCallback(() => {
+    setUser(null);
+    authService.clearTokens();
+    authService.clearStoredUser();
   }, []);
 
-  const login = async (credentials: LoginCredentials): Promise<boolean> => {
-    setIsLoading(true);
+  // Format user display name based on role
+  const getDisplayName = (user: AuthUser): string => {
+    const rolePrefix = ROLE_DISPLAY_NAMES[user.role.role_id] || "";
+    return user.role.role_id === "patient"
+      ? user.profile.ep_firstname
+      : `${rolePrefix} ${user.profile.ep_lastname}`.trim();
+  };
 
+  // Show success message with user's display name
+  const showLoginSuccessMessage = (user: AuthUser) => {
+    const displayName = getDisplayName(user);
+    toast.success(`Đăng nhập thành công! Chào bạn, ${displayName}!`);
+  };
+
+  // Refresh JWT token and update user state
+  const handleRefreshToken = useCallback(async (): Promise<boolean> => {
     try {
-      // Simulate API call with mock data
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authService.refreshToken();
+      authService.saveTokens(response.token, response.refreshToken);
+      authService.saveUser(response.user);
+      setUser(response.user);
+      return true;
+    } catch (error) {
+      console.error("Token refresh failed:", error);
+      clearAuthState();
+      return false;
+    }
+  }, [clearAuthState]);
 
-      // Mock authentication logic
-      if (
-        credentials.username === "doctor@hospital.com" &&
-        credentials.password === "doctor123"
-      ) {
-        const mockUser: AuthUser = {
-          userAccount: {
-            ua_id: "1",
-            ua_username: "doctor@hospital.com",
-            ua_password: "",
-            is_active: true,
-            ep_id: "1",
-          },
-          profile: {
-            ep_id: "1",
-            ep_firstname: "Dr. John",
-            ep_lastname: "Smith",
-            ep_dob: "1985-03-15",
-            ep_gender: "Male",
-            ep_phonenumber: "+1234567890",
-            ep_hire_date: "2020-01-15",
-            ep_certificate_number: "DOC12345",
-            email: "doctor@hospital.com",
-            role_id: "1",
-          },
-          role: {
-            role_id: "1",
-            role_description: "Doctor",
-          },
-        };
+  // Check if token is expired and refresh if needed
+  const checkTokenExpiration = useCallback(async () => {
+    const token = authService.getToken();
+    if (token && authService.isTokenExpired(token)) {
+      await handleRefreshToken();
+    }
+  }, [handleRefreshToken]);
 
-        setUser(mockUser);
-        localStorage.setItem("hospital_user", JSON.stringify(mockUser));
-        toast.success("Đăng nhập thành công! Chào bạn, Dr. Smith!");
-        setIsLoading(false);
-        return true;
-      } else if (
-        credentials.username === "patient@hospital.com" &&
-        credentials.password === "patient123"
-      ) {
-        const mockUser: AuthUser = {
-          userAccount: {
-            ua_id: "2",
-            ua_username: "patient@hospital.com",
-            ua_password: "",
-            is_active: true,
-            pt_id: "1",
-          },
-          profile: {
-            pt_id: "1",
-            pt_firstname: "Jane",
-            pt_lastname: "Doe",
-            pt_dob: "1990-07-20",
-            pt_nationality: "American",
-            email: "patient@hospital.com",
-            pt_gender: "Female",
-            pt_place_of_residence: "New York, NY",
-            pt_is_insurance: true,
-            pt_contact_number: "+1987654321",
-            pt_registration_date: "2024-01-10",
-            role_id: "2",
-          },
-          role: {
-            role_id: "2",
-            role_description: "Patient",
-          },
-        };
+  // Initialize auth state from stored data on app startup
+  const initializeAuth = useCallback(async () => {
+    try {
+      const storedUser = authService.getStoredUser();
+      const token = authService.getToken();
 
-        setUser(mockUser);
-        localStorage.setItem("hospital_user", JSON.stringify(mockUser));
-        toast.success("Đăng nhập thành công! Xin chào Jane!");
-        setIsLoading(false);
-        return true;
-      } else if (
-        credentials.username === "admin@hospital.com" &&
-        credentials.password === "admin123"
-      ) {
-        const mockUser: AuthUser = {
-          userAccount: {
-            ua_id: "3",
-            ua_username: "123@hospital.com",
-            ua_password: "",
-            is_active: true,
-            ep_id: "3",
-          },
-          profile: {
-            ep_id: "3",
-            ep_firstname: "Dr. John",
-            ep_lastname: "Smith",
-            ep_dob: "1985-03-15",
-            ep_gender: "Male",
-            ep_phonenumber: "+1234567890",
-            ep_hire_date: "2020-01-15",
-            ep_certificate_number: "DOC12345",
-            email: "doctor@hospital.com",
-            role_id: "1",
-          },
-          role: {
-            role_id: "1",
-            role_description: "Admin",
-          },
-        };
-
-        setUser(mockUser);
-        localStorage.setItem("hospital_user", JSON.stringify(mockUser));
-        toast.success("Đăng nhập thành công! Chào bạn, Dr. Smith!");
-        setIsLoading(false);
-        return true;
+      if (storedUser && token) {
+        if (authService.isTokenExpired(token)) {
+          await handleRefreshToken();
+        } else {
+          setUser(storedUser);
+        }
       }
+    } catch (error) {
+      console.error("Auth initialization error:", error);
+      clearAuthState();
+    } finally {
+      setIsLoading(false);
+    }
+  }, [handleRefreshToken, clearAuthState]);
 
-      toast.error("Mật khẩu hoặc tên đăng nhập không chính xác!");
-      setIsLoading(false);
+  // Authenticate user with credentials
+  const handleLogin = async (
+    credentials: LoginCredentials,
+  ): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      const response = await authService.login(credentials);
+
+      authService.saveTokens(response.token, response.refreshToken);
+      authService.saveUser(response.user);
+      setUser(response.user);
+
+      showLoginSuccessMessage(response.user);
+      return true;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Đăng nhập thất bại";
+      const displayMessage =
+        errorMessage === "Invalid credentials"
+          ? "Mật khẩu hoặc tên đăng nhập không chính xác!"
+          : "Đăng nhập thất bại. Hãy thử lại!";
+
+      toast.error(displayMessage);
       return false;
-    } catch {
-      toast.error("Đăng nhập thất bại. Hãy thử lại!");
+    } finally {
       setIsLoading(false);
-      return false;
     }
   };
 
-  const register = async (data: RegisterData): Promise<boolean> => {
+  // Register new patient account
+  const handleRegister = async (
+    data: PatientRegisterData,
+  ): Promise<boolean> => {
     setIsLoading(true);
-
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      toast.success("Đăng ký thành công!.");
-      setIsLoading(false);
-      return true;
+      const response = await authService.register(data);
+      toast.success("Đăng ký thành công!");
+      return response.success;
     } catch {
       toast.error("Đăng ký thất bại. Hãy thử lại!");
-      setIsLoading(false);
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("hospital_user");
+  // Clear user session and show logout message
+  const handleLogout = useCallback(() => {
+    clearAuthState();
     toast.success("Đã đăng xuất khỏi tài khoản!");
+  }, [clearAuthState]);
+
+  // Initialize auth state on component mount
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
+  // Set up periodic token expiration check
+  useEffect(() => {
+    if (!user?.token) return;
+
+    const interval = setInterval(checkTokenExpiration, TOKEN_CHECK_INTERVAL);
+    return () => clearInterval(interval);
+  }, [user?.token, checkTokenExpiration]);
+
+  const contextValue: AuthContextType = {
+    user,
+    isLoading,
+    isAuthenticated: !!user,
+    login: handleLogin,
+    register: handleRegister,
+    logout: handleLogout,
+    refreshToken: handleRefreshToken,
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isLoading,
-        login,
-        register,
-        logout,
-        isAuthenticated: !!user,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 }
 
+// Hook to access auth context with error handling
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
