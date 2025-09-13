@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using HospitalManagementSystem.Configs; 
+using HospitalManagementSystem.Configs;
+using HospitalManagementSystem.Services.Account;
+using HospitalManagementSystem.Repositories.Account;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,6 +84,9 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
