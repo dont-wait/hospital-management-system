@@ -1,0 +1,50 @@
+# --- Build ---
+bin/
+obj/
+[Bb]uild/
+[Bb]uilds/
+
+# --- User-specific files ---
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# --- Logs & temp ---
+*.log
+*.vspscc
+*.vssscc
+*.tmp
+*.temp
+
+# --- Visual Studio ---
+.vs/
+*.vscode/
+
+# --- Packages ---
+*.nupkg
+*.snupkg
+packages/
+*.dll
+*.pdb
+
+# --- Configuration secrets ---
+appsettings.Development.json
+appsettings.Local.json
+*.Secret.json
+secrets.json
+
+# --- Entity Framework Core ---
+# Migration snapshots (chỉ bỏ nếu bạn không muốn push migration)
+#Migrations/
+
+# --- OS generated files ---
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# --- Rider / JetBrains ---
+.idea/
+*.iml
