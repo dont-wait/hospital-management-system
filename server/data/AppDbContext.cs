@@ -4,6 +4,12 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+    public DbSet<UserAccount> user_accounts { get; set; } = null!;
+    public DbSet<Patient> patients { get; set; } = null!;
+    public DbSet<Employee> employees { get; set; } = null!;
+    public DbSet<Doctor> doctors { get; set; } = null!;
+    public DbSet<Nurse> nurses { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserAccount>()

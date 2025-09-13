@@ -26,8 +26,7 @@ public class Patient
     public string? Email { get; set; }
 
     [Required]
-    [MaxLength(1)]
-    public char Gender { get; set; } = string.Empty[0];
+    public char Gender { get; set; } = ' ';
 
     [Required]
     [MaxLength(150)]
@@ -44,5 +43,5 @@ public class Patient
 
     public DateTime RegistrationDate { get; set; } = DateTime.Now;
 
-    public UserAccount? UserAccount { get; set; }
+    public UserAccount UserAccount { get; set; } = null!;
 }
