@@ -87,6 +87,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

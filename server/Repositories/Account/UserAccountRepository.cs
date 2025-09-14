@@ -8,6 +8,7 @@ public interface IUserAccountRepository
 {
     Task<Patient> CreateUserAccount_Patient_Async(RequestPatientDTO patientDto);
     Task<ResponseUserDTO?> GetUserAccountByIdAsync(Guid userId);
+    Task<UserAccount?> GetUserAccountByCitizenIDAsync(string citizenID);
 }
 
 class UserAccountRepository : IUserAccountRepository
@@ -23,7 +24,7 @@ class UserAccountRepository : IUserAccountRepository
     {
         UserAccount userAccount = new UserAccount
         {
-            Username = patientDto.Username,
+            CitizenID = patientDto.CitizenID,
             Password = patientDto.Password
         };
 
@@ -36,7 +37,6 @@ class UserAccountRepository : IUserAccountRepository
             DateOfBirth = patientDto.DateOfBirth,
             Gender = patientDto.Gender,
             Nationality = patientDto.Nationality,
-            Email = patientDto.Email,
             Address = patientDto.Address,
             PhoneNumber = patientDto.PhoneNumber,
             PlaceOfResidence = patientDto.PlaceOfResidence,
@@ -56,7 +56,7 @@ class UserAccountRepository : IUserAccountRepository
             UserAccountId = p.UserAccount.Id,
             AvatarUrl = p.UserAccount.AvatarUrl,
             Is_Active = p.UserAccount.Is_Active,
-            Username = p.UserAccount.Username,
+            CitizenID = p.UserAccount.CitizenID,
             Patient = new ResponsePatientDTO
             {
                 PatientId = p.Id,
@@ -65,11 +65,39 @@ class UserAccountRepository : IUserAccountRepository
                 DateOfBirth = p.DateOfBirth,
                 Gender = p.Gender,
                 Nationality = p.Nationality,
-                Email = p.Email,
                 Address = p.Address,
                 PhoneNumber = p.PhoneNumber,
                 PlaceOfResidence = p.PlaceOfResidence
             }
         })
         .FirstOrDefaultAsync();
-}
+
+    public async Task<UserAccount?> GetUserAccountByCitizenIDAsync(string citizenID)
+        => await _context.user_accounts
+            .Where(ua => ua.CitizenID == citizenID)
+            .Select(ua =>
+                new UserAccount
+                {
+                    CitizenID = ua.CitizenID,
+                    Password = ua.Password,
+                    AvatarUrl = ua.AvatarUrl,
+                    Is_Active = ua.Is_Active,
+                    Id = ua.Id,
+                    Patient = ua.Patient != null ? new Patient
+                    {
+                        Id = ua.Patient.Id,
+                        FirstName = ua.Patient.FirstName,
+                        LastName = ua.Patient.LastName,
+                        DateOfBirth = ua.Patient.DateOfBirth,
+                        Gender = ua.Patient.Gender,
+                        Address = ua.Patient.Address,
+                        PhoneNumber = ua.Patient.PhoneNumber,
+                        PlaceOfResidence = ua.Patient.PlaceOfResidence,
+                        Is_Insurance = ua.Patient.Is_Insurance,
+                        Nationality = ua.Patient.Nationality,
+                        RegistrationDate = ua.Patient.RegistrationDate,
+                    } : null
+                }
+            )
+            .FirstOrDefaultAsync();
+}   

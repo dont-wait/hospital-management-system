@@ -3,6 +3,7 @@ using HospitalManagementSystem.DTOs.Patient;
 using HospitalManagementSystem.DTOs.UserAccount;
 using HospitalManagementSystem.Repositories.Account;
 using Azure.Core;
+using System.Security.Claims;
 
 namespace HospitalManagementSystem.Services.Account;
 
@@ -23,8 +24,14 @@ class UserAccountService : IUserAccountService
 
     public async Task<ServiceResult<ResponsePatientDTO>> CreateUserAccount_Patient_Async(RequestPatientDTO userDto)
     {
+        if (await _userAccountRepository.GetUserAccountByCitizenIDAsync(userDto.CitizenID) != null)
+            return ServiceResult<ResponsePatientDTO>.Fail("Số CMND/CCCD đã tồn tại.");
+
         if (userDto.Password != userDto.ConfirmPassword)
             return ServiceResult<ResponsePatientDTO>.Fail("Mật khẩu và xác nhận mật khẩu không khớp.");
+
+        string hashedPassword = HashPasswordUtil.HashPassword(userDto.Password);
+        userDto.Password = hashedPassword;
 
         Patient patient = await _userAccountRepository.CreateUserAccount_Patient_Async(userDto);
         if (patient == null)
@@ -38,7 +45,6 @@ class UserAccountService : IUserAccountService
             DateOfBirth = patient.DateOfBirth,
             Gender = patient.Gender,
             Nationality = patient.Nationality,
-            Email = patient.Email,
             Address = patient.Address,
             PhoneNumber = patient.PhoneNumber,
             PlaceOfResidence = patient.PlaceOfResidence
