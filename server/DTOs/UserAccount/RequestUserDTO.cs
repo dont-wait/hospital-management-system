@@ -5,8 +5,9 @@ namespace HospitalManagementSystem.DTOs.UserAccount
     public class RequestUserDTO
     {
         [Required]
-        [MaxLength(150)]
-        public string Username { get; set; } = string.Empty;
+        [MinLength(10, ErrorMessage = "CCCD phải có ít nhất 10 ký tự.")]
+        [MaxLength(10, ErrorMessage = "CCCD không được vượt quá 10 ký tự.")]
+        public string CitizenID { get; set; } = string.Empty;
 
         [Required]
         [StringLength(30, MinimumLength = 6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự.")]
