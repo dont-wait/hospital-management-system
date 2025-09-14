@@ -22,8 +22,9 @@ public class Patient
     [MaxLength(150)]
     public string Nationality { get; set; } = string.Empty;
 
+    [Required]
     [MaxLength(100)]
-    public string? Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 
     [Required]
     public char Gender { get; set; } = ' ';
