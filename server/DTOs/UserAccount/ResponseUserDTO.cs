@@ -1,3 +1,5 @@
+using HospitalManagementSystem.DTOs.Patient;
+
 namespace HospitalManagementSystem.DTOs.UserAccount
 {
     public class ResponseUserDTO
@@ -6,5 +8,6 @@ namespace HospitalManagementSystem.DTOs.UserAccount
         public string Username { get; set; } = null!;
         public string AvatarUrl { get; set; } = null!;
         public bool Is_Active { get; set; }
+        public ResponsePatientDTO? Patient { get; set; }
     }
 }

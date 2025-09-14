@@ -7,7 +7,7 @@ namespace HospitalManagementSystem.Repositories.Account;
 public interface IUserAccountRepository
 {
     Task<Patient> CreateUserAccount_Patient_Async(RequestPatientDTO patientDto);
-    Task<ResponsePatientDTO?> GetUserAccountByIdAsync(Guid userId);
+    Task<ResponseUserDTO?> GetUserAccountByIdAsync(Guid userId);
 }
 
 class UserAccountRepository : IUserAccountRepository
@@ -49,26 +49,26 @@ class UserAccountRepository : IUserAccountRepository
         return patient;
     }
 
-    public async Task<ResponsePatientDTO?> GetUserAccountByIdAsync(Guid userId) => await _context.patients
+    public async Task<ResponseUserDTO?> GetUserAccountByIdAsync(Guid userId) => await _context.patients
         .Where(p => p.Id == userId)
-        .Select(p => new ResponsePatientDTO
+        .Select(p => new ResponseUserDTO
         {
-            PatientId = p.Id,
-            FirstName = p.FirstName,
-            LastName = p.LastName,
-            DateOfBirth = p.DateOfBirth,
-            Gender = p.Gender,
-            Nationality = p.Nationality,
-            Email = p.Email,
-            Address = p.Address,
-            PhoneNumber = p.PhoneNumber,
-            PlaceOfResidence = p.PlaceOfResidence,
-            UserAccount = new ResponseUserDTO
+            UserAccountId = p.UserAccount.Id,
+            AvatarUrl = p.UserAccount.AvatarUrl,
+            Is_Active = p.UserAccount.Is_Active,
+            Username = p.UserAccount.Username,
+            Patient = new ResponsePatientDTO
             {
-                UserAccountId = p.UserAccount.Id,
-                AvatarUrl = p.UserAccount.AvatarUrl,
-                Is_Active = p.UserAccount.Is_Active,
-                Username = p.UserAccount.Username
+                PatientId = p.Id,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                DateOfBirth = p.DateOfBirth,
+                Gender = p.Gender,
+                Nationality = p.Nationality,
+                Email = p.Email,
+                Address = p.Address,
+                PhoneNumber = p.PhoneNumber,
+                PlaceOfResidence = p.PlaceOfResidence
             }
         })
         .FirstOrDefaultAsync();

@@ -1,5 +1,6 @@
 using Utils;
 using HospitalManagementSystem.DTOs.Patient;
+using HospitalManagementSystem.DTOs.UserAccount;
 using HospitalManagementSystem.Repositories.Account;
 using Azure.Core;
 
@@ -8,7 +9,7 @@ namespace HospitalManagementSystem.Services.Account;
 public interface IUserAccountService
 {
     Task<ServiceResult<ResponsePatientDTO>> CreateUserAccount_Patient_Async(RequestPatientDTO userDto);
-    Task<ServiceResult<ResponsePatientDTO?>> GetUserAccountByIdAsync(Guid userId);
+    Task<ServiceResult<ResponseUserDTO?>> GetUserAccountByIdAsync(Guid userId);
 }
 
 class UserAccountService : IUserAccountService
@@ -46,12 +47,12 @@ class UserAccountService : IUserAccountService
         return ServiceResult<ResponsePatientDTO>.Success(responsePatientDto);
     }
     
-    public async Task<ServiceResult<ResponsePatientDTO?>> GetUserAccountByIdAsync(Guid userId)
+    public async Task<ServiceResult<ResponseUserDTO?>> GetUserAccountByIdAsync(Guid userId)
     {
         var userAccount = await _userAccountRepository.GetUserAccountByIdAsync(userId);
         if (userAccount == null)
-            return ServiceResult<ResponsePatientDTO?>.Fail("Tài khoản không tồn tại.");
+            return ServiceResult<ResponseUserDTO?>.Fail("Tài khoản không tồn tại.");
 
-        return ServiceResult<ResponsePatientDTO?>.Success(userAccount);
+        return ServiceResult<ResponseUserDTO?>.Success(userAccount);
     }
 }
