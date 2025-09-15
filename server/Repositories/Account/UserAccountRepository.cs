@@ -7,7 +7,6 @@ namespace HospitalManagementSystem.Repositories.Account;
 public interface IUserAccountRepository
 {
     Task<Patient> CreateUserAccount_Patient_Async(RequestPatientDTO patientDto);
-    //Task<Doctor> CreateUserAccount_Doctor_Async(RequestDoctorDTO doctorDto);
     Task<ResponseUserDTO?> GetUserAccountByIdAsync(Guid userId);
     Task<UserAccount?> GetUserAccountByCitizenIDAsync(string citizenID);
 }
@@ -89,6 +88,23 @@ class UserAccountRepository : IUserAccountRepository
                         Is_Insurance = ua.Patient.Is_Insurance,
                         Nationality = ua.Patient.Nationality,
                         RegistrationDate = ua.Patient.RegistrationDate,
+                    } : null,
+                    Employee = ua.Employee != null ? new Employee
+                    {
+                        Id = ua.Employee.Id,
+                        FirstName = ua.Employee.FirstName,
+                        LastName = ua.Employee.LastName,
+                        DateOfBirth = ua.Employee.DateOfBirth,
+                        Gender = ua.Employee.Gender,
+                        PhoneNumber = ua.Employee.PhoneNumber,
+                        CertificateNumber = ua.Employee.CertificateNumber,
+                        Email = ua.Employee.Email,
+                        HireDate = ua.Employee.HireDate,
+                        Doctor = new Doctor
+                        {
+                            Id = ua.Employee.Doctor.Id,
+                            Specialization = ua.Employee.Doctor.Specialization
+                        }
                     } : null
                 }
             )
