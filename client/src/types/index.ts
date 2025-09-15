@@ -31,10 +31,9 @@ export interface LoginCredentials {
 }
 
 export interface Account {
-  avatar?: string;
-  username: string;
+  citizenID: string;
   password: string;
-  isActive?: number;
+  confirmPassword: string;
 }
 
 export type Gender = "Male" | "Female" | "Other";
