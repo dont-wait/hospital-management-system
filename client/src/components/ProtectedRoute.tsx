@@ -24,7 +24,7 @@ export function ProtectedRoute({
     }
 
     if (!isLoading && isAuthenticated && allowedRoles && authUser) {
-      const userRole = "doctorId" in authUser.user ? "Doctor" : "Patient";
+      const userRole = "doctorId" in authUser.user ? "doctor" : "patient";
       if (!allowedRoles.includes(userRole)) {
         router.push("/unauthorized");
         return;
