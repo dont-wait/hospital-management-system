@@ -14,7 +14,7 @@ export function ProtectedRoute({
   children,
   allowedRoles,
 }: ProtectedRouteProps) {
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { authUser, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -23,14 +23,14 @@ export function ProtectedRoute({
       return;
     }
 
-    if (!isLoading && isAuthenticated && allowedRoles && user) {
-      const userRole = user.role.role_description.toLowerCase();
+    if (!isLoading && isAuthenticated && allowedRoles && authUser) {
+      const userRole = "doctorId" in authUser.user ? "Doctor" : "Patient";
       if (!allowedRoles.includes(userRole)) {
         router.push("/unauthorized");
         return;
       }
     }
-  }, [isLoading, isAuthenticated, user, allowedRoles, router]);
+  }, [isLoading, isAuthenticated, authUser, allowedRoles, router]);
 
   if (isLoading) {
     return (
@@ -44,8 +44,8 @@ export function ProtectedRoute({
     return null;
   }
 
-  if (allowedRoles && user) {
-    const userRole = user.role.role_description.toLowerCase();
+  if (allowedRoles && authUser) {
+    const userRole = "doctorId" in authUser.user ? "doctor" : "patient";
     if (!allowedRoles.includes(userRole)) {
       return null;
     }
