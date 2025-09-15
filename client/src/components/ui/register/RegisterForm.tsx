@@ -109,7 +109,7 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? (
+              {!showPassword ? (
                 <EyeOff className="h-4 w-4 text-gray-400" />
               ) : (
                 <Eye className="h-4 w-4 text-gray-400" />
@@ -141,7 +141,7 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
-              {showConfirmPassword ? (
+              {!showConfirmPassword ? (
                 <EyeOff className="h-4 w-4 text-gray-400" />
               ) : (
                 <Eye className="h-4 w-4 text-gray-400" />
