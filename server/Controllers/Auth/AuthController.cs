@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using HospitalManagementSystem.DTOs.Patient;
-using Utils;
+using HospitalManagementSystem.DTOs.Employee;
 using HospitalManagementSystem.Services.Account;
 using HospitalManagementSystem.DTOs.Login;
+using Utils;
 
 namespace HospitalManagementSystem.Controllers.Auth;
 
@@ -11,16 +12,18 @@ namespace HospitalManagementSystem.Controllers.Auth;
 public class AuthController : ControllerBase
 {
     private readonly IUserAccountService _userAccountService;
+    private readonly IEmployeeAccountService _employeeAccountService;
     private readonly IAuthService _authService;
 
-    public AuthController(IUserAccountService userAccountService, IAuthService authService)
+    public AuthController(IUserAccountService userAccountService, IEmployeeAccountService employeeAccountService, IAuthService authService)
     {
         _userAccountService = userAccountService;
+        _employeeAccountService = employeeAccountService;
         _authService = authService;
     }
 
-    [HttpPost("register")]
-    public async Task<ApiResponse<ResponsePatientDTO>> Register(RequestPatientDTO userDto)
+    [HttpPost("/patient/register")]
+    public async Task<ApiResponse<ResponsePatientDTO>> PatientRegister(RequestPatientDTO userDto)
     {
         try
         {
@@ -37,6 +40,24 @@ public class AuthController : ControllerBase
         }
     }
     
+    [HttpPost("/doctor/register")]
+    public async Task<ApiResponse<ResponseDoctorDTO>> DoctorRegister(RequestDoctorDTO userDto)
+    {
+        try
+        {
+            var result = await _employeeAccountService.CreateDoctorAsync(userDto);
+            if (result.IsSuccess)
+                return new ApiResponse<ResponseDoctorDTO>(201, "Tạo tài khoản thành công.", result.Data);
+            else
+                return new ApiResponse<ResponseDoctorDTO>(400, result.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return new ApiResponse<ResponseDoctorDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+        }
+    }
+
     [HttpPost("login")]
     public async Task<ApiResponse<ResponseLoginDTO>> Login(RequestLoginDTO loginDto)
     {

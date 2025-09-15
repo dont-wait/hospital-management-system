@@ -5,6 +5,7 @@ using System.Text;
 using HospitalManagementSystem.Configs;
 using HospitalManagementSystem.Services.Account;
 using HospitalManagementSystem.Repositories.Account;
+using HospitalManagementSystem.Repositories.Employees;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,6 +89,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

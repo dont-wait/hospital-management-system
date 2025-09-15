@@ -2,9 +2,6 @@ using Utils;
 using HospitalManagementSystem.DTOs.Patient;
 using HospitalManagementSystem.DTOs.UserAccount;
 using HospitalManagementSystem.Repositories.Account;
-using Azure.Core;
-using System.Security.Claims;
-
 namespace HospitalManagementSystem.Services.Account;
 
 public interface IUserAccountService

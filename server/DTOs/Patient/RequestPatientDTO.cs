@@ -14,12 +14,12 @@ namespace HospitalManagementSystem.DTOs.Patient
         public string LastName { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(150)]
         [EmailAddress]
+        [StringLength(150, ErrorMessage = "Email không được vượt quá 150 ký tự.")]
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(10)]
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "Số điện thoại phải đúng 10 chữ số.")]
         public string PhoneNumber { get; set; } = string.Empty;
     }
 }

@@ -1,12 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using HospitalManagementSystem.DTOs.UserAccount;
 
-[Table("employees")]
-public class Employee
+namespace HospitalManagementSystem.DTOs.Employee;
+public class RequestEmployeeDTO : RequestUserDTO
 {
-    [Key]
-    public Guid Id { get; set; } = Guid.NewGuid();
-
     [Required]
     [MaxLength(30)]
     public string FirstName { get; set; } = string.Empty;
@@ -19,12 +16,11 @@ public class Employee
     public DateTime DateOfBirth { get; set; }
 
     [Required]
-    [Column(TypeName = "char(1)")]
     [MaxLength(1)]
     public string Gender { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(10)]
+    [StringLength(10, MinimumLength = 10, ErrorMessage = "Số điện thoại phải đúng 10 chữ số.")]
     public string PhoneNumber { get; set; } = string.Empty;
 
     [MaxLength(100)]
@@ -34,10 +30,6 @@ public class Employee
     public DateTime HireDate { get; set; }
 
     [Required]
-    [Column(TypeName = "char(10)")]
-    [StringLength(10)]
+    [StringLength(10, MinimumLength = 10, ErrorMessage = "Số chứng chỉ hành nghề phải đúng 10 ký tự.")]
     public string CertificateNumber { get; set; } = string.Empty;
-
-    public UserAccount UserAccount { get; set; } = null!;
-    public Doctor Doctor { get; set; } = null!;
 }

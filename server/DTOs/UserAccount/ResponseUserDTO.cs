@@ -1,4 +1,5 @@
 using HospitalManagementSystem.DTOs.Patient;
+using HospitalManagementSystem.DTOs.Employee;
 
 namespace HospitalManagementSystem.DTOs.UserAccount
 {
@@ -8,6 +9,7 @@ namespace HospitalManagementSystem.DTOs.UserAccount
         public string CitizenID { get; set; } = null!;
         public string AvatarUrl { get; set; } = null!;
         public bool Is_Active { get; set; }
-        public ResponsePatientDTO? Patient { get; set; }
+        public ResponsePatientDTO? Patient { get; set; } = null;
+        public ResponseEmployeeDTO? Employee { get; set; } = null;
     }
 }
