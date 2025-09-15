@@ -44,13 +44,10 @@ export interface Patient {
   lastName: string;
   dateOfBirth: string;
   nationality: string;
-  email: string;
   gender: Gender;
   placeOfResidence: string;
   address: string;
-  insurance?: number;
-  contactNumber: string;
-  roleId?: string;
+  phoneNumber: string;
 }
 
 export interface PatientRegisterData {
