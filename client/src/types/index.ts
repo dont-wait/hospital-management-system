@@ -36,7 +36,11 @@ export interface Account {
   confirmPassword: string;
 }
 
-export type Gender = "Male" | "Female" | "Other";
+export enum Gender {
+  Male = "M",
+  Female = "F",
+  Other = "O"
+}
 
 export interface Patient {
   firstName: string;
