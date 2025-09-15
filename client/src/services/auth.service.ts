@@ -1,17 +1,11 @@
-import { LoginCredentials, PatientRegisterData, AuthUser } from "@/types";
-import { mockUsers } from "@/mock-data";
-
-// Response types
-export interface LoginResponse {
-  user: AuthUser;
-  token: string;
-  refreshToken: string;
-}
-
-export interface RegisterResponse {
-  success: boolean;
-  message: string;
-}
+import {
+  LoginPatientDto,
+  LoginResponse,
+  RegisterPatientDto,
+  RegisterResponse,
+  AuthUser,
+} from "@/types";
+import { mockData } from "@/mock-data";
 
 class AuthService {
   // Configuration
@@ -27,32 +21,32 @@ class AuthService {
     new Promise((resolve) => setTimeout(resolve, ms));
 
   // Authentication methods
-  async login(credentials: LoginCredentials): Promise<LoginResponse> {
+  async login(userDto: LoginPatientDto): Promise<LoginResponse> {
     await this.delay(1000);
 
     // In real implementation: make API call to server
-    const user = this.validateCredentials(credentials);
+    const user = this.validateCredentials(userDto);
     if (!user) {
       throw new Error("Invalid credentials");
     }
 
     // Mock tokens - in real app, these come from server response
-    const token = "mock_jwt_token_from_server";
-    const refreshToken = "mock_refresh_token_from_server";
-    const authUser: AuthUser = { ...user, token, refreshToken };
+    const accessToken = "mock_access_token";
+    const refreshToken = "mock_refresh_token";
+    const authUser: AuthUser = { ...user, accessToken, refreshToken };
 
     return {
-      user: authUser,
-      token,
-      refreshToken,
+      status: 200,
+      message: "Đăng nhập thành công!",
+      data: authUser,
     };
   }
 
-  async register(data: PatientRegisterData): Promise<RegisterResponse> {
+  async register(patientDto: RegisterPatientDto): Promise<RegisterResponse> {
     await this.delay(1500);
 
     // In real implementation: make API call to server
-    console.log("Registering patient:", data);
+    console.log("Registering patient:", patientDto);
 
     return {
       success: true,
@@ -60,35 +54,6 @@ class AuthService {
     };
   }
 
-  async refreshToken(): Promise<LoginResponse> {
-    await this.delay(500);
-
-    const refreshToken = this.getRefreshToken();
-    const storedUser = this.getStoredUser();
-
-    if (!refreshToken || !storedUser) {
-      throw new Error("Authentication data unavailable");
-    }
-
-    // In real implementation: make API call with refresh token
-
-    // Mock new tokens from server response
-    const newToken = "new_mock_jwt_token_from_server";
-    const newRefreshToken = "new_mock_refresh_token_from_server";
-    const user = {
-      ...storedUser,
-      token: newToken,
-      refreshToken: newRefreshToken,
-    };
-
-    return {
-      user,
-      token: newToken,
-      refreshToken: newRefreshToken,
-    };
-  }
-
-  // Token management
   saveTokens(token: string, refreshToken: string): void {
     localStorage.setItem(this.STORAGE_KEYS.TOKEN, token);
     localStorage.setItem(this.STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
@@ -154,12 +119,8 @@ class AuthService {
   }
 
   // Private helpers
-  private validateCredentials(credentials: LoginCredentials) {
-    return mockUsers.find(
-      (user) =>
-        user.userAccount.username === credentials.username &&
-        user.userAccount.password === credentials.password,
-    );
+  private validateCredentials(userDto: LoginPatientDto) {
+    return mockData.find((user) => user.citizenID === userDto.citizenID);
   }
 }
 

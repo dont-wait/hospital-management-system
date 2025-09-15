@@ -7,47 +7,40 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { AuthUser, LoginCredentials, PatientRegisterData } from "@/types";
+import { AuthUser, LoginPatientDto, RegisterPatientDto } from "@/types";
 import { authService } from "@/services/auth.service";
 import { toast } from "sonner";
 
 interface AuthContextType {
-  user: AuthUser | null;
+  authUser: AuthUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (credentials: LoginCredentials) => Promise<boolean>;
-  register: (data: PatientRegisterData) => Promise<boolean>;
+  login: (userDto: LoginPatientDto) => Promise<boolean>;
+  register: (patientDto: RegisterPatientDto) => Promise<boolean>;
   logout: () => void;
-  refreshToken: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Token expiration check interval and role display mappings
-const TOKEN_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
-const ROLE_DISPLAY_NAMES: Record<string, string> = {
-  doctor: "Dr.",
-  patient: "",
-  admin: "Admin",
-} as const;
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Clear all authentication data from state and storage
   const clearAuthState = useCallback(() => {
-    setUser(null);
+    setAuthUser(null);
     authService.clearTokens();
     authService.clearStoredUser();
   }, []);
 
   // Format user display name based on role
-  const getDisplayName = (user: AuthUser): string => {
-    const rolePrefix = ROLE_DISPLAY_NAMES[user.role.role_id] || "";
-    return user.role.role_id === "patient"
-      ? user.profile.ep_firstname
-      : `${rolePrefix} ${user.profile.ep_lastname}`.trim();
+  const getDisplayName = (authUser: AuthUser): string => {
+    if ("patientId" in authUser.user) {
+      return authUser.user.firstName;
+    } else if ("doctorId" in authUser.user) {
+      return `Dr. ${authUser.user.firstName}`;
+    }
+    return "Admin";
   };
 
   // Show success message with user's display name
@@ -56,63 +49,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     toast.success(`Đăng nhập thành công! Chào bạn, ${displayName}!`);
   };
 
-  // Refresh JWT token and update user state
-  const handleRefreshToken = useCallback(async (): Promise<boolean> => {
-    try {
-      const response = await authService.refreshToken();
-      authService.saveTokens(response.token, response.refreshToken);
-      authService.saveUser(response.user);
-      setUser(response.user);
-      return true;
-    } catch (error) {
-      console.error("Token refresh failed:", error);
-      clearAuthState();
-      return false;
-    }
-  }, [clearAuthState]);
-
-  // Check if token is expired and refresh if needed
-  const checkTokenExpiration = useCallback(async () => {
-    const token = authService.getToken();
-    if (token && authService.isTokenExpired(token)) {
-      await handleRefreshToken();
-    }
-  }, [handleRefreshToken]);
-
   // Initialize auth state from stored data on app startup
   const initializeAuth = useCallback(async () => {
-    try {
-      const storedUser = authService.getStoredUser();
-      const token = authService.getToken();
-
-      if (storedUser && token) {
-        if (authService.isTokenExpired(token)) {
-          await handleRefreshToken();
-        } else {
-          setUser(storedUser);
-        }
-      }
-    } catch (error) {
-      console.error("Auth initialization error:", error);
-      clearAuthState();
-    } finally {
-      setIsLoading(false);
-    }
-  }, [handleRefreshToken, clearAuthState]);
+    clearAuthState();
+    setIsLoading(false);
+  }, [clearAuthState]);
 
   // Authenticate user with credentials
-  const handleLogin = async (
-    credentials: LoginCredentials,
-  ): Promise<boolean> => {
+  const handleLogin = async (userDto: LoginPatientDto): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await authService.login(credentials);
+      const response = await authService.login(userDto);
 
-      authService.saveTokens(response.token, response.refreshToken);
-      authService.saveUser(response.user);
-      setUser(response.user);
+      authService.saveTokens(
+        response.data.accessToken,
+        response.data.refreshToken,
+      );
+      authService.saveUser(response.data);
+      setAuthUser(response.data);
 
-      showLoginSuccessMessage(response.user);
+      showLoginSuccessMessage(response.data);
       return true;
     } catch (error) {
       const errorMessage =
@@ -131,11 +87,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Register new patient account
   const handleRegister = async (
-    data: PatientRegisterData,
+    patientDto: RegisterPatientDto,
   ): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await authService.register(data);
+      const response = await authService.register(patientDto);
       toast.success("Đăng ký thành công!");
       return response.success;
     } catch {
@@ -157,22 +113,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initializeAuth();
   }, [initializeAuth]);
 
-  // Set up periodic token expiration check
-  useEffect(() => {
-    if (!user?.token) return;
-
-    const interval = setInterval(checkTokenExpiration, TOKEN_CHECK_INTERVAL);
-    return () => clearInterval(interval);
-  }, [user?.token, checkTokenExpiration]);
-
   const contextValue: AuthContextType = {
-    user,
+    authUser,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated: !!authUser,
     login: handleLogin,
     register: handleRegister,
     logout: handleLogout,
-    refreshToken: handleRefreshToken,
   };
 
   return (
