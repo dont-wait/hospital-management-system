@@ -8,25 +8,13 @@ export const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-export const registerSchema = z.object({
-  // Account Info
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-
-  // Patient Info
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  email: z.string().email("Invalid email format"),
-  gender: z
-    .union([z.literal("Male"), z.literal("Female"), z.literal("Other")])
-    .refine((val) => val !== undefined, {
-      message: "Please select a gender",
-    }),
-  contactNumber: z
-    .string()
-    .min(10, "Contact number must be at least 10 digits"),
-  nationality: z.string().min(1, "Nationality is required"),
-  placeOfResidence: z.string().min(1, "Place of residence is required"),
-  address: z.string().min(1, "Address is required"),
+export const patientSchema = z.object({
+  citizenID: z.string().min(1, "CCCD không được để trống"),
+  password: z.string().min(1, "Password Không được để trống"),
+  confirmPassword: z.string().min(1, "Confirm Password không được để trống"),
+  firstName: z.string().min(1, "Tên không được để trống"),
+  lastName: z.string().min(1, "Họ và tên đệm không được để trống"),
+  email: z.email("Email không hợp lệ"),
+  phoneNumber: z.string().min(10, "Số điện thoại phải có ít nhất 10 chữ số"),
 });
+
