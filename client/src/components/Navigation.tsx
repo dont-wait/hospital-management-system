@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, User, LogOut, Home, UserCheck } from "lucide-react";
 
 export function Navigation() {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { authUser, logout, isAuthenticated } = useAuth();
 
   return (
     <nav className="bg-white shadow-md border-b">
@@ -28,7 +28,7 @@ export function Navigation() {
 
             {isAuthenticated ? (
               <>
-                {user?.role.role_description.toLowerCase() === "doctor" && (
+                {authUser && "doctorId" in authUser.user && (
                   <Link href="/doctor">
                     <Button
                       variant="ghost"
@@ -40,7 +40,7 @@ export function Navigation() {
                   </Link>
                 )}
 
-                {user?.role.role_description.toLowerCase() === "patient" && (
+                {authUser && "patientId" in authUser.user && (
                   <Link href="/patient">
                     <Button
                       variant="ghost"
@@ -52,26 +52,12 @@ export function Navigation() {
                   </Link>
                 )}
 
-                {user?.role.role_description.toLowerCase() === "admin" && (
-                  <Link href="/admin">
-                    <Button
-                      variant="ghost"
-                      className="flex items-center space-x-2"
-                    >
-                      <User className="h-4 w-4" />
-                      <span>Dashboard</span>
-                    </Button>
-                  </Link>
-                )}
-
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-700">
                     Hi,{" "}
-                    {user?.profile
-                      ? "pt_firstname" in user.profile
-                        ? `${user.profile.pt_firstname} ${user.profile.pt_lastname}`
-                        : `${user.profile.ep_firstname} ${user.profile.ep_lastname}`
-                      : "Người dùng"}
+                    {authUser &&
+                      `${authUser.user.firstName} ${authUser.user.lastName}`}
+                    {!authUser && "Người dùng"}
                   </span>
                   <Button onClick={logout} variant="outline" size="sm">
                     <LogOut className="h-4 w-4 mr-2" />

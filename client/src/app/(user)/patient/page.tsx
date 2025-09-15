@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Calendar, FileText, Heart, Clock } from "lucide-react";
 
 export default function PatientPage() {
-  const { user } = useAuth();
+  const { authUser } = useAuth();
 
   return (
     <ProtectedRoute allowedRoles={["patient"]}>
@@ -16,9 +16,9 @@ export default function PatientPage() {
           <h1 className="text-3xl font-bold text-gray-900">Patient Portal</h1>
           <p className="text-gray-600 mt-2">
             Welcome,{" "}
-            {user?.profile && "pt_firstname" in user.profile
-              ? `${user.profile.pt_firstname} ${user.profile.pt_lastname}`
-              : "Patient"}
+            {authUser &&
+              "patientId" in authUser.user &&
+              `${authUser.user.firstName} ${authUser.user.lastName}`}
           </p>
         </div>
 
@@ -145,7 +145,7 @@ export default function PatientPage() {
         </div>
 
         {/* Patient Information */}
-        {user?.profile && "pt_firstname" in user.profile && (
+        {authUser && "patientId" in authUser.user && (
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>Personal Information</CardTitle>
@@ -155,24 +155,16 @@ export default function PatientPage() {
                 <div>
                   <p className="text-sm text-gray-600">Name</p>
                   <p className="font-medium">
-                    {user.profile.pt_firstname} {user.profile.pt_lastname}
+                    {authUser.user.firstName} {authUser.user.lastName}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Email</p>
-                  <p className="font-medium">{user.profile.email}</p>
+                  <p className="font-medium">{authUser.user.email}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Contact Number</p>
-                  <p className="font-medium">
-                    {user.profile.pt_contact_number}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Insurance Status</p>
-                  <p className="font-medium">
-                    {user.profile.pt_is_insurance ? "Covered" : "Not Covered"}
-                  </p>
+                  <p className="font-medium">{authUser.user.phoneNumber}</p>
                 </div>
               </div>
             </CardContent>
