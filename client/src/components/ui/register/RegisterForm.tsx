@@ -31,8 +31,6 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <IdCardScanner onCardScanned={setIdCardFile} scannedFile={idCardFile} />
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* 1. CitizenID */}
         <div className="space-y-2">
