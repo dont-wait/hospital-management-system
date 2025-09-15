@@ -1,11 +1,8 @@
 import { z } from "zod";
 
-export const loginSchema = z.object({
-  username: z
-    .string()
-    .min(1, "Username is required")
-    .email("Invalid email format"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+export const accountSchema = z.object({
+  citizenID: z.string().min(1, "CCCD không được để trống"),
+  password: z.string().min(1, "Password Không được để trống"),
 });
 
 export const patientSchema = z.object({
@@ -17,4 +14,3 @@ export const patientSchema = z.object({
   email: z.email("Email không hợp lệ"),
   phoneNumber: z.string().min(10, "Số điện thoại phải có ít nhất 10 chữ số"),
 });
-

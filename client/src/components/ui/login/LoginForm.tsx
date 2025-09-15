@@ -6,11 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { PasswordInput } from "@/components/ui/login/PasswordInput";
 import { UsernameInput } from "@/components/ui/login/UsernameInput";
-import { loginSchema } from "@/schemas/auth";
-import type { LoginCredentials } from "@/types/index";
+import { accountSchema } from "@/schemas/auth";
+import type { LoginPatientDto } from "@/types/index";
 
 interface LoginFormProps {
-  onSubmit: (data: LoginCredentials) => Promise<void>;
+  onSubmit: (patientDto: LoginPatientDto) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -19,31 +19,30 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginCredentials>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<LoginPatientDto>({
+    resolver: zodResolver(accountSchema),
   });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="username">Email</Label>
+        <Label htmlFor="citizenID">Căn cước công dân</Label>
         <UsernameInput
-          id="username"
-          type="email"
-          placeholder="Enter your email"
-          {...register("username")}
-          className={errors.username ? "border-red-500" : ""}
+          id="citizenID"
+          placeholder="Nhập số căn cước công dân"
+          {...register("citizenID")}
+          className={errors.citizenID ? "border-red-500" : ""}
         />
-        {errors.username && (
-          <p className="text-sm text-red-600">{errors.username.message}</p>
+        {errors.citizenID && (
+          <p className="text-sm text-red-600">{errors.citizenID.message}</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">Mật khẩu</Label>
         <PasswordInput
           id="password"
-          placeholder="Enter your password"
+          placeholder="Nhập mật khẩu"
           {...register("password")}
           error={!!errors.password}
         />

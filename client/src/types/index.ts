@@ -10,12 +10,6 @@ export interface AuthUser {
   refreshToken?: string;
 }
 
-export interface LoginCredentials {
-  username: string;
-  password: string;
-  idCard?: File;
-}
-
 export interface Account {
   citizenID: string;
   password: string;
@@ -26,6 +20,11 @@ export enum Gender {
   Male = "M",
   Female = "F",
   Other = "O",
+}
+
+export interface LoginPatientDto {
+  citizenID: string;
+  password: string;
 }
 
 export interface RegisterPatientDto {
