@@ -7,6 +7,7 @@ namespace HospitalManagementSystem.Repositories.Account;
 public interface IUserAccountRepository
 {
     Task<Patient> CreateUserAccount_Patient_Async(RequestPatientDTO patientDto);
+    //Task<Doctor> CreateUserAccount_Doctor_Async(RequestDoctorDTO doctorDto);
     Task<ResponseUserDTO?> GetUserAccountByIdAsync(Guid userId);
     Task<UserAccount?> GetUserAccountByCitizenIDAsync(string citizenID);
 }
@@ -34,13 +35,9 @@ class UserAccountRepository : IUserAccountRepository
         {
             FirstName = patientDto.FirstName,
             LastName = patientDto.LastName,
-            DateOfBirth = patientDto.DateOfBirth,
-            Gender = patientDto.Gender,
-            Nationality = patientDto.Nationality,
-            Address = patientDto.Address,
             PhoneNumber = patientDto.PhoneNumber,
-            PlaceOfResidence = patientDto.PlaceOfResidence,
-            UserAccount = userAccount
+            UserAccount = userAccount,
+            Email = patientDto.Email,
         };
 
         await _context.patients.AddAsync(patient);
@@ -62,12 +59,8 @@ class UserAccountRepository : IUserAccountRepository
                 PatientId = p.Id,
                 FirstName = p.FirstName,
                 LastName = p.LastName,
-                DateOfBirth = p.DateOfBirth,
-                Gender = p.Gender,
-                Nationality = p.Nationality,
-                Address = p.Address,
                 PhoneNumber = p.PhoneNumber,
-                PlaceOfResidence = p.PlaceOfResidence
+                Email = p.Email,
             }
         })
         .FirstOrDefaultAsync();

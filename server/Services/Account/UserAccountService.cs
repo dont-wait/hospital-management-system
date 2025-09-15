@@ -42,12 +42,8 @@ class UserAccountService : IUserAccountService
             PatientId = patient.Id,
             FirstName = patient.FirstName,
             LastName = patient.LastName,
-            DateOfBirth = patient.DateOfBirth,
-            Gender = patient.Gender,
-            Nationality = patient.Nationality,
-            Address = patient.Address,
             PhoneNumber = patient.PhoneNumber,
-            PlaceOfResidence = patient.PlaceOfResidence
+            Email = patient.Email,
         };
 
         return ServiceResult<ResponsePatientDTO>.Success(responsePatientDto);

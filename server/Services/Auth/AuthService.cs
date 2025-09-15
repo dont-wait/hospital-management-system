@@ -42,12 +42,8 @@ public class AuthService : IAuthService
                 PatientId = userAccountExists.Patient.Id,
                 FirstName = userAccountExists.Patient.FirstName,
                 LastName = userAccountExists.Patient.LastName,
-                DateOfBirth = userAccountExists.Patient.DateOfBirth,
-                Gender = userAccountExists.Patient.Gender,
-                Nationality = userAccountExists.Patient.Nationality,
-                Address = userAccountExists.Patient.Address,
                 PhoneNumber = userAccountExists.Patient.PhoneNumber,
-                PlaceOfResidence = userAccountExists.Patient.PlaceOfResidence
+                Email = userAccountExists.Patient.Email,
             } : null
         };
 

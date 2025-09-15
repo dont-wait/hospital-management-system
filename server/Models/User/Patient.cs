@@ -16,23 +16,22 @@ public class Patient
     public string LastName { get; set; } = string.Empty;
 
     [Required]
-    public DateTime DateOfBirth { get; set; }
+    [EmailAddress]
+    public string Email { get; set; } = string.Empty;
 
-    [Required]
+    public DateTime? DateOfBirth { get; set; } = null;
+
     [MaxLength(150)]
-    public string Nationality { get; set; } = string.Empty;
+    public string? Nationality { get; set; } = null;
 
-    [Required]
-    public char Gender { get; set; } = ' ';
+    public char? Gender { get; set; } = null;
 
-    [Required]
     [MaxLength(150)]
-    public string PlaceOfResidence { get; set; } = string.Empty;
+    public string? PlaceOfResidence { get; set; } = null;
 
     public bool Is_Insurance { get; set; } = false;
 
-    [Required]
-    public string Address { get; set; } = string.Empty;
+    public string? Address { get; set; } = null;
 
     [Required]
     [MaxLength(10)]
