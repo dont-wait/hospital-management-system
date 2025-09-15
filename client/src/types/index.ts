@@ -31,26 +31,26 @@ export interface LoginCredentials {
 }
 
 export interface Account {
-  avatar?: string;
-  username: string;
+  citizenID: string;
   password: string;
-  isActive?: number;
+  confirmPassword: string;
 }
 
-export type Gender = "Male" | "Female" | "Other";
+export enum Gender {
+  Male = "M",
+  Female = "F",
+  Other = "O"
+}
 
 export interface Patient {
   firstName: string;
   lastName: string;
   dateOfBirth: string;
   nationality: string;
-  email: string;
   gender: Gender;
   placeOfResidence: string;
   address: string;
-  insurance?: number;
-  contactNumber: string;
-  roleId?: string;
+  phoneNumber: string;
 }
 
 export interface PatientRegisterData {
