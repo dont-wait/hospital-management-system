@@ -29,7 +29,8 @@ public class Patient
     [MaxLength(150)]
     public string? PlaceOfResidence { get; set; } = null;
 
-    public bool Is_Insurance { get; set; } = false;
+
+    public int Is_Insurance { get; set; } = 0; //0: Dont have insurance, 1:Have Insurance
 
     public string? Address { get; set; } = null;
 

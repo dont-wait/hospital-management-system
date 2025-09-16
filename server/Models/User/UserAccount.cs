@@ -16,7 +16,7 @@ public class UserAccount
     public string Password { get; set; } = string.Empty;
 
     public string AvatarUrl { get; set; } = "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg";
-    public bool Is_Active { get; set; } = true;
+    public int Is_Active { get; set; } = 1; //1:Active, 0:Inactive
 
     public Guid? PatientId { get; set; }
     public Patient? Patient { get; set; }
