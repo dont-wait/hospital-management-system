@@ -60,6 +60,11 @@ class UserAccountRepository : IUserAccountRepository
                 LastName = p.LastName,
                 PhoneNumber = p.PhoneNumber,
                 Email = p.Email,
+                DateOfBirth = p.DateOfBirth,
+                Gender = p.Gender,
+                Address = p.Address,
+                Nationality = p.Nationality,
+                PlaceOfResidence = p.PlaceOfResidence
             }
         })
         .FirstOrDefaultAsync();
