@@ -60,8 +60,6 @@ public class AuthService : IAuthService
             } : null
         };
 
-        Console.WriteLine($"Debug: Login successful: {userAccountExists.Employee?.Doctor?.Specialization}");
-
         return ServiceResult<ResponseLoginDTO?>.Success(responseLoginDTO);
     }
 }

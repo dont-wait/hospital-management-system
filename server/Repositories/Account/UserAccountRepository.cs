@@ -72,7 +72,6 @@ class UserAccountRepository : IUserAccountRepository
                 .ThenInclude(e => e!.Doctor)
                 .FirstOrDefaultAsync();
 
-        Console.WriteLine($"Debug: Retrieved UserAccount {rs?.Employee?.Doctor.Specialization}");
         return rs;
     }
 }   
