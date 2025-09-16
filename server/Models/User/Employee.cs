@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class Employee
 {
     [Key]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
 
     [Required]
     [MaxLength(30)]

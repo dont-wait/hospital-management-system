@@ -34,22 +34,22 @@ class EmployeeAccountService : IEmployeeAccountService
         string hashedPassword = HashPasswordUtil.HashPassword(doctorDto.Password);
         doctorDto.Password = hashedPassword;
 
-        Doctor doctor  = await _employeeRepository.CreateDoctorAsync(doctorDto);
-        if (doctor == null)
+        Doctor newDoctor  = await _employeeRepository.CreateDoctorAsync(doctorDto);
+        if (newDoctor == null)
             return ServiceResult<ResponseDoctorDTO>.Fail("Tạo tài khoản thất bại.");
 
         var responseDoctorDto = new ResponseDoctorDTO
         {
-            DoctorId = doctor.Id,
-            FirstName = doctor.Employee.FirstName,
-            LastName = doctor.Employee.LastName,
-            PhoneNumber = doctor.Employee.PhoneNumber,
-            Email = doctor.Employee.Email,
-            Specialization = doctor.Specialization,
-            CertificateNumber = doctor.Employee.CertificateNumber,
-            DateOfBirth = doctor.Employee.DateOfBirth,
-            Gender = doctor.Employee.Gender,
-            HireDate = doctor.Employee.HireDate,
+            DoctorId = newDoctor.Id,
+            FirstName = newDoctor.Employee.FirstName,
+            LastName = newDoctor.Employee.LastName,
+            PhoneNumber = newDoctor.Employee.PhoneNumber,
+            Email = newDoctor.Employee.Email,
+            Specialization = newDoctor.Specialization,
+            CertificateNumber = newDoctor.Employee.CertificateNumber,
+            DateOfBirth = newDoctor.Employee.DateOfBirth,
+            Gender = newDoctor.Employee.Gender,
+            HireDate = newDoctor.Employee.HireDate,
         };
 
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);

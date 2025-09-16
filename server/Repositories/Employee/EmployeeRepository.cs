@@ -28,23 +28,30 @@ class EmployeeRepository : IEmployeeRepository
 
         await _context.user_accounts.AddAsync(userAccount);
 
+        // Tạo Employee trước để lấy Id
+        Employee employee = new Employee
+        {
+            FirstName = doctorDto.FirstName,
+            LastName = doctorDto.LastName,
+            PhoneNumber = doctorDto.PhoneNumber,
+            UserAccount = userAccount,
+            Email = doctorDto.Email,
+            CertificateNumber = doctorDto.CertificateNumber,
+            DateOfBirth = doctorDto.DateOfBirth,
+            Gender = doctorDto.Gender,
+            HireDate = doctorDto.HireDate
+        };
+
+        await _context.employees.AddAsync(employee);
+        await _context.SaveChangesAsync(); // Để lấy được employee.Id
+
         Doctor doctor = new Doctor
         {
+            Id = employee.Id, // Gán DoctorId bằng EmployeeId
             Specialization = doctorDto.Specialization,
-            Employee = new Employee
-            {
-                FirstName = doctorDto.FirstName,
-                LastName = doctorDto.LastName,
-                PhoneNumber = doctorDto.PhoneNumber,
-                UserAccount = userAccount,
-                Email = doctorDto.Email,
-                CertificateNumber = doctorDto.CertificateNumber,
-                DateOfBirth = doctorDto.DateOfBirth,
-                Gender = doctorDto.Gender,
-                HireDate = doctorDto.HireDate
-            }
+            Employee = employee
         };
-        
+
         await _context.doctors.AddAsync(doctor);
         await _context.SaveChangesAsync();
 
