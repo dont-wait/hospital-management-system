@@ -41,6 +41,7 @@ class EmployeeAccountService : IEmployeeAccountService
         var responseDoctorDto = new ResponseDoctorDTO
         {
             DoctorId = newDoctor.Id,
+            EmployeeId = newDoctor.Employee.Id,
             FirstName = newDoctor.Employee.FirstName,
             LastName = newDoctor.Employee.LastName,
             PhoneNumber = newDoctor.Employee.PhoneNumber,
