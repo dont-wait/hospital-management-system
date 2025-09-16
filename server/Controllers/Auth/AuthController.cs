@@ -58,7 +58,7 @@ public class AuthController : ControllerBase
         }
     }
 
-    [HttpPost("login")]
+    [HttpPost("/login")]
     public async Task<ApiResponse<ResponseLoginDTO>> Login(RequestLoginDTO loginDto)
     {
         try

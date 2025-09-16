@@ -45,9 +45,8 @@ public class AuthService : IAuthService
                 PhoneNumber = userAccountExists.Patient.PhoneNumber,
                 Email = userAccountExists.Patient.Email,
             } : null,
-            Employee = userAccountExists.Employee != null ? new ResponseDoctorDTO
+            Employee = userAccountExists.Employee != null ? new ResponseEmployeeDTO
             {
-                DoctorId = userAccountExists.Employee.Id,
                 EmployeeId = userAccountExists.Employee.Id,
                 FirstName = userAccountExists.Employee.FirstName,
                 LastName = userAccountExists.Employee.LastName,
@@ -57,9 +56,11 @@ public class AuthService : IAuthService
                 DateOfBirth = userAccountExists.Employee.DateOfBirth,
                 Gender = userAccountExists.Employee.Gender,
                 HireDate = userAccountExists.Employee.HireDate,
-                Specialization = userAccountExists.Employee.Doctor.Specialization
+                Specialization = userAccountExists.Employee.Doctor.Specialization 
             } : null
         };
+
+        Console.WriteLine($"Debug: Login successful: {userAccountExists.Employee?.Doctor?.Specialization}");
 
         return ServiceResult<ResponseLoginDTO?>.Success(responseLoginDTO);
     }

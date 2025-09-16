@@ -65,48 +65,14 @@ class UserAccountRepository : IUserAccountRepository
         .FirstOrDefaultAsync();
 
     public async Task<UserAccount?> GetUserAccountByCitizenIDAsync(string citizenID)
-        => await _context.user_accounts
+    {
+        UserAccount? rs = await _context.user_accounts
             .Where(ua => ua.CitizenID == citizenID)
-            .Select(ua =>
-                new UserAccount
-                {
-                    CitizenID = ua.CitizenID,
-                    Password = ua.Password,
-                    AvatarUrl = ua.AvatarUrl,
-                    Is_Active = ua.Is_Active,
-                    Id = ua.Id,
-                    Patient = ua.Patient != null ? new Patient
-                    {
-                        Id = ua.Patient.Id,
-                        FirstName = ua.Patient.FirstName,
-                        LastName = ua.Patient.LastName,
-                        DateOfBirth = ua.Patient.DateOfBirth,
-                        Gender = ua.Patient.Gender,
-                        Address = ua.Patient.Address,
-                        PhoneNumber = ua.Patient.PhoneNumber,
-                        PlaceOfResidence = ua.Patient.PlaceOfResidence,
-                        Is_Insurance = ua.Patient.Is_Insurance,
-                        Nationality = ua.Patient.Nationality,
-                        RegistrationDate = ua.Patient.RegistrationDate,
-                    } : null,
-                    Employee = ua.Employee != null ? new Employee
-                    {
-                        Id = ua.Employee.Id,
-                        FirstName = ua.Employee.FirstName,
-                        LastName = ua.Employee.LastName,
-                        DateOfBirth = ua.Employee.DateOfBirth,
-                        Gender = ua.Employee.Gender,
-                        PhoneNumber = ua.Employee.PhoneNumber,
-                        CertificateNumber = ua.Employee.CertificateNumber,
-                        Email = ua.Employee.Email,
-                        HireDate = ua.Employee.HireDate,
-                        Doctor = new Doctor
-                        {
-                            Id = ua.Employee.Doctor.Id,
-                            Specialization = ua.Employee.Doctor.Specialization
-                        }
-                    } : null
-                }
-            )
-            .FirstOrDefaultAsync();
+            .Include(ua => ua.Employee)
+                .ThenInclude(e => e!.Doctor)
+                .FirstOrDefaultAsync();
+
+        Console.WriteLine($"Debug: Retrieved UserAccount {rs?.Employee?.Doctor.Specialization}");
+        return rs;
+    }
 }   
