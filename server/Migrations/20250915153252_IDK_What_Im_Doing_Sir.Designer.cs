@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250915153252_IDK_What_Im_Doing_Sir")]
+    partial class IDK_What_Im_Doing_Sir
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,8 +54,7 @@ namespace server.Migrations
 
                     b.Property<string>("CertificateNumber")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("char(10)");
+                        .HasColumnType("nvarchar(1)");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -70,7 +72,7 @@ namespace server.Migrations
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasMaxLength(1)
-                        .HasColumnType("char(1)");
+                        .HasColumnType("nvarchar(1)");
 
                     b.Property<DateTime>("HireDate")
                         .HasColumnType("datetime2");
@@ -114,8 +116,8 @@ namespace server.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(1)");
 
-                    b.Property<int>("Is_Insurance")
-                        .HasColumnType("int");
+                    b.Property<bool>("Is_Insurance")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -161,8 +163,8 @@ namespace server.Migrations
                     b.Property<Guid?>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Is_Active")
-                        .HasColumnType("int");
+                    b.Property<bool>("Is_Active")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Password")
                         .IsRequired()

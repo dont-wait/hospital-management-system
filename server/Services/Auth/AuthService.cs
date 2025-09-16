@@ -1,5 +1,5 @@
 using HospitalManagementSystem.DTOs.Login;
-using HospitalManagementSystem.DTOs.UserAccount;
+using HospitalManagementSystem.DTOs.Employee;
 using HospitalManagementSystem.Repositories.Account;
 using HospitalManagementSystem.DTOs.Patient;
 using Utils;
@@ -44,6 +44,19 @@ public class AuthService : IAuthService
                 LastName = userAccountExists.Patient.LastName,
                 PhoneNumber = userAccountExists.Patient.PhoneNumber,
                 Email = userAccountExists.Patient.Email,
+            } : null,
+            Employee = userAccountExists.Employee != null ? new ResponseEmployeeDTO
+            {
+                EmployeeId = userAccountExists.Employee.Id,
+                FirstName = userAccountExists.Employee.FirstName,
+                LastName = userAccountExists.Employee.LastName,
+                PhoneNumber = userAccountExists.Employee.PhoneNumber,
+                Email = userAccountExists.Employee.Email,
+                CertificateNumber = userAccountExists.Employee.CertificateNumber,
+                DateOfBirth = userAccountExists.Employee.DateOfBirth,
+                Gender = userAccountExists.Employee.Gender,
+                HireDate = userAccountExists.Employee.HireDate,
+                Specialization = userAccountExists.Employee.Doctor.Specialization 
             } : null
         };
 

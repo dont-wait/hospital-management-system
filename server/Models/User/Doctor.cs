@@ -12,5 +12,5 @@ public class Doctor
     public string Specialization { get; set; } = string.Empty;
 
     public Guid EmployeeId { get; set; }
-    public Employee? Employee { get; set; }
+    public Employee Employee { get; set; } = null!;
 }

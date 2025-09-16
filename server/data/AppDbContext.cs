@@ -8,7 +8,6 @@ public class AppDbContext : DbContext
     public DbSet<Patient> patients { get; set; } = null!;
     public DbSet<Employee> employees { get; set; } = null!;
     public DbSet<Doctor> doctors { get; set; } = null!;
-    public DbSet<Nurse> nurses { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,11 +25,6 @@ public class AppDbContext : DbContext
             .HasOne(d => d.Employee)
             .WithOne(e => e.Doctor)
             .HasForeignKey<Doctor>(d => d.EmployeeId);
-
-        modelBuilder.Entity<Nurse>()
-            .HasOne(n => n.Employee)
-            .WithOne(e => e.Nurse)
-            .HasForeignKey<Nurse>(n => n.EmployeeId);
 
         base.OnModelCreating(modelBuilder);
     }

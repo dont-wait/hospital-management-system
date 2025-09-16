@@ -1,0 +1,35 @@
+using Microsoft.AspNetCore.Mvc;
+using HospitalManagementSystem.DTOs.UserAccount;
+using HospitalManagementSystem.Services.Account;
+using Utils;
+
+namespace HospitalManagementSystem.Controllers.Auth;
+[Route("api/[controller]")]
+[ApiController]
+public class EmployeeController : ControllerBase
+{
+    private readonly IEmployeeAccountService _employeeAccountService;
+
+    public EmployeeController(IEmployeeAccountService employeeAccountService)
+    {
+        _employeeAccountService = employeeAccountService;
+    }
+    
+    [HttpGet("{userId}")]
+    public async Task<ApiResponse<ResponseUserDTO>> GetUserById(Guid userId)
+    {
+        try
+        {
+            var result = await _employeeAccountService.GetEmployeeByIdAsync(userId);
+            if (result.IsSuccess)
+                return new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data);
+            else
+                return new ApiResponse<ResponseUserDTO>(404, result.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return new ApiResponse<ResponseUserDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+        }
+    }
+}

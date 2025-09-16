@@ -7,7 +7,6 @@ namespace HospitalManagementSystem.Repositories.Account;
 public interface IUserAccountRepository
 {
     Task<Patient> CreateUserAccount_Patient_Async(RequestPatientDTO patientDto);
-    //Task<Doctor> CreateUserAccount_Doctor_Async(RequestDoctorDTO doctorDto);
     Task<ResponseUserDTO?> GetUserAccountByIdAsync(Guid userId);
     Task<UserAccount?> GetUserAccountByCitizenIDAsync(string citizenID);
 }
@@ -66,31 +65,13 @@ class UserAccountRepository : IUserAccountRepository
         .FirstOrDefaultAsync();
 
     public async Task<UserAccount?> GetUserAccountByCitizenIDAsync(string citizenID)
-        => await _context.user_accounts
+    {
+        UserAccount? rs = await _context.user_accounts
             .Where(ua => ua.CitizenID == citizenID)
-            .Select(ua =>
-                new UserAccount
-                {
-                    CitizenID = ua.CitizenID,
-                    Password = ua.Password,
-                    AvatarUrl = ua.AvatarUrl,
-                    Is_Active = ua.Is_Active,
-                    Id = ua.Id,
-                    Patient = ua.Patient != null ? new Patient
-                    {
-                        Id = ua.Patient.Id,
-                        FirstName = ua.Patient.FirstName,
-                        LastName = ua.Patient.LastName,
-                        DateOfBirth = ua.Patient.DateOfBirth,
-                        Gender = ua.Patient.Gender,
-                        Address = ua.Patient.Address,
-                        PhoneNumber = ua.Patient.PhoneNumber,
-                        PlaceOfResidence = ua.Patient.PlaceOfResidence,
-                        Is_Insurance = ua.Patient.Is_Insurance,
-                        Nationality = ua.Patient.Nationality,
-                        RegistrationDate = ua.Patient.RegistrationDate,
-                    } : null
-                }
-            )
-            .FirstOrDefaultAsync();
+            .Include(ua => ua.Employee)
+                .ThenInclude(e => e!.Doctor)
+                .FirstOrDefaultAsync();
+
+        return rs;
+    }
 }   
