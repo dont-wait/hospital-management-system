@@ -61,6 +61,7 @@ class EmployeeRepository : IEmployeeRepository
             CitizenID = e.UserAccount.CitizenID,
             Employee = new ResponseEmployeeDTO
             {
+                EmployeeId = e.Id,
                 FirstName = e.FirstName,
                 LastName = e.LastName,
                 PhoneNumber = e.PhoneNumber,
@@ -68,7 +69,8 @@ class EmployeeRepository : IEmployeeRepository
                 CertificateNumber = e.CertificateNumber,
                 DateOfBirth = e.DateOfBirth,
                 Gender = e.Gender,
-                HireDate = e.HireDate
+                HireDate = e.HireDate,
+                Specialization = e.Doctor.Specialization
             }
         })
         .FirstOrDefaultAsync();
