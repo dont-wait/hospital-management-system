@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Calendar, Users, FileText, Activity } from "lucide-react";
 
 export default function DoctorPage() {
-  const { user } = useAuth();
+  const { authUser } = useAuth();
 
   return (
     <ProtectedRoute allowedRoles={["doctor"]}>
@@ -15,9 +15,9 @@ export default function DoctorPage() {
           <h1 className="text-3xl font-bold text-gray-900">Doctor Dashboard</h1>
           <p className="text-gray-600 mt-2">
             Welcome back, Dr.{" "}
-            {user?.profile && "ep_firstname" in user.profile
-              ? `${user.profile.ep_firstname} ${user.profile.ep_lastname}`
-              : "Doctor"}
+            {authUser &&
+              "doctorId" in authUser.user &&
+              `${authUser.user.firstName} ${authUser.user.lastName}`}
           </p>
         </div>
 
