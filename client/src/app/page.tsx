@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Heart, Shield, Clock, Users, Star, ArrowRight } from "lucide-react";
 
 export default function HomePage() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, authUser } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -54,15 +54,11 @@ export default function HomePage() {
             <div className="space-y-4">
               <p className="text-lg text-gray-700">
                 Chào mừng trở lại,{" "}
-                {user?.profile
-                  ? "pt_firstname" in user.profile
-                    ? `${user.profile.pt_firstname} ${user.profile.pt_lastname}`
-                    : `${user.profile.ep_firstname} ${user.profile.ep_lastname}`
-                  : "Người dùng"}
-                !
+                {authUser &&
+                  `${authUser.user.firstName} ${authUser.user.lastName}`}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                {user?.role.role_description.toLowerCase() === "doctor" && (
+                { authUser && "doctorId" in authUser.user && (
                   <Link href="/doctor">
                     <Button size="lg">
                       Đi tới Bảng điều khiển Bác sĩ
@@ -70,7 +66,7 @@ export default function HomePage() {
                     </Button>
                   </Link>
                 )}
-                {user?.role.role_description.toLowerCase() === "patient" && (
+                {authUser && "patientId" in authUser.user && (
                   <Link href="/patient">
                     <Button size="lg">
                       Đi tới Cổng thông tin Bệnh nhân

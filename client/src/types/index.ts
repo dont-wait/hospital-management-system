@@ -1,73 +1,69 @@
-export interface UserAccount {
-  ua_id: string;
-  ua_avatar?: string;
-  ua_username: string;
-  ua_password: string;
-  is_active: boolean;
-  pt_id?: string;
-  ep_id?: string;
+export enum Gender {
+  Male = "M",
+  Female = "F",
+  Other = "O",
+}
+
+export type Role = "admin" | "doctor" | "patient";
+
+export interface LoginPatientDto {
+  citizenID: string;
+  password: string;
+}
+
+export interface RegisterPatientDto {
+  citizenID: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
 }
 
 export interface Patient {
-  pt_id: string;
-  pt_firstname: string;
-  pt_lastname: string;
-  pt_dob: string;
-  pt_nationality: string;
+  patientId: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  pt_gender: "Male" | "Female" | "Other";
-  pt_place_of_residence: string;
-  pt_is_insurance: boolean;
-  pt_contact_number: string;
-  pt_registration_date: string;
-  role_id: string;
+  phoneNumber: string;
+  dateOfBirth: string;
+  gender: Gender;
+  nationality: string;
+  address: string;
+  placeOfResidence: string;
 }
 
-export interface Employee {
-  ep_id: string;
-  ep_firstname: string;
-  ep_lastname: string;
-  ep_dob: string;
-  ep_gender: "Male" | "Female" | "Other";
-  ep_phonenumber: string;
-  ep_hire_date: string;
-  ep_certificate_number: string;
+export interface Doctor {
+  doctorId: string;
+  specialization: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  gender: Gender;
+  phoneNumber: string;
   email: string;
-  role_id: string;
-}
-
-export interface Role {
-  role_id: string;
-  role_description: string;
+  hireDate: string;
+  certificateNumber: string;
 }
 
 export interface AuthUser {
-  userAccount: UserAccount;
-  profile: Patient | Employee;
-  role: Role;
+    userAccountId: string;
+    citizenID: string;
+    avatarUrl: string;
+    is_Active: boolean;
+    user: Patient | Doctor;
+    accessToken: string;
+    refreshToken: string;
 }
 
-export interface LoginCredentials {
-  username: string;
-  password: string;
-  idCard?: File;
+export interface LoginResponse {
+  status: number;
+  message: string;
+  data: AuthUser;
 }
 
-export interface RegisterData {
-  username: string;
-  password: string;
-  confirmPassword: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  dob: string;
-  gender: "Male" | "Female" | "Other";
-  contactNumber: string;
-  userType: "patient" | "employee";
-  // Additional fields for employees
-  certificateNumber?: string;
-  // Additional fields for patients
-  nationality?: string;
-  placeOfResidence?: string;
-  isInsurance?: boolean;
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
 }

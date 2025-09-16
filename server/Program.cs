@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using HospitalManagementSystem.Configs; 
+using HospitalManagementSystem.Configs;
+using HospitalManagementSystem.Services.Account;
+using HospitalManagementSystem.Repositories.Account;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,11 +13,15 @@ if (dbProvider == "SqlServer")
 {
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDb")));
+
+    Console.WriteLine("Đã kết nối với SQL Server");
 }
 else if (dbProvider == "Oracle")
 {
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseOracle(builder.Configuration.GetConnectionString("OracleDb")));
+
+    Console.WriteLine("Đã kết nối với Oracle Database");
 }
 else
 {
@@ -78,6 +84,10 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
