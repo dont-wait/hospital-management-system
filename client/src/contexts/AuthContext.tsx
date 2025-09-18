@@ -98,7 +98,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const response = await authService.register(patientDto);
-      console.log(response.data);
       showToast(response.message, "success");
       return true;
     } catch (error) {
