@@ -6,6 +6,7 @@ import {
   AuthUser,
 } from "@/types";
 import { mockData } from "@/mock-data";
+import api from "@/axios";
 
 class AuthService {
   // Configuration
@@ -43,15 +44,16 @@ class AuthService {
   }
 
   async register(patientDto: RegisterPatientDto): Promise<RegisterResponse> {
-    await this.delay(1500);
-
-    // In real implementation: make API call to server
-    console.log("Registering patient:", patientDto);
-
-    return {
-      success: true,
-      message: "Registration successful",
-    };
+    return api
+      .post<RegisterResponse>("/patient/register", patientDto)
+      .then((response) => response.data)
+      .catch((error) => {
+        const { message, response } = error;
+        throw {
+          message,
+          response: response ? response.data : undefined,
+        };
+      });
   }
 
   saveTokens(token: string, refreshToken: string): void {

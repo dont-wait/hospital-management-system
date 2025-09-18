@@ -64,6 +64,16 @@ export interface LoginResponse {
 }
 
 export interface RegisterResponse {
-  success: boolean;
+  status: number;
+  message: string;
+  data: Patient;
+}
+
+export interface PatientRegisterError {
+  type: string;
+  title: string;
+  status: number;
+  errors: Record<string, string[]>;
+  traceId: string;
   message: string;
 }

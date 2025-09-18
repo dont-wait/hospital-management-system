@@ -7,9 +7,14 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { AuthUser, LoginPatientDto, RegisterPatientDto } from "@/types";
+import {
+  AuthUser,
+  LoginPatientDto,
+  PatientRegisterError,
+  RegisterPatientDto,
+} from "@/types";
 import { authService } from "@/services/auth.service";
-import { toast } from "sonner";
+import { useToast } from "@/contexts/ToastContext";
 
 interface AuthContextType {
   authUser: AuthUser | null;
@@ -25,6 +30,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { showToast } = useToast();
 
   // Clear all authentication data from state and storage
   const clearAuthState = useCallback(() => {
@@ -46,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Show success message with user's display name
   const showLoginSuccessMessage = (user: AuthUser) => {
     const displayName = getDisplayName(user);
-    toast.success(`Đăng nhập thành công! Chào bạn, ${displayName}!`);
+    showToast(`Đăng nhập thành công! Chào bạn, ${displayName}!`, "success");
   };
 
   // Initialize auth state from stored data on app startup
@@ -78,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           ? "Mật khẩu hoặc tên đăng nhập không chính xác!"
           : "Đăng nhập thất bại. Hãy thử lại!";
 
-      toast.error(displayMessage);
+      showToast(displayMessage, "error");
       return false;
     } finally {
       setIsLoading(false);
@@ -92,10 +98,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const response = await authService.register(patientDto);
-      toast.success("Đăng ký thành công!");
-      return response.success;
-    } catch {
-      toast.error("Đăng ký thất bại. Hãy thử lại!");
+      console.log(response.data);
+      showToast(response.message, "success");
+      return true;
+    } catch (error) {
+      const { message, response } = error as {
+        message: string;
+        response: PatientRegisterError;
+      };
+
+      if (!response) {
+        showToast(message, "error");
+      } else {
+        Object.values(response.errors)
+          .flat()
+          .forEach((err) => {
+            showToast(err, "error");
+          });
+      }
+
       return false;
     } finally {
       setIsLoading(false);
@@ -105,8 +126,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Clear user session and show logout message
   const handleLogout = useCallback(() => {
     clearAuthState();
-    toast.success("Đã đăng xuất khỏi tài khoản!");
-  }, [clearAuthState]);
+    showToast("Đã đăng xuất khỏi tài khoản!", "success");
+  }, [clearAuthState, showToast]);
 
   // Initialize auth state on component mount
   useEffect(() => {
