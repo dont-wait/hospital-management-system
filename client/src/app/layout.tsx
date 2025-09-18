@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { roboto } from "@/font/font";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Navigation } from "@/components/Navigation";
-import { Toaster } from "@/components/ui/sooner";
+import { ToastProvider } from "@/contexts/ToastContext";
 
 export const metadata: Metadata = {
   title: "Medica Hospital",
@@ -19,11 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={roboto.className}>
-        <AuthProvider>
-          <Navigation />
-          <main>{children}</main>
-          <Toaster />
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <Navigation />
+            <main>{children}</main>
+          </AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );
