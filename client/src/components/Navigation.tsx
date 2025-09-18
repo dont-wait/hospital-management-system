@@ -28,7 +28,7 @@ export function Navigation() {
 
             {isAuthenticated ? (
               <>
-                {authUser && "doctorId" in authUser.user && (
+                {authUser && authUser.employee && (
                   <Link href="/doctor">
                     <Button
                       variant="ghost"
@@ -40,7 +40,7 @@ export function Navigation() {
                   </Link>
                 )}
 
-                {authUser && "patientId" in authUser.user && (
+                {authUser && authUser.patient && (
                   <Link href="/patient">
                     <Button
                       variant="ghost"
@@ -53,12 +53,6 @@ export function Navigation() {
                 )}
 
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-700">
-                    Hi,{" "}
-                    {authUser &&
-                      `${authUser.user.firstName} ${authUser.user.lastName}`}
-                    {!authUser && "Người dùng"}
-                  </span>
                   <Button onClick={logout} variant="outline" size="sm">
                     <LogOut className="h-4 w-4 mr-2" />
                     Đăng xuất
