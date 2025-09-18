@@ -10,7 +10,7 @@ import React, {
 import {
   AuthUser,
   LoginPatientDto,
-  PatientRegisterError,
+  AuthRegisterError,
   RegisterPatientDto,
 } from "@/types";
 import { authService } from "@/services/auth.service";
@@ -23,6 +23,11 @@ interface AuthContextType {
   login: (userDto: LoginPatientDto) => Promise<boolean>;
   register: (patientDto: RegisterPatientDto) => Promise<boolean>;
   logout: () => void;
+}
+
+interface AuthError {
+  message: string;
+  response: AuthRegisterError;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -41,57 +46,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Format user display name based on role
   const getDisplayName = (authUser: AuthUser): string => {
-    if ("patientId" in authUser.user) {
-      return authUser.user.firstName;
-    } else if ("doctorId" in authUser.user) {
-      return `Dr. ${authUser.user.firstName}`;
+    if (authUser.patient) {
+      return authUser.patient.firstName + authUser.patient.lastName;
+    } else if (authUser.employee) {
+      return `Dr. ${authUser.employee.firstName} ${authUser.employee.lastName}`;
     }
-    return "Admin";
+    return "bạn";
   };
 
-  // Show success message with user's display name
-  const showLoginSuccessMessage = (user: AuthUser) => {
-    const displayName = getDisplayName(user);
-    showToast(`Đăng nhập thành công! Chào bạn, ${displayName}!`, "success");
+  // Show error messages for login or register
+  const handleAuthError = (error: AuthError) => {
+    const { message, response } = error;
+    if (!response) {
+      showToast(message, "error");
+    } else {
+      Object.values(response.errors)
+        .flat()
+        .forEach((err) => {
+          showToast(err, "error");
+        });
+    }
   };
 
-  // Initialize auth state from stored data on app startup
-  const initializeAuth = useCallback(async () => {
-    clearAuthState();
-    setIsLoading(false);
-  }, [clearAuthState]);
-
-  // Authenticate user with credentials
+  // Login handle
   const handleLogin = async (userDto: LoginPatientDto): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await authService.login(userDto);
+      const { message, data } = await authService.login(userDto);
+      if (data) {
+        const { accessToken, refreshToken } = data;
+        const displayName = getDisplayName(data);
 
-      authService.saveTokens(
-        response.data.accessToken,
-        response.data.refreshToken,
-      );
-      authService.saveUser(response.data);
-      setAuthUser(response.data);
+        // Store token, refresh token
+        authService.saveTokens(accessToken, refreshToken);
+        showToast(`Đăng nhập thành công! Chào ${displayName}!`, "success");
 
-      showLoginSuccessMessage(response.data);
-      return true;
+        // Store user
+        authService.saveUser(data);
+        setAuthUser(data);
+
+        return true;
+      } else {
+        // Incorrect username or password
+        showToast(message, "error");
+        return false;
+      }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Đăng nhập thất bại";
-      const displayMessage =
-        errorMessage === "Invalid credentials"
-          ? "Mật khẩu hoặc tên đăng nhập không chính xác!"
-          : "Đăng nhập thất bại. Hãy thử lại!";
-
-      showToast(displayMessage, "error");
+      handleAuthError(error as AuthError);
       return false;
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Register new patient account
+  // Register handle
   const handleRegister = async (
     patientDto: RegisterPatientDto,
   ): Promise<boolean> => {
@@ -101,21 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       showToast(response.message, "success");
       return true;
     } catch (error) {
-      const { message, response } = error as {
-        message: string;
-        response: PatientRegisterError;
-      };
-
-      if (!response) {
-        showToast(message, "error");
-      } else {
-        Object.values(response.errors)
-          .flat()
-          .forEach((err) => {
-            showToast(err, "error");
-          });
-      }
-
+      handleAuthError(error as AuthError);
       return false;
     } finally {
       setIsLoading(false);
@@ -130,8 +124,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize auth state on component mount
   useEffect(() => {
-    initializeAuth();
-  }, [initializeAuth]);
+    clearAuthState();
+    setIsLoading(false);
+  }, [clearAuthState]);
 
   const contextValue: AuthContextType = {
     authUser,

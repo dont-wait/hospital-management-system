@@ -32,18 +32,4 @@ api.interceptors.request.use(
   }
 );
 
-
-// hỗ trợ
-export const setAuthToken = (token: string) => {
-  if (token) {
-    localStorage.setItem('token', token);
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  }
-};
-
-export const clearAuthToken = () => {
-  localStorage.removeItem('token');
-  delete api.defaults.headers.common['Authorization'];
-};
-
 export default api;
