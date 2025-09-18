@@ -47,14 +47,28 @@ export interface Doctor {
   certificateNumber: string;
 }
 
+export interface Employee {
+  employeeId: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  gender: string;
+  phoneNumber: string;
+  email: string;
+  hireDate: string;
+  certificateNumber: string;
+  specialization: string;
+}
+
 export interface AuthUser {
-    userAccountId: string;
-    citizenID: string;
-    avatarUrl: string;
-    is_Active: boolean;
-    user: Patient | Doctor;
-    accessToken: string;
-    refreshToken: string;
+  userAccountId: string;
+  citizenID: string;
+  avatarUrl: string;
+  is_Active: boolean;
+  patient: Patient | null;
+  employee: Employee | null;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface LoginResponse {
@@ -69,7 +83,7 @@ export interface RegisterResponse {
   data: Patient;
 }
 
-export interface PatientRegisterError {
+export interface AuthRegisterError {
   type: string;
   title: string;
   status: number;
