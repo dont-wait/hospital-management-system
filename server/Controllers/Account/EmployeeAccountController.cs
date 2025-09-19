@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using HospitalManagementSystem.DTOs.UserAccount;
 using HospitalManagementSystem.Services.Account;
 using Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalManagementSystem.Controllers.Auth;
 [Route("api/[controller]")]
@@ -14,8 +15,9 @@ public class EmployeeController : ControllerBase
     {
         _employeeAccountService = employeeAccountService;
     }
-    
+
     [HttpGet("{employeeId}")]
+    [Authorize(Roles = "admin")]
     public async Task<ApiResponse<ResponseUserDTO>> GetUserById(Guid employeeId)
     {
         try

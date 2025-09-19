@@ -2,22 +2,31 @@ using Utils;
 using HospitalManagementSystem.DTOs.Patient;
 using HospitalManagementSystem.DTOs.UserAccount;
 using HospitalManagementSystem.Repositories.Account;
+using System.Security.Claims;
 namespace HospitalManagementSystem.Services.Account;
 
 public interface IUserAccountService
 {
     Task<ServiceResult<ResponsePatientDTO>> CreateUserAccount_Patient_Async(RequestPatientDTO userDto);
     Task<ServiceResult<ResponseUserDTO?>> GetUserAccountByIdAsync(Guid userId);
+    Guid? CurrentUserId { get; }
+    string RoleId { get; }
 }
 
 class UserAccountService : IUserAccountService
 {
     private readonly IUserAccountRepository _userAccountRepository;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserAccountService(IUserAccountRepository userAccountRepository)
+    public UserAccountService(IUserAccountRepository userAccountRepository, IHttpContextAccessor httpContextAccessor)
     {
         _userAccountRepository = userAccountRepository;
+        _httpContextAccessor = httpContextAccessor;
     }
+
+    private ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;
+    public Guid? CurrentUserId => User != null ? Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!) : null;
+    public string RoleId => User != null ? User.FindFirstValue("RoleId")! : "";
 
     public async Task<ServiceResult<ResponsePatientDTO>> CreateUserAccount_Patient_Async(RequestPatientDTO userDto)
     {
@@ -49,6 +58,7 @@ class UserAccountService : IUserAccountService
     
     public async Task<ServiceResult<ResponseUserDTO?>> GetUserAccountByIdAsync(Guid userId)
     {
+        Console.WriteLine($"UserId: {userId}");
         var userAccount = await _userAccountRepository.GetUserAccountByIdAsync(userId);
         if (userAccount == null)
             return ServiceResult<ResponseUserDTO?>.Fail("Tài khoản không tồn tại.");

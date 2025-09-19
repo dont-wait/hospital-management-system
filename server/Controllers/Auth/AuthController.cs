@@ -4,6 +4,7 @@ using HospitalManagementSystem.DTOs.Employee;
 using HospitalManagementSystem.Services.Account;
 using HospitalManagementSystem.DTOs.Login;
 using Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalManagementSystem.Controllers.Auth;
 
@@ -39,8 +40,9 @@ public class AuthController : ControllerBase
             return new ApiResponse<ResponsePatientDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
         }
     }
-    
+
     [HttpPost("/doctor/register")]
+    [Authorize(Roles = "admin")]
     public async Task<ApiResponse<ResponseDoctorDTO>> DoctorRegister(RequestDoctorDTO userDto)
     {
         try
