@@ -15,12 +15,12 @@ public class EmployeeController : ControllerBase
         _employeeAccountService = employeeAccountService;
     }
     
-    [HttpGet("{userId}")]
-    public async Task<ApiResponse<ResponseUserDTO>> GetUserById(Guid userId)
+    [HttpGet("{employeeId}")]
+    public async Task<ApiResponse<ResponseUserDTO>> GetUserById(Guid employeeId)
     {
         try
         {
-            var result = await _employeeAccountService.GetEmployeeByIdAsync(userId);
+            var result = await _employeeAccountService.GetEmployeeByIdAsync(employeeId);
             if (result.IsSuccess)
                 return new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data);
             else
