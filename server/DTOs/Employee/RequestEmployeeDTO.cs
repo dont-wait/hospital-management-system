@@ -25,6 +25,7 @@ public class RequestEmployeeDTO : RequestUserDTO
     public string PhoneNumber { get; set; } = string.Empty;
 
     [MaxLength(100)]
+    [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
     public string Email { get; set; } = string.Empty;
 
     [Required]
@@ -33,7 +34,4 @@ public class RequestEmployeeDTO : RequestUserDTO
     [Required]
     [StringLength(10, MinimumLength = 10, ErrorMessage = "Số chứng chỉ hành nghề phải đúng 10 ký tự.")]
     public string CertificateNumber { get; set; } = string.Empty;
-    [Required]
-    [MaxLength(20)]
-    public string RoleId { get; set; } = string.Empty;
 }
