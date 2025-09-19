@@ -79,7 +79,9 @@ builder.Services.AddAuthentication("Bearer")
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
 
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
+
+            RoleClaimType = "role",
         };
     });
 
@@ -97,7 +99,13 @@ builder.Logging.AddConsole();
 
 var app = builder.Build();
 
-app.UseCors("CorsPolicy");
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await DataSeeder.SeedAsync(db);
+}
+
+    app.UseCors("CorsPolicy");
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

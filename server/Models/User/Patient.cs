@@ -41,4 +41,9 @@ public class Patient
     public DateTime RegistrationDate { get; set; } = DateTime.Now;
 
     public UserAccount UserAccount { get; set; } = null!;
+
+    [Required]
+    [StringLength(20)]
+    public string RoleId { get; set; } = "patient";
+    public Roles Role { get; set; } = null!; 
 }
