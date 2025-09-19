@@ -41,6 +41,7 @@ class UserAccountService : IUserAccountService
             LastName = patient.LastName,
             PhoneNumber = patient.PhoneNumber,
             Email = patient.Email,
+            RoleId = patient.RoleId,
         };
 
         return ServiceResult<ResponsePatientDTO>.Success(responsePatientDto);

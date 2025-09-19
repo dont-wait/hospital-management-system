@@ -51,6 +51,7 @@ class EmployeeAccountService : IEmployeeAccountService
             DateOfBirth = newDoctor.Employee.DateOfBirth,
             Gender = newDoctor.Employee.Gender,
             HireDate = newDoctor.Employee.HireDate,
+            RoleId = newDoctor.Employee.RoleId
         };
 
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);

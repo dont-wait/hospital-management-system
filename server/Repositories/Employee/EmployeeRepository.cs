@@ -39,7 +39,8 @@ class EmployeeRepository : IEmployeeRepository
             CertificateNumber = doctorDto.CertificateNumber,
             DateOfBirth = doctorDto.DateOfBirth,
             Gender = doctorDto.Gender,
-            HireDate = doctorDto.HireDate
+            HireDate = doctorDto.HireDate,
+            RoleId = doctorDto.RoleId
         };
 
         await _context.employees.AddAsync(employee);
@@ -77,7 +78,8 @@ class EmployeeRepository : IEmployeeRepository
                 DateOfBirth = e.DateOfBirth,
                 Gender = e.Gender,
                 HireDate = e.HireDate,
-                Specialization = e.Doctor.Specialization
+                Specialization = e.Doctor.Specialization,
+                RoleId = e.RoleId
             }
         })
         .FirstOrDefaultAsync();

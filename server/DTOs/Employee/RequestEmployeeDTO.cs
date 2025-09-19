@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using HospitalManagementSystem.DTOs.UserAccount;
 
 namespace HospitalManagementSystem.DTOs.Employee;
+
 public class RequestEmployeeDTO : RequestUserDTO
 {
     [Required]
@@ -32,4 +33,7 @@ public class RequestEmployeeDTO : RequestUserDTO
     [Required]
     [StringLength(10, MinimumLength = 10, ErrorMessage = "Số chứng chỉ hành nghề phải đúng 10 ký tự.")]
     public string CertificateNumber { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(20)]
+    public string RoleId { get; set; } = string.Empty;
 }

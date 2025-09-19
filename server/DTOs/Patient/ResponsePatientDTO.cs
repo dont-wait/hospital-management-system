@@ -15,4 +15,5 @@ public class ResponsePatientDTO
     public string? Nationality { get; set; } = null;
     public string? Address { get; set; } = null;
     public string? PlaceOfResidence { get; set; } = null;
+    public string RoleId { get; set; } = "patient";
 }
