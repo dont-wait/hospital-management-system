@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
+import LoginFormSkeleton from "@/components/ui/login/LoginFormSkeleton";
 
 // Lazy load the LoginCard component
 const LoginCard = dynamic(
@@ -8,11 +9,7 @@ const LoginCard = dynamic(
       default: mod.LoginCard,
     })),
   {
-    loading: () => (
-      <div className="w-full max-w-md">
-        <div className="animate-pulse bg-gray-200 rounded-lg h-96"></div>
-      </div>
-    ),
+    loading: () => <LoginFormSkeleton />,
   },
 );
 

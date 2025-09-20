@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
+import RegisterFormSkeleton from "@/components/ui/register/RegisterFormSkeleton";
 
 // Lazy load the RegisterCard component
 const RegisterCard = dynamic(
@@ -10,11 +11,7 @@ const RegisterCard = dynamic(
       default: mod.RegisterCard,
     })),
   {
-    loading: () => (
-      <div className="w-full max-w-md">
-        <div className="animate-pulse bg-gray-200 rounded-lg h-96"></div>
-      </div>
-    ),
+    loading: () => <RegisterFormSkeleton />,
   },
 );
 
