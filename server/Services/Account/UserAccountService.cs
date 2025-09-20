@@ -58,7 +58,6 @@ class UserAccountService : IUserAccountService
     
     public async Task<ServiceResult<ResponseUserDTO?>> GetUserAccountByIdAsync(Guid userId)
     {
-        Console.WriteLine($"UserId: {userId}");
         var userAccount = await _userAccountRepository.GetUserAccountByIdAsync(userId);
         if (userAccount == null)
             return ServiceResult<ResponseUserDTO?>.Fail("Tài khoản không tồn tại.");

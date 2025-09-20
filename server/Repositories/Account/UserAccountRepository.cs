@@ -74,6 +74,7 @@ class UserAccountRepository : IUserAccountRepository
     {
         UserAccount? rs = await _context.user_accounts
             .Where(ua => ua.CitizenID == citizenID)
+            .Include(ua => ua.Patient)
             .Include(ua => ua.Employee)
                 .ThenInclude(e => e!.Doctor)
                 .FirstOrDefaultAsync();

@@ -60,7 +60,6 @@ class EmployeeAccountService : IEmployeeAccountService
 
     public async Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId)
     {
-        Console.WriteLine($"EmployeeId: {employeeId}");
         var employee = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
         if (employee == null)
             return ServiceResult<ResponseUserDTO?>.Fail("Nhân viên không tồn tại.");

@@ -68,7 +68,7 @@ public class AuthService : IAuthService
         };
 
         string accessToken = GenerateTokenUtil.GenerateAccessToken(
-            userAccountExists.EmployeeId.ToString() ?? userAccountExists.PatientId.ToString()!,
+            userAccountExists.Employee?.Id.ToString() ?? userAccountExists.Patient?.Id.ToString()!,
             userAccountExists.CitizenID,
             responseEmployeeDTO?.RoleId.ToString() ?? "patient",
             ProgramGlobals.JwtSettingsInstance
