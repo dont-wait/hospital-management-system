@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { authService } from "./services/auth.service";
 
 function decodePayload(token: string) {
   try {
@@ -36,8 +35,6 @@ export async function middleware(req: NextRequest) {
   // Kiểm tra hết hạn
   const now = Math.floor(Date.now() / 1000);
   if (payload.exp && now >= payload.exp) {
-    authService.clearStoredUser();
-    authService.clearTokens();
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
