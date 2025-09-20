@@ -49,6 +49,16 @@ builder.Services.AddOpenApiDocument(config =>
     config.DocumentName = "Hospital Management System API";
     config.Title = "Hospital Management System API";
     config.Version = "v1";
+
+    config.AddSecurity("JWT", new NSwag.OpenApiSecurityScheme
+    {
+        Type = NSwag.OpenApiSecuritySchemeType.ApiKey,
+        Name = "Authorization",
+        In = NSwag.OpenApiSecurityApiKeyLocation.Header,
+        Description = "Nhập: Bearer {token}"
+    });
+
+    config.OperationProcessors.Add(new NSwag.Generation.Processors.Security.AspNetCoreOperationSecurityScopeProcessor("JWT"));
 });
 
 builder.Services.AddRouting(options =>
@@ -79,7 +89,9 @@ builder.Services.AddAuthentication("Bearer")
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
 
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
+
+            RoleClaimType = "RoleId",
         };
     });
 
@@ -97,7 +109,13 @@ builder.Logging.AddConsole();
 
 var app = builder.Build();
 
-app.UseCors("CorsPolicy");
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await DataSeeder.SeedAsync(db);
+}
+
+    app.UseCors("CorsPolicy");
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

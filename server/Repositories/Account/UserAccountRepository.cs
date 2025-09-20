@@ -64,7 +64,8 @@ class UserAccountRepository : IUserAccountRepository
                 Gender = p.Gender,
                 Address = p.Address,
                 Nationality = p.Nationality,
-                PlaceOfResidence = p.PlaceOfResidence
+                PlaceOfResidence = p.PlaceOfResidence,
+                RoleId = p.RoleId,
             }
         })
         .FirstOrDefaultAsync();

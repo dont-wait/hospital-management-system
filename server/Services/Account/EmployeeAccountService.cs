@@ -3,6 +3,7 @@ using HospitalManagementSystem.Repositories.Employees;
 using HospitalManagementSystem.Repositories.Account;
 using HospitalManagementSystem.DTOs.Employee;
 using Utils;
+using HospitalManagementSystem.Enums.Role;
 
 namespace HospitalManagementSystem.Services.Account;
 
@@ -51,6 +52,7 @@ class EmployeeAccountService : IEmployeeAccountService
             DateOfBirth = newDoctor.Employee.DateOfBirth,
             Gender = newDoctor.Employee.Gender,
             HireDate = newDoctor.Employee.HireDate,
+            RoleId = RoleEnum.doctor.ToString().ToLower()
         };
 
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
@@ -58,6 +60,7 @@ class EmployeeAccountService : IEmployeeAccountService
 
     public async Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId)
     {
+        Console.WriteLine($"EmployeeId: {employeeId}");
         var employee = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
         if (employee == null)
             return ServiceResult<ResponseUserDTO?>.Fail("Nhân viên không tồn tại.");

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HospitalManagementSystem.Enums.Role;
 
 [Table("employees")]
 public class Employee
@@ -40,4 +41,9 @@ public class Employee
 
     public UserAccount UserAccount { get; set; } = null!;
     public Doctor Doctor { get; set; } = null!;
+
+    [Required]
+    [StringLength(20)]
+    public string RoleId { get; set; } = null!;
+    public Roles Role { get; set; } = null!;
 }

@@ -1,0 +1,7 @@
+[
+    { "RoleId": "admin", "PermissionId": "manage_users" },
+    { "RoleId": "admin", "PermissionId": "view_reports" },
+    { "RoleId": "doctor", "PermissionId": "view_patient_records" },
+    { "RoleId": "doctor", "PermissionId": "edit_patient_records" },
+    { "RoleId": "patient", "PermissionId": "view_own_records" }
+]

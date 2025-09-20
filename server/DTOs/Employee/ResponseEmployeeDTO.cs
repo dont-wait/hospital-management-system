@@ -14,4 +14,5 @@ public class ResponseEmployeeDTO
     public DateTime HireDate { get; set; }
     public string CertificateNumber { get; set; } = string.Empty;
     public string Specialization { get; set; } = string.Empty;
+    public string RoleId { get; set; } = string.Empty;
 }
