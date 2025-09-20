@@ -105,9 +105,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   ): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await authService.register(patientDto);
-      showToast(response.message, "success");
-      return true;
+      const { message, data } = await authService.register(patientDto);
+      if (data) {
+        showToast(message, "success");
+        return true;
+      } else {
+        // Password mismatch
+        showToast(message, "error");
+        return false;
+      }
     } catch (error) {
       handleAuthError(error as AuthError);
       return false;
