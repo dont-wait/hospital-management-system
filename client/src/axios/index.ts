@@ -1,4 +1,5 @@
 import axios from "axios";
+import { authService } from "@/services/auth.service";
 
 const api = axios.create({
   baseURL: "http://localhost:5296",
@@ -15,7 +16,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // 1. Thêm Bearer Token
-    const token = localStorage.getItem('token');
+    const token = authService.getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -31,5 +32,13 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+export const setBearerToken = (token: string) => {
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+};
+
+export const delBearerToken = () => {
+    delete api.defaults.headers.common["Authorization"];
+}
 
 export default api;
