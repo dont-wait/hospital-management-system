@@ -51,8 +51,6 @@ public class AccountController : ControllerBase
             if (currentUserId == null)
                 return new ApiResponse<ResponseUserDTO>(401, "Người dùng chưa đăng nhập.");
 
-            Console.WriteLine($"RoleId: {_userAccountService.RoleId}");
-
             ServiceResult<ResponseUserDTO?> result = _userAccountService.RoleId switch
             {
                 nameof(RoleEnum.doctor) => await _employeeAccountService.GetEmployeeByIdAsync(currentUserId.Value),
