@@ -15,6 +15,7 @@ import {
 } from "@/types";
 import { authService } from "@/services/auth.service";
 import { useToast } from "@/contexts/ToastContext";
+import { setBearerToken, delBearerToken } from "@/axios";
 
 interface AuthContextType {
   authUser: AuthUser | null;
@@ -47,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Format user display name based on role
   const getDisplayName = (authUser: AuthUser): string => {
     if (authUser.patient) {
-      return authUser.patient.firstName + authUser.patient.lastName;
+      return `${authUser.patient.firstName} ${authUser.patient.lastName}`;
     } else if (authUser.employee) {
       return `Dr. ${authUser.employee.firstName} ${authUser.employee.lastName}`;
     }
@@ -84,6 +85,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Store user
         authService.saveUser(data);
         setAuthUser(data);
+
+        // Set Bearer Token
+        setBearerToken(accessToken);
 
         return true;
       } else {
@@ -130,7 +134,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize auth state on component mount
   useEffect(() => {
-    clearAuthState();
+    const user = authService.getStoredUser();
+    if (user) {
+      setAuthUser(user);
+    } else {
+      clearAuthState();
+      delBearerToken();
+    }
     setIsLoading(false);
   }, [clearAuthState]);
 

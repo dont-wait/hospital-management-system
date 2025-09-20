@@ -8,11 +8,10 @@ import {
 import api from "@/axios";
 
 class AuthService {
-  private readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
   private readonly STORAGE_KEYS = {
-    TOKEN: "access_token",
-    REFRESH_TOKEN: "refresh_token",
-    USER: "hospital_user",
+    TOKEN: "accessToken",
+    REFRESH_TOKEN: "refreshToken",
+    USER: "authUser",
   } as const;
 
   // Authentication methods
