@@ -7,7 +7,6 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { useRouter } from "next/navigation";
 import {
   AuthUser,
   LoginPatientDto,
@@ -39,7 +38,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useToast();
-  const router = useRouter();
 
   // Clear all authentication data from state and storage
   const clearAuthState = useCallback(() => {
@@ -151,7 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         delBearerToken();
 
         // Redirect về trang login
-        router.push("/login");
+        window.location.href = "/login";
       }
 
       setAuthUser(user);
@@ -161,7 +159,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       delBearerToken();
     }
     setIsLoading(false);
-  }, [clearAuthState, router]);
+  }, [clearAuthState]);
 
   const contextValue: AuthContextType = {
     authUser,
