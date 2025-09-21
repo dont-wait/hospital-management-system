@@ -39,13 +39,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useToast();
 
-  // Clear all authentication data from state and storage
-  const clearAuthState = useCallback(() => {
-    setAuthUser(null);
-    authService.clearTokens();
-    authService.clearStoredUser();
-  }, []);
-
   // Format user display name based on role
   const getDisplayName = (authUser: AuthUser): string => {
     if (authUser.patient) {
@@ -129,9 +122,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Clear user session and show logout message
   const handleLogout = useCallback(() => {
-    clearAuthState();
+    setAuthUser(null);
+    authService.logout();
     showToast("Đã đăng xuất khỏi tài khoản!", "success");
-  }, [clearAuthState, showToast]);
+  }, [showToast]);
 
   // Initialize auth state on component mount
   useEffect(() => {
@@ -141,25 +135,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const now = Math.floor(Date.now() / 1000);
 
       if (!payload || (payload.exp && now >= payload.exp)) {
-        // Token hết hạn - xóa token và redirect
-        authService.logout();
+        // Token hết hạn - xóa token
         setAuthUser(null);
-
-        // Xóa Bearer token khỏi axios headers
+        authService.logout();
         delBearerToken();
-
-        // Redirect về trang login
         window.location.href = "/login";
       }
 
       setAuthUser(user);
       setBearerToken(user.accessToken);
-    } else {
-      clearAuthState();
-      delBearerToken();
     }
     setIsLoading(false);
-  }, [clearAuthState]);
+  }, []);
 
   const contextValue: AuthContextType = {
     authUser,

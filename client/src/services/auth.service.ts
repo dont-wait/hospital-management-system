@@ -89,6 +89,7 @@ class AuthService {
   logout(): void {
     this.clearTokens();
     this.clearStoredUser();
+    window.location.href = "/";
   }
 }
 
