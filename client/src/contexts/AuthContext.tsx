@@ -122,9 +122,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Clear user session and show logout message
   const handleLogout = useCallback(() => {
-    setAuthUser(null);
-    authService.logout();
     showToast("Đã đăng xuất khỏi tài khoản!", "success");
+    setTimeout(() => {
+      setAuthUser(null);
+      authService.logout();
+    }, 3000);
   }, [showToast]);
 
   // Initialize auth state on component mount
