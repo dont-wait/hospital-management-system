@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
+import { useRouter } from "next/navigation";
 import {
   AuthUser,
   LoginPatientDto,
@@ -16,6 +17,7 @@ import {
 import { authService } from "@/services/auth.service";
 import { useToast } from "@/contexts/ToastContext";
 import { setBearerToken, delBearerToken } from "@/axios";
+import { decodePayload } from "@/lib/utils";
 
 interface AuthContextType {
   authUser: AuthUser | null;
@@ -37,6 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useToast();
+  const router = useRouter();
 
   // Clear all authentication data from state and storage
   const clearAuthState = useCallback(() => {
@@ -135,14 +138,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Initialize auth state on component mount
   useEffect(() => {
     const user = authService.getStoredUser();
-    if (user) {
+    if (user?.accessToken) {
+      const payload = decodePayload(user.accessToken);
+      const now = Math.floor(Date.now() / 1000);
+
+      if (!payload || (payload.exp && now >= payload.exp)) {
+        // Token hết hạn - xóa token và redirect
+        clearAuthState();
+
+        // Xóa Bearer token khỏi axios headers
+        delBearerToken();
+
+        // Redirect về trang login
+        router.push("/login");
+      }
+
       setAuthUser(user);
+      setBearerToken(user.accessToken);
     } else {
       clearAuthState();
       delBearerToken();
     }
     setIsLoading(false);
-  }, [clearAuthState]);
+  }, [clearAuthState, router]);
 
   const contextValue: AuthContextType = {
     authUser,
