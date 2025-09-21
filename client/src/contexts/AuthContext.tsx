@@ -144,7 +144,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!payload || (payload.exp && now >= payload.exp)) {
         // Token hết hạn - xóa token và redirect
-        clearAuthState();
+        authService.logout();
+        setAuthUser(null);
 
         // Xóa Bearer token khỏi axios headers
         delBearerToken();
