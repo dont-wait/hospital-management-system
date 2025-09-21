@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { decodePayload } from "@/lib/utils";
+import { type Role } from "@/types";
 
 function ForbiddenResponse() {
   return `
@@ -85,7 +86,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // Kiểm tra role
-  const role = payload.RoleId as string;
+  const role = payload.RoleId as Role;
   if (pathname.startsWith("/doctor") && role !== "doctor") {
     return new NextResponse(ForbiddenResponse(), {
       status: 403,
