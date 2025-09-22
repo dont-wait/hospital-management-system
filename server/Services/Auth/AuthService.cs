@@ -9,6 +9,7 @@ namespace HospitalManagementSystem.Services.Account;
 public interface IAuthService
 {
     Task<ServiceResult<ResponseLoginDTO?>> LoginSync(RequestLoginDTO loginDto);
+    ServiceResult<string> LogoutAsync();
 }
 
 public class AuthService : IAuthService
@@ -36,19 +37,19 @@ public class AuthService : IAuthService
         ResponseEmployeeDTO? responseEmployeeDTO = null;
         if (userAccountExists.Employee != null)
             responseEmployeeDTO = new ResponseEmployeeDTO
-                {
-                    EmployeeId = userAccountExists.Employee.Id,
-                    FirstName = userAccountExists.Employee.FirstName,
-                    LastName = userAccountExists.Employee.LastName,
-                    PhoneNumber = userAccountExists.Employee.PhoneNumber,
-                    Email = userAccountExists.Employee.Email,
-                    CertificateNumber = userAccountExists.Employee.CertificateNumber,
-                    DateOfBirth = userAccountExists.Employee.DateOfBirth,
-                    Gender = userAccountExists.Employee.Gender,
-                    HireDate = userAccountExists.Employee.HireDate,
-                    Specialization = userAccountExists.Employee.Doctor.Specialization,
-                    RoleId = userAccountExists.Employee.RoleId,
-                };
+            {
+                EmployeeId = userAccountExists.Employee.Id,
+                FirstName = userAccountExists.Employee.FirstName,
+                LastName = userAccountExists.Employee.LastName,
+                PhoneNumber = userAccountExists.Employee.PhoneNumber,
+                Email = userAccountExists.Employee.Email,
+                CertificateNumber = userAccountExists.Employee.CertificateNumber,
+                DateOfBirth = userAccountExists.Employee.DateOfBirth,
+                Gender = userAccountExists.Employee.Gender,
+                HireDate = userAccountExists.Employee.HireDate,
+                Specialization = userAccountExists.Employee.Doctor.Specialization,
+                RoleId = userAccountExists.Employee.RoleId,
+            };
 
         ResponseLoginDTO responseLoginDTO = new ResponseLoginDTO
         {
@@ -98,5 +99,28 @@ public class AuthService : IAuthService
         }
 
         return ServiceResult<ResponseLoginDTO?>.Success(responseLoginDTO);
+    }
+    
+    public ServiceResult<string> LogoutAsync()
+    {
+        try
+        {
+            var CookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(-1),
+                SameSite = SameSiteMode.None,
+                Secure = true
+            };
+            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("accessToken");
+            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("refreshToken");
+
+            return ServiceResult<string>.Success("Đăng xuất thành công.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Lỗi khi xóa cookies: {ex.Message}");
+            return ServiceResult<string>.Fail($"Lỗi khi đăng xuất");
+        }
     }
 }
