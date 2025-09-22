@@ -77,4 +77,22 @@ public class AuthController : ControllerBase
             return new ApiResponse<ResponseLoginDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
         }
     }
+
+    [HttpPost("/logout")]
+    public ApiResponse<string> Logout()
+    {
+        try
+        {
+            var result = _authService.LogoutAsync();
+            if (result.IsSuccess)
+                return new ApiResponse<string>(200, result.Data!);
+            else
+                return new ApiResponse<string>(400, result.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Lỗi khi đăng xuất: {ex.Message}");
+            return new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình đăng xuất.");
+        }
+    }
 }
