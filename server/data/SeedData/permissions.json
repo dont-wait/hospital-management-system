@@ -1,0 +1,9 @@
+[
+    { "PermissionId": "manage_users", "Description": "Quản lý người dùng" },
+    { "PermissionId": "view_reports", "Description": "Xem báo cáo" },
+    { "PermissionId": "view_own_records", "Description": "Xem hồ sơ của chính mình" },
+    { "PermissionId": "view_patient_records", "Description": "Xem hồ sơ bệnh nhân" },
+    { "PermissionId": "edit_patient_records", "Description": "Chỉnh sửa hồ sơ bệnh nhân" },
+    { "PermissionId": "manage_appointments", "Description": "Quản lý cuộc hẹn" },
+    { "PermissionId": "access_billing_info", "Description": "Truy cập thông tin thanh toán" }
+]

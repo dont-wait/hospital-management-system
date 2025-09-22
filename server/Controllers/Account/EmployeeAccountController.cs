@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using HospitalManagementSystem.DTOs.UserAccount;
 using HospitalManagementSystem.Services.Account;
 using Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalManagementSystem.Controllers.Auth;
 [Route("api/[controller]")]
@@ -14,13 +15,14 @@ public class EmployeeController : ControllerBase
     {
         _employeeAccountService = employeeAccountService;
     }
-    
-    [HttpGet("{userId}")]
-    public async Task<ApiResponse<ResponseUserDTO>> GetUserById(Guid userId)
+
+    [HttpGet("{employeeId}")]
+    [Authorize(Roles = "admin")]
+    public async Task<ApiResponse<ResponseUserDTO>> GetUserById(Guid employeeId)
     {
         try
         {
-            var result = await _employeeAccountService.GetEmployeeByIdAsync(userId);
+            var result = await _employeeAccountService.GetEmployeeByIdAsync(employeeId);
             if (result.IsSuccess)
                 return new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data);
             else

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using HospitalManagementSystem.DTOs.UserAccount;
 
 namespace HospitalManagementSystem.DTOs.Employee;
+
 public class RequestEmployeeDTO : RequestUserDTO
 {
     [Required]
@@ -24,6 +25,7 @@ public class RequestEmployeeDTO : RequestUserDTO
     public string PhoneNumber { get; set; } = string.Empty;
 
     [MaxLength(100)]
+    [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
     public string Email { get; set; } = string.Empty;
 
     [Required]

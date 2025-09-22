@@ -4,6 +4,7 @@ using HospitalManagementSystem.DTOs.Employee;
 using HospitalManagementSystem.Services.Account;
 using HospitalManagementSystem.DTOs.Login;
 using Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalManagementSystem.Controllers.Auth;
 
@@ -39,8 +40,9 @@ public class AuthController : ControllerBase
             return new ApiResponse<ResponsePatientDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
         }
     }
-    
+
     [HttpPost("/doctor/register")]
+    [Authorize(Roles = "admin")]
     public async Task<ApiResponse<ResponseDoctorDTO>> DoctorRegister(RequestDoctorDTO userDto)
     {
         try
@@ -73,6 +75,24 @@ public class AuthController : ControllerBase
         {
             Console.WriteLine(ex);
             return new ApiResponse<ResponseLoginDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+        }
+    }
+
+    [HttpPost("/logout")]
+    public ApiResponse<string> Logout()
+    {
+        try
+        {
+            var result = _authService.LogoutAsync();
+            if (result.IsSuccess)
+                return new ApiResponse<string>(200, result.Data!);
+            else
+                return new ApiResponse<string>(400, result.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Lỗi khi đăng xuất: {ex.Message}");
+            return new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình đăng xuất.");
         }
     }
 }

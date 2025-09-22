@@ -64,7 +64,8 @@ class UserAccountRepository : IUserAccountRepository
                 Gender = p.Gender,
                 Address = p.Address,
                 Nationality = p.Nationality,
-                PlaceOfResidence = p.PlaceOfResidence
+                PlaceOfResidence = p.PlaceOfResidence,
+                RoleId = p.RoleId,
             }
         })
         .FirstOrDefaultAsync();
@@ -73,6 +74,7 @@ class UserAccountRepository : IUserAccountRepository
     {
         UserAccount? rs = await _context.user_accounts
             .Where(ua => ua.CitizenID == citizenID)
+            .Include(ua => ua.Patient)
             .Include(ua => ua.Employee)
                 .ThenInclude(e => e!.Doctor)
                 .FirstOrDefaultAsync();

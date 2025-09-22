@@ -1,5 +1,6 @@
 using HospitalManagementSystem.DTOs.Employee;
 using HospitalManagementSystem.DTOs.UserAccount;
+using HospitalManagementSystem.Enums.Role;
 using Microsoft.EntityFrameworkCore;
 
 namespace HospitalManagementSystem.Repositories.Employees;
@@ -39,7 +40,8 @@ class EmployeeRepository : IEmployeeRepository
             CertificateNumber = doctorDto.CertificateNumber,
             DateOfBirth = doctorDto.DateOfBirth,
             Gender = doctorDto.Gender,
-            HireDate = doctorDto.HireDate
+            HireDate = doctorDto.HireDate,
+            RoleId = RoleEnum.doctor.ToString().ToLower()
         };
 
         await _context.employees.AddAsync(employee);
@@ -77,7 +79,8 @@ class EmployeeRepository : IEmployeeRepository
                 DateOfBirth = e.DateOfBirth,
                 Gender = e.Gender,
                 HireDate = e.HireDate,
-                Specialization = e.Doctor.Specialization
+                Specialization = e.Doctor.Specialization,
+                RoleId = e.RoleId
             }
         })
         .FirstOrDefaultAsync();

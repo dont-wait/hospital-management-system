@@ -7,9 +7,16 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { AuthUser, LoginPatientDto, RegisterPatientDto } from "@/types";
+import {
+  AuthUser,
+  LoginPatientDto,
+  AuthRegisterError,
+  RegisterPatientDto,
+} from "@/types";
 import { authService } from "@/services/auth.service";
-import { toast } from "sonner";
+import { useToast } from "@/contexts/ToastContext";
+import { setBearerToken, delBearerToken } from "@/axios";
+import { decodePayload } from "@/lib/utils";
 
 interface AuthContextType {
   authUser: AuthUser | null;
@@ -20,82 +27,93 @@ interface AuthContextType {
   logout: () => void;
 }
 
+interface AuthError {
+  message: string;
+  response: AuthRegisterError;
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Clear all authentication data from state and storage
-  const clearAuthState = useCallback(() => {
-    setAuthUser(null);
-    authService.clearTokens();
-    authService.clearStoredUser();
-  }, []);
+  const { showToast } = useToast();
 
   // Format user display name based on role
   const getDisplayName = (authUser: AuthUser): string => {
-    if ("patientId" in authUser.user) {
-      return authUser.user.firstName;
-    } else if ("doctorId" in authUser.user) {
-      return `Dr. ${authUser.user.firstName}`;
+    if (authUser.patient) {
+      return `${authUser.patient.firstName} ${authUser.patient.lastName}`;
+    } else if (authUser.employee) {
+      return `Dr. ${authUser.employee.firstName} ${authUser.employee.lastName}`;
     }
-    return "Admin";
+    return "bạn";
   };
 
-  // Show success message with user's display name
-  const showLoginSuccessMessage = (user: AuthUser) => {
-    const displayName = getDisplayName(user);
-    toast.success(`Đăng nhập thành công! Chào bạn, ${displayName}!`);
+  // Show error messages for login or register
+  const handleAuthError = (error: AuthError) => {
+    const { message, response } = error;
+    if (!response) {
+      showToast(message, "error");
+    } else {
+      Object.values(response.errors)
+        .flat()
+        .forEach((err) => {
+          showToast(err, "error");
+        });
+    }
   };
 
-  // Initialize auth state from stored data on app startup
-  const initializeAuth = useCallback(async () => {
-    clearAuthState();
-    setIsLoading(false);
-  }, [clearAuthState]);
-
-  // Authenticate user with credentials
+  // Login handle
   const handleLogin = async (userDto: LoginPatientDto): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await authService.login(userDto);
+      const { message, data } = await authService.login(userDto);
+      if (data) {
+        const { accessToken, refreshToken } = data;
+        const displayName = getDisplayName(data);
 
-      authService.saveTokens(
-        response.data.accessToken,
-        response.data.refreshToken,
-      );
-      authService.saveUser(response.data);
-      setAuthUser(response.data);
+        // Store token, refresh token
+        authService.saveTokens(accessToken, refreshToken);
+        showToast(`Đăng nhập thành công! Chào ${displayName}!`, "success");
 
-      showLoginSuccessMessage(response.data);
-      return true;
+        // Store user
+        authService.saveUser(data);
+        setAuthUser(data);
+
+        // Set Bearer Token
+        setBearerToken(accessToken);
+
+        return true;
+      } else {
+        // Incorrect username or password
+        showToast(message, "error");
+        return false;
+      }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Đăng nhập thất bại";
-      const displayMessage =
-        errorMessage === "Invalid credentials"
-          ? "Mật khẩu hoặc tên đăng nhập không chính xác!"
-          : "Đăng nhập thất bại. Hãy thử lại!";
-
-      toast.error(displayMessage);
+      handleAuthError(error as AuthError);
       return false;
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Register new patient account
+  // Register handle
   const handleRegister = async (
     patientDto: RegisterPatientDto,
   ): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await authService.register(patientDto);
-      toast.success("Đăng ký thành công!");
-      return response.success;
-    } catch {
-      toast.error("Đăng ký thất bại. Hãy thử lại!");
+      const { message, data } = await authService.register(patientDto);
+      if (data) {
+        showToast(message, "success");
+        return true;
+      } else {
+        // Password mismatch
+        showToast(message, "error");
+        return false;
+      }
+    } catch (error) {
+      handleAuthError(error as AuthError);
       return false;
     } finally {
       setIsLoading(false);
@@ -104,14 +122,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Clear user session and show logout message
   const handleLogout = useCallback(() => {
-    clearAuthState();
-    toast.success("Đã đăng xuất khỏi tài khoản!");
-  }, [clearAuthState]);
+    showToast("Đã đăng xuất khỏi tài khoản!", "success");
+    setTimeout(() => {
+      setAuthUser(null);
+      authService.logout();
+    }, 3000);
+  }, [showToast]);
 
   // Initialize auth state on component mount
   useEffect(() => {
-    initializeAuth();
-  }, [initializeAuth]);
+    const user = authService.getStoredUser();
+    if (user?.accessToken) {
+      const payload = decodePayload(user.accessToken);
+      const now = Math.floor(Date.now() / 1000);
+
+      if (!payload || (payload.exp && now >= payload.exp)) {
+        // Token hết hạn - xóa token
+        setAuthUser(null);
+        authService.logout();
+        delBearerToken();
+        window.location.href = "/login";
+      }
+
+      setAuthUser(user);
+      setBearerToken(user.accessToken);
+    }
+    setIsLoading(false);
+  }, []);
 
   const contextValue: AuthContextType = {
     authUser,

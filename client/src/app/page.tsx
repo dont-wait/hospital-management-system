@@ -52,13 +52,8 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-lg text-gray-700">
-                Chào mừng trở lại,{" "}
-                {authUser &&
-                  `${authUser.user.firstName} ${authUser.user.lastName}`}
-              </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                { authUser && "doctorId" in authUser.user && (
+                {authUser && authUser.employee && (
                   <Link href="/doctor">
                     <Button size="lg">
                       Đi tới Bảng điều khiển Bác sĩ
@@ -66,7 +61,7 @@ export default function HomePage() {
                     </Button>
                   </Link>
                 )}
-                {authUser && "patientId" in authUser.user && (
+                {authUser && authUser.patient && (
                   <Link href="/patient">
                     <Button size="lg">
                       Đi tới Cổng thông tin Bệnh nhân

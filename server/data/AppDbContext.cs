@@ -8,6 +8,9 @@ public class AppDbContext : DbContext
     public DbSet<Patient> patients { get; set; } = null!;
     public DbSet<Employee> employees { get; set; } = null!;
     public DbSet<Doctor> doctors { get; set; } = null!;
+    public DbSet<Roles> roles { get; set; } = null!;
+    public DbSet<RolePermission> role_permissions { get; set; } = null!;
+    public DbSet<Permission> permissions { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,6 +28,20 @@ public class AppDbContext : DbContext
             .HasOne(d => d.Employee)
             .WithOne(e => e.Doctor)
             .HasForeignKey<Doctor>(d => d.EmployeeId);
+
+        // Composite key cho bảng trung gian
+        modelBuilder.Entity<RolePermission>()
+            .HasKey(rp => new { rp.RoleId, rp.PermissionId });
+
+        modelBuilder.Entity<RolePermission>()
+            .HasOne(rp => rp.Role)
+            .WithMany(r => r.RolePermissions)
+            .HasForeignKey(rp => rp.RoleId);
+
+        modelBuilder.Entity<RolePermission>()
+            .HasOne(rp => rp.Permission)
+            .WithMany(p => p.RolePermissions)
+            .HasForeignKey(rp => rp.PermissionId);
 
         base.OnModelCreating(modelBuilder);
     }
