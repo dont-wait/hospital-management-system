@@ -6,6 +6,7 @@ using HospitalManagementSystem.Configs;
 using HospitalManagementSystem.Services.Account;
 using HospitalManagementSystem.Repositories.Account;
 using HospitalManagementSystem.Repositories.Employees;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,9 +67,8 @@ builder.Services.AddRouting(options =>
     options.LowercaseUrls = true;
     options.LowercaseQueryStrings = true;
 });
-
+// Config JWT Authentication
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-
 var jwtSettings = new JwtSettings();
 builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);
 
@@ -94,6 +94,15 @@ builder.Services.AddAuthentication("Bearer")
             RoleClaimType = "RoleId",
         };
     });
+
+// Config Redis
+var redisConnectionString = builder.Configuration["Redis:ConnectionString"];
+if (string.IsNullOrWhiteSpace(redisConnectionString))
+    throw new InvalidOperationException("Không tìm thấy cấu hình Redis");
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(redisConnectionString)
+);
 
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
