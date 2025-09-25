@@ -32,6 +32,14 @@ class EmployeeAccountService : IEmployeeAccountService
         if (doctorDto.Password != doctorDto.ConfirmPassword)
             return ServiceResult<ResponseDoctorDTO>.Fail("Mật khẩu và xác nhận mật khẩu không khớp.");
 
+        if(!string.IsNullOrWhiteSpace(doctorDto.Email) && await _userAccountRepository
+            .IsEmailExistsAsync(doctorDto.Email))
+            return ServiceResult<ResponseDoctorDTO>.Fail("Email đã tồn tại.");
+
+        if(!string.IsNullOrWhiteSpace(doctorDto.PhoneNumber) && await _userAccountRepository
+            .IsPhoneNumberExistsAsync(doctorDto.PhoneNumber))
+            return ServiceResult<ResponseDoctorDTO>.Fail("Số điện thoại đã tồn tại.");
+
         string hashedPassword = HashPasswordUtil.HashPassword(doctorDto.Password);
         doctorDto.Password = hashedPassword;
 
