@@ -106,9 +106,21 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(
 );
 
 // Config DI for Email services
-builder.Services.AddScoped<IEmailProvider, SmtpEmailProvider>(); 
+
+var emailProvider = builder.Configuration["EmailSettings:Provider"];
+if (emailProvider == "SendGrid")
+{
+    builder.Services.AddScoped<IEmailProvider, SendGridEmailProvider>();
+}
+else if (emailProvider == "Smtp")
+{
+    builder.Services.AddScoped<IEmailProvider, SmtpEmailProvider>();
+}
+else
+{
+    throw new Exception("Không tìm thấy nhà cung cấp dịch vụ email phù hợp");
+}
 builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
-//can be changed to other email sender service like smtp
 
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();

@@ -13,15 +13,15 @@ public class SmtpEmailProvider : IEmailProvider
 
     public async Task SendEmailAsync(string to, string subject, string body, bool isHtml = true)
     {
-        var smtpHost = _config["Smtp:Host"];
-        var smtpPortValue = _config["Smtp:Port"];
+        var smtpHost = _config["EmailSettings:Smtp:Host"];
+        var smtpPortValue = _config["EmailSettings:Smtp:Port"];
         if (!int.TryParse(smtpPortValue, out var smtpPort))
         {
             throw new Exception("Invalid or missing SMTP port configuration.");
         }
-        var smtpUser = _config["Smtp:Username"];
-        var smtpPass = _config["Smtp:Password"];
-        var fromAddress = _config["Smtp:From"];
+        var smtpUser = _config["EmailSettings:Smtp:Username"];
+        var smtpPass = _config["EmailSettings:Smtp:Password"];
+        var fromAddress = _config["EmailSettings:Smtp:From"];
         if (string.IsNullOrWhiteSpace(fromAddress))
         {
             throw new Exception("SMTP 'From' address is not configured.");

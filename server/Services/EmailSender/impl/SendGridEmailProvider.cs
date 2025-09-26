@@ -12,8 +12,8 @@ public class SendGridEmailProvider : IEmailProvider
 
     public async Task SendEmailAsync(string to, string subject, string body, bool isHtml = true)
     {
-        var client = new SendGridClient(_config["SendGrid:ApiKey"]);
-        var from = new EmailAddress(_config["SendGrid:SenderEmail"], _config["SendGrid:SenderName"]);
+        var client = new SendGridClient(_config["EmailSettings:SendGrid:ApiKey"]);
+        var from = new EmailAddress(_config["EmailSettings:SendGrid:SenderEmail"], _config["EmailSettings:SendGrid:SenderName"]);
         var toEmail = new EmailAddress(to);
 
         var msg = MailHelper.CreateSingleEmail(
