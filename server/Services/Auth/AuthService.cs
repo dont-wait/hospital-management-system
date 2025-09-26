@@ -3,6 +3,8 @@ using HospitalManagementSystem.DTOs.Employee;
 using HospitalManagementSystem.Repositories.Account;
 using HospitalManagementSystem.DTOs.Patient;
 using Utils;
+using System.Net.Mime;
+using HospitalManagementSystem.Services.Otp;
 
 namespace HospitalManagementSystem.Services.Account;
 
@@ -10,6 +12,8 @@ public interface IAuthService
 {
     Task<ServiceResult<ResponseLoginDTO?>> LoginSync(RequestLoginDTO loginDto);
     ServiceResult<string> LogoutAsync();
+
+    Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request);
 }
 
 public class AuthService : IAuthService
@@ -122,5 +126,13 @@ public class AuthService : IAuthService
             Console.WriteLine($"Lỗi khi xóa cookies: {ex.Message}");
             return ServiceResult<string>.Fail($"Lỗi khi đăng xuất");
         }
+    }
+
+    public Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request)
+    {
+       // string otp = OtpService.GenerateOtp();
+
+        //ko check email co ton tai hay ko de tranh lo thong tin
+        return Task.FromResult(ServiceResult<ResponseResetPassword>.Success(new ResponseResetPassword { Message = "Vui lòng kiểm tra email để nhận mã OTP." }));
     }
 }

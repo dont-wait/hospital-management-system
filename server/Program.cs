@@ -7,6 +7,7 @@ using HospitalManagementSystem.Services.Account;
 using HospitalManagementSystem.Repositories.Account;
 using HospitalManagementSystem.Repositories.Employees;
 using StackExchange.Redis;
+using server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,6 +104,11 @@ if (string.IsNullOrWhiteSpace(redisConnectionString))
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect(redisConnectionString)
 );
+
+// Config DI for Email services
+builder.Services.AddScoped<IEmailProvider, SmtpEmailProvider>(); 
+builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
+//can be changed to other email sender service like smtp
 
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();

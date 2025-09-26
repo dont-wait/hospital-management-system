@@ -5,6 +5,8 @@ using HospitalManagementSystem.Services.Account;
 using HospitalManagementSystem.DTOs.Login;
 using Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using server.Services;
 
 namespace HospitalManagementSystem.Controllers.Auth;
 
@@ -15,12 +17,14 @@ public class AuthController : ControllerBase
     private readonly IUserAccountService _userAccountService;
     private readonly IEmployeeAccountService _employeeAccountService;
     private readonly IAuthService _authService;
+    private readonly IEmailSenderService _emailSender;
 
-    public AuthController(IUserAccountService userAccountService, IEmployeeAccountService employeeAccountService, IAuthService authService)
+    public AuthController(IUserAccountService userAccountService, IEmployeeAccountService employeeAccountService, IAuthService authService, IEmailSenderService emailSender)
     {
         _userAccountService = userAccountService;
         _employeeAccountService = employeeAccountService;
         _authService = authService;
+        _emailSender = emailSender;
     }
 
     [HttpPost("/patient/register")]
@@ -94,5 +98,80 @@ public class AuthController : ControllerBase
             Console.WriteLine($"Lỗi khi đăng xuất: {ex.Message}");
             return new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình đăng xuất.");
         }
+    }
+    /*
+    1.Để có thể reset password, người dùng cần nhập email đã đăng ký tạo tài khoản
+    2.Hệ thống lúc này sẽ gửi mã otp về email đó để xác thực - trong bước này ta cần lưu mã otp vào db
+        NGười dùng được phép nhập sai tối đa 3 lần, nếu sai quá 3 lần thì mã otp sẽ bị vô hiệu hóa
+        Mã otp chỉ có hiệu lực trong vòng 5 phút kể từ khi gửi
+    3.Sau khi xác thực thành công, người dùng sẽ được phép đặt lại mật khẩu mới
+    */
+
+    //1 Người dùng gửi request yêu cầu đổi mật khẩu
+    [HttpPost("/request-reset")]
+    public async Task<ApiResponse<ResponseResetPassword>> RequestResetPassword(RequestResetPassword request)
+    {
+        try
+        {
+            var result = await _authService.RequestPasswordResetAsync(request);
+            if (result.IsSuccess)
+                return new ApiResponse<ResponseResetPassword>(200, "Yêu cầu đặt lại mật khẩu thành công.", result.Data);
+            else
+                return new ApiResponse<ResponseResetPassword>(400, result.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return new ApiResponse<ResponseResetPassword>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+        }
+    }
+
+    //2. Sau khi nhận được request server sẽ lưu otp dưới redis
+    //Người dùng cần thực hiện check email và nhập lại, nếu sau quá 3 lần thì
+    //lặp túc otp invalid
+    // [HttpPost("/verify-otp")]
+    // public async Task<ApiResponse<ResponseResetPassword>> VerifyOtp(RequestVerifyOtp request)
+    // {
+    //     try
+    //     {
+    //         var result = await _authService.VerifyOtpAsync(request);
+    //         if (result.IsSuccess)
+    //             return new ApiResponse<ResponseResetPassword>(200, "Xác thực OTP thành công.", result.Data);
+    //         else
+    //             return new ApiResponse<ResponseResetPassword>(400, result.Message);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine(ex);
+    //         return new ApiResponse<ResponseResetPassword>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+    //     }
+    // }
+
+    // //3. Người dùng gửi request đặt lại mật khẩu mới
+    // [HttpPost("/reset-password")]
+    // public async Task<ApiResponse<ResponseResetPassword>> ResetPassword(RequestResetPasswordFinal request)
+    // {
+    //     try
+    //     {
+    //         var result = await _authService.ResetPasswordAsync(request);
+    //         if (result.IsSuccess)
+    //             return new ApiResponse<ResponseResetPassword>(200, "Đặt lại mật khẩu thành công.", result.Data);
+    //         else
+    //             return new ApiResponse<ResponseResetPassword>(400, result.Message);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine(ex);
+    //         return new ApiResponse<ResponseResetPassword>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+    //     }
+    // }
+
+    [HttpPost("send-otp")]
+    public async Task<IActionResult> SendOtp( RequestOtp request)
+    {
+        string otp = new Random().Next(100000, 999999).ToString();
+        await _emailSender.SendOtpEmailAsync(request.Email, otp);
+
+        return Ok(new { Message = "OTP sent successfully" });
     }
 }
