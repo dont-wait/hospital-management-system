@@ -12,7 +12,8 @@ public interface IUserAccountRepository
 
     Task<bool> IsEmailExistsAsync(string email);
     
-    Task<bool> IsPhoneNumberExistsAsync(string phoneNumber); 
+    Task<bool> IsPhoneNumberExistsAsync(string phoneNumber);
+    Task<UserAccount?> GetUserAccountByEmailAsync(string email);
 }
 
 class UserAccountRepository : IUserAccountRepository
@@ -108,5 +109,14 @@ class UserAccountRepository : IUserAccountRepository
                 .AnyAsync(p => p.Email == email)
             || await _context.employees
                 .AnyAsync(e => e.Email == email);
-    
+
+    public Task<UserAccount?> GetUserAccountByEmailAsync(string email)
+    {
+        return _context.user_accounts
+            .Include(ua => ua.Patient)
+            .Include(ua => ua.Employee)
+            .Where(ua => (ua.Patient != null && ua.Patient.Email == email) ||
+                         (ua.Employee != null && ua.Employee.Email == email))
+            .FirstOrDefaultAsync();
+    }
 }
