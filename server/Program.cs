@@ -97,7 +97,7 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 // Config Redis
-var redisConnectionString = builder.Configuration["Redis:ConnectionString"];
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
 if (string.IsNullOrWhiteSpace(redisConnectionString))
     throw new InvalidOperationException("Không tìm thấy cấu hình Redis");
 

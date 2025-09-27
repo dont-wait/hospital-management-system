@@ -5,6 +5,7 @@ using StackExchange.Redis;
 public interface IRedisService
 {
     Task SetAsync(string key, string value, TimeSpan? expiry = null);
+    Task SetAsync<T>(string key, T value,  TimeSpan? expiry = null);
 
     Task<T?> GetAsync<T>(string key);
 
@@ -21,11 +22,9 @@ public class RedisService : IRedisService
 
     private readonly IDatabase _db; // Redis database instance
 
-    public RedisService(IConfiguration config)
+    public RedisService(IConnectionMultiplexer multiplexer)
     {
-        var connString = config.GetConnectionString("Redis") ?? "localhost:6379";
-        var redis = ConnectionMultiplexer.Connect(connString);
-        _db = redis.GetDatabase();
+        _db = multiplexer.GetDatabase();
     }
 
     public async Task<string?> GetAsync(string key)
@@ -81,6 +80,11 @@ public class RedisService : IRedisService
         await _db.StringSetAsync(key, value, expiry);
     }
 
+    public async Task SetAsync<T>(string key, T value, TimeSpan? expiry = null)
+    {
+        await _db.StringSetAsync(key, JsonSerializer.Serialize(value), expiry);
+    }
+    
     public async Task UpdateTimeToLiveAsync<T>(string key, T value)
     {
         var ttl = await _db.KeyTimeToLiveAsync(key);

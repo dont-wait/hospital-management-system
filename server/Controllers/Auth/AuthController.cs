@@ -115,7 +115,7 @@ public class AuthController : ControllerBase
         {
             var result = await _authService.RequestPasswordResetAsync(request);
             if (result.IsSuccess)
-                return new ApiResponse<ResponseResetPassword>(200, "OTP đã được gửi vào email của bạn", result.Data);
+                return new ApiResponse<ResponseResetPassword>(200, "Success", result.Data);
             else
                 return new ApiResponse<ResponseResetPassword>(400, result.Message);
         }
@@ -137,7 +137,7 @@ public class AuthController : ControllerBase
             var result = await _authService.VerifyOtpAsync(request);
 
             if (result.Data != null && result.Data.IsValid)
-                return new ApiResponse<ResponseVerifyOtp>(200, "Xác thực OTP thành công.");
+                return new ApiResponse<ResponseVerifyOtp>(200, "Xác thực OTP thành công.", result.Data);
             else
                 return new ApiResponse<ResponseVerifyOtp>(400, result.Message);
         }

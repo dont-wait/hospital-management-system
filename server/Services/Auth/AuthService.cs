@@ -22,12 +22,14 @@ public class AuthService : IAuthService
     private readonly IUserAccountRepository _userAccountRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IRedisService _redisService;
+    private readonly IEmailSenderService _emailSenderService;
 
-    public AuthService(IUserAccountRepository userAccountRepository, IHttpContextAccessor httpContextAccessor, IRedisService redisService)
+    public AuthService(IUserAccountRepository userAccountRepository, IHttpContextAccessor httpContextAccessor, IRedisService redisService, IEmailSenderService emailSenderService)
     {
         _userAccountRepository = userAccountRepository;
         _httpContextAccessor = httpContextAccessor;
         _redisService = redisService;
+        _emailSenderService = emailSenderService;
     }
 
     public async Task<ServiceResult<ResponseLoginDTO?>> LoginSync(RequestLoginDTO loginDto)
@@ -131,25 +133,27 @@ public class AuthService : IAuthService
         }
     }
 
-    public Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request)
+    public async Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request)
     {
         string otp = OtpUtil.GenerateOtp();
 
         //ko check email co ton tai hay ko de tranh lo thong tin
-        var otpData = new 
+        var otpData = new OtpData()
         {
-            Otp = otp,
+            Code = otp,
             Attempts = 0
         };
 
-        _redisService.SetAsync($"OTP:{request.Email}", otp, TimeSpan.FromMinutes(3));
+        await _emailSenderService.SendOtpEmailAsync(request.Email, otp);
+        await _redisService.SetAsync($"OTP:{request.Email}", otpData, TimeSpan.FromMinutes(3));
 
-        return Task.FromResult(ServiceResult<ResponseResetPassword>.Success(new ResponseResetPassword { Message = "Vui lòng kiểm tra email để nhận mã OTP." }));
+        return ServiceResult<ResponseResetPassword>
+            .Success(new ResponseResetPassword { Message = "Vui lòng kiểm tra email để nhận mã OTP." });
     }
 
     public async Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request)
     {
-        var otpInRedis = await _redisService.GetAsync<OtpData>($"{request.Email}");
+        var otpInRedis = await _redisService.GetAsync<OtpData>($"OTP:{request.Email}");
         //Check otp co ton tai hay ko hoac het han hay chua, nhap sai qua 3 lan la vo hieu hoa otp
         if (otpInRedis == null)
             return ServiceResult<ResponseVerifyOtp>.Fail("Mã OTP không hợp lệ");
@@ -159,12 +163,12 @@ public class AuthService : IAuthService
             otpInRedis.Attempts++;
             if (otpInRedis.Attempts >= 3)
             {
-                await _redisService.RemoveAsync($"{request.Email}");
+                await _redisService.RemoveAsync($"OTP:{request.Email}");
                 return ServiceResult<ResponseVerifyOtp>.Fail("Sai OTP quá 3 lần! Vui lòng xin gửi lại OTP");
             }
 
             //Update attempts            
-            await _redisService.UpdateTimeToLiveAsync($"{request.Email}", otpInRedis);
+            await _redisService.UpdateTimeToLiveAsync($"OTP:{request.Email}", otpInRedis);
             return ServiceResult<ResponseVerifyOtp>.Fail("Mã OTP không hợp lệ");
         }
         // OTP đúng → tạo reset-token
@@ -174,7 +178,7 @@ public class AuthService : IAuthService
         // Xoá OTP để không reuse
         await _redisService.RemoveAsync($"OTP:{request.Email}");
 
-        return ServiceResult<ResponseVerifyOtp>.Success(new ResponseVerifyOtp { IsValid = true, Message = resetToken });
+        return ServiceResult<ResponseVerifyOtp>.Success(new ResponseVerifyOtp { IsValid = true, ResetToken = resetToken });
         
     }
 }
