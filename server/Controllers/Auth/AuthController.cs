@@ -149,21 +149,21 @@ public class AuthController : ControllerBase
     }
 
     // //3. Người dùng gửi request đặt lại mật khẩu mới
-    // [HttpPost("/reset-password")]
-    // public async Task<ApiResponse<ResponseResetPassword>> ResetPassword(RequestResetPasswordFinal request)
-    // {
-    //     try
-    //     {
-    //         var result = await _authService.ResetPasswordAsync(request);
-    //         if (result.IsSuccess)
-    //             return new ApiResponse<ResponseResetPassword>(200, "Đặt lại mật khẩu thành công.", result.Data);
-    //         else
-    //             return new ApiResponse<ResponseResetPassword>(400, result.Message);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Console.WriteLine(ex);
-    //         return new ApiResponse<ResponseResetPassword>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
-    //     }
-    // }
+    [HttpPost("/reset-password")]
+    public async Task<ApiResponse<string>> ResetPassword(RequestResetPasswordFinal request)
+    {
+        try
+        {
+            var result = await _authService.ResetPasswordAsync(request);
+            if (result.IsSuccess)
+                return new ApiResponse<string>(200, "Success", result.Data);
+            else
+                return new ApiResponse<string>(400, result.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+        }
+    }
 }

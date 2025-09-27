@@ -15,6 +15,8 @@ public interface IAuthService
 
     Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request);
     Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request);
+    
+    Task<ServiceResult<string>> ResetPasswordAsync(RequestResetPasswordFinal request);
 }
 
 public class AuthService : IAuthService
@@ -171,7 +173,7 @@ public class AuthService : IAuthService
             await _redisService.UpdateTimeToLiveAsync($"OTP:{request.Email}", otpInRedis);
             return ServiceResult<ResponseVerifyOtp>.Fail("Mã OTP không hợp lệ");
         }
-        // OTP đúng → tạo reset-token
+        // OTP đúng => tạo reset-token
         string resetToken = Guid.NewGuid().ToString();
         await _redisService.SetAsync($"RESET:{resetToken}", request.Email, TimeSpan.FromMinutes(10));
 
@@ -180,5 +182,35 @@ public class AuthService : IAuthService
 
         return ServiceResult<ResponseVerifyOtp>.Success(new ResponseVerifyOtp { IsValid = true, ResetToken = resetToken });
         
+    }
+
+    public async Task<ServiceResult<string>> ResetPasswordAsync(RequestResetPasswordFinal request)
+    {
+        //1.check email trong reset token
+        var existingEmail = await _redisService.GetAsync($"RESET:{request.ResetToken}");
+        if(String.IsNullOrEmpty((existingEmail)))
+        {
+            return ServiceResult<string>.Fail("Reset token không hợp lệ hoặc đã hết hạn");
+        }
+        
+        //2. Lay user tu db de update password
+        //TODO: Xac thuc email truoc r ms dc thuc hien cac tinh nang nay
+        UserAccount? existingUserAccount = await _userAccountRepository.GetUserAccountByEmailAsync(existingEmail);
+        if (existingUserAccount == null)
+        {
+            return ServiceResult<string>.Fail("Không tìm thấy tài khoản người dùng với email này.");
+        }
+
+        //3. hash pass
+        existingUserAccount.Password = HashPasswordUtil.HashPassword(request.NewPassword);
+        
+        //4. save db
+        await _userAccountRepository.UpdateSync(existingUserAccount);
+        
+        //5. Xoa reset token
+        await _redisService.RemoveAsync($"RESET:{request.ResetToken}");
+        
+        //6. Response client
+        return ServiceResult<string>.Success("Đặt lại mật khẩu thành công");
     }
 }

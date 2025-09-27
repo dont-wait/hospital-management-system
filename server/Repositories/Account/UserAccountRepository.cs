@@ -14,6 +14,8 @@ public interface IUserAccountRepository
     
     Task<bool> IsPhoneNumberExistsAsync(string phoneNumber);
     Task<UserAccount?> GetUserAccountByEmailAsync(string email);
+    
+    Task UpdateSync(UserAccount userAccount);
 }
 
 class UserAccountRepository : IUserAccountRepository
@@ -118,5 +120,11 @@ class UserAccountRepository : IUserAccountRepository
             .Where(ua => (ua.Patient != null && ua.Patient.Email == email) ||
                          (ua.Employee != null && ua.Employee.Email == email))
             .FirstOrDefaultAsync();
+    }
+
+    public async Task UpdateSync(UserAccount userAccount)
+    {
+        _context.user_accounts.Update(userAccount);
+        await _context.SaveChangesAsync();
     }
 }
