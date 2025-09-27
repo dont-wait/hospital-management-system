@@ -173,8 +173,26 @@ public class AuthService : IAuthService
             await _redisService.UpdateTimeToLiveAsync($"OTP:{request.Email}", otpInRedis);
             return ServiceResult<ResponseVerifyOtp>.Fail("Mã OTP không hợp lệ");
         }
-        // OTP đúng => tạo reset-token
-        string resetToken = Guid.NewGuid().ToString();
+        // OTP đúng => tạo reset-token luu vao cookie va redis
+        string resetToken = GenerateTokenUtil.GenerateResetToken();
+
+        var CookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = DateTime.UtcNow.AddMinutes(10),
+            SameSite = SameSiteMode.None,
+            Secure = true
+        };
+
+        try
+        {
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("resetToken", resetToken, CookieOptions);
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<ResponseVerifyOtp>.Fail($"Lỗi khi setting cookies: {ex.Message}");
+        }
+
         await _redisService.SetAsync($"RESET:{resetToken}", request.Email, TimeSpan.FromMinutes(10));
 
         // Xoá OTP để không reuse
@@ -186,8 +204,14 @@ public class AuthService : IAuthService
 
     public async Task<ServiceResult<string>> ResetPasswordAsync(RequestResetPasswordFinal request)
     {
+        //0. Get reset token from cookie
+        var resetToken = _httpContextAccessor.HttpContext?.Request.Cookies["resetToken"];
+        if (string.IsNullOrEmpty(resetToken))
+        {
+            return ServiceResult<string>.Fail("Reset token không hợp lệ hoặc đã hết hạn");
+        }
         //1.check email trong reset token
-        var existingEmail = await _redisService.GetAsync($"RESET:{request.ResetToken}");
+        var existingEmail = await _redisService.GetAsync($"RESET:{resetToken}");
         if(String.IsNullOrEmpty((existingEmail)))
         {
             return ServiceResult<string>.Fail("Reset token không hợp lệ hoặc đã hết hạn");
@@ -198,6 +222,7 @@ public class AuthService : IAuthService
         UserAccount? existingUserAccount = await _userAccountRepository.GetUserAccountByEmailAsync(existingEmail);
         if (existingUserAccount == null)
         {
+            await _redisService.RemoveAsync($"RESET:{resetToken}"); //vo hieu hoa reset token neu email kh ton tai
             return ServiceResult<string>.Fail("Không tìm thấy tài khoản người dùng với email này.");
         }
 
@@ -208,9 +233,12 @@ public class AuthService : IAuthService
         await _userAccountRepository.UpdateSync(existingUserAccount);
         
         //5. Xoa reset token
-        await _redisService.RemoveAsync($"RESET:{request.ResetToken}");
+        await _redisService.RemoveAsync($"RESET:{resetToken}");
+
+        //6. Xoa cookie reset token
+        _httpContextAccessor.HttpContext?.Response.Cookies.Delete("resetToken");       
         
-        //6. Response client
+         //7. Response client
         return ServiceResult<string>.Success("Đặt lại mật khẩu thành công");
     }
 }
