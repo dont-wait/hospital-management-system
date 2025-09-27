@@ -136,7 +136,7 @@ public class AuthController : ControllerBase
         {
             var result = await _authService.VerifyOtpAsync(request);
 
-            if (result.IsValid)
+            if (result.Data != null && result.Data.IsValid)
                 return new ApiResponse<ResponseVerifyOtp>(200, "Xác thực OTP thành công.");
             else
                 return new ApiResponse<ResponseVerifyOtp>(400, result.Message);

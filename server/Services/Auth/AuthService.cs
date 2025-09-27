@@ -4,7 +4,7 @@ using HospitalManagementSystem.Repositories.Account;
 using HospitalManagementSystem.DTOs.Patient;
 using Utils;
 using System.Net.Mime;
-using HospitalManagementSystem.Services.Otp;
+using server.Models;
 
 namespace HospitalManagementSystem.Services.Account;
 
@@ -14,7 +14,7 @@ public interface IAuthService
     ServiceResult<string> LogoutAsync();
 
     Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request);
-    Task<ResponseVerifyOtp> VerifyOtpAsync(RequestVerifyOtp request);
+    Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request);
 }
 
 public class AuthService : IAuthService
@@ -136,18 +136,45 @@ public class AuthService : IAuthService
         string otp = OtpUtil.GenerateOtp();
 
         //ko check email co ton tai hay ko de tranh lo thong tin
-        string existedEmail = 
+        var otpData = new 
+        {
+            Otp = otp,
+            Attempts = 0
+        };
 
-        _redisService.SetAsync($"OTP:{request.Email}", otp, TimeSpan.FromMinutes(5));
-
-        
-
+        _redisService.SetAsync($"OTP:{request.Email}", otp, TimeSpan.FromMinutes(3));
 
         return Task.FromResult(ServiceResult<ResponseResetPassword>.Success(new ResponseResetPassword { Message = "Vui lòng kiểm tra email để nhận mã OTP." }));
     }
 
-    public Task<ResponseVerifyOtp> VerifyOtpAsync(RequestVerifyOtp request)
+    public async Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request)
     {
-        throw new NotImplementedException();
+        var otpInRedis = await _redisService.GetAsync<OtpData>($"{request.Email}");
+        //Check otp co ton tai hay ko hoac het han hay chua, nhap sai qua 3 lan la vo hieu hoa otp
+        if (otpInRedis == null)
+            return ServiceResult<ResponseVerifyOtp>.Fail("Mã OTP không hợp lệ");
+
+        if (otpInRedis.Code != request.Otp)
+        {
+            otpInRedis.Attempts++;
+            if (otpInRedis.Attempts >= 3)
+            {
+                await _redisService.RemoveAsync($"{request.Email}");
+                return ServiceResult<ResponseVerifyOtp>.Fail("Sai OTP quá 3 lần! Vui lòng xin gửi lại OTP");
+            }
+
+            //Update attempts            
+            await _redisService.UpdateTimeToLiveAsync($"{request.Email}", otpInRedis);
+            return ServiceResult<ResponseVerifyOtp>.Fail("Mã OTP không hợp lệ");
+        }
+        // OTP đúng → tạo reset-token
+        string resetToken = Guid.NewGuid().ToString();
+        await _redisService.SetAsync($"RESET:{resetToken}", request.Email, TimeSpan.FromMinutes(10));
+
+        // Xoá OTP để không reuse
+        await _redisService.RemoveAsync($"OTP:{request.Email}");
+
+        return ServiceResult<ResponseVerifyOtp>.Success(new ResponseVerifyOtp { IsValid = true, Message = resetToken });
+        
     }
 }

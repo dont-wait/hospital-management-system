@@ -12,6 +12,8 @@ public interface IRedisService
     Task<string?> GetAsync(string key);
     Task RemoveAsync(string key);
     Task<T> GetOrSetAsync<T>(string key, Func<Task<T>> factory, TimeSpan? expiry = null);
+
+    Task UpdateTimeToLiveAsync<T>(string key, T value);
 }
 
 public class RedisService : IRedisService
@@ -35,15 +37,16 @@ public class RedisService : IRedisService
     public async Task<T?> GetAsync<T>(string key)
     {
         var cached = await _db.StringGetAsync(key);
-        if(!cached.HasValue || string.IsNullOrEmpty(cached))
+        if (!cached.HasValue || string.IsNullOrEmpty(cached))
             return default;
-        try {
+        try
+        {
             var result = JsonSerializer.Deserialize<T>(cached!);
             if (result != null)
                 return result;
             return default;
         }
-        catch(Exception)
+        catch (Exception)
         {
             return default;
         }
@@ -53,7 +56,7 @@ public class RedisService : IRedisService
     {
         // Kiem tra trong redis co key chua
         var cached = await _db.StringGetAsync(key);
-       
+
         if (cached.HasValue && !string.IsNullOrEmpty(cached))
         {
             var result = JsonSerializer.Deserialize<T>(cached!); //Neu co thi convert thanh Object<T>
@@ -67,7 +70,7 @@ public class RedisService : IRedisService
         await _db.StringSetAsync(key, serialized, expiry);
         return value;
     }
-  
+
     public Task RemoveAsync(string key)
     {
         return _db.KeyDeleteAsync(key);
@@ -76,5 +79,15 @@ public class RedisService : IRedisService
     public async Task SetAsync(string key, string value, TimeSpan? expiry = null)
     {
         await _db.StringSetAsync(key, value, expiry);
+    }
+
+    public async Task UpdateTimeToLiveAsync<T>(string key, T value)
+    {
+        var ttl = await _db.KeyTimeToLiveAsync(key);
+        if (ttl.HasValue)
+        {
+            var serialized = JsonSerializer.Serialize(value);
+            await _db.StringSetAsync(key, serialized, ttl);
+        }
     }
 }
