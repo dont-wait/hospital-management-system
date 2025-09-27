@@ -6,7 +6,7 @@ using Utils;
 using System.Net.Mime;
 using server.Models;
 
-namespace HospitalManagementSystem.Services.Account;
+namespace HospitalManagementSystem.Services.Auth;
 
 public interface IAuthService
 {

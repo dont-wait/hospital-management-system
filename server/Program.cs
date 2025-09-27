@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HospitalManagementSystem.Configs;
 using HospitalManagementSystem.Services.Account;
+using HospitalManagementSystem.Services.Auth;
+
 using HospitalManagementSystem.Repositories.Account;
 using HospitalManagementSystem.Repositories.Employees;
 using StackExchange.Redis;

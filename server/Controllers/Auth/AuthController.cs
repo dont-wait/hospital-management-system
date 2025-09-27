@@ -7,6 +7,7 @@ using Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using server.Services;
+using HospitalManagementSystem.Services.Auth;
 
 namespace HospitalManagementSystem.Controllers.Auth;
 
