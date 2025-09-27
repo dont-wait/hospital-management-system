@@ -130,6 +130,8 @@ builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IRedisService, RedisService>();
+
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

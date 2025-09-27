@@ -17,14 +17,12 @@ public class AuthController : ControllerBase
     private readonly IUserAccountService _userAccountService;
     private readonly IEmployeeAccountService _employeeAccountService;
     private readonly IAuthService _authService;
-    private readonly IEmailSenderService _emailSender;
 
-    public AuthController(IUserAccountService userAccountService, IEmployeeAccountService employeeAccountService, IAuthService authService, IEmailSenderService emailSender)
+    public AuthController(IUserAccountService userAccountService, IEmployeeAccountService employeeAccountService, IAuthService authService)
     {
         _userAccountService = userAccountService;
         _employeeAccountService = employeeAccountService;
         _authService = authService;
-        _emailSender = emailSender;
     }
 
     [HttpPost("/patient/register")]
@@ -99,6 +97,8 @@ public class AuthController : ControllerBase
             return new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình đăng xuất.");
         }
     }
+
+
     /*
     1.Để có thể reset password, người dùng cần nhập email đã đăng ký tạo tài khoản
     2.Hệ thống lúc này sẽ gửi mã otp về email đó để xác thực - trong bước này ta cần lưu mã otp vào db
@@ -115,7 +115,7 @@ public class AuthController : ControllerBase
         {
             var result = await _authService.RequestPasswordResetAsync(request);
             if (result.IsSuccess)
-                return new ApiResponse<ResponseResetPassword>(200, "Yêu cầu đặt lại mật khẩu thành công.", result.Data);
+                return new ApiResponse<ResponseResetPassword>(200, "OTP đã được gửi vào email của bạn", result.Data);
             else
                 return new ApiResponse<ResponseResetPassword>(400, result.Message);
         }
@@ -129,23 +129,24 @@ public class AuthController : ControllerBase
     //2. Sau khi nhận được request server sẽ lưu otp dưới redis
     //Người dùng cần thực hiện check email và nhập lại, nếu sau quá 3 lần thì
     //lặp túc otp invalid
-    // [HttpPost("/verify-otp")]
-    // public async Task<ApiResponse<ResponseResetPassword>> VerifyOtp(RequestVerifyOtp request)
-    // {
-    //     try
-    //     {
-    //         var result = await _authService.VerifyOtpAsync(request);
-    //         if (result.IsSuccess)
-    //             return new ApiResponse<ResponseResetPassword>(200, "Xác thực OTP thành công.", result.Data);
-    //         else
-    //             return new ApiResponse<ResponseResetPassword>(400, result.Message);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Console.WriteLine(ex);
-    //         return new ApiResponse<ResponseResetPassword>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
-    //     }
-    // }
+    [HttpPost("/verify-otp")]
+    public async Task<ApiResponse<ResponseVerifyOtp>> VerifyOtp(RequestVerifyOtp request)
+    {
+        try
+        {
+            var result = await _authService.VerifyOtpAsync(request);
+
+            if (result.IsValid)
+                return new ApiResponse<ResponseVerifyOtp>(200, "Xác thực OTP thành công.");
+            else
+                return new ApiResponse<ResponseVerifyOtp>(400, result.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return new ApiResponse<ResponseVerifyOtp>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+        }
+    }
 
     // //3. Người dùng gửi request đặt lại mật khẩu mới
     // [HttpPost("/reset-password")]
@@ -165,13 +166,4 @@ public class AuthController : ControllerBase
     //         return new ApiResponse<ResponseResetPassword>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
     //     }
     // }
-
-    [HttpPost("send-otp")]
-    public async Task<IActionResult> SendOtp( RequestOtp request)
-    {
-        string otp = new Random().Next(100000, 999999).ToString();
-        await _emailSender.SendOtpEmailAsync(request.Email, otp);
-
-        return Ok(new { Message = "OTP sent successfully" });
-    }
 }

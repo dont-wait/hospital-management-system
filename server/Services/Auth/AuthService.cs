@@ -14,17 +14,20 @@ public interface IAuthService
     ServiceResult<string> LogoutAsync();
 
     Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request);
+    Task<ResponseVerifyOtp> VerifyOtpAsync(RequestVerifyOtp request);
 }
 
 public class AuthService : IAuthService
 {
     private readonly IUserAccountRepository _userAccountRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IRedisService _redisService;
 
-    public AuthService(IUserAccountRepository userAccountRepository, IHttpContextAccessor httpContextAccessor)
+    public AuthService(IUserAccountRepository userAccountRepository, IHttpContextAccessor httpContextAccessor, IRedisService redisService)
     {
         _userAccountRepository = userAccountRepository;
         _httpContextAccessor = httpContextAccessor;
+        _redisService = redisService;
     }
 
     public async Task<ServiceResult<ResponseLoginDTO?>> LoginSync(RequestLoginDTO loginDto)
@@ -130,9 +133,21 @@ public class AuthService : IAuthService
 
     public Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request)
     {
-       // string otp = OtpService.GenerateOtp();
+        string otp = OtpUtil.GenerateOtp();
 
         //ko check email co ton tai hay ko de tranh lo thong tin
+        string existedEmail = 
+
+        _redisService.SetAsync($"OTP:{request.Email}", otp, TimeSpan.FromMinutes(5));
+
+        
+
+
         return Task.FromResult(ServiceResult<ResponseResetPassword>.Success(new ResponseResetPassword { Message = "Vui lòng kiểm tra email để nhận mã OTP." }));
+    }
+
+    public Task<ResponseVerifyOtp> VerifyOtpAsync(RequestVerifyOtp request)
+    {
+        throw new NotImplementedException();
     }
 }
