@@ -6,6 +6,8 @@ public interface IRedisService
 {
     Task SetAsync(string key, string value, TimeSpan? expiry = null);
 
+    Task<T?> GetAsync<T>(string key);
+
     //Can lay cai string, vd: otp, token
     Task<string?> GetAsync(string key);
     Task RemoveAsync(string key);
@@ -28,6 +30,23 @@ public class RedisService : IRedisService
     {
         var value = await _db.StringGetAsync(key);
         return value.HasValue ? value.ToString() : null;
+    }
+
+    public async Task<T?> GetAsync<T>(string key)
+    {
+        var cached = await _db.StringGetAsync(key);
+        if(!cached.HasValue || string.IsNullOrEmpty(cached))
+            return default;
+        try {
+            var result = JsonSerializer.Deserialize<T>(cached!);
+            if (result != null)
+                return result;
+            return default;
+        }
+        catch(Exception)
+        {
+            return default;
+        }
     }
 
     public async Task<T> GetOrSetAsync<T>(string key, Func<Task<T>> factory, TimeSpan? expiry = null)
