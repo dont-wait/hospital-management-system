@@ -145,9 +145,15 @@ public class AuthService : IAuthService
             Code = otp,
             Attempts = 0
         };
-
-        await _emailSenderService.SendOtpEmailAsync(request.Email, otp);
-        await _redisService.SetAsync($"OTP:{request.Email}", otpData, TimeSpan.FromMinutes(3));
+        try
+        {
+            await _emailSenderService.SendOtpEmailAsync(request.Email, otp);
+            await _redisService.SetAsync($"OTP:{request.Email}", otpData, TimeSpan.FromMinutes(3));
+            
+        }catch(Exception ex)
+        {
+            return ServiceResult<ResponseResetPassword>.Fail($"Đã xảy ra gián đoạn khi gửi email: {ex.Message}");
+        }
 
         return ServiceResult<ResponseResetPassword>
             .Success(new ResponseResetPassword { Message = "Vui lòng kiểm tra email để nhận mã OTP." });
