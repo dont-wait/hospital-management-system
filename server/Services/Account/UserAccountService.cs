@@ -36,6 +36,15 @@ class UserAccountService : IUserAccountService
         if (userDto.Password != userDto.ConfirmPassword)
             return ServiceResult<ResponsePatientDTO>.Fail("Mật khẩu và xác nhận mật khẩu không khớp.");
 
+        if(!string.IsNullOrWhiteSpace(userDto.Email) && await _userAccountRepository
+            .IsEmailExistsAsync(userDto.Email))
+            return ServiceResult<ResponsePatientDTO>.Fail("Email đã tồn tại.");
+
+        if (!string.IsNullOrWhiteSpace(userDto.PhoneNumber) && await _userAccountRepository
+            .IsPhoneNumberExistsAsync(userDto.PhoneNumber))
+            return ServiceResult<ResponsePatientDTO>.Fail("Số điện thoại đã tồn tại!");
+            
+
         string hashedPassword = HashPasswordUtil.HashPassword(userDto.Password);
         userDto.Password = hashedPassword;
 

@@ -50,3 +50,4 @@ Desktop.ini
 *.iml
 #-- Config version SDK
 global.json 
+.env

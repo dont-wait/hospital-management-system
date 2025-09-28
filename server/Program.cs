@@ -4,8 +4,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HospitalManagementSystem.Configs;
 using HospitalManagementSystem.Services.Account;
+using HospitalManagementSystem.Services.Auth;
+
 using HospitalManagementSystem.Repositories.Account;
 using HospitalManagementSystem.Repositories.Employees;
+using StackExchange.Redis;
+using server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,9 +70,8 @@ builder.Services.AddRouting(options =>
     options.LowercaseUrls = true;
     options.LowercaseQueryStrings = true;
 });
-
+// Config JWT Authentication
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-
 var jwtSettings = new JwtSettings();
 builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);
 
@@ -95,6 +98,32 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 
+// Config Redis
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
+if (string.IsNullOrWhiteSpace(redisConnectionString))
+    throw new InvalidOperationException("Không tìm thấy cấu hình Redis");
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(redisConnectionString)
+);
+
+// Config DI for Email services
+
+var emailProvider = builder.Configuration["EmailSettings:Provider"];
+if (emailProvider == "SendGrid")
+{
+    builder.Services.AddScoped<IEmailProvider, SendGridEmailProvider>();
+}
+else if (emailProvider == "Smtp")
+{
+    builder.Services.AddScoped<IEmailProvider, SmtpEmailProvider>();
+}
+else
+{
+    throw new Exception("Không tìm thấy nhà cung cấp dịch vụ email phù hợp");
+}
+builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
+
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 
@@ -103,6 +132,8 @@ builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IRedisService, RedisService>();
+
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

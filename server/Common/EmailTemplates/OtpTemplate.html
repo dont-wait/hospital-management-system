@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      color: #333333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .header {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .content {
+      padding: 30px;
+    }
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .otp-box {
+      text-align: center;
+      border: 2px solid #000000;
+      color: #000000;
+      font-size: 30px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin: 25px 0;
+    }
+    .divider {
+      border-top: 1px solid #e0e0e0;
+      margin: 30px 0;
+    }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #888888;
+      padding: 15px;
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      Medicare Hospital
+    </div>
+    <div class="content">
+      <p>Xin chào,</p>
+      <p>Bạn vừa yêu cầu xác thực tài khoản. Đây là mã OTP của bạn:</p>
+      <div class="otp-box">{{OTP}}</div>
+      <p>Mã OTP có hiệu lực trong vòng <strong>5 phút</strong>.</p>
+      <p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>
+      <div class="divider"></div>
+      <p>Trân trọng,<br><strong>Medicare Hospital</strong></p>
+    </div>
+    <div class="footer">
+      &copy; 2025 Medicare Hospital. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>

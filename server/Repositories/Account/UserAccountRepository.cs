@@ -9,6 +9,13 @@ public interface IUserAccountRepository
     Task<Patient> CreateUserAccount_Patient_Async(RequestPatientDTO patientDto);
     Task<ResponseUserDTO?> GetUserAccountByIdAsync(Guid userId);
     Task<UserAccount?> GetUserAccountByCitizenIDAsync(string citizenID);
+
+    Task<bool> IsEmailExistsAsync(string email);
+    
+    Task<bool> IsPhoneNumberExistsAsync(string phoneNumber);
+    Task<UserAccount?> GetUserAccountByEmailAsync(string email);
+    
+    Task UpdateSync(UserAccount userAccount);
 }
 
 class UserAccountRepository : IUserAccountRepository
@@ -29,6 +36,8 @@ class UserAccountRepository : IUserAccountRepository
         };
 
         await _context.user_accounts.AddAsync(userAccount);
+
+        
 
         Patient patient = new Patient
         {
@@ -81,4 +90,41 @@ class UserAccountRepository : IUserAccountRepository
 
         return rs;
     }
-}   
+
+    public async Task<string> GetEmailByUserIdAsync(Guid userId)
+    {
+        var email = await _context.user_accounts
+            .Where(ua => ua.Id == userId)
+            .Select(ua => ua.Patient != null ? ua.Patient.Email : ua.Employee != null ? ua.Employee.Email : null)
+            .FirstOrDefaultAsync();
+        return email ?? string.Empty;
+    }
+
+    public async Task<bool> IsPhoneNumberExistsAsync(string phoneNumber) =>
+        await _context.patients
+                .AnyAsync(p => p.PhoneNumber == phoneNumber)
+            || await _context.employees
+                .AnyAsync(e => e.PhoneNumber == phoneNumber);
+
+    public async Task<bool> IsEmailExistsAsync(string email) =>
+        await _context.patients
+                .AnyAsync(p => p.Email == email)
+            || await _context.employees
+                .AnyAsync(e => e.Email == email);
+
+    public Task<UserAccount?> GetUserAccountByEmailAsync(string email)
+    {
+        return _context.user_accounts
+            .Include(ua => ua.Patient)
+            .Include(ua => ua.Employee)
+            .Where(ua => (ua.Patient != null && ua.Patient.Email == email) ||
+                         (ua.Employee != null && ua.Employee.Email == email))
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task UpdateSync(UserAccount userAccount)
+    {
+        _context.user_accounts.Update(userAccount);
+        await _context.SaveChangesAsync();
+    }
+}

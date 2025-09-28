@@ -42,5 +42,11 @@ namespace Utils
             RandomNumberGenerator.Fill(randomBytes);
             return Convert.ToBase64String(randomBytes);
         }
+        public static string GenerateResetToken()
+        {
+            var randomBytes = new byte[32];
+            RandomNumberGenerator.Fill(randomBytes);
+            return Convert.ToBase64String(randomBytes);
+        }
     }
 }

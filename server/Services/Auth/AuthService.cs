@@ -3,24 +3,35 @@ using HospitalManagementSystem.DTOs.Employee;
 using HospitalManagementSystem.Repositories.Account;
 using HospitalManagementSystem.DTOs.Patient;
 using Utils;
+using System.Net.Mime;
+using server.Models;
 
-namespace HospitalManagementSystem.Services.Account;
+namespace HospitalManagementSystem.Services.Auth;
 
 public interface IAuthService
 {
     Task<ServiceResult<ResponseLoginDTO?>> LoginSync(RequestLoginDTO loginDto);
     ServiceResult<string> LogoutAsync();
+
+    Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request);
+    Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request);
+    
+    Task<ServiceResult<string>> ResetPasswordAsync(RequestResetPasswordFinal request);
 }
 
 public class AuthService : IAuthService
 {
     private readonly IUserAccountRepository _userAccountRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IRedisService _redisService;
+    private readonly IEmailSenderService _emailSenderService;
 
-    public AuthService(IUserAccountRepository userAccountRepository, IHttpContextAccessor httpContextAccessor)
+    public AuthService(IUserAccountRepository userAccountRepository, IHttpContextAccessor httpContextAccessor, IRedisService redisService, IEmailSenderService emailSenderService)
     {
         _userAccountRepository = userAccountRepository;
         _httpContextAccessor = httpContextAccessor;
+        _redisService = redisService;
+        _emailSenderService = emailSenderService;
     }
 
     public async Task<ServiceResult<ResponseLoginDTO?>> LoginSync(RequestLoginDTO loginDto)
@@ -122,5 +133,118 @@ public class AuthService : IAuthService
             Console.WriteLine($"Lỗi khi xóa cookies: {ex.Message}");
             return ServiceResult<string>.Fail($"Lỗi khi đăng xuất");
         }
+    }
+
+    public async Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request)
+    {
+        string otp = OtpUtil.GenerateOtp();
+
+        //ko check email co ton tai hay ko de tranh lo thong tin
+        var otpData = new OtpData()
+        {
+            Code = otp,
+            Attempts = 0
+        };
+        try
+        {
+            await _emailSenderService.SendOtpEmailAsync(request.Email, otp);
+            await _redisService.SetAsync($"OTP:{request.Email}", otpData, TimeSpan.FromMinutes(3));
+            
+        }catch(Exception ex)
+        {
+            return ServiceResult<ResponseResetPassword>.Fail($"Đã xảy ra gián đoạn khi gửi email: {ex.Message}");
+        }
+
+        return ServiceResult<ResponseResetPassword>
+            .Success(new ResponseResetPassword { Message = "Vui lòng kiểm tra email để nhận mã OTP." });
+    }
+
+    public async Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request)
+    {
+        var otpInRedis = await _redisService.GetAsync<OtpData>($"OTP:{request.Email}");
+        //Check otp co ton tai hay ko hoac het han hay chua, nhap sai qua 3 lan la vo hieu hoa otp
+        if (otpInRedis == null)
+            return ServiceResult<ResponseVerifyOtp>.Fail("Mã OTP không hợp lệ");
+
+        if (otpInRedis.Code != request.Otp)
+        {
+            otpInRedis.Attempts++;
+            if (otpInRedis.Attempts >= 3)
+            {
+                await _redisService.RemoveAsync($"OTP:{request.Email}");
+                return ServiceResult<ResponseVerifyOtp>.Fail("Sai OTP quá 3 lần! Vui lòng xin gửi lại OTP");
+            }
+
+            //Update attempts            
+            await _redisService.UpdateTimeToLiveAsync($"OTP:{request.Email}", otpInRedis);
+            return ServiceResult<ResponseVerifyOtp>.Fail("Mã OTP không hợp lệ");
+        }
+        // OTP đúng => tạo reset-token luu vao cookie va redis
+        string resetToken = GenerateTokenUtil.GenerateResetToken();
+
+        var CookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = DateTime.UtcNow.AddMinutes(10),
+            SameSite = SameSiteMode.None,
+            Secure = true
+        };
+
+        try
+        {
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("resetToken", resetToken, CookieOptions);
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<ResponseVerifyOtp>.Fail($"Lỗi khi setting cookies: {ex.Message}");
+        }
+
+        await _redisService.SetAsync($"RESET:{resetToken}", request.Email, TimeSpan.FromMinutes(10));
+
+        // Xoá OTP để không reuse
+        await _redisService.RemoveAsync($"OTP:{request.Email}");
+
+        return ServiceResult<ResponseVerifyOtp>.Success(new ResponseVerifyOtp { IsValid = true, ResetToken = resetToken });
+        
+    }
+
+    public async Task<ServiceResult<string>> ResetPasswordAsync(RequestResetPasswordFinal request)
+    {
+        //0. Get reset token from cookie
+        var resetToken = _httpContextAccessor.HttpContext?.Request.Cookies["resetToken"];
+        if (string.IsNullOrEmpty(resetToken))
+        {
+            return ServiceResult<string>.Fail("Reset token không hợp lệ hoặc đã hết hạn");
+        }
+        //1.check email trong reset token
+        var existingEmail = await _redisService.GetAsync($"RESET:{resetToken}");
+        if(String.IsNullOrEmpty(existingEmail))
+        {
+            return ServiceResult<string>.Fail("Reset token không hợp lệ hoặc đã hết hạn");
+        }
+        
+        //2. Lay user tu db de update password
+        //TODO: Xac thuc email truoc r ms dc thuc hien cac tinh nang nay
+        UserAccount? existingUserAccount = await _userAccountRepository.GetUserAccountByEmailAsync(existingEmail);
+        if (existingUserAccount == null)
+        {
+            await _redisService.RemoveAsync($"RESET:{resetToken}"); //vo hieu hoa reset token neu email kh ton tai
+            return ServiceResult<string>.Fail("Không tìm thấy tài khoản người dùng với email này.");
+        }
+
+        //3. hash pass
+        existingUserAccount.Password = HashPasswordUtil.HashPassword(request.NewPassword);
+        
+        //4. save db
+        await _userAccountRepository.UpdateSync(existingUserAccount);
+        
+        //5. Xoa reset token
+        await _redisService.RemoveAsync($"RESET:{resetToken}");
+
+        //6. Xoa cookie reset token
+        _httpContextAccessor.HttpContext?.Response.Cookies.Delete("resetToken");       
+        
+         //7. Response client
+        return ServiceResult<string>.Success("Đặt lại mật khẩu thành công");
     }
 }
