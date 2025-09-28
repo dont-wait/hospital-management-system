@@ -218,7 +218,7 @@ public class AuthService : IAuthService
         }
         //1.check email trong reset token
         var existingEmail = await _redisService.GetAsync($"RESET:{resetToken}");
-        if(String.IsNullOrEmpty((existingEmail)))
+        if(String.IsNullOrEmpty(existingEmail))
         {
             return ServiceResult<string>.Fail("Reset token không hợp lệ hoặc đã hết hạn");
         }
