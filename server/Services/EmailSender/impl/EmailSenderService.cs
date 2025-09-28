@@ -1,35 +1,24 @@
 using server.Services;
 
+
 public class EmailSenderService : IEmailSenderService
 {
 
     private readonly IEmailProvider _emailProvider;
     private readonly IWebHostEnvironment _env;
-
+    private readonly string _otpTemplate;
 
     public EmailSenderService(IEmailProvider emailProvider, IWebHostEnvironment env)
     {
         _emailProvider = emailProvider;
         _env = env;
+        var otpTemplatePath = Path.Combine(_env.ContentRootPath, "Common", "EmailTemplates", "OtpTemplate.html");
+        _otpTemplate = File.ReadAllText(otpTemplatePath);
     }
 
     public async Task SendOtpEmailAsync(string to, string otp)
     {
-        var path = Path.Combine(_env.ContentRootPath, "Common", "EmailTemplates", "OtpTemplate.html");       
-        string template = File.ReadAllText(path);
-        string body = template.Replace("{{OTP}}", otp);
-
+        string body = _otpTemplate.Replace("{{OTP}}", otp);
         await _emailProvider.SendEmailAsync(to, "Mã OTP xác thực", body, true);
     }
-
-    public async Task SendResetPasswordEmailAsync(string to, string resetLink)
-    {
-        var path = Path.Combine(_env.ContentRootPath, "Common", "EmailTemplates", "ResetPasswordTemplate.html");
-        string template = File.ReadAllText(path);
-        string body = template.Replace("{{RESET_LINK}}", resetLink);
-
-        await _emailProvider.SendEmailAsync(to, "Đặt lại mật khẩu", body, true);
-    }
-
-   
 }
