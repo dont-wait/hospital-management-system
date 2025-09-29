@@ -1,4 +1,9 @@
-import { LoginResponse, RegisterResponse, AuthUser } from "@/types";
+import {
+  LoginResponse,
+  RegisterResponse,
+  LogoutResponse,
+  AuthUser,
+} from "@/types";
 import {
   LoginPatientDto,
   RegisterPatientDto,
@@ -14,29 +19,38 @@ class AuthService {
     USER: "authUser",
   } as const;
 
-  // Authentication methods
+  // Login services
   async login(userDto: LoginPatientDto): Promise<LoginResponse> {
     return api.post("/login", userDto).then((response) => response.data);
   }
 
+  // Register services
   async register(patientDto: RegisterPatientDto): Promise<RegisterResponse> {
     return api
       .post<RegisterResponse>("/patient/register", patientDto)
       .then((response) => response.data);
   }
 
+  // Logout services
+  async logout(): Promise<LogoutResponse> {
+    return api.post("/logout").then((response) => response.data);
+  }
+
+  // Reset password services
   async resetPassword(resetPasswordDto: ResetPassworDto) {
     return api
       .post("/request-reset", resetPasswordDto)
       .then((response) => response.data);
   }
 
+  // Verify otp services
   async verifyOtp(email: string, otp: string) {
     return api
       .post("/verify-otp", { email, otp })
       .then((response) => response.data);
   }
 
+  // Create new password services
   async newPassword(newPasswordDto: NewPasswordDto) {
     return api
       .post("/reset-password", newPasswordDto)
@@ -85,14 +99,6 @@ class AuthService {
 
   clearStoredUser(): void {
     localStorage.removeItem(this.STORAGE_KEYS.USER);
-  }
-
-  // Authentication cleanup
-  logout(): void {
-    this.clearTokens();
-    this.clearStoredUser();
-    api.post("/logout");
-    window.location.href = "/";
   }
 }
 

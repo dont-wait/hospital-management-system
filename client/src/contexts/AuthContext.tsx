@@ -5,11 +5,9 @@ import React, {
   useContext,
   useState,
   useEffect,
-  useCallback,
 } from "react";
 import { AuthUser } from "@/types";
 import { authService } from "@/services/auth.service";
-import { useToast } from "@/contexts/ToastContext";
 import { setBearerToken, delBearerToken } from "@/axios";
 import { LoginPatientDto, RegisterPatientDto } from "@/schemas/auth";
 import { decodePayload } from "@/lib/utils";
@@ -28,7 +26,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { showToast } = useToast();
 
   // Login handle
   const handleLogin = async (userDto: LoginPatientDto): Promise<boolean> => {
@@ -71,13 +68,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Clear user session and show logout message
-  const handleLogout = useCallback(() => {
-    showToast("Đã đăng xuất khỏi tài khoản!", "success");
-    setTimeout(() => {
-      setAuthUser(null);
-      authService.logout();
-    }, 3000);
-  }, [showToast]);
+  const handleLogout = async () => {
+    await authService.logout();
+    authService.clearTokens();
+    authService.clearStoredUser();
+    setAuthUser(null);
+  };
 
   // Initialize auth state on component mount
   useEffect(() => {
