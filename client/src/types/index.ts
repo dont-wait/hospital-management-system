@@ -68,6 +68,11 @@ export interface RegisterResponse {
   data: Patient;
 }
 
+export interface LogoutResponse {
+  status: number;
+  message: string;
+}
+
 export interface AuthErrorResponse {
   message?: string;
   errors?: Record<string, string[]>;
