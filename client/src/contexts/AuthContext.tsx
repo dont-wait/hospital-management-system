@@ -1,13 +1,9 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-} from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { AuthUser } from "@/types";
 import { authService } from "@/services/auth.service";
+import { tokenService } from "@/services/token.service";
 import { setBearerToken, delBearerToken } from "@/axios";
 import { LoginPatientDto, RegisterPatientDto } from "@/schemas/auth";
 import { decodePayload } from "@/lib/utils";
@@ -35,10 +31,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { accessToken, refreshToken } = data;
 
       // Store token, refresh token
-      authService.saveTokens(accessToken, refreshToken);
+      tokenService.saveTokens(accessToken, refreshToken);
 
       // Store user
-      authService.saveUser(data);
+      tokenService.saveUser(data);
       setAuthUser(data);
 
       // Set Bearer Token
@@ -70,14 +66,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Clear user session and show logout message
   const handleLogout = async () => {
     await authService.logout();
-    authService.clearTokens();
-    authService.clearStoredUser();
+    tokenService.clearTokens();
+    tokenService.clearStoredUser();
     setAuthUser(null);
   };
 
   // Initialize auth state on component mount
   useEffect(() => {
-    const user = authService.getStoredUser();
+    const user = tokenService.getStoredUser();
     if (user?.accessToken) {
       const payload = decodePayload(user.accessToken);
       const now = Math.floor(Date.now() / 1000);

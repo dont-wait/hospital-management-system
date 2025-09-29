@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import type { LoginPatientDto} from "@/types/index";
+import type { LoginPatientDto } from "@/schemas/auth";
 
 export function useLoginSubmit() {
   const { login, isLoading } = useAuth();

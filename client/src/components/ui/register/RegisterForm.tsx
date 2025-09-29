@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Eye, EyeOff } from "lucide-react";
-import { RegisterPatientDto } from "@/types";
-import { patientSchema } from "@/schemas/auth";
+import { patientSchema, RegisterPatientDto } from "@/schemas/auth";
 
 interface RegisterFormProps {
   onSubmit: (patientDto: RegisterPatientDto) => Promise<void>;

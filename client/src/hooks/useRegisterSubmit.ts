@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import type { RegisterPatientDto } from "@/types/index";
+import type { RegisterPatientDto } from "@/schemas/auth";
 
 export function useRegisterSubmit() {
   const { register, isLoading } = useAuth();
@@ -11,7 +11,6 @@ export function useRegisterSubmit() {
 
   const handleSubmit = useCallback(
     async (patientDto: RegisterPatientDto) => {
-
       const success = await register(patientDto);
 
       if (success) {

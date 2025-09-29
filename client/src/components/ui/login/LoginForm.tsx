@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { PasswordInput } from "@/components/ui/login/PasswordInput";
 import { UsernameInput } from "@/components/ui/login/UsernameInput";
-import { accountSchema } from "@/schemas/auth";
-import type { LoginPatientDto } from "@/types/index";
+import { accountSchema, LoginPatientDto } from "@/schemas/auth";
 
 interface LoginFormProps {
   onSubmit: (patientDto: LoginPatientDto) => Promise<void>;
@@ -53,7 +52,12 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
       </div>
 
       <div>
-        <Link href="/forgot-password" className="flex justify-end text-sm text-blue-600 ">Quên mật khẩu</Link>
+        <Link
+          href="/forgot-password"
+          className="flex justify-end text-sm text-blue-600 "
+        >
+          Quên mật khẩu
+        </Link>
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
