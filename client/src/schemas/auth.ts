@@ -22,10 +22,11 @@ export const resetPasswordSchema = z.object({
     .email("Email không hợp lệ"),
 });
 
-export type ResetPassworDto = z.infer<typeof resetPasswordSchema>;
-
 export const newPasswordSchema = z.object({
   newPassword: z.string().min(1, "Mật khẩu mới không được để trống"),
 });
 
+export type LoginPatientDto = z.infer<typeof accountSchema>;
+export type RegisterPatientDto = z.infer<typeof patientSchema>;
+export type ResetPassworDto = z.infer<typeof resetPasswordSchema>;
 export type NewPasswordDto = z.infer<typeof newPasswordSchema>;

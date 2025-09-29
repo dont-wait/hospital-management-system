@@ -1,10 +1,10 @@
+import { LoginResponse, RegisterResponse, AuthUser } from "@/types";
 import {
   LoginPatientDto,
-  LoginResponse,
   RegisterPatientDto,
-  RegisterResponse,
-  AuthUser,
-} from "@/types";
+  ResetPassworDto,
+  NewPasswordDto,
+} from "@/schemas/auth";
 import api from "@/axios";
 
 class AuthService {
@@ -16,15 +16,31 @@ class AuthService {
 
   // Authentication methods
   async login(userDto: LoginPatientDto): Promise<LoginResponse> {
-    return api
-      .post("/login", userDto)
-      .then((response) => response.data)
+    return api.post("/login", userDto).then((response) => response.data);
   }
 
   async register(patientDto: RegisterPatientDto): Promise<RegisterResponse> {
     return api
       .post<RegisterResponse>("/patient/register", patientDto)
-      .then((response) => response.data)
+      .then((response) => response.data);
+  }
+
+  async resetPassword(resetPasswordDto: ResetPassworDto) {
+    return api
+      .post("/request-reset", resetPasswordDto)
+      .then((response) => response.data);
+  }
+
+  async verifyOtp(email: string, otp: string) {
+    return api
+      .post("/verify-otp", { email, otp })
+      .then((response) => response.data);
+  }
+
+  async newPassword(newPasswordDto: NewPasswordDto) {
+    return api
+      .post("/reset-password", newPasswordDto)
+      .then((response) => response.data);
   }
 
   saveTokens(token: string, refreshToken: string): void {

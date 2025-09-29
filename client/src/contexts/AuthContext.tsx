@@ -7,10 +7,11 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { AuthUser, LoginPatientDto, RegisterPatientDto } from "@/types";
+import { AuthUser } from "@/types";
 import { authService } from "@/services/auth.service";
 import { useToast } from "@/contexts/ToastContext";
 import { setBearerToken, delBearerToken } from "@/axios";
+import { LoginPatientDto, RegisterPatientDto } from "@/schemas/auth";
 import { decodePayload } from "@/lib/utils";
 
 interface AuthContextType {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ForgotPasswordState } from "@/types";
 import { ResetPassworDto, NewPasswordDto } from "@/schemas/auth";
-import api from "@/axios";
+import { authService } from "@/services/auth.service";
 
 const INITIAL_STATE: ForgotPasswordState = {
   step: 1,
@@ -52,7 +52,7 @@ export const useForgotPassword = () => {
     }
 
     try {
-      const { data } = await api.post("/request-reset", resetPasswordDto);
+      const { data } = await authService.resetPassword(resetPasswordDto);
       updateState({
         email: resetPasswordDto.email,
         loading: false,
@@ -73,10 +73,7 @@ export const useForgotPassword = () => {
     updateState({ loading: true, error: "" });
 
     try {
-      const { data } = await api.post("/verify-otp", {
-        email: state.email,
-        otp: state.otp,
-      });
+      const { data } = await authService.verifyOtp(state.email, state.otp);
 
       updateState({
         loading: false,
@@ -107,7 +104,7 @@ export const useForgotPassword = () => {
     updateState({ loading: true, error: "" });
 
     try {
-      const { data } = await api.post("/reset-password", newPasswordDto);
+      const { data } = await authService.newPassword(newPasswordDto);
       updateState({
         loading: false,
         success: data.message,

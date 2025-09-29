@@ -6,21 +6,6 @@ export enum Gender {
 
 export type Role = "admin" | "doctor" | "patient";
 
-export interface LoginPatientDto {
-  citizenID: string;
-  password: string;
-}
-
-export interface RegisterPatientDto {
-  citizenID: string;
-  password: string;
-  confirmPassword: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-}
-
 export interface Patient {
   patientId: string;
   firstName: string;
