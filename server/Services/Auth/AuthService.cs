@@ -156,7 +156,7 @@ public class AuthService : IAuthService
         }
 
         return ServiceResult<ResponseResetPassword>
-            .Success(new ResponseResetPassword { Message = "Vui lòng kiểm tra email để nhận mã OTP." });
+            .Success(new ResponseResetPassword { Message = "Vui lòng kiểm tra email để nhập mã OTP." });
     }
 
     public async Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request)

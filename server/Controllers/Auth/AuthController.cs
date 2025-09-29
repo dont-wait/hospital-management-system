@@ -131,21 +131,22 @@ public class AuthController : ControllerBase
     //Người dùng cần thực hiện check email và nhập lại, nếu sau quá 3 lần thì
     //lặp túc otp invalid
     [HttpPost("/verify-otp")]
-    public async Task<ApiResponse<ResponseVerifyOtp>> VerifyOtp(RequestVerifyOtp request)
+    public async Task<IActionResult> VerifyOtp(RequestVerifyOtp request)
     {
         try
         {
             var result = await _authService.VerifyOtpAsync(request);
 
-            if (result.Data != null && result.Data.IsValid)
-                return new ApiResponse<ResponseVerifyOtp>(200, "Xác thực OTP thành công.", result.Data);
+            if (result.IsSuccess && result.Data != null && result.Data.IsValid)
+                return Ok(new ApiResponse<ResponseVerifyOtp>(200, "Xác thực OTP thành công.", result.Data));
             else
-                return new ApiResponse<ResponseVerifyOtp>(400, result.Message);
+                return BadRequest(new ApiResponse<ResponseVerifyOtp>(400, result.Message));
+
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return new ApiResponse<ResponseVerifyOtp>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+            return BadRequest(new ApiResponse<ResponseVerifyOtp>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu."));
         }
     }
 
