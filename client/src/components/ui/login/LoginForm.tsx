@@ -1,5 +1,6 @@
 "use client";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -49,6 +50,10 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
         {errors.password && (
           <p className="text-sm text-red-600">{errors.password.message}</p>
         )}
+      </div>
+
+      <div>
+        <Link href="/forgot-password" className="flex justify-end text-sm text-blue-600 ">Quên mật khẩu</Link>
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
