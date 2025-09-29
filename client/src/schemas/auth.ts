@@ -14,3 +14,18 @@ export const patientSchema = z.object({
   email: z.email("Email không hợp lệ"),
   phoneNumber: z.string().min(10, "Số điện thoại phải có ít nhất 10 chữ số"),
 });
+
+export const resetPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, "Email không được để trống")
+    .email("Email không hợp lệ"),
+});
+
+export type ResetPassworDto = z.infer<typeof resetPasswordSchema>;
+
+export const newPasswordSchema = z.object({
+  newPassword: z.string().min(1, "Mật khẩu mới không được để trống"),
+});
+
+export type NewPasswordDto = z.infer<typeof newPasswordSchema>;
