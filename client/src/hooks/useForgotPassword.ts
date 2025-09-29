@@ -23,6 +23,14 @@ const ERROR_MESSAGES = {
 export const useForgotPassword = () => {
   const [state, setState] = useState<ForgotPasswordState>(INITIAL_STATE);
 
+  const clearClipBoard = async () => {
+    try {
+      await navigator.clipboard.writeText("");
+    } catch (clipboardError) {
+      console.error("Failed to clear clipboard:", clipboardError);
+    }
+  };
+
   const updateState = (updates: Partial<ForgotPasswordState>) => {
     setState((prev) => ({ ...prev, ...updates }));
   };
@@ -74,7 +82,6 @@ export const useForgotPassword = () => {
 
     try {
       const { data } = await authService.verifyOtp(state.email, state.otp);
-
       updateState({
         loading: false,
         step: 3,
@@ -84,6 +91,7 @@ export const useForgotPassword = () => {
         otp: "",
       });
     } catch {
+      await clearClipBoard();
       const isLastAttempt = state.payload === 1;
 
       if (isLastAttempt) {
