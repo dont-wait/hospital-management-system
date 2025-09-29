@@ -83,11 +83,23 @@ export interface RegisterResponse {
   data: Patient;
 }
 
-export interface AuthRegisterError {
-  type: string;
-  title: string;
-  status: number;
-  errors: Record<string, string[]>;
-  traceId: string;
-  message: string;
+export interface AuthErrorResponse {
+  message?: string;
+  errors?: Record<string, string[]>;
+}
+
+export interface ForgotPasswordState {
+  step: 1 | 2 | 3;
+  email: string;
+  otp: string;
+  newPassword: string;
+  loading: boolean;
+  error: string;
+  success: string;
+  payload: number;
+}
+
+export interface OtpDto {
+  email: string;
+  otp: string;
 }
