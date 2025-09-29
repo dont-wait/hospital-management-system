@@ -19,26 +19,12 @@ class AuthService {
     return api
       .post("/login", userDto)
       .then((response) => response.data)
-      .catch((error) => {
-        const { message, response } = error;
-        throw {
-          message,
-          response: response ? response.data : undefined,
-        };
-      });
   }
 
   async register(patientDto: RegisterPatientDto): Promise<RegisterResponse> {
     return api
       .post<RegisterResponse>("/patient/register", patientDto)
       .then((response) => response.data)
-      .catch((error) => {
-        const { message, response } = error;
-        throw {
-          message,
-          response: response ? response.data : undefined,
-        };
-      });
   }
 
   saveTokens(token: string, refreshToken: string): void {

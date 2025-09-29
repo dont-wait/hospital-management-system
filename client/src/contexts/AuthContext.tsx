@@ -7,12 +7,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import {
-  AuthUser,
-  LoginPatientDto,
-  AuthRegisterError,
-  RegisterPatientDto,
-} from "@/types";
+import { AuthUser, LoginPatientDto, RegisterPatientDto } from "@/types";
 import { authService } from "@/services/auth.service";
 import { useToast } from "@/contexts/ToastContext";
 import { setBearerToken, delBearerToken } from "@/axios";
@@ -25,11 +20,6 @@ interface AuthContextType {
   login: (userDto: LoginPatientDto) => Promise<boolean>;
   register: (patientDto: RegisterPatientDto) => Promise<boolean>;
   logout: () => void;
-}
-
-interface AuthError {
-  message: string;
-  response: AuthRegisterError;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -47,20 +37,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return `Dr. ${authUser.employee.firstName} ${authUser.employee.lastName}`;
     }
     return "bạn";
-  };
-
-  // Show error messages for login or register
-  const handleAuthError = (error: AuthError) => {
-    const { message, response } = error;
-    if (!response) {
-      showToast(message, "error");
-    } else {
-      Object.values(response.errors)
-        .flat()
-        .forEach((err) => {
-          showToast(err, "error");
-        });
-    }
   };
 
   // Login handle
@@ -89,8 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         showToast(message, "error");
         return false;
       }
-    } catch (error) {
-      handleAuthError(error as AuthError);
+    } catch {
       return false;
     } finally {
       setIsLoading(false);
@@ -112,8 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         showToast(message, "error");
         return false;
       }
-    } catch (error) {
-      handleAuthError(error as AuthError);
+    } catch {
       return false;
     } finally {
       setIsLoading(false);

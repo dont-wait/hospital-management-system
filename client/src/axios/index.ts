@@ -1,4 +1,7 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { defaultOptions } from "@/lib/toast";
+import { AuthErrorResponse } from "@/types";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -20,6 +23,48 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  },
+);
+
+const handleValidationErrors = (data: AuthErrorResponse) => {
+  if (data.errors) {
+    Object.values(data.errors)
+      .flat()
+      .forEach((err) => {
+        toast.error(err, defaultOptions);
+      });
+  } else if (data.message) {
+    toast.error(data.message, defaultOptions);
+  }
+};
+
+// Response interceptor - Thêm token và timestamp
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (
+    error: AxiosError<{ message?: string; errors?: Record<string, string[]> }>,
+  ) => {
+    if (error.response) {
+      const { status, data } = error.response;
+      switch (status) {
+        case 400:
+          // Bad Request
+          handleValidationErrors(data);
+          break;
+
+        case 500:
+          // Internal Server Error
+          toast.error("Lỗi máy chủ. Vui lòng thử lại sau", defaultOptions);
+          break;
+
+        default:
+          toast.error("Có lỗi xảy ra. Vui lòng thử lại", defaultOptions);
+      }
+    }
+
     return Promise.reject(error);
   },
 );
