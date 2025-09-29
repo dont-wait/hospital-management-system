@@ -29,42 +29,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useToast();
 
-  // Format user display name based on role
-  const getDisplayName = (authUser: AuthUser): string => {
-    if (authUser.patient) {
-      return `${authUser.patient.firstName} ${authUser.patient.lastName}`;
-    } else if (authUser.employee) {
-      return `Dr. ${authUser.employee.firstName} ${authUser.employee.lastName}`;
-    }
-    return "bạn";
-  };
-
   // Login handle
   const handleLogin = async (userDto: LoginPatientDto): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const { message, data } = await authService.login(userDto);
-      if (data) {
-        const { accessToken, refreshToken } = data;
-        const displayName = getDisplayName(data);
+      const { data } = await authService.login(userDto);
+      const { accessToken, refreshToken } = data;
 
-        // Store token, refresh token
-        authService.saveTokens(accessToken, refreshToken);
-        showToast(`Đăng nhập thành công! Chào ${displayName}!`, "success");
+      // Store token, refresh token
+      authService.saveTokens(accessToken, refreshToken);
 
-        // Store user
-        authService.saveUser(data);
-        setAuthUser(data);
+      // Store user
+      authService.saveUser(data);
+      setAuthUser(data);
 
-        // Set Bearer Token
-        setBearerToken(accessToken);
+      // Set Bearer Token
+      setBearerToken(accessToken);
 
-        return true;
-      } else {
-        // Incorrect username or password
-        showToast(message, "error");
-        return false;
-      }
+      return true;
     } catch {
       return false;
     } finally {
@@ -78,15 +60,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   ): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const { message, data } = await authService.register(patientDto);
-      if (data) {
-        showToast(message, "success");
-        return true;
-      } else {
-        // Password mismatch
-        showToast(message, "error");
-        return false;
-      }
+      await authService.register(patientDto);
+      return true;
     } catch {
       return false;
     } finally {

@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { defaultOptions } from "@/lib/toast";
 import { AuthErrorResponse } from "@/types";
@@ -41,7 +41,15 @@ const handleValidationErrors = (data: AuthErrorResponse) => {
 
 // Response interceptor - Thêm token và timestamp
 api.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse<{ status: number; message: string }>) => {
+    const { status, message } = response.data;
+
+    if (status !== 200) {
+      toast.error(message, defaultOptions);
+      return Promise.reject(response);
+    }
+
+    toast.success(message, defaultOptions);
     return response;
   },
   (
