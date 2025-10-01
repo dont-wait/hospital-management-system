@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/navigation'
 import { ForgotPasswordState } from "@/types";
 import { ResetPasswordDto, NewPasswordDto } from "@/schemas/auth";
 import { authService } from "@/services/auth.service";
@@ -64,12 +64,12 @@ export const useForgotPassword = () => {
     }
 
     try {
-      const { data } = await authService.resetPassword(resetPasswordDto);
+      await authService.resetPassword(resetPasswordDto);
       updateState({
         email: resetPasswordDto.email,
         loading: false,
         step: 2,
-        success: data.message,
+        success: "Vui lòng kiểm tra mail và xác thực OTP",
         error: "",
       });
     } catch {
