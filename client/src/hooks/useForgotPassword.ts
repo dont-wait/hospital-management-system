@@ -1,6 +1,9 @@
+"use client";
+
 import { useState } from "react";
+import { useRouter } from "next/router";
 import { ForgotPasswordState } from "@/types";
-import { ResetPassworDto, NewPasswordDto } from "@/schemas/auth";
+import { ResetPasswordDto, NewPasswordDto } from "@/schemas/auth";
 import { authService } from "@/services/auth.service";
 
 const INITIAL_STATE: ForgotPasswordState = {
@@ -22,6 +25,7 @@ const ERROR_MESSAGES = {
 
 export const useForgotPassword = () => {
   const [state, setState] = useState<ForgotPasswordState>(INITIAL_STATE);
+  const router = useRouter();
 
   const clearClipBoard = async () => {
     try {
@@ -47,7 +51,7 @@ export const useForgotPassword = () => {
     });
   };
 
-  const resetPassword = async (resetPasswordDto: ResetPassworDto) => {
+  const resetPassword = async (resetPasswordDto: ResetPasswordDto) => {
     updateState({ loading: true, error: "" });
 
     // Skip API call if email hasn't changed
@@ -117,7 +121,7 @@ export const useForgotPassword = () => {
         loading: false,
         success: data.message,
       });
-      window.location.href = "/login";
+      router.push("/login");
     } catch {
       updateState({
         loading: false,

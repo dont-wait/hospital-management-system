@@ -28,5 +28,5 @@ export const newPasswordSchema = z.object({
 
 export type LoginPatientDto = z.infer<typeof accountSchema>;
 export type RegisterPatientDto = z.infer<typeof patientSchema>;
-export type ResetPassworDto = z.infer<typeof resetPasswordSchema>;
+export type ResetPasswordDto = z.infer<typeof resetPasswordSchema>;
 export type NewPasswordDto = z.infer<typeof newPasswordSchema>;
