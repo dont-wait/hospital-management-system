@@ -44,7 +44,7 @@ api.interceptors.response.use(
   (response: AxiosResponse<{ status: number; message: string }>) => {
     const { status, message } = response.data;
 
-    if (status !== 200) {
+    if (status !== 200 && status !== 201) {
       toast.error(message, defaultOptions);
       return Promise.reject(response);
     }
