@@ -147,8 +147,12 @@ public class AuthService : IAuthService
         };
         try
         {
+            UserAccount? existingUserAccount = await _userAccountRepository.GetUserAccountByEmailAsync(request.Email);
+            //Just email existing, server save otp in redis
+            if (existingUserAccount != null)
+                await _redisService.SetAsync($"OTP:{request.Email}", otpData, TimeSpan.FromMinutes(3));
+
             await _emailSenderService.SendOtpEmailAsync(request.Email, otp);
-            await _redisService.SetAsync($"OTP:{request.Email}", otpData, TimeSpan.FromMinutes(3));
             
         }catch(Exception ex)
         {
