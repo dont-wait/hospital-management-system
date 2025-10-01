@@ -13,7 +13,7 @@ public interface IAuthService
     Task<ServiceResult<ResponseLoginDTO?>> LoginSync(RequestLoginDTO loginDto);
     ServiceResult<string> LogoutAsync();
 
-    Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request);
+    Task<ServiceResult<string>> RequestPasswordResetAsync(RequestResetPassword request);
     Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request);
     
     Task<ServiceResult<string>> ResetPasswordAsync(RequestResetPasswordFinal request);
@@ -135,7 +135,7 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<ServiceResult<ResponseResetPassword>> RequestPasswordResetAsync(RequestResetPassword request)
+    public async Task<ServiceResult<string>> RequestPasswordResetAsync(RequestResetPassword request)
     {
         string otp = OtpUtil.GenerateOtp();
 
@@ -156,11 +156,10 @@ public class AuthService : IAuthService
             
         }catch(Exception ex)
         {
-            return ServiceResult<ResponseResetPassword>.Fail($"Đã xảy ra gián đoạn khi gửi email: {ex.Message}");
+            return ServiceResult<string>.Fail($"Đã xảy ra gián đoạn khi gửi email: {ex.Message}");
         }
 
-        return ServiceResult<ResponseResetPassword>
-            .Success(new ResponseResetPassword { Message = "Vui lòng kiểm tra email để nhận mã OTP." });
+        return ServiceResult<string>.Success("Vui lòng kiểm tra email để nhận mã OTP.");
     }
 
     public async Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request)
