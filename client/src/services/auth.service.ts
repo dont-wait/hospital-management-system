@@ -2,7 +2,7 @@ import { LoginResponse, RegisterResponse, LogoutResponse } from "@/types";
 import {
   LoginPatientDto,
   RegisterPatientDto,
-  ResetPassworDto,
+  ResetPasswordDto,
   NewPasswordDto,
 } from "@/schemas/auth";
 import api from "@/axios";
@@ -26,7 +26,7 @@ class AuthService {
   }
 
   // Reset password service
-  async resetPassword(resetPasswordDto: ResetPassworDto) {
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
     return api
       .post("/request-reset", resetPasswordDto)
       .then((response) => response.data);

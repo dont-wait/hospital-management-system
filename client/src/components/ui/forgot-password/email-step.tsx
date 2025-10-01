@@ -4,13 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { resetPasswordSchema, ResetPassworDto } from "@/schemas/auth";
+import { resetPasswordSchema, ResetPasswordDto } from "@/schemas/auth";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface EmailStepProps {
   email: string;
   isLoading: boolean;
-  onSubmit: (resetPasswordDto: ResetPassworDto) => Promise<void>;
+  onSubmit: (resetPasswordDto: ResetPasswordDto) => Promise<void>;
 }
 
 export function EmailStep({ email, isLoading, onSubmit }: EmailStepProps) {
@@ -23,7 +23,7 @@ export function EmailStep({ email, isLoading, onSubmit }: EmailStepProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ResetPassworDto>({
+  } = useForm<ResetPasswordDto>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       email: defaultEmail,
