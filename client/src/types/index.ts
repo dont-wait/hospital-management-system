@@ -6,21 +6,6 @@ export enum Gender {
 
 export type Role = "admin" | "doctor" | "patient";
 
-export interface LoginPatientDto {
-  citizenID: string;
-  password: string;
-}
-
-export interface RegisterPatientDto {
-  citizenID: string;
-  password: string;
-  confirmPassword: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-}
-
 export interface Patient {
   patientId: string;
   firstName: string;
@@ -83,11 +68,28 @@ export interface RegisterResponse {
   data: Patient;
 }
 
-export interface AuthRegisterError {
-  type: string;
-  title: string;
+export interface LogoutResponse {
   status: number;
-  errors: Record<string, string[]>;
-  traceId: string;
   message: string;
+}
+
+export interface AuthErrorResponse {
+  message?: string;
+  errors?: Record<string, string[]>;
+}
+
+export interface ForgotPasswordState {
+  step: 1 | 2 | 3;
+  email: string;
+  otp: string;
+  newPassword: string;
+  loading: boolean;
+  error: string;
+  success: string;
+  payload: number;
+}
+
+export interface OtpDto {
+  email: string;
+  otp: string;
 }

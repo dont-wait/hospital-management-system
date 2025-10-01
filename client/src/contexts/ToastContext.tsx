@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useContext, ReactNode } from "react";
-import { ToastContainer, toast, ToastOptions } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import { defaultOptions } from "@/lib/toast";
 import "react-toastify/dist/ReactToastify.css";
 
 interface ToastContextType {
@@ -9,15 +10,6 @@ interface ToastContextType {
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
-
-const defaultOptions: ToastOptions = {
-  position: "top-center",
-  autoClose: 3000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: true,
-};
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const showToast = (

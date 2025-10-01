@@ -110,20 +110,20 @@ public class AuthController : ControllerBase
 
     //1 Người dùng gửi request yêu cầu đổi mật khẩu
     [HttpPost("/request-reset")]
-    public async Task<ApiResponse<ResponseResetPassword>> RequestResetPassword(RequestResetPassword request)
+    public async Task<ApiResponse<string>> RequestResetPassword(RequestResetPassword request)
     {
         try
         {
             var result = await _authService.RequestPasswordResetAsync(request);
             if (result.IsSuccess)
-                return new ApiResponse<ResponseResetPassword>(200, "Success", result.Data);
+                return new ApiResponse<string>(200, "Vui lòng kiểm tra email để nhập mã otp");
             else
-                return new ApiResponse<ResponseResetPassword>(400, result.Message);
+                return new ApiResponse<string>(400, result.Message);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return new ApiResponse<ResponseResetPassword>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+            return new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
         }
     }
 

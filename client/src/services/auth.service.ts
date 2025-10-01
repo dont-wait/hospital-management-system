@@ -1,96 +1,49 @@
+import { LoginResponse, RegisterResponse, LogoutResponse } from "@/types";
 import {
   LoginPatientDto,
-  LoginResponse,
   RegisterPatientDto,
-  RegisterResponse,
-  AuthUser,
-} from "@/types";
+  ResetPasswordDto,
+  NewPasswordDto,
+} from "@/schemas/auth";
 import api from "@/axios";
 
 class AuthService {
-  private readonly STORAGE_KEYS = {
-    TOKEN: "accessToken",
-    REFRESH_TOKEN: "refreshToken",
-    USER: "authUser",
-  } as const;
-
-  // Authentication methods
+  // Login service
   async login(userDto: LoginPatientDto): Promise<LoginResponse> {
-    return api
-      .post("/login", userDto)
-      .then((response) => response.data)
-      .catch((error) => {
-        const { message, response } = error;
-        throw {
-          message,
-          response: response ? response.data : undefined,
-        };
-      });
+    return api.post("/login", userDto).then((response) => response.data);
   }
 
+  // Register service
   async register(patientDto: RegisterPatientDto): Promise<RegisterResponse> {
     return api
       .post<RegisterResponse>("/patient/register", patientDto)
-      .then((response) => response.data)
-      .catch((error) => {
-        const { message, response } = error;
-        throw {
-          message,
-          response: response ? response.data : undefined,
-        };
-      });
+      .then((response) => response.data);
   }
 
-  saveTokens(token: string, refreshToken: string): void {
-    if (token) {
-      localStorage.setItem(this.STORAGE_KEYS.TOKEN, token);
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    }
-
-    if (refreshToken) {
-      localStorage.setItem(this.STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
-    }
+  // Logout service
+  async logout(): Promise<LogoutResponse> {
+    return api.post("/logout").then((response) => response.data);
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.STORAGE_KEYS.TOKEN);
+  // Reset password service
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    return api
+      .post("/request-reset", resetPasswordDto)
+      .then((response) => response.data);
   }
 
-  getRefreshToken(): string | null {
-    return localStorage.getItem(this.STORAGE_KEYS.REFRESH_TOKEN);
+  // Verify otp services
+  async verifyOtp(email: string, otp: string) {
+    return api
+      .post("/verify-otp", { email, otp })
+      .then((response) => response.data);
   }
 
-  clearTokens(): void {
-    Object.values(this.STORAGE_KEYS).forEach((key) =>
-      localStorage.removeItem(key),
-    );
-  }
-
-  // User data management
-  saveUser(user: AuthUser): void {
-    localStorage.setItem(this.STORAGE_KEYS.USER, JSON.stringify(user));
-  }
-
-  getStoredUser(): AuthUser | null {
-    try {
-      const userData = localStorage.getItem(this.STORAGE_KEYS.USER);
-      return userData ? JSON.parse(userData) : null;
-    } catch {
-      this.clearStoredUser();
-      return null;
-    }
-  }
-
-  clearStoredUser(): void {
-    localStorage.removeItem(this.STORAGE_KEYS.USER);
-  }
-
-  // Authentication cleanup
-  logout(): void {
-    this.clearTokens();
-    this.clearStoredUser();
-    api.post("/logout");
-    window.location.href = "/";
+  // Create new password services
+  async newPassword(newPasswordDto: NewPasswordDto) {
+    return api
+      .post("/reset-password", newPasswordDto)
+      .then((response) => response.data);
   }
 }
 
