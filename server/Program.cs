@@ -103,9 +103,18 @@ var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
 if (string.IsNullOrWhiteSpace(redisConnectionString))
     throw new InvalidOperationException("Không tìm thấy cấu hình Redis");
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(redisConnectionString)
-);
+try
+{
+    builder.Services.AddSingleton<IConnectionMultiplexer>(
+        ConnectionMultiplexer.Connect(redisConnectionString)
+    );
+    Console.WriteLine("Đã kết nối với Redis");
+} catch (Exception ex)
+{
+    Console.WriteLine($"Lỗi kết nối Redis: {ex.Message}");
+    throw;
+}
+
 
 // Config DI for Email services
 
