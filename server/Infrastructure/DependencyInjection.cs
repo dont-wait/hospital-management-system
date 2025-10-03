@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Infrastructure.Services.Token;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Services.Swagger;
 
 namespace Infrastructure;
 
@@ -26,6 +27,7 @@ public static class DependencyInjection
         }
 
         services.AddTokenService(configuration);
+        services.AddSwaggerDocumentation();
 
         return services;
     }
