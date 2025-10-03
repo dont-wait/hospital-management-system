@@ -4,9 +4,8 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { AuthUser } from "@/types";
 import { authService } from "@/services/auth.service";
 import { tokenService } from "@/services/token.service";
-import { setBearerToken, delBearerToken } from "@/axios";
+import { setBearerToken } from "@/axios";
 import { LoginPatientDto, RegisterPatientDto } from "@/schemas/auth";
-import { decodePayload } from "@/lib/utils";
 
 interface AuthContextType {
   authUser: AuthUser | null;
@@ -75,17 +74,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const user = tokenService.getStoredUser();
     if (user?.accessToken) {
-      const payload = decodePayload(user.accessToken);
-      const now = Math.floor(Date.now() / 1000);
-
-      if (!payload || (payload.exp && now >= payload.exp)) {
-        // Token hết hạn - xóa token
-        setAuthUser(null);
-        authService.logout();
-        delBearerToken();
-        window.location.href = "/login";
-      }
-
       setAuthUser(user);
       setBearerToken(user.accessToken);
     }

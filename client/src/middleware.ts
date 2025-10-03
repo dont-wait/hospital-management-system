@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { decodePayload } from "@/lib/utils";
+import { decodePayload } from "@/lib/server/utils";
 import { type Role } from "@/types";
 
 function ForbiddenResponse() {
