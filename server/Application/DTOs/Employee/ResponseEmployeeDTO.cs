@@ -1,7 +1,5 @@
 using HospitalManagementSystem.DTOs.UserAccount;
 
-namespace HospitalManagementSystem.DTOs.Employee;
-
 public class ResponseEmployeeDTO
 {
     public Guid EmployeeId { get; set; }

@@ -1,15 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using HospitalManagementSystem.Configs;
-using HospitalManagementSystem.Services.Account;
-using HospitalManagementSystem.Services.Auth;
-
-using HospitalManagementSystem.Repositories.Account;
-using HospitalManagementSystem.Repositories.Employees;
+using HospitalManagementSystem.WebApi.Configs;
 using StackExchange.Redis;
-using server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,7 +63,7 @@ builder.Services.AddRouting(options =>
     options.LowercaseUrls = true;
     options.LowercaseQueryStrings = true;
 });
-// Config JWT Authentication
+
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 var jwtSettings = new JwtSettings();
 builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);

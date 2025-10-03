@@ -1,7 +1,4 @@
-using System.ComponentModel.DataAnnotations;
 using HospitalManagementSystem.DTOs.UserAccount;
-
-namespace HospitalManagementSystem.DTOs.Login;
 
 public class ResponseLoginDTO : ResponseUserDTO
 {

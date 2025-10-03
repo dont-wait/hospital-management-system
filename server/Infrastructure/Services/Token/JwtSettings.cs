@@ -1,4 +1,4 @@
-namespace HospitalManagementSystem.Configs;
+namespace Infrastructure.Services.Token;
 public class JwtSettings
 {
     public string Issuer { get; set; } = string.Empty;

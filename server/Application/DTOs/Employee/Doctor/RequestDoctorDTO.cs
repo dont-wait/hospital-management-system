@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace HospitalManagementSystem.DTOs.Employee;
-
 public class RequestDoctorDTO : RequestEmployeeDTO
 {
     [Required]

@@ -1,12 +1,10 @@
-
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
-using HospitalManagementSystem.Configs;
 
-namespace Utils
+namespace HospitalManagementSystem.Shared.Utils
 {
     public static class GenerateTokenUtil
     {

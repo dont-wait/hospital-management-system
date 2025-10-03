@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using HospitalManagementSystem.DTOs.UserAccount;
 
-namespace HospitalManagementSystem.DTOs.Employee;
-
 public class RequestEmployeeDTO : RequestUserDTO
 {
     [Required]

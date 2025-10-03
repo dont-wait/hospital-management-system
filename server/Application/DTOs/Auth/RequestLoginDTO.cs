@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace HospitalManagementSystem.DTOs.Login;
 public class RequestLoginDTO
 {
     [Required]

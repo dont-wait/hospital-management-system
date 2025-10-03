@@ -1,8 +1,3 @@
-using Azure;
-using HospitalManagementSystem.DTOs.UserAccount;
-
-namespace HospitalManagementSystem.DTOs.Patient;
-
 public class ResponsePatientDTO
 {
     public Guid PatientId { get; set; }
