@@ -42,31 +42,14 @@ try
 }
 
 
-// Config DI for Email services
-
-var emailProvider = builder.Configuration["EmailSettings:Provider"];
-if (emailProvider == "SendGrid")
-{
-    builder.Services.AddScoped<IEmailProvider, SendGridEmailProvider>();
-}
-else if (emailProvider == "Smtp")
-{
-    builder.Services.AddScoped<IEmailProvider, SmtpEmailProvider>();
-}
-else
-{
-    throw new Exception("Không tìm thấy nhà cung cấp dịch vụ email phù hợp");
-}
-builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
-
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IUserAccountService, UserAccountService>();
-builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+// builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+// builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
+// builder.Services.AddScoped<IAuthService, AuthService>();
+// builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
+// builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IRedisService, RedisService>();
 
 
