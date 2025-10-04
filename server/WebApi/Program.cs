@@ -1,6 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 using Infrastructure;
+using Infrastructure.Persistence.Repositories.Account;
+using Infrastructure.Persistence.Repositories.EmployeeRepository;
+using Application.Services.Auth;
+using Application.Services.Account;
+using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,12 +33,12 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// builder.Services.AddScoped<IUserAccountService, UserAccountService>();
-// builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
-// builder.Services.AddScoped<IAuthService, AuthService>();
-// builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
-// builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-builder.Services.AddScoped<IRedisService, RedisService>();
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 
 builder.Logging.ClearProviders();

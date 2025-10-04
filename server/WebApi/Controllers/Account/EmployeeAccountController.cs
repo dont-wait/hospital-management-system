@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using HospitalManagementSystem.DTOs.UserAccount;
-using HospitalManagementSystem.Services.Account;
-using Utils;
 using Microsoft.AspNetCore.Authorization;
+using Application.Common.Utils;
 
-namespace HospitalManagementSystem.Controllers.Auth;
+namespace WebApi.Controllers.Account;
 [Route("api/[controller]")]
 [ApiController]
 public class EmployeeController : ControllerBase

@@ -3,21 +3,22 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Services.Token;
 public class TokenService : ITokenService
 {
-    private readonly JwtSettings jwtSettings;
+    private readonly JwtSettings _jwtSettings;
 
-    public TokenService(JwtSettings jwtSettings)
+    public TokenService(IOptions<JwtSettings> jwtSettings)
     {
-        this.jwtSettings = jwtSettings;
+        _jwtSettings = jwtSettings.Value;
     }
     
     public string GenerateAccessToken(string userId, string CitizenID, string RoleId)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(jwtSettings.Key);
+        var key = Encoding.UTF8.GetBytes(_jwtSettings.Key);
 
         if (key.Length < 32)
             throw new Exception($"JWT key quá ngắn! Key hiện tại: {key.Length} bytes");
@@ -31,9 +32,9 @@ public class TokenService : ITokenService
                 new Claim("CitizenID", CitizenID),
                 new Claim("RoleId", RoleId)
             ]),
-            Expires = DateTime.UtcNow.AddMinutes(jwtSettings.ExpiryMinutes),
-            Issuer = jwtSettings.Issuer,
-            Audience = jwtSettings.Audience,
+            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+            Issuer = _jwtSettings.Issuer,
+            Audience = _jwtSettings.Audience,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);

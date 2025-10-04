@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories.Account;
-class UserAccountRepository : IUserAccountRepository
+public class UserAccountRepository : IUserAccountRepository
 {
     private readonly AppDbContext _context;
 

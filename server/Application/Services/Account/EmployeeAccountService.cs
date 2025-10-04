@@ -1,19 +1,8 @@
-using HospitalManagementSystem.DTOs.UserAccount;
-using HospitalManagementSystem.Repositories.Employees;
-using HospitalManagementSystem.Repositories.Account;
-using HospitalManagementSystem.DTOs.Employee;
-using Utils;
-using HospitalManagementSystem.Enums.Role;
+using Domain.Enums;
+using Application.Common.Utils;
 
-namespace HospitalManagementSystem.Services.Account;
-
-public interface IEmployeeAccountService
-{
-    Task<ServiceResult<ResponseDoctorDTO>> CreateDoctorAsync(RequestDoctorDTO doctorDto);
-    Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId);
-}
-
-class EmployeeAccountService : IEmployeeAccountService
+namespace Application.Services.Account;
+public class EmployeeAccountService : IEmployeeAccountService
 {
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IUserAccountRepository _userAccountRepository;
@@ -38,14 +27,14 @@ class EmployeeAccountService : IEmployeeAccountService
             .IsEmailExistsAsync(doctorDto.Email))
             return ServiceResult<ResponseDoctorDTO>.Fail("Email đã tồn tại.");
 
-        if(!string.IsNullOrWhiteSpace(doctorDto.PhoneNumber) && await _userAccountRepository
+        if (!string.IsNullOrWhiteSpace(doctorDto.PhoneNumber) && await _userAccountRepository
             .IsPhoneNumberExistsAsync(doctorDto.PhoneNumber))
             return ServiceResult<ResponseDoctorDTO>.Fail("Số điện thoại đã tồn tại.");
 
         string hashedPassword = HashPasswordUtil.HashPassword(doctorDto.Password);
         doctorDto.Password = hashedPassword;
 
-        Doctor newDoctor  = await _employeeRepository.CreateDoctorAsync(doctorDto);
+        Doctor newDoctor = await _employeeRepository.CreateDoctorAsync(doctorDto);
         if (newDoctor == null)
             return ServiceResult<ResponseDoctorDTO>.Fail("Tạo tài khoản thất bại.");
 

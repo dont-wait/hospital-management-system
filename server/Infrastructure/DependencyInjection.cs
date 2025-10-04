@@ -6,6 +6,7 @@ using Infrastructure.Services.Swagger;
 using Infrastructure.Services.Email.Smtp;
 using Infrastructure.Services.Email.SendGrid;
 using Infrastructure.Services.Redis;
+using Infrastructure.Services.Email;
 
 namespace Infrastructure;
 
@@ -13,20 +14,32 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        string DbProvider = configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
-        if (DbProvider == "SqlServer")
+        try
         {
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("SqlServerDb")));
+            string DbProvider = configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
+            if (DbProvider == "SqlServer")
+            {
+                services.AddDbContext<AppDbContext>(options =>
+                    options.UseSqlServer(configuration.GetConnectionString("SqlServerDb")));
 
-            Console.WriteLine("Đã kết nối với SQL Server");
+                Console.WriteLine("Đã kết nối với SQL Server");
+            }
+            else if (DbProvider == "Oracle")
+            {
+                services.AddDbContext<AppDbContext>(options =>
+                    options.UseOracle(configuration.GetConnectionString("OracleDb")));
+
+                Console.WriteLine("Đã kết nối với Oracle Database");
+            }
+            else
+            {
+                throw new Exception("Nhà cung cấp cơ sở dữ liệu không được hỗ trợ.");
+            }
         }
-        else if (DbProvider == "Oracle")
+        catch (Exception ex)
         {
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseOracle(configuration.GetConnectionString("OracleDb")));
-
-            Console.WriteLine("Đã kết nối với Oracle Database");
+            Console.WriteLine($"Lỗi khi thiết lập kết nối cơ sở dữ liệu: {ex.Message}");
+            throw;
         }
 
         services.AddTokenService(configuration);
@@ -43,6 +56,7 @@ public static class DependencyInjection
         }
 
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IOTPService, SendOTPService>();
 
         return services;
     }

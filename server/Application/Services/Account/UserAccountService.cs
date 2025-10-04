@@ -1,32 +1,21 @@
-using Utils;
-using HospitalManagementSystem.DTOs.Patient;
-using HospitalManagementSystem.DTOs.UserAccount;
-using HospitalManagementSystem.Repositories.Account;
 using System.Security.Claims;
-namespace HospitalManagementSystem.Services.Account;
+using Application.Common.Utils;
 
-public interface IUserAccountService
-{
-    Task<ServiceResult<ResponsePatientDTO>> CreateUserAccount_Patient_Async(RequestPatientDTO userDto);
-    Task<ServiceResult<ResponseUserDTO?>> GetUserAccountByIdAsync(Guid userId);
-    Guid? CurrentUserId { get; }
-    string RoleId { get; }
-}
 
-class UserAccountService : IUserAccountService
+namespace Application.Services.Account;
+public class UserAccountService : IUserAccountService
 {
     private readonly IUserAccountRepository _userAccountRepository;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICurrentUserService _currentUserService;
 
-    public UserAccountService(IUserAccountRepository userAccountRepository, IHttpContextAccessor httpContextAccessor)
+    public UserAccountService(IUserAccountRepository userAccountRepository, ICurrentUserService currentUserService)
     {
         _userAccountRepository = userAccountRepository;
-        _httpContextAccessor = httpContextAccessor;
+        _currentUserService = currentUserService;
     }
 
-    private ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;
-    public Guid? CurrentUserId => User != null ? Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!) : null;
-    public string RoleId => User != null ? User.FindFirstValue("RoleId")! : "";
+    public Guid? CurrentUserId => _currentUserService.CurrentUserId;
+    public string RoleId => _currentUserService.RoleId;
 
     public async Task<ServiceResult<ResponsePatientDTO>> CreateUserAccount_Patient_Async(RequestPatientDTO userDto)
     {
@@ -36,14 +25,14 @@ class UserAccountService : IUserAccountService
         if (userDto.Password != userDto.ConfirmPassword)
             return ServiceResult<ResponsePatientDTO>.Fail("Mật khẩu và xác nhận mật khẩu không khớp.");
 
-        if(!string.IsNullOrWhiteSpace(userDto.Email) && await _userAccountRepository
+        if (!string.IsNullOrWhiteSpace(userDto.Email) && await _userAccountRepository
             .IsEmailExistsAsync(userDto.Email))
             return ServiceResult<ResponsePatientDTO>.Fail("Email đã tồn tại.");
 
         if (!string.IsNullOrWhiteSpace(userDto.PhoneNumber) && await _userAccountRepository
             .IsPhoneNumberExistsAsync(userDto.PhoneNumber))
             return ServiceResult<ResponsePatientDTO>.Fail("Số điện thoại đã tồn tại!");
-            
+
 
         string hashedPassword = HashPasswordUtil.HashPassword(userDto.Password);
         userDto.Password = hashedPassword;
@@ -64,7 +53,7 @@ class UserAccountService : IUserAccountService
 
         return ServiceResult<ResponsePatientDTO>.Success(responsePatientDto);
     }
-    
+
     public async Task<ServiceResult<ResponseUserDTO?>> GetUserAccountByIdAsync(Guid userId)
     {
         var userAccount = await _userAccountRepository.GetUserAccountByIdAsync(userId);

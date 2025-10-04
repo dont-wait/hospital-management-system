@@ -2,7 +2,7 @@ using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories.EmployeeRepository;
-class EmployeeRepository : IEmployeeRepository
+public class EmployeeRepository : IEmployeeRepository
 {
     private readonly AppDbContext _context;
 
