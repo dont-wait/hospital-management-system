@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, forwardRef } from "react";
 import { Button } from "@/components/ui/shared/Button";
 import { Input } from "@/components/ui/shared/Input";

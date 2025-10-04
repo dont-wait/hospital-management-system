@@ -1,16 +1,14 @@
-"use client";
-
 import { Card, CardContent } from "@/components/ui/shared/Card";
 import { LoginHeader } from "./LoginHeader";
 import { LoginForm } from "./LoginForm";
 import { useLoginSubmit } from "@/hooks/useLoginSubmit";
 import Link from "next/link";
 
-export function LoginCard() {
+function LoginCard() {
   const { handleSubmit, isLoading } = useLoginSubmit();
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-100">
       <LoginHeader />
       <CardContent className="space-y-4">
         <LoginForm onSubmit={handleSubmit} isLoading={isLoading} />
@@ -30,3 +28,5 @@ export function LoginCard() {
     </Card>
   );
 }
+
+export default LoginCard;

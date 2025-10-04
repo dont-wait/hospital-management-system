@@ -13,7 +13,7 @@ export function LoginHeader() {
       </div>
       <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
       <CardDescription className="text-center">
-        Sign in to your MediCare Hospital account
+        Đăng nhập với tài khoản của bạn.
       </CardDescription>
     </CardHeader>
   );

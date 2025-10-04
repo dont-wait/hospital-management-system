@@ -1,13 +1,12 @@
-"use client";
-import { useForm } from "react-hook-form";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/shared/Button";
 import { Label } from "@/components/ui/shared/Label";
 import { PasswordInput } from "@/components/ui/login/PasswordInput";
 import { UsernameInput } from "@/components/ui/login/UsernameInput";
+import { LoadingSpinner } from "@/components/ui/shared/LoadingSpinner";
 import { accountSchema, LoginPatientDto } from "@/schemas/auth";
-import { Loader2 } from "lucide-react";
 
 interface LoginFormProps {
   onSubmit: (patientDto: LoginPatientDto) => Promise<void>;
@@ -60,9 +59,8 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
         </Link>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {isLoading ? "Signing in..." : "Sign In"}
+      <Button type="submit" className="w-full h-12" disabled={isLoading}>
+        {isLoading ? <LoadingSpinner text="Đang gửi..." /> : "Tiếp tục"}
       </Button>
     </form>
   );
