@@ -7,9 +7,10 @@ type ImportFunc = () => Promise<{ default: ImportedComponent }>;
 interface LazySectionProps {
   importFunc: ImportFunc;
   skeleton: ReactNode;
+  className?: string;
 }
 
-function LazySection({ importFunc, skeleton }: LazySectionProps) {
+function LazySection({ importFunc, skeleton, className }: LazySectionProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -34,7 +35,7 @@ function LazySection({ importFunc, skeleton }: LazySectionProps) {
     };
   }, []);
 
-  return <div ref={ref}>{visible ? <Section /> : skeleton}</div>;
+  return <div className={className} ref={ref}>{visible ? <Section /> : skeleton}</div>;
 }
 
 export default LazySection;
