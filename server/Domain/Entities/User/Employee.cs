@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using HospitalManagementSystem.Enums.Role;
 
 [Table("employees")]
 public class Employee

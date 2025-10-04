@@ -1,4 +1,4 @@
-namespace HospitalManagementSystem.Enums.Role;
+namespace Domain.Enums;
 public enum RoleEnum
 {
     admin,
