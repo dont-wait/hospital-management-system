@@ -13,7 +13,7 @@ public class SendOTPService : IOTPService
     {
         _emailProvider = emailProvider;
         _env = env;
-        var otpTemplatePath = Path.Combine(_env.ContentRootPath, "Application", "Common", "EmailTemplates", "OtpTemplate.html");
+        var otpTemplatePath = Path.Combine(_env.ContentRootPath, "Resources", "EmailTemplates", "OtpTemplate.html");
         _otpTemplate = File.ReadAllText(otpTemplatePath);
     }
 
