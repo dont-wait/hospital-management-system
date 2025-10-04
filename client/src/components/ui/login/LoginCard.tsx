@@ -8,7 +8,7 @@ function LoginCard() {
   const { handleSubmit, isLoading } = useLoginSubmit();
 
   return (
-    <Card className="w-100">
+    <Card className="w-full">
       <LoginHeader />
       <CardContent className="space-y-4">
         <LoginForm onSubmit={handleSubmit} isLoading={isLoading} />

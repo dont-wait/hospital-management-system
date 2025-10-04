@@ -6,34 +6,47 @@ import Skeleton from "react-loading-skeleton";
 export default function LoginPage() {
   return (
     <div
-      className="bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center"
+      className="bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4"
       style={{ minHeight: "calc(100vh - 64.8px)" }}
     >
       <LazySection
         importFunc={() => import("@/components/ui/login/LoginCard")}
         skeleton={
-          <section className="bg-gray-50">
-            <div className="text-center">
-              <Skeleton width={40} height={40} className="mt-6 mb-4" />
-              <Skeleton width={150} height={32} className="mb-1" />
-              <Skeleton width={200} height={20} className="mb-6" />
+          <div className="w-full mx-auto p-6 space-y-4 bg-white">
+            {/* Form Title Area */}
+            <div className="space-y-2 mb-6 text-center">
+              <Skeleton width={40} height={40} className="mb-4" />
+              <Skeleton width={128} height={24} />
+              <Skeleton width={192} height={16} />
             </div>
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="px-4">
-                <Skeleton width={120} height={17} className="mb-2" />
-                <Skeleton width={350} height={40} className="mb-2" />
+
+            {/* CitizenID Field */}
+            <div className="space-y-2">
+              <Skeleton width={144} height={16} />
+              <Skeleton height={40} />
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-2">
+              <Skeleton width={80} height={16} />
+              <div className="relative">
+                <Skeleton height={40} />
               </div>
-            ))}
-            <div className="px-4 text-right">
-              <Skeleton width={100} height={20} className="mb-2" />
             </div>
-            <div className="text-center">
-              <Skeleton width={350} height={48} className="my-2" />
-              <Skeleton width={200} height={20} className="mb-6" />
+
+            {/* Submit Button */}
+            <div className="mt-6">
+              <Skeleton height={40} />
             </div>
-          </section>
+
+            {/* Additional Links Area */}
+            <div className="flex justify-center items-center mt-4 gap-2">
+              <Skeleton width={96} height={12} />
+              <Skeleton width={80} height={12} />
+            </div>
+          </div>
         }
-        className="md:w-1/4"
+        className="w-full md:w-1/2 lg:w-2/6"
       />
     </div>
   );
