@@ -1,4 +1,8 @@
-import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/shared/Card";
 import { Heart } from "lucide-react";
 
 export function RegisterHeader() {

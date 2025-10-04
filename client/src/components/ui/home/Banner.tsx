@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shared/Button";
 import { ArrowRight } from "lucide-react";
 
 function Banner() {

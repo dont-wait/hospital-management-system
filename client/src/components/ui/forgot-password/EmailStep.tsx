@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { resetPasswordSchema, ResetPasswordDto } from "@/schemas/auth";
 import { useAuth } from "@/contexts/AuthContext";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/shared/Button";
+import { Input } from "@/components/ui/shared/Input";
+import { LoadingSpinner } from "@/components/ui/shared/LoadingSpinner";
+import { resetPasswordSchema, ResetPasswordDto } from "@/schemas/auth";
 
 interface EmailStepProps {
   email: string;
@@ -50,4 +50,3 @@ export function EmailStep({ email, isLoading, onSubmit }: EmailStepProps) {
     </form>
   );
 }
-

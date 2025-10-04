@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/shared/Card";
 import { useAuth } from "@/contexts/AuthContext";
 import { Calendar, Users, FileText, Activity } from "lucide-react";
 

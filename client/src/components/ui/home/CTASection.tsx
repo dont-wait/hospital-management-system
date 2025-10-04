@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shared/Button";
 
 const ArrowRight = dynamic(() =>
   import("lucide-react").then((mod) => mod.ArrowRight),

@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/shared/Button";
+import { Progress } from "@/components/ui/shared/Progress";
+import { CardTitle, CardDescription } from "@/components/ui/shared/Card";
 import { ArrowLeft } from "lucide-react";
 import {
   getStepIcon,
   getStepTitle,
   getStepDescription,
-} from "@/components/ui/forgot-password/step-helpers";
+} from "@/components/ui/forgot-password/StepHelpers";
 
 interface StepHeaderProps {
   step: number;

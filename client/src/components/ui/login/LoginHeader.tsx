@@ -1,5 +1,9 @@
 import { Heart } from "lucide-react";
-import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/shared/Card";
 
 export function LoginHeader() {
   return (

@@ -1,13 +1,13 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/shared/Card";
+import { AlertMessage } from "@/components/ui/shared/AlertMessage";
+import { StepHeader } from "@/components/ui/forgot-password/StepHeader";
+import { EmailStep } from "@/components/ui/forgot-password/EmailStep";
+import { OtpStep } from "@/components/ui/forgot-password/OtpStep";
+import { PasswordStep } from "@/components/ui/forgot-password/PasswordStep";
 import { useForgotPassword } from "@/hooks/useForgotPassword";
 import { useOtpClipboard } from "@/hooks/useOtpClipboard";
-import { StepHeader } from "@/components/ui/forgot-password/stepHeader";
-import { AlertMessage } from "@/components/AlertMessage";
-import { EmailStep } from "@/components/ui/forgot-password/email-step";
-import { OtpStep } from "@/components/ui/forgot-password/otp-step";
-import { PasswordStep } from "@/components/ui/forgot-password/password-step";
 
 export default function ForgotPasswordPage() {
   const {

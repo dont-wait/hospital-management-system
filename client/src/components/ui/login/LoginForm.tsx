@@ -2,12 +2,12 @@
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/shared/Button";
+import { Label } from "@/components/ui/shared/Label";
 import { PasswordInput } from "@/components/ui/login/PasswordInput";
 import { UsernameInput } from "@/components/ui/login/UsernameInput";
 import { accountSchema, LoginPatientDto } from "@/schemas/auth";
+import { Loader2 } from "lucide-react";
 
 interface LoginFormProps {
   onSubmit: (patientDto: LoginPatientDto) => Promise<void>;

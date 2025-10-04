@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/shared/Card";
 import { LoginHeader } from "./LoginHeader";
 import { LoginForm } from "./LoginForm";
 import { useLoginSubmit } from "@/hooks/useLoginSubmit";

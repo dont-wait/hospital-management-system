@@ -1,10 +1,10 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import Link from "next/link";
-import { RegisterHeader } from "./RegisterHeader"
-import { RegisterForm } from "./RegisterForm";
+import { Card, CardContent } from "@/components/ui/shared/Card";
 import { useRegisterSubmit } from "@/hooks/useRegisterSubmit";
+import Link from "next/link";
+import { RegisterHeader } from "./RegisterHeader";
+import { RegisterForm } from "./RegisterForm";
 
 export function RegisterCard() {
   const { handleSubmit, isLoading } = useRegisterSubmit();

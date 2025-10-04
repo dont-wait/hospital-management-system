@@ -1,7 +1,8 @@
 "use client";
+
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shared/Button";
 import { Heart, User, LogOut, Home, UserCheck } from "lucide-react";
 
 export function Navigation() {
