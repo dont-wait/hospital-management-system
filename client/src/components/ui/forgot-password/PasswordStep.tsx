@@ -13,11 +13,7 @@ interface PasswordStepProps {
   onSubmit: (newPasswordDto: NewPasswordDto) => Promise<void>;
 }
 
-export function PasswordStep({
-  newPassword,
-  loading,
-  onSubmit,
-}: PasswordStepProps) {
+function PasswordStep({ newPassword, loading, onSubmit }: PasswordStepProps) {
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -79,3 +75,5 @@ export function PasswordStep({
     </>
   );
 }
+
+export default PasswordStep;

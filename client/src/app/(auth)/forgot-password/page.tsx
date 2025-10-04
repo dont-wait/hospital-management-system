@@ -1,13 +1,19 @@
 "use client";
 
+import { lazy, Suspense, useMemo } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/shared/Card";
 import { AlertMessage } from "@/components/ui/shared/AlertMessage";
 import { StepHeader } from "@/components/ui/forgot-password/StepHeader";
-import { EmailStep } from "@/components/ui/forgot-password/EmailStep";
-import { OtpStep } from "@/components/ui/forgot-password/OtpStep";
-import { PasswordStep } from "@/components/ui/forgot-password/PasswordStep";
 import { useForgotPassword } from "@/hooks/useForgotPassword";
 import { useOtpClipboard } from "@/hooks/useOtpClipboard";
+
+const EmailStep = lazy(
+  () => import("@/components/ui/forgot-password/EmailStep"),
+);
+const OtpStep = lazy(() => import("@/components/ui/forgot-password/OtpStep"));
+const PasswordStep = lazy(
+  () => import("@/components/ui/forgot-password/PasswordStep"),
+);
 
 export default function ForgotPasswordPage() {
   const {
@@ -22,7 +28,7 @@ export default function ForgotPasswordPage() {
 
   useOtpClipboard(state.step, state.otp, (otp) => updateState({ otp }));
 
-  const renderStep = () => {
+  const renderStep = useMemo(() => {
     switch (state.step) {
       case 1:
         return (
@@ -54,7 +60,18 @@ export default function ForgotPasswordPage() {
       default:
         return null;
     }
-  };
+  }, [
+    state.step,
+    state.email,
+    state.otp,
+    state.newPassword,
+    state.loading,
+    resetPassword,
+    updateState,
+    verifyOtp,
+    clearMessages,
+    createNewPassword,
+  ]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
@@ -68,7 +85,7 @@ export default function ForgotPasswordPage() {
           {state.success && (
             <AlertMessage type="success" message={state.success} />
           )}
-          {renderStep()}
+          <Suspense fallback={<div>Loading...</div>}>{renderStep}</Suspense>
         </CardContent>
       </Card>
     </div>

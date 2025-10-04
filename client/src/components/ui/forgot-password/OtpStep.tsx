@@ -16,7 +16,7 @@ interface OtpStepProps {
   onClearError: () => void;
 }
 
-export function OtpStep({
+function OtpStep({
   email,
   otp,
   loading,
@@ -68,3 +68,5 @@ export function OtpStep({
     </form>
   );
 }
+
+export default OtpStep;
