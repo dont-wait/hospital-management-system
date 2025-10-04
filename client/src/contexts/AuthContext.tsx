@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
+import { useRouter } from "next/navigation";
 import { AuthUser } from "@/types";
 import { authService } from "@/services/auth.service";
 import { tokenService } from "@/services/token.service";
@@ -18,9 +25,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   // Login handle
   const handleLogin = async (userDto: LoginPatientDto): Promise<boolean> => {
@@ -68,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     tokenService.clearTokens();
     tokenService.clearStoredUser();
     setAuthUser(null);
+    router.push("/");
   };
 
   // Initialize auth state on component mount
