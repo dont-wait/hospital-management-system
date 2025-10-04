@@ -1,4 +1,4 @@
-namespace Utils;
+namespace Application.Common.Utils;
 public class ServiceResult<T>
 {
     public bool IsSuccess { get; }

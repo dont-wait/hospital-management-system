@@ -1,37 +1,20 @@
-using HospitalManagementSystem.DTOs.Login;
-using HospitalManagementSystem.DTOs.Employee;
-using HospitalManagementSystem.Repositories.Account;
-using HospitalManagementSystem.DTOs.Patient;
-using Utils;
-using System.Net.Mime;
-using server.Models;
+using Application.Common.Utils;
+using Domain.Entities;
 
-namespace HospitalManagementSystem.Services.Auth;
-
-public interface IAuthService
-{
-    Task<ServiceResult<ResponseLoginDTO?>> LoginSync(RequestLoginDTO loginDto);
-    ServiceResult<string> LogoutAsync();
-
-    Task<ServiceResult<string>> RequestPasswordResetAsync(RequestResetPassword request);
-    Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request);
-    
-    Task<ServiceResult<string>> ResetPasswordAsync(RequestResetPasswordFinal request);
-}
-
+namespace Application.Services.Auth;
 public class AuthService : IAuthService
 {
     private readonly IUserAccountRepository _userAccountRepository;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IRedisService _redisService;
-    private readonly IEmailSenderService _emailSenderService;
+    private readonly IOTPService _emailSenderService;
+    private readonly ITokenService _tokenService;
 
-    public AuthService(IUserAccountRepository userAccountRepository, IHttpContextAccessor httpContextAccessor, IRedisService redisService, IEmailSenderService emailSenderService)
+    public AuthService(IUserAccountRepository userAccountRepository, IRedisService redisService, IOTPService emailSenderService, ITokenService tokenService)
     {
         _userAccountRepository = userAccountRepository;
-        _httpContextAccessor = httpContextAccessor;
         _redisService = redisService;
         _emailSenderService = emailSenderService;
+        _tokenService = tokenService;
     }
 
     public async Task<ServiceResult<ResponseLoginDTO?>> LoginSync(RequestLoginDTO loginDto)
@@ -79,30 +62,18 @@ public class AuthService : IAuthService
             Employee = userAccountExists.Employee != null ? responseEmployeeDTO : null
         };
 
-        string accessToken = GenerateTokenUtil.GenerateAccessToken(
-            userAccountExists.Employee?.Id.ToString() ?? userAccountExists.Patient?.Id.ToString()!,
-            userAccountExists.CitizenID,
-            responseEmployeeDTO?.RoleId.ToString() ?? "patient",
-            ProgramGlobals.JwtSettingsInstance
-        );
-
-        string refreshToken = GenerateTokenUtil.GenerateRefreshToken();
-
-        responseLoginDTO.AccessToken = accessToken;
-        responseLoginDTO.RefreshToken = refreshToken;
-
-        var CookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTime.UtcNow.AddDays(7),
-            SameSite = SameSiteMode.None,
-            Secure = true
-        };
-
         try
-        {
-            _httpContextAccessor.HttpContext?.Response.Cookies.Append("accessToken", accessToken, CookieOptions);
-            _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken, CookieOptions);
+            {
+            string accessToken = _tokenService.GenerateAccessToken(
+                userAccountExists.Employee?.Id.ToString() ?? userAccountExists.Patient?.Id.ToString()!,
+                userAccountExists.CitizenID,
+                responseEmployeeDTO?.RoleId.ToString() ?? "patient"
+            );
+
+            string refreshToken = _tokenService.GenerateRandomToken();
+
+            responseLoginDTO.AccessToken = accessToken;
+            responseLoginDTO.RefreshToken = refreshToken;
         }
         catch (Exception ex)
         {
@@ -110,29 +81,6 @@ public class AuthService : IAuthService
         }
 
         return ServiceResult<ResponseLoginDTO?>.Success(responseLoginDTO);
-    }
-    
-    public ServiceResult<string> LogoutAsync()
-    {
-        try
-        {
-            var CookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(-1),
-                SameSite = SameSiteMode.None,
-                Secure = true
-            };
-            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("accessToken");
-            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("refreshToken");
-
-            return ServiceResult<string>.Success("Đăng xuất thành công.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Lỗi khi xóa cookies: {ex.Message}");
-            return ServiceResult<string>.Fail($"Lỗi khi đăng xuất");
-        }
     }
 
     public async Task<ServiceResult<string>> RequestPasswordResetAsync(RequestResetPassword request)
@@ -153,8 +101,9 @@ public class AuthService : IAuthService
                 await _redisService.SetAsync($"OTP:{request.Email}", otpData, TimeSpan.FromMinutes(3));
 
             await _emailSenderService.SendOtpEmailAsync(request.Email, otp);
-            
-        }catch(Exception ex)
+
+        }
+        catch (Exception ex)
         {
             return ServiceResult<string>.Fail($"Đã xảy ra gián đoạn khi gửi email: {ex.Message}");
         }
@@ -182,50 +131,39 @@ public class AuthService : IAuthService
             await _redisService.UpdateTimeToLiveAsync($"OTP:{request.Email}", otpInRedis);
             return ServiceResult<ResponseVerifyOtp>.Fail("Mã OTP không hợp lệ");
         }
-        // OTP đúng => tạo reset-token luu vao cookie va redis
-        string resetToken = GenerateTokenUtil.GenerateResetToken();
-
-        var CookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTime.UtcNow.AddMinutes(10),
-            SameSite = SameSiteMode.None,
-            Secure = true
-        };
 
         try
         {
-            _httpContextAccessor.HttpContext?.Response.Cookies.Append("resetToken", resetToken, CookieOptions);
+            // OTP đúng => tạo reset-token luu vao cookie va redis
+            string resetToken = _tokenService.GenerateRandomToken();
+            await _redisService.SetAsync($"RESET:{resetToken}", request.Email, TimeSpan.FromMinutes(10));
+
+            // Xoá OTP để không reuse
+            await _redisService.RemoveAsync($"OTP:{request.Email}");
+
+            return ServiceResult<ResponseVerifyOtp>.Success(new ResponseVerifyOtp { IsValid = true, ResetToken = resetToken });
         }
         catch (Exception ex)
         {
             return ServiceResult<ResponseVerifyOtp>.Fail($"Lỗi khi setting cookies: {ex.Message}");
         }
 
-        await _redisService.SetAsync($"RESET:{resetToken}", request.Email, TimeSpan.FromMinutes(10));
 
-        // Xoá OTP để không reuse
-        await _redisService.RemoveAsync($"OTP:{request.Email}");
-
-        return ServiceResult<ResponseVerifyOtp>.Success(new ResponseVerifyOtp { IsValid = true, ResetToken = resetToken });
-        
     }
 
-    public async Task<ServiceResult<string>> ResetPasswordAsync(RequestResetPasswordFinal request)
+    public async Task<ServiceResult<string>> ResetPasswordAsync(RequestResetPasswordFinal request, string resetToken)
     {
-        //0. Get reset token from cookie
-        var resetToken = _httpContextAccessor.HttpContext?.Request.Cookies["resetToken"];
         if (string.IsNullOrEmpty(resetToken))
         {
             return ServiceResult<string>.Fail("Reset token không hợp lệ hoặc đã hết hạn");
         }
         //1.check email trong reset token
         var existingEmail = await _redisService.GetAsync($"RESET:{resetToken}");
-        if(String.IsNullOrEmpty(existingEmail))
+        if (String.IsNullOrEmpty(existingEmail))
         {
             return ServiceResult<string>.Fail("Reset token không hợp lệ hoặc đã hết hạn");
         }
-        
+
         //2. Lay user tu db de update password
         //TODO: Xac thuc email truoc r ms dc thuc hien cac tinh nang nay
         UserAccount? existingUserAccount = await _userAccountRepository.GetUserAccountByEmailAsync(existingEmail);
@@ -237,17 +175,16 @@ public class AuthService : IAuthService
 
         //3. hash pass
         existingUserAccount.Password = HashPasswordUtil.HashPassword(request.NewPassword);
-        
+
         //4. save db
         await _userAccountRepository.UpdateSync(existingUserAccount);
-        
+
         //5. Xoa reset token
         await _redisService.RemoveAsync($"RESET:{resetToken}");
 
-        //6. Xoa cookie reset token
-        _httpContextAccessor.HttpContext?.Response.Cookies.Delete("resetToken");       
-        
-         //7. Response client
+        //6. Xoa cookie reset token ở layer controller
+
+        //7. Response client
         return ServiceResult<string>.Success("Đặt lại mật khẩu thành công");
     }
 }

@@ -1,16 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using HospitalManagementSystem.DTOs.Patient;
-using HospitalManagementSystem.DTOs.Employee;
-using HospitalManagementSystem.Services.Account;
-using HospitalManagementSystem.DTOs.Login;
-using Utils;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using server.Services;
-using HospitalManagementSystem.Services.Auth;
+using Application.Services.Auth;
+using Application.Common.Utils;
 
-namespace HospitalManagementSystem.Controllers.Auth;
-
+namespace WebApi.Controllers.Auth;
 [Route("api/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
@@ -18,12 +11,14 @@ public class AuthController : ControllerBase
     private readonly IUserAccountService _userAccountService;
     private readonly IEmployeeAccountService _employeeAccountService;
     private readonly IAuthService _authService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthController(IUserAccountService userAccountService, IEmployeeAccountService employeeAccountService, IAuthService authService)
+    public AuthController(IUserAccountService userAccountService, IEmployeeAccountService employeeAccountService, IAuthService authService, IHttpContextAccessor httpContextAccessor)
     {
         _userAccountService = userAccountService;
         _employeeAccountService = employeeAccountService;
         _authService = authService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     [HttpPost("/patient/register")]
@@ -69,8 +64,20 @@ public class AuthController : ControllerBase
         try
         {
             var result = await _authService.LoginSync(loginDto);
-            if (result.IsSuccess)
+            if (result.IsSuccess) {
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    SameSite = SameSiteMode.None,
+                    Secure = true
+                };
+
+                _httpContextAccessor.HttpContext?.Response.Cookies.Append("accessToken", result.Data!.AccessToken, cookieOptions);
+                _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", result.Data!.RefreshToken, cookieOptions);
+
                 return new ApiResponse<ResponseLoginDTO>(200, "Đăng nhập thành công.", result.Data);
+             }
             else
                 return new ApiResponse<ResponseLoginDTO>(400, result.Message);
         }
@@ -86,11 +93,10 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var result = _authService.LogoutAsync();
-            if (result.IsSuccess)
-                return new ApiResponse<string>(200, result.Data!);
-            else
-                return new ApiResponse<string>(400, result.Message);
+            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("accessToken");
+            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("refreshToken");
+
+            return new ApiResponse<string>(200, "Đăng xuất thành công.");
         }
         catch (Exception ex)
         {
@@ -137,8 +143,19 @@ public class AuthController : ControllerBase
         {
             var result = await _authService.VerifyOtpAsync(request);
 
-            if (result.IsSuccess && result.Data != null && result.Data.IsValid)
+            if (result.IsSuccess && result.Data != null && result.Data.IsValid) {
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    SameSite = SameSiteMode.None,
+                    Secure = true
+                }; 
+
+                _httpContextAccessor.HttpContext?.Response.Cookies.Append("resetToken", result.Data.ResetToken!, cookieOptions);
+
                 return Ok(new ApiResponse<ResponseVerifyOtp>(200, "Xác thực OTP thành công.", result.Data));
+            }
             else
                 return BadRequest(new ApiResponse<ResponseVerifyOtp>(400, result.Message));
 
@@ -156,9 +173,13 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var result = await _authService.ResetPasswordAsync(request);
-            if (result.IsSuccess)
+            var resetToken = _httpContextAccessor.HttpContext?.Request.Cookies["resetToken"];
+
+            var result = await _authService.ResetPasswordAsync(request, resetToken!);
+            if (result.IsSuccess) {
+                _httpContextAccessor.HttpContext?.Response.Cookies.Delete("resetToken");
                 return new ApiResponse<string>(200, "Success", result.Data);
+            }
             else
                 return new ApiResponse<string>(400, result.Message);
         }

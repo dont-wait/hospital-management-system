@@ -1,15 +1,7 @@
-using HospitalManagementSystem.DTOs.Employee;
-using HospitalManagementSystem.DTOs.UserAccount;
-using HospitalManagementSystem.Enums.Role;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace HospitalManagementSystem.Repositories.Employees;
-public interface IEmployeeRepository
-{
-    Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto);
-    Task<ResponseUserDTO?> GetEmployeeByIdAsync(Guid employeeId);
-}
-
+namespace Infrastructure.Persistence.Repositories.EmployeeRepository;
 class EmployeeRepository : IEmployeeRepository
 {
     private readonly AppDbContext _context;

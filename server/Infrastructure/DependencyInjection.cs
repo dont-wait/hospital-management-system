@@ -42,6 +42,8 @@ public static class DependencyInjection
             services.AddSendGridEmailProvider(configuration);
         }
 
+        services.AddScoped<ITokenService, TokenService>();
+
         return services;
     }
 }

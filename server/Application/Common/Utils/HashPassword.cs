@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace Utils;
+namespace Application.Common.Utils;
 public static class HashPasswordUtil
 {
     private const int KeySize = 8;

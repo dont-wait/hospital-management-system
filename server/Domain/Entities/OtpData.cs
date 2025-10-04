@@ -1,4 +1,4 @@
-namespace server.Models;
+namespace Domain.Entities;
 public class OtpData
 {
     public string Code { get; set; } = string.Empty;

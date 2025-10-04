@@ -1,4 +1,4 @@
-namespace Utils;
+namespace Application.Common.Utils;
 public class ApiResponse<T>
 {
     public int Status { get; set; }
