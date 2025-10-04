@@ -1,8 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Infrastructure.Services.Token;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Services.Token;
 using Infrastructure.Services.Swagger;
+using Infrastructure.Services.Email.Smtp;
+using Infrastructure.Services.Email.SendGrid;
+using Infrastructure.Services.Redis;
 
 namespace Infrastructure;
 
@@ -28,6 +31,16 @@ public static class DependencyInjection
 
         services.AddTokenService(configuration);
         services.AddSwaggerDocumentation();
+        services.AddRedisService(configuration);
+
+        if (configuration.GetValue<string>("EmailSettings:Provider") == "Smtp")
+        {
+            services.AddSmtpEmailProvider(configuration);
+        }
+        else
+        {
+            services.AddSendGridEmailProvider(configuration);
+        }
 
         return services;
     }

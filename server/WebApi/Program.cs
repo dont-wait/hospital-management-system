@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,26 +25,10 @@ builder.Services.AddRouting(options =>
 });
 
 
-// Config Redis
-var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
-if (string.IsNullOrWhiteSpace(redisConnectionString))
-    throw new InvalidOperationException("Không tìm thấy cấu hình Redis");
-
-try
-{
-    builder.Services.AddSingleton<IConnectionMultiplexer>(
-        ConnectionMultiplexer.Connect(redisConnectionString)
-    );
-    Console.WriteLine("Đã kết nối với Redis");
-} catch (Exception ex)
-{
-    Console.WriteLine($"Lỗi kết nối Redis: {ex.Message}");
-    throw;
-}
-
-
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 // builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
