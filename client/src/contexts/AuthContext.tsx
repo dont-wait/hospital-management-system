@@ -31,7 +31,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  console.log("hi");
 
   // Login handle
   const handleLogin = useCallback(
