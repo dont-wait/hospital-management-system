@@ -1,4 +1,4 @@
-import { Mail, Shield, Key } from "lucide-react";
+import { Mail, Shield, Key } from "@/lib/client/utils";
 
 export const getStepIcon = (step: number) => {
   const icons = {

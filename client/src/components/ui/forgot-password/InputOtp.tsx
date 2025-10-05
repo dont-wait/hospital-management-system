@@ -5,8 +5,7 @@ import {
   useContext,
 } from "react";
 import { OTPInput, OTPInputContext } from "input-otp";
-import { Dot } from "lucide-react";
-import { cn } from "@/lib/client/utils";
+import { cn, Dot } from "@/lib/client/utils";
 
 const InputOTP = forwardRef<
   ElementRef<typeof OTPInput>,

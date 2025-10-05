@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import {
   Card,
   CardContent,
@@ -6,31 +5,32 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/shared/Card";
+import { Shield, Clock, Users, Star } from "@/lib/client/utils";
 
 const features = [
   {
-    icon: dynamic(() => import("lucide-react").then((mod) => mod.Shield)),
+    icon: Shield,
     title: "Chăm sóc chuyên nghiệp",
     description:
       "Đội ngũ bác sĩ và chuyên gia giàu kinh nghiệm cung cấp dịch vụ chăm sóc y tế chất lượng cao nhất.",
     color: "text-blue-600",
   },
   {
-    icon: dynamic(() => import("lucide-react").then((mod) => mod.Clock)),
+    icon: Clock,
     title: "Cấp cứu 24/7",
     description:
       "Dịch vụ cấp cứu suốt ngày đêm đảm bảo bạn được hỗ trợ khi cần thiết nhất.",
     color: "text-green-600",
   },
   {
-    icon: dynamic(() => import("lucide-react").then((mod) => mod.User)),
+    icon: Users,
     title: "Chăm sóc toàn diện",
     description:
       "Từ chăm sóc dự phòng đến điều trị chuyên khoa, chúng tôi cung cấp đầy đủ các dịch vụ y tế.",
     color: "text-purple-600",
   },
   {
-    icon: dynamic(() => import("lucide-react").then((mod) => mod.Star)),
+    icon: Star,
     title: "Hài lòng bệnh nhân",
     description:
       "Liên tục được bệnh nhân đánh giá 5 sao cho dịch vụ chăm sóc và phục vụ tuyệt vời.",

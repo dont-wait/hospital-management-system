@@ -4,8 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/shared/Button";
 import { Input } from "@/components/ui/shared/Input";
 import { Label } from "@/components/ui/shared/Label";
+import { LoadingSpinner } from "@/components/ui/shared/LoadingSpinner";
 import { patientSchema, RegisterPatientDto } from "@/schemas/auth";
-import { Loader2, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "@/lib/client/utils";
 
 interface RegisterFormProps {
   onSubmit: (patientDto: RegisterPatientDto) => Promise<void>;
@@ -163,15 +164,8 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Creating Account...
-          </>
-        ) : (
-          "Create Account"
-        )}
+      <Button type="submit" className="w-full h-12" disabled={isLoading}>
+        {isLoading ? <LoadingSpinner text="Đang đăng ký..." /> : "Đăng ký"}
       </Button>
     </form>
   );

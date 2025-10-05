@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/shared/Button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/lib/client/utils";
 
 function Banner() {
   const { isAuthenticated, authUser } = useAuth();

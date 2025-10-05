@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/shared/Button";
 import { Input } from "@/components/ui/shared/Input";
 import { LoadingSpinner } from "@/components/ui/shared/LoadingSpinner";
 import { newPasswordSchema, NewPasswordDto } from "@/schemas/auth";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "@/lib/client/utils";
 
 interface PasswordStepProps {
   newPassword: string;
