@@ -15,7 +15,7 @@ function LoginCard() {
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Bạn chưa có tài khoản ?{" "}
+            Bạn chưa có tài khoản?{" "}
             <Link
               href="/register"
               className="font-medium text-blue-600 hover:text-blue-500"
