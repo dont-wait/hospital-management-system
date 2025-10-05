@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/shared/Button";
+import { Label } from "@/components/ui/shared/Label";
+import { LoadingSpinner } from "@/components/ui/shared/LoadingSpinner";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@/components/ui/forgot-password/input-otp";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
+} from "@/components/ui/forgot-password/InputOtp";
 
 interface OtpStepProps {
   email: string;
@@ -16,7 +16,7 @@ interface OtpStepProps {
   onClearError: () => void;
 }
 
-export function OtpStep({
+function OtpStep({
   email,
   otp,
   loading,
@@ -68,3 +68,5 @@ export function OtpStep({
     </form>
   );
 }
+
+export default OtpStep;

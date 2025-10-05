@@ -1,7 +1,5 @@
-"use client";
-
 import { forwardRef } from "react";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/shared/Input";
 
 interface PasswordInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -10,7 +8,6 @@ interface PasswordInputProps
 
 export const UsernameInput = forwardRef<HTMLInputElement, PasswordInputProps>(
   ({ error, ...props }, ref) => {
-
     return (
       <div className="relative">
         <Input

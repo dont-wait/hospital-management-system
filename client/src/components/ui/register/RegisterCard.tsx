@@ -1,25 +1,23 @@
-"use client";
-
-import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { RegisterHeader } from "./RegisterHeader"
-import { RegisterForm } from "./RegisterForm";
 import { useRegisterSubmit } from "@/hooks/useRegisterSubmit";
+import { Card, CardContent } from "@/components/ui/shared/Card";
+import { RegisterHeader } from "./RegisterHeader";
+import { RegisterForm } from "./RegisterForm";
 
-export function RegisterCard() {
+function RegisterCard() {
   const { handleSubmit, isLoading } = useRegisterSubmit();
 
   return (
-    <Card className="w-full max-w-2xl">
+    <Card className="w-full">
       <RegisterHeader />
       <CardContent className="space-y-6">
         <RegisterForm onSubmit={handleSubmit} isLoading={isLoading} />
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Already have an account?{" "}
+            Bạn đã có tài khoản?{" "}
             <Link href="/login" className="text-blue-600 hover:underline">
-              Sign in
+              Đăng nhập
             </Link>
           </p>
         </div>
@@ -27,3 +25,5 @@ export function RegisterCard() {
     </Card>
   );
 }
+
+export default RegisterCard;

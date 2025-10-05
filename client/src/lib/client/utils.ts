@@ -1,0 +1,91 @@
+import dynamic from "next/dynamic";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export const defaultOptions = {
+  position: "top-center" as const,
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+};
+
+/* Icons */
+export const Calendar = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Calendar),
+);
+
+export const Users = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Users),
+);
+
+export const FileText = dynamic(() =>
+  import("lucide-react").then((mod) => mod.FileText),
+);
+
+export const Activity = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Activity),
+);
+
+export const Heart = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Heart),
+);
+
+export const Clock = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Clock),
+);
+
+export const Dot = dynamic(() => import("lucide-react").then((mod) => mod.Dot));
+
+export const Eye = dynamic(() => import("lucide-react").then((mod) => mod.Eye));
+
+export const EyeOff = dynamic(() =>
+  import("lucide-react").then((mod) => mod.EyeOff),
+);
+
+export const ArrowLeft = dynamic(() =>
+  import("lucide-react").then((mod) => mod.ArrowLeft),
+);
+
+export const ArrowRight = dynamic(() =>
+  import("lucide-react").then((mod) => mod.ArrowRight),
+);
+
+export const Mail = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Mail),
+);
+
+export const Shield = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Shield),
+);
+
+export const Key = dynamic(() => import("lucide-react").then((mod) => mod.Key));
+
+export const Star = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Star),
+);
+
+export const CheckCircle = dynamic(() =>
+  import("lucide-react").then((mod) => mod.CheckCircle),
+);
+
+export const AlertCircle = dynamic(() =>
+  import("lucide-react").then((mod) => mod.AlertCircle),
+);
+
+export const LogOut = dynamic(() =>
+  import("lucide-react").then((mod) => mod.LogOut),
+);
+
+export const Home = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Home),
+);
+
+export const UserCheck = dynamic(() =>
+  import("lucide-react").then((mod) => mod.UserCheck),
+);

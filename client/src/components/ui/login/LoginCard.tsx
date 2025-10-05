@@ -1,28 +1,26 @@
-"use client";
-
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/shared/Card";
 import { LoginHeader } from "./LoginHeader";
 import { LoginForm } from "./LoginForm";
 import { useLoginSubmit } from "@/hooks/useLoginSubmit";
 import Link from "next/link";
 
-export function LoginCard() {
+function LoginCard() {
   const { handleSubmit, isLoading } = useLoginSubmit();
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full">
       <LoginHeader />
       <CardContent className="space-y-4">
         <LoginForm onSubmit={handleSubmit} isLoading={isLoading} />
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Don&apos;t have an account?{" "}
+            Bạn chưa có tài khoản?{" "}
             <Link
               href="/register"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
-              Sign up
+              Đăng ký
             </Link>
           </p>
         </div>
@@ -30,3 +28,5 @@ export function LoginCard() {
     </Card>
   );
 }
+
+export default LoginCard;

@@ -1,9 +1,7 @@
-"use client";
-
 import { useState, forwardRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/shared/Button";
+import { Input } from "@/components/ui/shared/Input";
+import { Eye, EyeOff } from "@/lib/client/utils";
 
 interface PasswordInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {

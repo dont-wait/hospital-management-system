@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { decodePayload } from "@/lib/utils";
+import { tokenService } from "@/services/token.service";
 import { type Role } from "@/types";
 
 function ForbiddenResponse() {
@@ -74,7 +74,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  const payload = decodePayload(token);
+  const payload = tokenService.decodePayload(token);
   if (!payload || !payload.RoleId) {
     return NextResponse.redirect(new URL("/login", req.url));
   }

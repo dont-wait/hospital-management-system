@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Eye, EyeOff } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { Button } from "@/components/ui/shared/Button";
+import { Input } from "@/components/ui/shared/Input";
+import { LoadingSpinner } from "@/components/ui/shared/LoadingSpinner";
 import { newPasswordSchema, NewPasswordDto } from "@/schemas/auth";
+import { Eye, EyeOff } from "@/lib/client/utils";
 
 interface PasswordStepProps {
   newPassword: string;
@@ -13,11 +13,7 @@ interface PasswordStepProps {
   onSubmit: (newPasswordDto: NewPasswordDto) => Promise<void>;
 }
 
-export function PasswordStep({
-  newPassword,
-  loading,
-  onSubmit,
-}: PasswordStepProps) {
+function PasswordStep({ newPassword, loading, onSubmit }: PasswordStepProps) {
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -79,3 +75,5 @@ export function PasswordStep({
     </>
   );
 }
+
+export default PasswordStep;

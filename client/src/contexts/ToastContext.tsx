@@ -2,7 +2,7 @@
 
 import { createContext, useContext, ReactNode } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { defaultOptions } from "@/lib/toast";
+import { defaultOptions } from "@/lib/client/utils";
 import "react-toastify/dist/ReactToastify.css";
 
 interface ToastContextType {
