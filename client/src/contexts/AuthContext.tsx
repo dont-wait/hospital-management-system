@@ -7,6 +7,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
 } from "react";
 import { useRouter } from "next/navigation";
 import { AuthUser } from "@/types";
@@ -30,46 +31,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  console.log("hi");
 
   // Login handle
-  const handleLogin = async (userDto: LoginPatientDto): Promise<boolean> => {
-    setIsLoading(true);
-    try {
-      const { data } = await authService.login(userDto);
-      const { accessToken, refreshToken } = data;
+  const handleLogin = useCallback(
+    async (userDto: LoginPatientDto): Promise<boolean> => {
+      setIsLoading(true);
+      try {
+        const { data } = await authService.login(userDto);
+        const { accessToken, refreshToken } = data;
 
-      // Store token, refresh token
-      tokenService.saveTokens(accessToken, refreshToken);
+        tokenService.saveTokens(accessToken, refreshToken);
+        tokenService.saveUser(data);
+        setAuthUser(data);
+        setBearerToken(accessToken);
 
-      // Store user
-      tokenService.saveUser(data);
-      setAuthUser(data);
-
-      // Set Bearer Token
-      setBearerToken(accessToken);
-
-      return true;
-    } catch {
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        return true;
+      } catch {
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   // Register handle
-  const handleRegister = async (
-    patientDto: RegisterPatientDto,
-  ): Promise<boolean> => {
-    setIsLoading(true);
-    try {
-      await authService.register(patientDto);
-      return true;
-    } catch {
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const handleRegister = useCallback(
+    async (patientDto: RegisterPatientDto): Promise<boolean> => {
+      setIsLoading(true);
+      try {
+        await authService.register(patientDto);
+        return true;
+      } catch {
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   // Clear user session and show logout message
   const handleLogout = useCallback(async () => {
@@ -86,7 +87,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (user?.accessToken) {
       try {
         const payload = tokenService.decodePayload(user.accessToken);
-        // Token is expried?
         const isExpired =
           !payload || (payload.exp && Date.now() >= payload.exp * 1000);
         if (isExpired) {
@@ -102,14 +102,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, [handleLogout]);
 
-  const contextValue: AuthContextType = {
-    authUser,
-    isLoading,
-    isAuthenticated: !!authUser,
-    login: handleLogin,
-    register: handleRegister,
-    logout: handleLogout,
-  };
+  // Memoize context value to avoid unnecessary rerenders
+  const contextValue = useMemo(
+    () => ({
+      authUser,
+      isLoading,
+      isAuthenticated: !!authUser,
+      login: handleLogin,
+      register: handleRegister,
+      logout: handleLogout,
+    }),
+    [authUser, isLoading, handleLogin, handleRegister, handleLogout],
+  );
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
