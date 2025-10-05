@@ -6,6 +6,7 @@ import {
   useContext,
   useState,
   useEffect,
+  useCallback,
 } from "react";
 import { useRouter } from "next/navigation";
 import { AuthUser } from "@/types";
@@ -71,23 +72,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Clear user session and show logout message
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     await authService.logout();
     tokenService.clearTokens();
     tokenService.clearStoredUser();
     setAuthUser(null);
     router.push("/");
-  };
+  }, [router]);
 
   // Initialize auth state on component mount
   useEffect(() => {
     const user = tokenService.getStoredUser();
     if (user?.accessToken) {
-      setAuthUser(user);
-      setBearerToken(user.accessToken);
+      try {
+        const payload = tokenService.decodePayload(user.accessToken);
+        // Token is expried?
+        const isExpired =
+          !payload || (payload.exp && Date.now() >= payload.exp * 1000);
+        if (isExpired) {
+          handleLogout();
+        } else {
+          setAuthUser(user);
+          setBearerToken(user.accessToken);
+        }
+      } catch {
+        handleLogout();
+      }
     }
     setIsLoading(false);
-  }, []);
+  }, [handleLogout]);
 
   const contextValue: AuthContextType = {
     authUser,
