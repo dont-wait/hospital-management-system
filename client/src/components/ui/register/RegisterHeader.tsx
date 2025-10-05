@@ -3,7 +3,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/shared/Card";
-import { Heart } from "lucide-react";
+import { Heart } from "@/lib/client/utils";
 
 export function RegisterHeader() {
   return (
@@ -11,9 +11,9 @@ export function RegisterHeader() {
       <div className="flex items-center justify-center mb-4">
         <Heart className="h-10 w-10 text-blue-600" />
       </div>
-      <CardTitle className="text-2xl text-center">Create Account</CardTitle>
+      <CardTitle className="text-2xl text-center">Tạo Tài khoản</CardTitle>
       <CardDescription className="text-center">
-        Join MediCare Hospital - Register Now!
+        Tham gia MediCare Hospital - Đăng ký ngay!
       </CardDescription>
     </CardHeader>
   );

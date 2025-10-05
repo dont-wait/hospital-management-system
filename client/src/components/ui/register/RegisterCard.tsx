@@ -15,9 +15,9 @@ function RegisterCard() {
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Already have an account?{" "}
+            Bạn đã có tài khoản ?{" "}
             <Link href="/login" className="text-blue-600 hover:underline">
-              Sign in
+              Đăng nhập
             </Link>
           </p>
         </div>
