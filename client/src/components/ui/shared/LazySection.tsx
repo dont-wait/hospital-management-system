@@ -35,7 +35,16 @@ function LazySection({ importFunc, skeleton, className }: LazySectionProps) {
     };
   }, []);
 
-  return <div className={className} ref={ref}>{visible ? <Section /> : skeleton}</div>;
+  return (
+    <div
+      className={className}
+      ref={ref}
+      aria-busy={!visible}
+      aria-live="polite"
+    >
+      {visible ? <Section /> : skeleton}
+    </div>
+  );
 }
 
 export default LazySection;
