@@ -26,7 +26,7 @@ function MainCard() {
 
   useOtpClipboard(state.step, state.otp, (otp) => updateState({ otp }));
 
-  const renderStep = useMemo(() => {
+  const renderStep = () => {
     switch (state.step) {
       case 1:
         return (
@@ -58,18 +58,7 @@ function MainCard() {
       default:
         return null;
     }
-  }, [
-    state.step,
-    state.email,
-    state.otp,
-    state.newPassword,
-    state.loading,
-    resetPassword,
-    updateState,
-    verifyOtp,
-    clearMessages,
-    createNewPassword,
-  ]);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
@@ -83,7 +72,7 @@ function MainCard() {
           {state.success && (
             <AlertMessage type="success" message={state.success} />
           )}
-          <Suspense fallback={<div>Loading...</div>}>{renderStep}</Suspense>
+          <Suspense fallback={<div>Loading...</div>}>{renderStep()}</Suspense>
         </CardContent>
       </Card>
     </div>
