@@ -60,7 +60,7 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
       </div>
 
       <Button type="submit" className="w-full h-12" disabled={isLoading}>
-        {isLoading ? <LoadingSpinner text="Đang gửi..." /> : "Tiếp tục"}
+        {isLoading ? <LoadingSpinner text="Đang đăng nhập..." /> : "Đăng nhập"}
       </Button>
     </form>
   );
