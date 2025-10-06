@@ -19,8 +19,7 @@ Hệ thống quản lý bệnh viện hiện đại được xây dựng với C
 
 Hospital Management System là một ứng dụng web toàn diện được thiết kế để quản lý các hoạt động của bệnh viện một cách hiệu quả. Hệ thống hỗ trợ quản lý bệnh nhân, bác sĩ, lịch hẹn và các dịch vụ y tế khác.
 
-### Đặc điểm nổi bật
-
+### Đặc điểm nổi bật:
 - ✅ Clean Architecture với SOLID principles
 - ✅ RESTful API với JWT Authentication
 - ✅ Real-time notifications với SignalR
@@ -33,7 +32,7 @@ Hospital Management System là một ứng dụng web toàn diện được thi�
 
 Dự án được xây dựng theo mô hình **Clean Architecture** với các lớp sau:
 
-```text
+```
 Backend (Clean Architecture)
 ├── WebApi (Presentation Layer)
 ├── Application (Application Layer)
@@ -51,7 +50,6 @@ Frontend (Next.js)
 ## 🛠️ Công nghệ sử dụng
 
 ### Backend
-
 - **Framework**: .NET 8.0
 - **Database**: SQL Server 2022
 - **ORM**: Entity Framework Core
@@ -61,7 +59,6 @@ Frontend (Next.js)
 - **Containerization**: Docker
 
 ### Frontend
-
 - **Framework**: Next.js 15.5.2
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
@@ -71,7 +68,6 @@ Frontend (Next.js)
 - **State Management**: React Context
 
 ### DevOps & Tools
-
 - **Container**: Docker & Docker Compose
 - **Database**: SQL Server in Docker
 - **Cache**: Redis in Docker
@@ -79,7 +75,6 @@ Frontend (Next.js)
 ## ✨ Tính năng
 
 ### 🔐 Xác thực & Phân quyền
-
 - Đăng nhập/Đăng ký cho bệnh nhân
 - Quản lý tài khoản bác sĩ (Admin only)
 - JWT Authentication với Refresh Token
@@ -87,13 +82,11 @@ Frontend (Next.js)
 - Quên mật khẩu với OTP verification
 
 ### 👥 Quản lý người dùng
-
 - **Bệnh nhân**: Đăng ký, cập nhật thông tin cá nhân
 - **Bác sĩ**: Quản lý hồ sơ, chuyên khoa
 - **Admin**: Quản lý toàn bộ hệ thống
 
 ### 📱 Giao diện người dùng
-
 - Responsive design
 - Dark/Light theme support
 - Loading states và error handling
@@ -101,7 +94,6 @@ Frontend (Next.js)
 - Toast notifications
 
 ### 🔒 Bảo mật
-
 - Password hashing với bcrypt
 - JWT token với expiration
 - Rate limiting
@@ -111,14 +103,12 @@ Frontend (Next.js)
 ## 🚀 Cài đặt và chạy dự án
 
 ### Yêu cầu hệ thống
-
 - .NET 8.0 SDK
 - Node.js 18+ và npm/yarn
 - Docker và Docker Compose
 - SQL Server (hoặc Docker container)
 
 ### 1. Clone repository
-
 ```bash
 git clone https://github.com/dont-wait/hospital-management-system.git
 cd hospital-management-system
@@ -174,8 +164,7 @@ npm run dev
 ## 📁 Cấu trúc dự án
 
 ### Backend Structure
-
-```text
+```
 server/
 ├── WebApi/                 # API Controllers, Middleware
 │   ├── Controllers/        # API Endpoints
@@ -194,8 +183,7 @@ server/
 ```
 
 ### Frontend Structure
-
-```text
+```
 client/
 ├── src/
 │   ├── app/              # Next.js App Router
@@ -215,10 +203,9 @@ client/
 API documentation được tự động tạo bằng Swagger và có thể truy cập tại:
 `https://localhost:5001/swagger`
 
-### Main Endpoints
+### Main Endpoints:
 
 #### Authentication
-
 ```http
 POST /login                 # User login
 POST /patient/register      # Patient registration
@@ -230,7 +217,6 @@ POST /reset-password      # Reset password
 ```
 
 #### User Management
-
 ```http
 GET  /api/users           # Get all users (Admin only)
 GET  /api/users/{id}      # Get user by ID
@@ -243,27 +229,23 @@ DELETE /api/users/{id}    # Delete user (Admin only)
 ### Core Entities
 
 #### UserAccount
-
 - Id, CitizenID (unique)
 - Password (hashed)
 - AvatarUrl, Is_Active
 - Created/Updated timestamps
 
 #### Patient
-
 - Personal information (Name, Phone, Email)
 - Medical history references
 - Relationship with UserAccount
 
 #### Employee & Doctor
-
 - Professional information
 - Specialization (for doctors)
 - Certification details
 - Role-based permissions
 
 ### Relationships
-
 - UserAccount → Patient (1:0..1)
 - UserAccount → Employee (1:0..1)
 - Employee → Doctor (1:0..1)
@@ -278,7 +260,6 @@ DELETE /api/users/{id}    # Delete user (Admin only)
 5. Open a Pull Request
 
 ### Development Guidelines
-
 - Follow Clean Architecture principles
 - Write unit tests for new features
 - Follow coding standards (C# và TypeScript)
@@ -287,7 +268,6 @@ DELETE /api/users/{id}    # Delete user (Admin only)
 ## 📝 Environment Variables
 
 ### Backend (.NET)
-
 ```env
 ConnectionStrings__DefaultConnection=Server=localhost;Database=HospitalDB;Trusted_Connection=true;
 JWT__SecretKey=your-secret-key
@@ -297,7 +277,6 @@ Redis__ConnectionString=localhost:6379
 ```
 
 ### Frontend (Next.js)
-
 ```env
 NEXT_PUBLIC_API_URL=https://localhost:5001/api
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -306,13 +285,11 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ## 🐛 Known Issues & TODO
 
 ### Current Issues
-
 - [ ] Email service integration pending
 - [ ] File upload for avatars
 - [ ] Advanced search functionality
 
 ### Planned Features
-
 - [ ] Appointment scheduling system
 - [ ] Medical records management
 - [ ] Prescription management
