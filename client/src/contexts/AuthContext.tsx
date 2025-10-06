@@ -1,12 +1,20 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { useRouter } from "next/navigation";
 import { AuthUser } from "@/types";
 import { authService } from "@/services/auth.service";
 import { tokenService } from "@/services/token.service";
-import { setBearerToken, delBearerToken } from "@/axios";
+import { setBearerToken } from "@/axios";
 import { LoginPatientDto, RegisterPatientDto } from "@/schemas/auth";
-import { decodePayload } from "@/lib/utils";
 
 interface AuthContextType {
   authUser: AuthUser | null;
@@ -19,87 +27,92 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   // Login handle
-  const handleLogin = async (userDto: LoginPatientDto): Promise<boolean> => {
-    setIsLoading(true);
-    try {
-      const { data } = await authService.login(userDto);
-      const { accessToken, refreshToken } = data;
+  const handleLogin = useCallback(
+    async (userDto: LoginPatientDto): Promise<boolean> => {
+      setIsLoading(true);
+      try {
+        const { data } = await authService.login(userDto);
+        const { accessToken, refreshToken } = data;
 
-      // Store token, refresh token
-      tokenService.saveTokens(accessToken, refreshToken);
+        tokenService.saveTokens(accessToken, refreshToken);
+        tokenService.saveUser(data);
+        setAuthUser(data);
+        setBearerToken(accessToken);
 
-      // Store user
-      tokenService.saveUser(data);
-      setAuthUser(data);
-
-      // Set Bearer Token
-      setBearerToken(accessToken);
-
-      return true;
-    } catch {
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        return true;
+      } catch {
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   // Register handle
-  const handleRegister = async (
-    patientDto: RegisterPatientDto,
-  ): Promise<boolean> => {
-    setIsLoading(true);
-    try {
-      await authService.register(patientDto);
-      return true;
-    } catch {
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const handleRegister = useCallback(
+    async (patientDto: RegisterPatientDto): Promise<boolean> => {
+      setIsLoading(true);
+      try {
+        await authService.register(patientDto);
+        return true;
+      } catch {
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   // Clear user session and show logout message
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     await authService.logout();
     tokenService.clearTokens();
     tokenService.clearStoredUser();
     setAuthUser(null);
-  };
+    router.push("/");
+  }, [router]);
 
   // Initialize auth state on component mount
   useEffect(() => {
     const user = tokenService.getStoredUser();
     if (user?.accessToken) {
-      const payload = decodePayload(user.accessToken);
-      const now = Math.floor(Date.now() / 1000);
-
-      if (!payload || (payload.exp && now >= payload.exp)) {
-        // Token hết hạn - xóa token
-        setAuthUser(null);
-        authService.logout();
-        delBearerToken();
-        window.location.href = "/login";
+      try {
+        const payload = tokenService.decodePayload(user.accessToken);
+        const isExpired =
+          !payload || (payload.exp && Date.now() >= payload.exp * 1000);
+        if (isExpired) {
+          handleLogout();
+        } else {
+          setAuthUser(user);
+          setBearerToken(user.accessToken);
+        }
+      } catch {
+        handleLogout();
       }
-
-      setAuthUser(user);
-      setBearerToken(user.accessToken);
     }
     setIsLoading(false);
-  }, []);
+  }, [handleLogout]);
 
-  const contextValue: AuthContextType = {
-    authUser,
-    isLoading,
-    isAuthenticated: !!authUser,
-    login: handleLogin,
-    register: handleRegister,
-    logout: handleLogout,
-  };
+  // Memoize context value to avoid unnecessary rerenders
+  const contextValue = useMemo(
+    () => ({
+      authUser,
+      isLoading,
+      isAuthenticated: !!authUser,
+      login: handleLogin,
+      register: handleRegister,
+      logout: handleLogout,
+    }),
+    [authUser, isLoading, handleLogin, handleRegister, handleLogout],
+  );
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

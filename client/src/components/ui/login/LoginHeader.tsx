@@ -1,5 +1,9 @@
-import { Heart } from "lucide-react";
-import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/shared/Card";
+import { Heart } from "@/lib/client/utils";
 
 export function LoginHeader() {
   return (
@@ -7,9 +11,9 @@ export function LoginHeader() {
       <div className="flex items-center justify-center mb-4">
         <Heart className="h-10 w-10 text-blue-600" />
       </div>
-      <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
+      <CardTitle className="text-2xl text-center">Đăng Nhập</CardTitle>
       <CardDescription className="text-center">
-        Sign in to your MediCare Hospital account
+        Đăng nhập ngay với tài khoản của bạn.
       </CardDescription>
     </CardHeader>
   );

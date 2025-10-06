@@ -1,5 +1,5 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/shared/Alert";
+import { CheckCircle, AlertCircle } from "@/lib/client/utils";
 
 interface AlertMessageProps {
   type: "error" | "success";

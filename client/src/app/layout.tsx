@@ -1,8 +1,9 @@
 import "./globals.css";
+import "react-loading-skeleton/dist/skeleton.css";
 import type { Metadata } from "next";
 import { roboto } from "@/font/font";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { Navigation } from "@/components/Navigation";
+import { Navigation } from "@/components/ui/shared/Navigation";
 import { ToastProvider } from "@/contexts/ToastContext";
 
 export const metadata: Metadata = {

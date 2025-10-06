@@ -1,9 +1,14 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/shared/Card";
+import { Button } from "@/components/ui/shared/Button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Calendar, FileText, Heart, Clock } from "lucide-react";
+import { Calendar, FileText, Heart, Clock } from "@/lib/client/utils";
 
 export default function PatientPage() {
   const { authUser } = useAuth();

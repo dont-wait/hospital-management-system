@@ -1,8 +1,9 @@
 "use client";
+
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Heart, User, LogOut, Home, UserCheck } from "lucide-react";
+import { Button } from "@/components/ui/shared/Button";
+import { Heart, Users, LogOut, Home, UserCheck } from "@/lib/client/utils";
 
 export function Navigation() {
   const { authUser, logout, isAuthenticated } = useAuth();
@@ -46,7 +47,7 @@ export function Navigation() {
                       variant="ghost"
                       className="flex items-center space-x-2"
                     >
-                      <User className="h-4 w-4" />
+                      <Users className="h-4 w-4" />
                       <span>Cổng thông tin Bệnh nhân</span>
                     </Button>
                   </Link>
