@@ -67,6 +67,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut("/patient/{patientId}")]
+    [Authorize(Roles = "patient")]
     public async Task<ApiResponse<ResponseUpdatePatient>> UpdateUserById(Guid patientId, RequestUpdatePatient request)
     {
         try

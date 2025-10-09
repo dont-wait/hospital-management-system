@@ -54,8 +54,6 @@ public class UserAccountService : IUserAccountService
             PlaceOfResidence = request.PlaceOfResidence,
             AvatarUrl = request.AvatarUrl
         };
-        
-        
         return ServiceResult<ResponseUpdatePatient>.Success(responsePatientDto);
     }
 
