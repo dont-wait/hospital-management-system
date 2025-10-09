@@ -104,9 +104,24 @@ public class UserAccountRepository : IUserAccountRepository
                          (ua.Employee != null && ua.Employee.Email == email))
             .FirstOrDefaultAsync();
     }
-
     public async Task UpdateSync(UserAccount userAccount)
     {
+        _context.user_accounts.Update(userAccount);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<Patient?> FindPatientWithAccountByIdAsync(Guid patientId)
+    {
+        var existingPatient = await _context.patients
+            .Include(p => p.UserAccount)
+            .FirstOrDefaultAsync(p => p.Id == patientId);
+        return existingPatient;
+    }
+
+    //Cap nhat thong tin tai khoan cx nhu info cua patient
+    public async Task UpdateAccountAndPatientAsync(Patient patient, UserAccount userAccount)
+    {
+        _context.patients.Update(patient);
         _context.user_accounts.Update(userAccount);
         await _context.SaveChangesAsync();
     }

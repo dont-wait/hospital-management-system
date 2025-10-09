@@ -23,8 +23,7 @@ public class EmployeeController : ControllerBase
             var result = await _employeeAccountService.GetEmployeeByIdAsync(employeeId);
             if (result.IsSuccess)
                 return new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data);
-            else
-                return new ApiResponse<ResponseUserDTO>(404, result.Message);
+            return new ApiResponse<ResponseUserDTO>(404, result.Message);
         }
         catch (Exception ex)
         {
