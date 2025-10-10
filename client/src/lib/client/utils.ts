@@ -121,3 +121,15 @@ export const CircleX = dynamic(() =>
 export const Lock = dynamic(() =>
   import("lucide-react").then((mod) => mod.Lock),
 );
+
+export const Pencil = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Pencil),
+);
+
+export const User = dynamic(() =>
+  import("lucide-react").then((mod) => mod.User),
+);
+
+export const Phone = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Phone),
+);
