@@ -24,6 +24,7 @@
     "motion": "^12.23.22",
     "next": "15.5.2",
     "react": "19.1.0",
+    "react-country-region-selector": "^4.0.2",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.62.0",
     "react-loading-skeleton": "^3.5.0",
