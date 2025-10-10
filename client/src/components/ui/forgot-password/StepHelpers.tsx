@@ -11,7 +11,7 @@ export const getStepIcon = (step: number) => {
 
 export const getStepTitle = (step: number) => {
   const titles = {
-    1: "Quên mật khẩu",
+    1: "Đổi mật khẩu",
     2: "Xác thực OTP",
     3: "Đặt mật khẩu mới",
   };

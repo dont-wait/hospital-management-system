@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/shared/Card";
 import { AlertMessage } from "@/components/ui/shared/AlertMessage";
 import { StepHeader } from "@/components/ui/forgot-password/StepHeader";
