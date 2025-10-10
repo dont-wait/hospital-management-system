@@ -23,7 +23,7 @@ public class UserAccountService : IUserAccountService
         
         var accountOfPatient = patientExisting.UserAccount;
         if (accountOfPatient == null)
-            return ServiceResult<ResponseUpdatePatient>.Fail("Khong tim thay tai khoan nguoi dung");
+            return ServiceResult<ResponseUpdatePatient>.Fail("Không tìm thấy tài khoản người dùng");
             
         
         // 🩺 Cập nhật thông tin bệnh nhân
