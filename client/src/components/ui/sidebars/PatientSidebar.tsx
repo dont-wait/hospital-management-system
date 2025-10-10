@@ -78,13 +78,10 @@ function PatientSidebar() {
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={() => handleItemClick("/login")}
-            className="w-full flex items-center gap-4 p-4 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
+            className="w-full flex items-center gap-4 p-4 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200"
           >
-            <div className="p-2 rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors duration-200">
-              <LogIn
-                size={20}
-                className="text-gray-600 hover:text-blue-600"
-              />
+            <div className="p-2 rounded-lg bg-gray-100 transition-colors duration-200">
+              <LogIn size={20} className="text-gray-600" />
             </div>
             <span className="flex-1 text-left font-medium">Đăng Nhập</span>
           </motion.button>
@@ -92,13 +89,10 @@ function PatientSidebar() {
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={() => handleItemClick("/logout")}
-            className="w-full flex items-center gap-4 p-4 rounded-lg text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-200"
+            className="w-full flex items-center gap-4 p-4 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200"
           >
             <div className="p-2 rounded-lg bg-gray-100 group-hover:bg-red-100 transition-colors duration-200">
-              <LogOut
-                size={20}
-                className="text-gray-600 hover:text-red-600"
-              />
+              <LogOut size={20} className="text-gray-600" />
             </div>
             <span className="flex-1 text-left font-medium">Đăng Xuất</span>
           </motion.button>
