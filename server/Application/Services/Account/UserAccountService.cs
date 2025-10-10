@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Application.Common.DTOs.Patient;
 using Application.Common.Utils;
 
 
@@ -12,6 +13,48 @@ public class UserAccountService : IUserAccountService
     {
         _userAccountRepository = userAccountRepository;
         _currentUserService = currentUserService;
+    }
+
+    public async Task<ServiceResult<ResponseUpdatePatient>> UpdateUserAccount_Patient_Async(Guid patientId, RequestUpdatePatient request)
+    {
+        var patientExisting = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId);
+        if (patientExisting == null)
+            return ServiceResult<ResponseUpdatePatient>.Fail("Khong tim thay thong tin nguoi dung");
+        
+        var accountOfPatient = patientExisting.UserAccount;
+        if (accountOfPatient == null)
+            return ServiceResult<ResponseUpdatePatient>.Fail("Khong tim thay tai khoan nguoi dung");
+            
+        
+        // 🩺 Cập nhật thông tin bệnh nhân
+        patientExisting.FirstName = request.FirstName;
+        patientExisting.LastName = request.LastName;
+        patientExisting.Email = request.Email;
+        patientExisting.PhoneNumber = request.PhoneNumber;
+        patientExisting.Gender = request.Gender;
+        patientExisting.DateOfBirth = request.DateOfBirth;
+        patientExisting.Address = request.Address;
+        patientExisting.Nationality = request.Nationality;
+        patientExisting.PlaceOfResidence = request.PlaceOfResidence;
+        accountOfPatient.AvatarUrl = request.AvatarUrl;
+        
+        await _userAccountRepository.UpdateAccountAndPatientAsync(patientExisting, accountOfPatient);
+        
+        ResponseUpdatePatient responsePatientDto = new ResponseUpdatePatient
+        {
+            PatientId = patientId,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Email = request.Email,
+            PhoneNumber = request.PhoneNumber,
+            Gender = request.Gender,
+            DateOfBirth = request.DateOfBirth,
+            Address = request.Address,
+            Nationality = request.Nationality,
+            PlaceOfResidence = request.PlaceOfResidence,
+            AvatarUrl = request.AvatarUrl
+        };
+        return ServiceResult<ResponseUpdatePatient>.Success(responsePatientDto);
     }
 
     public Guid? CurrentUserId => _currentUserService.CurrentUserId;

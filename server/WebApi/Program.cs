@@ -52,7 +52,7 @@ using (var scope = app.Services.CreateScope())
     await DataSeeder.SeedAsync(db);
 }
 
-    app.UseCors("CorsPolicy");
+app.UseCors("CorsPolicy");
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
