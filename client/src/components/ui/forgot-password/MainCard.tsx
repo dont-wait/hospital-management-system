@@ -72,7 +72,7 @@ function MainCard() {
           {state.success && (
             <AlertMessage type="success" message={state.success} />
           )}
-          <Suspense fallback={<div>Loading...</div>}>{renderStep()}</Suspense>
+          {renderStep()}
         </CardContent>
       </Card>
     </div>
