@@ -19,7 +19,7 @@ public class UserAccountService : IUserAccountService
     {
         var patientExisting = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId);
         if (patientExisting == null)
-            return ServiceResult<ResponseUpdatePatient>.Fail("Khong tim thay thong tin nguoi dung");
+            return ServiceResult<ResponseUpdatePatient>.Fail("Không tìm thấy thông tin người dùng");
         
         var accountOfPatient = patientExisting.UserAccount;
         if (accountOfPatient == null)
