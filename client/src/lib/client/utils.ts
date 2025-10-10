@@ -15,6 +15,18 @@ export const defaultOptions = {
   draggable: true,
 };
 
+export const itemVariants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.1,
+      duration: 0.5,
+    },
+  }),
+};
+
 /* Icons */
 export const Calendar = dynamic(() =>
   import("lucide-react").then((mod) => mod.Calendar),
@@ -82,10 +94,30 @@ export const LogOut = dynamic(() =>
   import("lucide-react").then((mod) => mod.LogOut),
 );
 
+export const LogIn = dynamic(() =>
+  import("lucide-react").then((mod) => mod.LogIn),
+);
+
 export const Home = dynamic(() =>
   import("lucide-react").then((mod) => mod.Home),
 );
 
 export const UserCheck = dynamic(() =>
   import("lucide-react").then((mod) => mod.UserCheck),
+);
+
+export const Bell = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Bell),
+);
+
+export const Menu = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Menu),
+);
+
+export const CircleX = dynamic(() =>
+  import("lucide-react").then((mod) => mod.CircleX),
+);
+
+export const Lock = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Lock),
 );

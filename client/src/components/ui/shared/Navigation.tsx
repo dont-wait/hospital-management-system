@@ -1,76 +1,54 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSidebar } from "@/contexts/SidebarContext";
 import { Button } from "@/components/ui/shared/Button";
-import { Heart, Users, LogOut, Home, UserCheck } from "@/lib/client/utils";
+import PatientSidebar from "@/components/ui/sidebars/PatientSidebar";
+import { Heart, Bell, Menu } from "@/lib/client/utils";
 
 export function Navigation() {
-  const { authUser, logout, isAuthenticated } = useAuth();
+  const { authUser, isAuthenticated } = useAuth();
+  const { openSidebar, setContent } = useSidebar();
+
+  const handleOpenDetails = () => {
+    setContent(<PatientSidebar />);
+    openSidebar();
+  };
 
   return (
     <nav className="bg-white shadow-md border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex items-center">
+          {/* Logo section */}
+          <section className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <Heart className="h-8 w-8 text-blue-600" />
               <span className="font-bold text-xl text-gray-900">MediCare</span>
             </Link>
-          </div>
+          </section>
 
-          <div className="flex items-center space-x-4">
-            <Link href="/">
-              <Button variant="ghost" className="flex items-center space-x-2">
-                <Home className="h-4 w-4" />
-                <span>Trang chủ</span>
-              </Button>
-            </Link>
-
-            {isAuthenticated ? (
-              <>
-                {authUser && authUser.employee && (
-                  <Link href="/doctor">
-                    <Button
-                      variant="ghost"
-                      className="flex items-center space-x-2"
-                    >
-                      <UserCheck className="h-4 w-4" />
-                      <span>Bảng điều khiển Bác sĩ</span>
-                    </Button>
-                  </Link>
-                )}
-
-                {authUser && authUser.patient && (
-                  <Link href="/patient">
-                    <Button
-                      variant="ghost"
-                      className="flex items-center space-x-2"
-                    >
-                      <Users className="h-4 w-4" />
-                      <span>Cổng thông tin Bệnh nhân</span>
-                    </Button>
-                  </Link>
-                )}
-
-                <div className="flex items-center space-x-2">
-                  <Button onClick={logout} variant="outline" size="sm">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Đăng xuất
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Link href="/login">
-                  <Button variant="outline">Đăng nhập</Button>
-                </Link>
-                <Link href="/register">
-                  <Button>Đăng ký</Button>
-                </Link>
-              </div>
+          {/* Options section */}
+          <section className="flex items-center space-x-4">
+            {isAuthenticated && (
+              <Image
+                src={authUser!.avatarUrl}
+                className="rounded-full"
+                width={32}
+                height={32}
+                alt="avatar"
+              />
             )}
-          </div>
+
+            <Button variant="outline" size="sm">
+              <Bell className="h-4 w-4" />
+            </Button>
+
+            <Button variant="outline" size="sm" onClick={handleOpenDetails}>
+              <Menu className="h-4 w-4" />
+            </Button>
+          </section>
         </div>
       </div>
     </nav>

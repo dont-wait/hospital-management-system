@@ -5,6 +5,8 @@ import { roboto } from "@/font/font";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Navigation } from "@/components/ui/shared/Navigation";
 import { ToastProvider } from "@/contexts/ToastContext";
+import { SidebarProvider } from "@/contexts/SidebarContext";
+import { Sidebar } from "@/components/ui/shared/Sidebar";
 
 export const metadata: Metadata = {
   title: "Medica Hospital",
@@ -22,8 +24,11 @@ export default function RootLayout({
       <body className={roboto.className}>
         <ToastProvider>
           <AuthProvider>
-            <Navigation />
-            <main>{children}</main>
+            <SidebarProvider>
+              <Navigation />
+              <main>{children}</main>
+              <Sidebar />
+            </SidebarProvider>
           </AuthProvider>
         </ToastProvider>
       </body>
