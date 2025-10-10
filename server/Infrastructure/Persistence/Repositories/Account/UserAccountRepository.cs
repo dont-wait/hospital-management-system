@@ -118,7 +118,7 @@ public class UserAccountRepository : IUserAccountRepository
         return existingPatient;
     }
 
-    //Cap nhat thong tin tai khoan cx nhu info cua patient
+    // Cập nhật thông tin tài khoản cũng như thông tin của bệnh nhân
     public async Task UpdateAccountAndPatientAsync(Patient patient, UserAccount userAccount)
     {
         _context.patients.Update(patient);
