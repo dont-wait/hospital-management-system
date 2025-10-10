@@ -58,16 +58,17 @@ public class AuthService : IAuthService
                 LastName = userAccountExists.Patient.LastName,
                 PhoneNumber = userAccountExists.Patient.PhoneNumber,
                 Email = userAccountExists.Patient.Email,
+                RoleId = userAccountExists.Patient.RoleId,
             } : null,
             Employee = userAccountExists.Employee != null ? responseEmployeeDTO : null
         };
 
         try
-            {
+        {
             string accessToken = _tokenService.GenerateAccessToken(
                 userAccountExists.Employee?.Id.ToString() ?? userAccountExists.Patient?.Id.ToString()!,
                 userAccountExists.CitizenID,
-                responseEmployeeDTO?.RoleId.ToString() ?? "patient"
+                responseEmployeeDTO?.RoleId.ToString() ?? userAccountExists.Patient?.RoleId.ToString() ?? "patient"
             );
 
             string refreshToken = _tokenService.GenerateRandomToken();

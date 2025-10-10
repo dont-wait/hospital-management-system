@@ -33,7 +33,6 @@ public static class TokenExtension
                     ClockSkew = TimeSpan.Zero,
 
                     RoleClaimType = "RoleId",
-                    NameClaimType = ClaimTypes.NameIdentifier
                 };
             });
 
