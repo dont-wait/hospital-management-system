@@ -10,6 +10,17 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "static.vecteezy.com",
+        port: "",
+        pathname: "/system/resources/previews/**",
+      },
+    ],
+  },
 };
 
 export default bundleAnalyzer(nextConfig);
