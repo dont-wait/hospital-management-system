@@ -32,13 +32,17 @@ export function Navigation() {
           {/* Options section */}
           <section className="flex items-center space-x-4">
             {isAuthenticated && (
-              <Image
-                src={authUser!.avatarUrl}
-                className="rounded-full"
-                width={32}
-                height={32}
-                alt="avatar"
-              />
+              <div
+                className="border-2 border-gray-500 rounded-full overflow-hidden"
+                style={{ aspectRatio: "1/1" }}
+              >
+                <Image
+                  src={authUser!.avatarUrl}
+                  width={32}
+                  height={32}
+                  alt="avatar"
+                />
+              </div>
             )}
 
             <Button variant="outline" size="sm">
