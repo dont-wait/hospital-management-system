@@ -59,11 +59,11 @@ export default function PatientPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div
                   className="flex items-center rounded border
-                  border-gray-300 px-4 py-2
+                  border-gray-300 px-4 py-2 gap-2
                   "
                 >
-                  <User className="mr-2 h-4 w-4" />
-                  <Label className="text-sm text-gray-600">
+                  <User className="h-4 w-4" />
+                  <Label className="text-sm text-gray-600 block truncate">
                     Tên bệnh nhân:{" "}
                     <span>
                       {authUser.patient.firstName} {authUser.patient.lastName}
@@ -74,11 +74,11 @@ export default function PatientPage() {
                 {/* Email */}
                 <div
                   className="flex items-center rounded border
-                  border-gray-300 px-4 py-2
+                  border-gray-300 px-4 py-2 gap-2
                   "
                 >
-                  <Mail className="mr-2 h-4 w-4" />
-                  <Label className="text-sm text-gray-600">
+                  <Mail className="h-4 w-4" />
+                  <Label className="text-sm text-gray-600 block truncate">
                     Email: <span>{authUser.patient.email}</span>
                   </Label>
                 </div>
@@ -86,11 +86,11 @@ export default function PatientPage() {
                 {/* Contact Number */}
                 <div
                   className="flex items-center rounded border
-                  border-gray-300 px-4 py-2
+                  border-gray-300 px-4 py-2 gap-2
                   "
                 >
                   <Phone className="mr-2 h-4 w-4" />
-                  <Label className="text-sm text-gray-600">
+                  <Label className="text-sm text-gray-600 block truncate">
                     Số điện thoại: <span>{authUser.patient.phoneNumber}</span>
                   </Label>
                 </div>
