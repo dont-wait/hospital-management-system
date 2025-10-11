@@ -1,7 +1,7 @@
 import { Control, FieldErrors, Controller } from "react-hook-form";
+import { memo } from "react";
 import { Label } from "@/components/ui/shared/Label";
 import { PatientUpdateDto } from "@/schemas/patient";
-import { memo } from "react";
 
 type GenderSectionProps = {
   control: Control<PatientUpdateDto>;
@@ -14,10 +14,7 @@ const GENDER_OPTIONS = [
   { value: "Khác", label: "Khác" },
 ] as const;
 
-const GenderSection = memo(function GenderSection({
-  control,
-  errors,
-}: GenderSectionProps) {
+function GenderSection({ control, errors }: GenderSectionProps) {
   return (
     <div className="space-y-2">
       <Controller
@@ -50,6 +47,6 @@ const GenderSection = memo(function GenderSection({
       )}
     </div>
   );
-});
+}
 
-export default GenderSection;
+export default memo(GenderSection);

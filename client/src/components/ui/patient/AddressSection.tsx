@@ -21,7 +21,7 @@ type AddressSectionProps = {
   patient: Partial<PatientUpdateDto>;
 };
 
-const AddressSection = memo(function AddressSection({
+function AddressSection({
   setValue,
   control,
   errors,
@@ -122,6 +122,6 @@ const AddressSection = memo(function AddressSection({
       </div>
     </>
   );
-});
+}
 
-export default AddressSection;
+export default memo(AddressSection);
