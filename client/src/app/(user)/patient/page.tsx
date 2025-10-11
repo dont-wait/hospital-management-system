@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -18,12 +19,22 @@ import {
   Mail,
   Phone,
 } from "@/lib/client/utils";
+import PatientDetail from "@/components/ui/patient/PatientDetail";
 
 export default function PatientPage() {
+  const [isOpen, setIsOpen] = useState(false);
   const { authUser } = useAuth();
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {authUser?.patient && (
+        <PatientDetail
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          patient={authUser.patient}
+        />
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -96,7 +107,11 @@ export default function PatientPage() {
                 </div>
               </div>
 
-              <Button className="w-full justify-start" variant="outline">
+              <Button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full justify-start"
+                variant="outline"
+              >
                 <FileText className="mr-2 h-4 w-4" />
                 Hồ sơ chi tiết
               </Button>
