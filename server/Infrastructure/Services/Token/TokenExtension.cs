@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Claims;
 
 namespace Infrastructure.Services.Token;
 public static class TokenExtension
@@ -32,7 +33,6 @@ public static class TokenExtension
                     ClockSkew = TimeSpan.Zero,
 
                     RoleClaimType = "RoleId",
-                    NameClaimType = JwtRegisteredClaimNames.Sub
                 };
             });
 
