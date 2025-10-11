@@ -8,6 +8,7 @@ import {
   Lock,
   LogOut,
   LogIn,
+  Pencil,
   itemVariants,
 } from "@/lib/client/utils";
 
@@ -22,6 +23,12 @@ const menuItems = [
     title: "Thông Tin Bệnh Nhân",
     icon: Users,
   },
+  {
+    route: "/patient/update",
+    title: "Cập Nhật Thông Tin",
+    icon: Pencil,
+  },
+
   {
     route: "/forgot-password",
     title: "Đổi Mật Khẩu",
