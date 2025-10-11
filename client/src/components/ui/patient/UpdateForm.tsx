@@ -1,15 +1,27 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, memo } from "react";
+import { useMemo, memo, lazy } from "react";
 import { Button } from "@/components/ui/shared/Button";
-import { Label } from "@/components/ui/shared/Label";
-import { Input } from "@/components/ui/shared/Input";
 import { LoadingSpinner } from "@/components/ui/shared/LoadingSpinner";
 import { PatientUpdateDto, patientUpdateSchema } from "@/schemas/patient";
-import AvatarSection from "./AvatarSection";
-import AddressSection from "./AddressSection";
-import GenderSection from "./GenderSection";
-import DateSection from "./DateSection";
+
+const AvatarSection = lazy(
+  () => import("@/components/ui/patient/AvatarSection"),
+);
+
+const AddressSection = lazy(
+  () => import("@/components/ui/patient/AddressSection"),
+);
+
+const GenderSection = lazy(
+  () => import("@/components/ui/patient/GenderSection"),
+);
+
+const DateSection = lazy(() => import("@/components/ui/patient/DateSection"));
+
+const PatientInfoSection = lazy(
+  () => import("@/components/ui/patient/PatientInfoSection"),
+);
 
 interface PatientUpdateFormProps {
   onSubmit: (patientDto: PatientUpdateDto) => Promise<void>;
@@ -56,79 +68,10 @@ function UpdateForm({
       <AvatarSection setValue={setValue} patient={initialData} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-        <div className="space-y-4">
-          {/* Họ và tên đệm */}
-          <div className="space-y-2">
-            <Label htmlFor="firstName">Họ và tên đệm *</Label>
-            <Input
-              id="firstName"
-              type="text"
-              placeholder="Nhập họ và tên đệm"
-              {...register("firstName")}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.firstName ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.firstName && (
-              <p className="text-sm text-red-600">{errors.firstName.message}</p>
-            )}
-          </div>
+        {/* Patient Info*/}
+        <PatientInfoSection errors={errors} register={register} />
 
-          {/* Tên */}
-          <div className="space-y-2">
-            <Label htmlFor="lastName">Tên *</Label>
-            <Input
-              id="lastName"
-              type="text"
-              placeholder="Nhập tên"
-              {...register("lastName")}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.lastName ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.lastName && (
-              <p className="text-sm text-red-600">{errors.lastName.message}</p>
-            )}
-          </div>
-
-          {/* Email */}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Nhập email"
-              {...register("email")}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.email && (
-              <p className="text-sm text-red-600">{errors.email.message}</p>
-            )}
-          </div>
-
-          {/* Số điện thoại */}
-          <div className="space-y-2">
-            <Label htmlFor="phoneNumber">Số điện thoại *</Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              placeholder="Nhập số điện thoại"
-              {...register("phoneNumber")}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.phoneNumber ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.phoneNumber && (
-              <p className="text-sm text-red-600">
-                {errors.phoneNumber.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Địa chỉ */}
+        {/* Address */}
         <div className="space-y-4">
           <AddressSection
             setValue={setValue}
@@ -142,7 +85,11 @@ function UpdateForm({
       </div>
 
       {/* Date */}
-      <DateSection setValue={setValue} errors={errors} />
+      <DateSection
+        setValue={setValue}
+        errors={errors}
+        defaultValue={defaultValues.dateOfBirth}
+      />
 
       {/* Gender */}
       <GenderSection control={control} errors={errors} />

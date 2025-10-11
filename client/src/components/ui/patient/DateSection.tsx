@@ -26,22 +26,22 @@ type DateSectionProps = {
 };
 
 function DateSection({ setValue, errors, defaultValue }: DateSectionProps) {
-  const [dateState, setDateState] = useState({
-    day: "",
-    month: "",
-    year: "",
-  });
-
-  useEffect(() => {
+  const [dateState, setDateState] = useState(() => {
     if (defaultValue) {
       const date = new Date(defaultValue);
       const day = date.getDate().toString().padStart(2, "0");
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const year = date.getFullYear().toString();
 
-      setDateState({ day, month, year });
+      return { day, month, year };
+    } else {
+      return {
+        day: "",
+        month: "",
+        year: "",
+      };
     }
-  }, [defaultValue]);
+  });
 
   useEffect(() => {
     const { day, month, year } = dateState;
