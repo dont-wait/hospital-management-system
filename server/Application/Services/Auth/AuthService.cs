@@ -59,6 +59,11 @@ public class AuthService : IAuthService
                 PhoneNumber = userAccountExists.Patient.PhoneNumber,
                 Email = userAccountExists.Patient.Email,
                 RoleId = userAccountExists.Patient.RoleId,
+                Gender = userAccountExists.Patient.Gender,
+                DateOfBirth = userAccountExists.Patient.DateOfBirth,
+                Address = userAccountExists.Patient.Address,
+                Nationality = userAccountExists.Patient.Nationality,
+                PlaceOfResidence = userAccountExists.Patient.PlaceOfResidence
             } : null,
             Employee = userAccountExists.Employee != null ? responseEmployeeDTO : null
         };

@@ -77,9 +77,8 @@ public class AuthController : ControllerBase
                 _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", result.Data!.RefreshToken, cookieOptions);
 
                 return new ApiResponse<ResponseLoginDTO>(200, "Đăng nhập thành công.", result.Data);
-             }
-            else
-                return new ApiResponse<ResponseLoginDTO>(400, result.Message);
+            }
+            return new ApiResponse<ResponseLoginDTO>(400, result.Message);
         }
         catch (Exception ex)
         {
