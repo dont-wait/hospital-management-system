@@ -9,7 +9,7 @@ import {
 } from "react-hook-form";
 import { useEffect, memo, useCallback } from "react";
 import { Label } from "@/components/ui/shared/Label";
-import { ipGeoService } from "@/services/ipGeo.Service";
+import { ipGeoService } from "@/services/ipGeo.service";
 import { PatientUpdateDto } from "@/schemas/patient";
 
 type AddressSectionProps = {
