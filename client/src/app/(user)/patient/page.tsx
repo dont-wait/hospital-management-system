@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,32 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/shared/Card";
 import { Button } from "@/components/ui/shared/Button";
-import { Label } from "@/components/ui/shared/Label";
-import { useAuth } from "@/contexts/AuthContext";
-import {
-  Calendar,
-  FileText,
-  Pencil,
-  User,
-  Mail,
-  Phone,
-} from "@/lib/client/utils";
-import PatientDetail from "@/components/ui/patient/PatientDetail";
+import { Calendar, FileText, Pencil } from "@/lib/client/utils";
+import LazySection from "@/components/ui/shared/LazySection";
+import Skeleton from "react-loading-skeleton";
 
 export default function PatientPage() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { authUser } = useAuth();
-
   return (
     <div className="container mx-auto px-4 py-8">
-      {authUser?.patient && (
-        <PatientDetail
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          patient={authUser.patient}
-        />
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -60,64 +40,30 @@ export default function PatientPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Thông tin bệnh nhân</CardTitle>
-          </CardHeader>
-          {authUser && authUser.patient && (
-            <CardContent>
-              {/* Name */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div
-                  className="flex items-center rounded border
-                  border-gray-300 px-4 py-2 gap-2
-                  "
-                >
-                  <User className="h-4 w-4" />
-                  <Label className="text-sm text-gray-600 block truncate">
-                    Tên bệnh nhân:{" "}
-                    <span>
-                      {authUser.patient.firstName} {authUser.patient.lastName}
-                    </span>
-                  </Label>
+        <LazySection
+          importFunc={() => import("@/components/ui/patient/PatientInfo")}
+          skeleton={
+            <Card>
+              <CardHeader>
+                <Skeleton width="40%" height={24} />
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="rounded">
+                    <Skeleton width="100%" height={36} />
+                  </div>
+                  <div className="rounded">
+                    <Skeleton width="100%" height={36} />
+                  </div>
+                  <div className="rounded">
+                    <Skeleton width="100%" height={36} />
+                  </div>
                 </div>
-
-                {/* Email */}
-                <div
-                  className="flex items-center rounded border
-                  border-gray-300 px-4 py-2 gap-2
-                  "
-                >
-                  <Mail className="h-4 w-4" />
-                  <Label className="text-sm text-gray-600 block truncate">
-                    Email: <span>{authUser.patient.email}</span>
-                  </Label>
-                </div>
-
-                {/* Contact Number */}
-                <div
-                  className="flex items-center rounded border
-                  border-gray-300 px-4 py-2 gap-2
-                  "
-                >
-                  <Phone className="mr-2 h-4 w-4" />
-                  <Label className="text-sm text-gray-600 block truncate">
-                    Số điện thoại: <span>{authUser.patient.phoneNumber}</span>
-                  </Label>
-                </div>
-              </div>
-
-              <Button
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full justify-start"
-                variant="outline"
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Hồ sơ chi tiết
-              </Button>
-            </CardContent>
-          )}
-        </Card>
+                <Skeleton width="100%" height={39} />
+              </CardContent>
+            </Card>
+          }
+        />
       </div>
     </div>
   );
