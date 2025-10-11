@@ -33,7 +33,7 @@ export function Navigation() {
           <section className="flex items-center space-x-4">
             {isAuthenticated && (
               <div
-                className="border-2 border-gray-500 rounded-full overflow-hidden"
+                className="w-8 border-2 border-gray-500 rounded-full overflow-hidden"
                 style={{ aspectRatio: "1/1" }}
               >
                 <Image
@@ -41,6 +41,8 @@ export function Navigation() {
                   width={32}
                   height={32}
                   alt="avatar"
+                  className="w-full h-full object-cover object-center"
+                  loading="lazy"
                 />
               </div>
             )}

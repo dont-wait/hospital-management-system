@@ -45,7 +45,7 @@ function AvatarSection({ setValue, patient }: AvatarSectionProps) {
               width={100}
               height={100}
               alt="Avatar"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
               priority
             />
           )}
