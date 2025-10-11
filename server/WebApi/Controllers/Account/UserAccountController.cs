@@ -1,3 +1,4 @@
+using Application.Common.DTOs.Patient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Application.Common.Utils;
@@ -65,5 +66,28 @@ public class AccountController : ControllerBase
         }
     }
 
-    //[HttpGet("{employeeId}")] for search info about employee
+    [HttpPut("patient/{patientId}")]
+    [Authorize(Roles = "patient, admin, doctor")]
+    public async Task<ApiResponse<ResponseUpdatePatient>> UpdateUserById(Guid patientId, RequestUpdatePatient request)
+    {
+        var currentUserRole = _userAccountService.RoleId;
+        var currentUserId = _userAccountService.CurrentUserId;
+        try
+        {
+            if (currentUserRole == "patient" && currentUserId != patientId)
+                return new ApiResponse<ResponseUpdatePatient>(403,
+                    "Bạn không có quyền cập nhật thông tin cho người dùng này.");
+            
+            var updatedPatientAndAccount = await _userAccountService.UpdateUserAccount_Patient_Async(patientId, request);
+            if (!updatedPatientAndAccount.IsSuccess)
+                return new ApiResponse<ResponseUpdatePatient>(404, updatedPatientAndAccount.Message);
+
+            return new ApiResponse<ResponseUpdatePatient>(200, "Thông tin của bạn đã được cập nhật thành công", updatedPatientAndAccount.Data);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return new ApiResponse<ResponseUpdatePatient>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+        }        
+    }
 }
