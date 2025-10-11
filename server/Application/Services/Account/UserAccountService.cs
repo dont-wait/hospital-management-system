@@ -24,12 +24,17 @@ public class UserAccountService : IUserAccountService
         var accountOfPatient = patientExisting.UserAccount;
         if (accountOfPatient == null)
             return ServiceResult<ResponseUpdatePatient>.Fail("Không tìm thấy tài khoản người dùng");
-            
+
+        
+        //TODO: Xac thuc phone
+        if (patientExisting.PhoneNumber != request.PhoneNumber)
+        {
+            //implement it
+        }
         
         // 🩺 Cập nhật thông tin bệnh nhân
         patientExisting.FirstName = request.FirstName;
         patientExisting.LastName = request.LastName;
-        patientExisting.Email = request.Email;
         patientExisting.PhoneNumber = request.PhoneNumber;
         patientExisting.Gender = request.Gender;
         patientExisting.DateOfBirth = request.DateOfBirth;
@@ -45,7 +50,6 @@ public class UserAccountService : IUserAccountService
             PatientId = patientId,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            Email = request.Email,
             PhoneNumber = request.PhoneNumber,
             Gender = request.Gender,
             DateOfBirth = request.DateOfBirth,

@@ -67,12 +67,14 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut("patient/{patientId}")]
-    [Authorize(Roles = "patient")]
+    [Authorize(Roles = "patient, admin, doctor")]
     public async Task<ApiResponse<ResponseUpdatePatient>> UpdateUserById(Guid patientId, RequestUpdatePatient request)
     {
+        var currentUserRole = _userAccountService.RoleId;
+        var currentUserId = _userAccountService.CurrentUserId;
         try
         {
-            if (patientId != _userAccountService.CurrentUserId)
+            if (currentUserRole == "patient" && currentUserId != patientId)
                 return new ApiResponse<ResponseUpdatePatient>(403,
                     "Bạn không có quyền cập nhật thông tin cho người dùng này.");
             
