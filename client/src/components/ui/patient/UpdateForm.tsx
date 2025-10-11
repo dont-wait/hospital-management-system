@@ -72,16 +72,14 @@ function UpdateForm({
         <PatientInfoSection errors={errors} register={register} />
 
         {/* Address */}
-        <div className="space-y-4">
-          <AddressSection
-            setValue={setValue}
-            control={control}
-            errors={errors}
-            watch={watch}
-            register={register}
-            patient={initialData}
-          />
-        </div>
+        <AddressSection
+          setValue={setValue}
+          control={control}
+          errors={errors}
+          watch={watch}
+          register={register}
+          patient={initialData}
+        />
       </div>
 
       {/* Date */}

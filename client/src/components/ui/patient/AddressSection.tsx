@@ -52,7 +52,7 @@ function AddressSection({
   );
 
   return (
-    <>
+    <div className="space-y-4">
       {/* Quốc tịch */}
       <div className="space-y-2">
         <Label htmlFor="nationality">Quốc tịch *</Label>
@@ -120,7 +120,7 @@ function AddressSection({
           </p>
         )}
       </div>
-    </>
+    </div>
   );
 }
 
