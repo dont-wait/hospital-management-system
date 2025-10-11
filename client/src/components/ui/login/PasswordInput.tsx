@@ -17,7 +17,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         <Input
           {...props}
           ref={ref}
-          type={!showPassword ? "text" : "password"}
+          type={showPassword ? "text" : "password"}
           className={error ? "border-red-500 pr-10" : "pr-10"}
         />
         <Button
@@ -28,7 +28,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           onClick={() => setShowPassword(!showPassword)}
           aria-label={showPassword ? "Hide password" : "Show password"}
         >
-          {showPassword ? (
+          {!showPassword ? (
             <EyeOff className="h-4 w-4" />
           ) : (
             <Eye className="h-4 w-4" />
