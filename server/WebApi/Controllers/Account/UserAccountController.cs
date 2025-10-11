@@ -74,10 +74,10 @@ public class AccountController : ControllerBase
         var currentUserId = _userAccountService.CurrentUserId;
         try
         {
-            if (currentUserRole == "patient" && currentUserId != patientId)
+            if (currentUserRole == "patient" && !currentUserId.Equals(patientId))
                 return new ApiResponse<ResponseUpdatePatient>(403,
                     "Bạn không có quyền cập nhật thông tin cho người dùng này.");
-            
+
             var updatedPatientAndAccount = await _userAccountService.UpdateUserAccount_Patient_Async(patientId, request);
             if (!updatedPatientAndAccount.IsSuccess)
                 return new ApiResponse<ResponseUpdatePatient>(404, updatedPatientAndAccount.Message);
