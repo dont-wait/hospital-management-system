@@ -4,6 +4,7 @@ import { useMemo, memo, lazy } from "react";
 import { Button } from "@/components/ui/shared/Button";
 import { LoadingSpinner } from "@/components/ui/shared/LoadingSpinner";
 import { PatientUpdateDto, patientUpdateSchema } from "@/schemas/patient";
+import { Patient } from "@/types";
 
 const AvatarSection = lazy(
   () => import("@/components/ui/patient/AvatarSection"),
@@ -24,7 +25,7 @@ const PatientInfoSection = lazy(
 );
 
 interface PatientUpdateFormProps {
-  onSubmit: (patientDto: PatientUpdateDto) => Promise<void>;
+  onSubmit: (id: string, patientDto: PatientUpdateDto) => Promise<boolean>;
   isLoading: boolean;
   initialData: Partial<PatientUpdateDto>;
 }
@@ -62,8 +63,13 @@ function UpdateForm({
     defaultValues,
   });
 
+  const handleFormSubmit = async (data: PatientUpdateDto) => {
+    const patientId = (initialData as Patient).patientId;
+    await onSubmit(patientId, data);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       {/* Avatar */}
       <AvatarSection setValue={setValue} patient={initialData} />
 

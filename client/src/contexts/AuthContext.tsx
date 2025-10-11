@@ -18,6 +18,7 @@ import { LoginPatientDto, RegisterPatientDto } from "@/schemas/auth";
 
 interface AuthContextType {
   authUser: AuthUser | null;
+  setAuthUser: (user: AuthUser) => void;
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (userDto: LoginPatientDto) => Promise<boolean>;
@@ -105,6 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const contextValue = useMemo(
     () => ({
       authUser,
+      setAuthUser,
       isLoading,
       isAuthenticated: !!authUser,
       login: handleLogin,

@@ -9,9 +9,9 @@ type GenderSectionProps = {
 };
 
 const GENDER_OPTIONS = [
-  { value: "Nam", label: "Nam" },
-  { value: "Nữ", label: "Nữ" },
-  { value: "Khác", label: "Khác" },
+  { value: "M", label: "Nam" },
+  { value: "F", label: "Nữ" },
+  { value: "O", label: "Khác" },
 ] as const;
 
 function GenderSection({ control, errors }: GenderSectionProps) {
