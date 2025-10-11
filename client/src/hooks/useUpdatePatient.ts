@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { patientService } from "@/services/patient.service";
+import { tokenService } from "@/services/token.service";
 import type { PatientUpdateDto } from "@/schemas/patient";
 import { Patient } from "@/types";
 
@@ -19,11 +20,13 @@ export function useUpdatePatient() {
         const { avatarUrl, ...patientInfo } =
           await patientService.updatePatient(id, patientUpdateDto);
         if (patientInfo && avatarUrl && authUser) {
-          setAuthUser({
+          const newAuthUser = {
             ...authUser,
             avatarUrl,
             patient: patientInfo as Patient,
-          });
+          };
+          setAuthUser(newAuthUser);
+          tokenService.saveUser(newAuthUser);
           router.push("/patient");
         }
         return true;
