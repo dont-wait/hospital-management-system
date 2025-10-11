@@ -57,31 +57,31 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
           )}
         </div>
 
-        {/* 3. FirstName */}
+        {/* 3. LastName*/}
         <div className="space-y-2">
-          <Label htmlFor="firstName">Tên</Label>
-          <Input
-            id="firstName"
-            placeholder="Nhập tên của bạn"
-            {...register("firstName")}
-            className={errors.firstName ? "border-red-500" : ""}
-          />
-          {errors.firstName && (
-            <p className="text-sm text-red-600">{errors.firstName.message}</p>
-          )}
-        </div>
-
-        {/* 4. LastName */}
-        <div className="space-y-2">
-          <Label htmlFor="lastName">Họ và tên đệm</Label>
+          <Label htmlFor="lastName">Tên</Label>
           <Input
             id="lastName"
-            placeholder="Nhập họ và tên đệm của bạn"
+            placeholder="Nhập tên của bạn"
             {...register("lastName")}
             className={errors.lastName ? "border-red-500" : ""}
           />
           {errors.lastName && (
             <p className="text-sm text-red-600">{errors.lastName.message}</p>
+          )}
+        </div>
+
+        {/* 4. FirstName */}
+        <div className="space-y-2">
+          <Label htmlFor="firstName">Họ và tên đệm</Label>
+          <Input
+            id="firstName"
+            placeholder="Nhập họ và tên đệm của bạn"
+            {...register("firstName")}
+            className={errors.firstName ? "border-red-500" : ""}
+          />
+          {errors.firstName && (
+            <p className="text-sm text-red-600">{errors.firstName.message}</p>
           )}
         </div>
 
