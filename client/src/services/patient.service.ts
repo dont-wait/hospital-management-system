@@ -7,8 +7,10 @@ class PatientService {
     id: string,
     patientUpdateDto: PatientUpdateDto,
   ): Promise<PatientUpdateDto> {
-    return await api
-      .put(`patient/${id}`, patientUpdateDto)
+    const { email, ...patientUpdateInfo } = patientUpdateDto;
+    void email;
+    return api
+      .put(`api/account/patient/${id}`, patientUpdateInfo)
       .then((response) => response.data.data);
   }
 }
