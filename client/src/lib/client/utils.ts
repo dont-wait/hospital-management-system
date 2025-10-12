@@ -33,12 +33,6 @@ export const Clock = dynamic(() =>
 
 export const Dot = dynamic(() => import("lucide-react").then((mod) => mod.Dot));
 
-export const Eye = dynamic(() => import("lucide-react").then((mod) => mod.Eye));
-
-export const EyeOff = dynamic(() =>
-  import("lucide-react").then((mod) => mod.EyeOff),
-);
-
 export const ArrowLeft = dynamic(() =>
   import("lucide-react").then((mod) => mod.ArrowLeft),
 );

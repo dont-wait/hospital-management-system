@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/shared/Input";
 import { Label } from "@/components/ui/shared/Label";
 import { LoadingSpinner } from "@/components/ui/shared/LoadingSpinner";
 import { patientSchema, RegisterPatientDto } from "@/schemas/auth";
-import { Eye, EyeOff } from "@/lib/client/utils";
+import { Eye, EyeOff } from "lucide-react";
 
 interface RegisterFormProps {
   onSubmit: (patientDto: RegisterPatientDto) => Promise<void>;
