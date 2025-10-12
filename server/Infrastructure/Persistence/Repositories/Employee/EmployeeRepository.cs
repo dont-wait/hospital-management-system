@@ -11,6 +11,16 @@ public class EmployeeRepository : IEmployeeRepository
         _context = context;
     }
 
+    public async Task<List<UserAccount>?> GetAllDoctorAsync()
+    {
+        var doctors = await _context.user_accounts
+            .Include(d => d.Employee)
+                .ThenInclude(e => e!.UserAccount)
+                .ToListAsync();
+
+        return doctors;
+    }
+
     public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto)
     {
         UserAccount userAccount = new UserAccount
@@ -77,19 +87,29 @@ public class EmployeeRepository : IEmployeeRepository
         })
         .FirstOrDefaultAsync();
 
-    public async Task<Doctor?> FindDoctorWithAccountByIdAsync(Guid doctorId)
+    public async Task<UserAccount?> FindDoctorWithAccountByIdAsync(Guid userAccountId)
     {
-        var existingDoctor = await _context.doctors
+        var existingDoctor = await _context.user_accounts
             .Include(d => d.Employee)
-                .ThenInclude(e => e.UserAccount)
-            .FirstOrDefaultAsync(d => d.Id == doctorId);
+                .ThenInclude(e => e!.Doctor)
+            .FirstOrDefaultAsync(d => d.Id == userAccountId);
         return existingDoctor;
     }
 
-    public async Task UpdateAccountAndDoctorAsync(Doctor doctor, UserAccount userAccount)
+    public async Task UpdateAccountAndDoctorAsync(Doctor doctor, UserAccount userAccount, RequestUpdateDoctorDTO request)
     {
-        _context.doctors.Update(doctor);
-        _context.user_accounts.Update(userAccount);
+        var employee = userAccount.Employee!;
+
+        employee.FirstName = request.FirstName;
+        employee.LastName = request.LastName;
+        employee.PhoneNumber = request.PhoneNumber;
+        employee.Gender = request.Gender;
+        employee.DateOfBirth = request.DateOfBirth;
+        employee.HireDate = request.HireDate;
+        employee.CertificateNumber = request.CertificateNumber;
+        doctor.Specialization = request.Specialization;
+        userAccount.AvatarUrl = request.AvatarUrl;
+
         await _context.SaveChangesAsync();
     }   
 }

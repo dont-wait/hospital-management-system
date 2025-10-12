@@ -57,28 +57,17 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }
 
-        public async Task<ServiceResult<ResponseUpdateDoctorDTO>> UpdateUserAccount_Doctor_Async(Guid doctorId, RequestUpdateDoctorDTO request)
+    public async Task<ServiceResult<ResponseUpdateDoctorDTO>> UpdateUserAccount_Doctor_Async(Guid doctorId, RequestUpdateDoctorDTO request)
     {
-        var doctorExisting = await _employeeRepository.FindDoctorWithAccountByIdAsync(doctorId);
-        if (doctorExisting == null)
+        UserAccount? accountOfDoctor = await _employeeRepository.FindDoctorWithAccountByIdAsync(doctorId);
+        if (accountOfDoctor == null)
             return ServiceResult<ResponseUpdateDoctorDTO>.Fail("Không tìm thấy thông tin người dùng");
 
-        var accountOfDoctor = doctorExisting.Employee.UserAccount;
-        if (accountOfDoctor == null)
-            return ServiceResult<ResponseUpdateDoctorDTO>.Fail("Không tìm thấy tài khoản người dùng");
+        var employee = accountOfDoctor.Employee!;
+        var doctor = employee.Doctor!;
 
-        doctorExisting.Employee.FirstName = request.FirstName;
-        doctorExisting.Employee.LastName = request.LastName;
-        doctorExisting.Employee.PhoneNumber = request.PhoneNumber;
-        doctorExisting.Employee.Gender = request.Gender;
-        doctorExisting.Employee.DateOfBirth = request.DateOfBirth;
-        doctorExisting.Employee.HireDate = request.HireDate;
-        doctorExisting.Employee.CertificateNumber = request.CertificateNumber;
-        doctorExisting.Specialization = request.Specialization;
-        accountOfDoctor.AvatarUrl = request.AvatarUrl;
+        await _employeeRepository.UpdateAccountAndDoctorAsync(doctor, accountOfDoctor, request);
 
-        await _employeeRepository.UpdateAccountAndDoctorAsync(doctorExisting, accountOfDoctor);
-        
         ResponseUpdateDoctorDTO responseDoctorDto = new ResponseUpdateDoctorDTO
         {
             FirstName = request.FirstName,
