@@ -30,7 +30,8 @@ export function useUpdatePatient() {
           router.push("/patient");
         }
         return true;
-      } catch {
+      } catch (error) {
+        console.error("Failed to update patient:", error);
         return false;
       } finally {
         setIsLoading(false);
