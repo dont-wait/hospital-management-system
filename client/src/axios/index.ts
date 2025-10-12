@@ -14,19 +14,6 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor - Thêm token và timestamp
-api.interceptors.request.use(
-  (config) => {
-    const separator = config.url?.includes("?") ? "&" : "?";
-    config.url = `${config.url}${separator}_t=${new Date().getTime()}`;
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
-
 const handleValidationErrors = (data: AuthErrorResponse) => {
   if (data.errors) {
     Object.values(data.errors)
@@ -39,16 +26,27 @@ const handleValidationErrors = (data: AuthErrorResponse) => {
   }
 };
 
-// Response interceptor - Thêm token và timestamp
+// Response interceptor
 api.interceptors.response.use(
-  (response: AxiosResponse<{ status: number; message: string }>) => {
-    const { status, message } = response.data;
-
-    if (status !== 200 && status !== 201) {
+  <T>(
+    response: AxiosResponse<{ status: number; message: string; data: T }>,
+  ) => {
+    const { status, message, data } = response.data;
+    if (status >= 400) {
       toast.error(message, defaultOptions);
       return Promise.reject(response);
     }
 
+    if (data) {
+      if (typeof data === "object" && data !== null && "accessToken" in data) {
+        const { accessToken } = data as { accessToken: string };
+        if (accessToken) {
+          console.log(accessToken);
+          api.defaults.headers.common["Authorization"] =
+            `Bearer ${accessToken}`;
+        }
+      }
+    }
     toast.success(message, defaultOptions);
     return response;
   },
@@ -59,12 +57,10 @@ api.interceptors.response.use(
       const { status, data } = error.response;
       switch (status) {
         case 400:
-          // Bad Request
           handleValidationErrors(data);
           break;
 
         case 500:
-          // Internal Server Error
           toast.error("Lỗi máy chủ. Vui lòng thử lại sau", defaultOptions);
           break;
 
@@ -76,13 +72,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
-export const setBearerToken = (token: string) => {
-  api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-};
-
-export const delBearerToken = () => {
-  delete api.defaults.headers.common["Authorization"];
-};
 
 export default api;

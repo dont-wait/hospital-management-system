@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import { ForgotPasswordState } from "@/types";
 import { ResetPasswordDto, NewPasswordDto } from "@/schemas/auth";
-import { authService } from "@/services/auth.service";
+import AuthService from "@/services/auth.service";
 
 const INITIAL_STATE: ForgotPasswordState = {
   step: 1,
@@ -64,7 +64,7 @@ export const useForgotPassword = () => {
     }
 
     try {
-      await authService.resetPassword(resetPasswordDto);
+      await AuthService.resetPassword(resetPasswordDto);
       updateState({
         email: resetPasswordDto.email,
         loading: false,
@@ -85,7 +85,7 @@ export const useForgotPassword = () => {
     updateState({ loading: true, error: "" });
 
     try {
-      const { data } = await authService.verifyOtp(state.email, state.otp);
+      const { data } = await AuthService.verifyOtp(state.email, state.otp);
       updateState({
         loading: false,
         step: 3,
@@ -116,7 +116,7 @@ export const useForgotPassword = () => {
     updateState({ loading: true, error: "" });
 
     try {
-      const { data } = await authService.newPassword(newPasswordDto);
+      const { data } = await AuthService.newPassword(newPasswordDto);
       updateState({
         loading: false,
         success: data.message,

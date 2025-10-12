@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import PatientService from "@/services/patient.service";
-import { tokenService } from "@/services/token.service";
+import TokenService from "@/services/token.service";
 import type { PatientUpdateDto } from "@/schemas/patient";
 import { Patient } from "@/types";
 
@@ -26,7 +26,7 @@ export function useUpdatePatient() {
             patient: patientInfo as Patient,
           };
           setAuthUser(newAuthUser);
-          tokenService.saveUser(newAuthUser);
+          TokenService.saveUser(newAuthUser);
           router.push("/patient");
         }
         return true;

@@ -11,9 +11,8 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { AuthUser } from "@/types";
-import { authService } from "@/services/auth.service";
-import { tokenService } from "@/services/token.service";
-import { setBearerToken } from "@/axios";
+import AuthService from "@/services/auth.service";
+import TokenService from "@/services/token.service";
 import { LoginPatientDto, RegisterPatientDto } from "@/schemas/auth";
 
 interface AuthContextType {
@@ -38,13 +37,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (userDto: LoginPatientDto): Promise<boolean> => {
       setIsLoading(true);
       try {
-        const { data } = await authService.login(userDto);
-        const { accessToken, refreshToken } = data;
-
-        tokenService.saveTokens(accessToken, refreshToken);
-        tokenService.saveUser(data);
+        const { data } = await AuthService.login(userDto);
+        TokenService.saveUser(data);
         setAuthUser(data);
-        setBearerToken(accessToken);
 
         return true;
       } catch {
@@ -61,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (patientDto: RegisterPatientDto): Promise<boolean> => {
       setIsLoading(true);
       try {
-        await authService.register(patientDto);
+        await AuthService.register(patientDto);
         return true;
       } catch {
         return false;
@@ -74,26 +69,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Clear user session and show logout message
   const handleLogout = useCallback(async () => {
-    await authService.logout();
-    tokenService.clearTokens();
-    tokenService.clearStoredUser();
+    await AuthService.logout();
+    TokenService.clearStoredUser();
     setAuthUser(null);
     router.push("/");
   }, [router]);
 
   // Initialize auth state on component mount
   useEffect(() => {
-    const user = tokenService.getStoredUser();
+    const user = TokenService.getStoredUser();
     if (user?.accessToken) {
       try {
-        const payload = tokenService.decodePayload(user.accessToken);
+        const payload = TokenService.decodePayload(user.accessToken);
         const isExpired =
           !payload || (payload.exp && Date.now() >= payload.exp * 1000);
         if (isExpired) {
           handleLogout();
         } else {
           setAuthUser(user);
-          setBearerToken(user.accessToken);
         }
       } catch {
         handleLogout();
