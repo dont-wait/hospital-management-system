@@ -7,6 +7,15 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   /* config options here */
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? {
+            exclude: ["error"],
+          }
+        : false,
+  },
+
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
@@ -20,7 +29,12 @@ const nextConfig: NextConfig = {
         pathname: "/system/resources/previews/**",
       },
     ],
+    minimumCacheTTL: 60,
   },
+
+  compress: true,
+  poweredByHeader: false,
+  output: "standalone",
 };
 
 export default bundleAnalyzer(nextConfig);
