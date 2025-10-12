@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import TokenService from "@/services/token.service";
+import { ROUTE_ROLE_MAP } from "@/config/RoleConfig";
 import { type Role } from "@/types";
 
 function ForbiddenResponse() {
@@ -86,24 +87,17 @@ export async function middleware(req: NextRequest) {
   }
 
   // Kiểm tra role
-  const role = payload.RoleId as Role;
-  if (pathname.startsWith("/doctor") && role !== "doctor") {
-    return new NextResponse(ForbiddenResponse(), {
-      status: 403,
-      headers: { "Content-Type": "text/html" },
-    });
-  }
-  if (pathname.startsWith("/patient") && role !== "patient") {
-    return new NextResponse(ForbiddenResponse(), {
-      status: 403,
-      headers: { "Content-Type": "text/html" },
-    });
-  }
-  if (pathname.startsWith("/admin") && role !== "admin") {
-    return new NextResponse(ForbiddenResponse(), {
-      status: 403,
-      headers: { "Content-Type": "text/html" },
-    });
+  const userRole = payload.RoleId as Role;
+  for (const [routePrefix, allowedRoles] of Object.entries(ROUTE_ROLE_MAP)) {
+    if (pathname.startsWith(routePrefix)) {
+      if (!allowedRoles.includes(userRole)) {
+        return new NextResponse(ForbiddenResponse(), {
+          status: 403,
+          headers: { "Content-Type": "text/html" },
+        });
+      }
+      break;
+    }
   }
 
   return NextResponse.next();
