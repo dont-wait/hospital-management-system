@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { Button } from "@/components/ui/shared/Button";
 import PatientSidebar from "@/components/ui/sidebars/PatientSidebar";
-import { Heart, Bell, Menu } from "@/lib/client/utils";
+import { Heart, Bell } from "@/lib/client/utils";
 
 export function Navigation() {
   const { authUser, isAuthenticated } = useAuth();
@@ -31,29 +31,45 @@ export function Navigation() {
 
           {/* Options section */}
           <section className="flex items-center space-x-4">
-            {isAuthenticated && (
-              <div
-                className="w-8 border-2 border-gray-500 rounded-full overflow-hidden"
-                style={{ aspectRatio: "1/1" }}
-              >
-                <Image
-                  src={authUser!.avatarUrl}
-                  width={32}
-                  height={32}
-                  alt="avatar"
-                  className="w-full h-full object-cover object-center"
-                  loading="lazy"
-                />
-              </div>
+            {isAuthenticated ? (
+              <>
+                <Button
+                  variant="outline"
+                  className="shadow"
+                  style={{ aspectRatio: "1/1" }}
+                  size="sm"
+                >
+                  <Bell className="h-4 w-4" />
+                </Button>
+
+                <div
+                  className="w-10 border-2 border-gray-500 rounded-full overflow-hidden"
+                  style={{ aspectRatio: "1/1" }}
+                >
+                  <Image
+                    src={authUser!.avatarUrl}
+                    width={32}
+                    height={32}
+                    alt="avatar"
+                    className="w-full cursor-pointer h-full object-cover object-center"
+                    loading="lazy"
+                    onClick={handleOpenDetails}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="flex items-center space-x-2">
+                  <Button variant="outline" size="sm">
+                    Đăng nhập
+                  </Button>
+                </Link>
+
+                <Link href="/register" className="flex items-center space-x-2">
+                  <Button size="sm">Đăng ký</Button>
+                </Link>
+              </>
             )}
-
-            <Button variant="outline" size="sm">
-              <Bell className="h-4 w-4" />
-            </Button>
-
-            <Button variant="outline" size="sm" onClick={handleOpenDetails}>
-              <Menu className="h-4 w-4" />
-            </Button>
           </section>
         </div>
       </div>
