@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
-import { defaultOptions } from "@/lib/client/utils";
+import { ToastDefaultConfig } from "@/config/ToastConfig";
 import { AuthErrorResponse } from "@/types";
 
 const api = axios.create({
@@ -19,10 +19,10 @@ const handleValidationErrors = (data: AuthErrorResponse) => {
     Object.values(data.errors)
       .flat()
       .forEach((err) => {
-        toast.error(err, defaultOptions);
+        toast.error(err, ToastDefaultConfig);
       });
   } else if (data.message) {
-    toast.error(data.message, defaultOptions);
+    toast.error(data.message, ToastDefaultConfig);
   }
 };
 
@@ -33,7 +33,7 @@ api.interceptors.response.use(
   ) => {
     const { status, message, data } = response.data;
     if (status >= 400) {
-      toast.error(message, defaultOptions);
+      toast.error(message, ToastDefaultConfig);
       return Promise.reject(response);
     }
 
@@ -41,13 +41,12 @@ api.interceptors.response.use(
       if (typeof data === "object" && data !== null && "accessToken" in data) {
         const { accessToken } = data as { accessToken: string };
         if (accessToken) {
-          console.log(accessToken);
           api.defaults.headers.common["Authorization"] =
             `Bearer ${accessToken}`;
         }
       }
     }
-    toast.success(message, defaultOptions);
+    toast.success(message, ToastDefaultConfig);
     return response;
   },
   (
@@ -61,11 +60,11 @@ api.interceptors.response.use(
           break;
 
         case 500:
-          toast.error("Lỗi máy chủ. Vui lòng thử lại sau", defaultOptions);
+          toast.error("Lỗi máy chủ. Vui lòng thử lại sau", ToastDefaultConfig);
           break;
 
         default:
-          toast.error("Có lỗi xảy ra. Vui lòng thử lại", defaultOptions);
+          toast.error("Có lỗi xảy ra. Vui lòng thử lại", ToastDefaultConfig);
       }
     }
 

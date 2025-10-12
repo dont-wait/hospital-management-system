@@ -2,7 +2,7 @@
 
 import { createContext, useContext, ReactNode } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { defaultOptions } from "@/lib/client/utils";
+import { ToastDefaultConfig } from "@/config/ToastConfig";
 import "react-toastify/dist/ReactToastify.css";
 
 interface ToastContextType {
@@ -23,7 +23,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
         info: toast.info,
       }[type] || toast;
 
-    action(message, defaultOptions);
+    action(message, ToastDefaultConfig);
   };
 
   return (
