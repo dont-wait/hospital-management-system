@@ -9,7 +9,7 @@ import {
 } from "react-hook-form";
 import { useEffect, memo, useCallback } from "react";
 import { Label } from "@/components/ui/shared/Label";
-import { ipGeoService } from "@/services/ipGeo.service";
+import IpGeoService from "@/services/ipGeo.service";
 import { PatientUpdateDto } from "@/schemas/patient";
 
 type AddressSectionProps = {
@@ -34,7 +34,7 @@ function AddressSection({
   useEffect(() => {
     const fetchCountryByIP = async () => {
       if (!patient?.nationality) {
-        const country = await ipGeoService.getCountry();
+        const country = await IpGeoService.getCountry();
         setValue("nationality", country ?? "");
       } else {
         setValue("nationality", patient.nationality ?? "");

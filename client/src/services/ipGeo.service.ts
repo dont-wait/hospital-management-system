@@ -2,11 +2,24 @@ import axios from "axios";
 
 class IpGeoService {
   // Get country service
-  async getCountry(): Promise<string> {
-    return await axios
-      .get("https://ipwho.is")
-      .then((response) => response.data.country);
+  static async getCountry(): Promise<string> {
+    try {
+      const response = await axios.get("https://ipwho.is");
+      if (
+        response &&
+        response.data &&
+        typeof response.data.country === "string" &&
+        response.data.country.length > 0
+      ) {
+        return response.data.country;
+      } else {
+        return "Vietnam";
+      }
+    } catch (error) {
+      console.error("Failed to fetch country", error);
+      return "Vietnam";
+    }
   }
 }
 
-export const ipGeoService = new IpGeoService();
+export default IpGeoService;
