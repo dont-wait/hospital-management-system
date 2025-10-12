@@ -2,39 +2,11 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSidebar } from "@/contexts/SidebarContext";
+import { LogOut, LogIn } from "@/lib/client/utils";
 import {
-  Home,
-  Users,
-  Lock,
-  LogOut,
-  LogIn,
-  Pencil,
-  itemVariants,
-} from "@/lib/client/utils";
-
-const menuItems = [
-  {
-    route: "/",
-    title: "Trang Chủ",
-    icon: Home,
-  },
-  {
-    route: "/patient",
-    title: "Thông Tin Bệnh Nhân",
-    icon: Users,
-  },
-  {
-    route: "/patient/update",
-    title: "Cập Nhật Thông Tin",
-    icon: Pencil,
-  },
-
-  {
-    route: "/forgot-password",
-    title: "Đổi Mật Khẩu",
-    icon: Lock,
-  },
-];
+  PatientSidebarItems,
+  patientSidebarVariants,
+} from "@/config/SidebarConfig";
 
 function PatientSidebar() {
   const { logout, isAuthenticated } = useAuth();
@@ -42,7 +14,7 @@ function PatientSidebar() {
   const router = useRouter();
 
   const handleItemClick = (route: string) => {
-    if (route == "/logout") {
+    if (route === "/logout") {
       logout();
     } else {
       router.push(route);
@@ -54,13 +26,13 @@ function PatientSidebar() {
     <div className="flex flex-col" style={{ minHeight: "calc(100vh - 70px)" }}>
       {/* Menu Items */}
       <nav className="flex-1 space-y-3">
-        {menuItems.map((item, index) => {
+        {PatientSidebarItems.map((item, index) => {
           const Icon = item.icon;
           return (
             <motion.button
               key={index}
               custom={index}
-              variants={itemVariants}
+              variants={patientSidebarVariants}
               initial="hidden"
               animate="visible"
               whileTap={{ scale: 0.98 }}
