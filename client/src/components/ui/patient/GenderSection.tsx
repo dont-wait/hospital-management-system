@@ -2,17 +2,12 @@ import { Control, FieldErrors, Controller } from "react-hook-form";
 import { memo } from "react";
 import { Label } from "@/components/ui/shared/Label";
 import { PatientUpdateDto } from "@/schemas/patient";
+import { GENDER_OPTIONS } from "@/config/GenderConfig";
 
 type GenderSectionProps = {
   control: Control<PatientUpdateDto>;
   errors: FieldErrors<PatientUpdateDto>;
 };
-
-const GENDER_OPTIONS = [
-  { value: "M", label: "Nam" },
-  { value: "F", label: "Nữ" },
-  { value: "O", label: "Khác" },
-] as const;
 
 function GenderSection({ control, errors }: GenderSectionProps) {
   return (

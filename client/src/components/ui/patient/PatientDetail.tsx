@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Label } from "@/components/ui/shared/Label";
+import PatientService from "@/services/patient.service";
 import { CircleX } from "@/lib/client/utils";
 import { Patient } from "@/types";
 
@@ -12,22 +13,6 @@ type PatientDetailProps = {
 };
 
 function PatientDetail({ patient, isOpen, setIsOpen }: PatientDetailProps) {
-  const getGender = (c: string) => {
-    switch (c) {
-      case "M":
-        return "Nam";
-      case "F":
-        return "Nữ";
-      case "O":
-        return "Khác";
-    }
-  };
-
-  const getDOB = (dob: string) => {
-    const [year, month, day] = dob.split("T")[0].split("-");
-    return `${day}-${month}-${year}`;
-  };
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -104,7 +89,7 @@ function PatientDetail({ patient, isOpen, setIsOpen }: PatientDetailProps) {
                     <Label className="text-light text-gray-600 block">
                       Giới tính:{" "}
                       <span className="font-normal">
-                        {getGender(patient.gender)}
+                        {PatientService.formatGender(patient.gender)}
                       </span>
                     </Label>
                   </motion.li>
@@ -119,7 +104,7 @@ function PatientDetail({ patient, isOpen, setIsOpen }: PatientDetailProps) {
                     <Label className="text-light text-gray-600 block">
                       Ngày sinh:{" "}
                       <span className="font-normal">
-                        {getDOB(patient.dateOfBirth)}
+                        {PatientService.formatDOB(patient.dateOfBirth)}
                       </span>
                     </Label>
                   </motion.li>
@@ -146,7 +131,9 @@ function PatientDetail({ patient, isOpen, setIsOpen }: PatientDetailProps) {
                     <span className="w-2 h-2 bg-blue-100 rounded-full mr-3"></span>
                     <Label className="text-light text-gray-600 block">
                       Nơi sinh:{" "}
-                      <span className="font-normal">{patient.placeOfResidence}</span>
+                      <span className="font-normal">
+                        {patient.placeOfResidence}
+                      </span>
                     </Label>
                   </motion.li>
 
