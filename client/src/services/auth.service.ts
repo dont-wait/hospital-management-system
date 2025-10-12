@@ -1,6 +1,6 @@
 import { LoginResponse, RegisterResponse, LogoutResponse } from "@/types";
 import {
-  LoginPatientDto,
+  LoginAccountDto,
   RegisterPatientDto,
   ResetPasswordDto,
   NewPasswordDto,
@@ -9,7 +9,7 @@ import api from "@/axios";
 
 class AuthService {
   // Login service
-  static async login(userDto: LoginPatientDto): Promise<LoginResponse> {
+  static async login(userDto: LoginAccountDto): Promise<LoginResponse> {
     return api.post("/login", userDto).then((response) => response.data);
   }
 

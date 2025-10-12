@@ -3,14 +3,14 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import type { LoginPatientDto } from "@/schemas/auth";
+import type { LoginAccountDto } from "@/schemas/auth";
 
 export function useLoginSubmit() {
   const { login, isLoading } = useAuth();
   const router = useRouter();
 
   const handleSubmit = useCallback(
-    async (patientDto: LoginPatientDto) => {
+    async (patientDto: LoginAccountDto) => {
       const success = await login(patientDto);
 
       if (success) {

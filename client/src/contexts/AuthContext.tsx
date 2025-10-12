@@ -13,14 +13,14 @@ import { useRouter } from "next/navigation";
 import { AuthUser } from "@/types";
 import AuthService from "@/services/auth.service";
 import TokenService from "@/services/token.service";
-import { LoginPatientDto, RegisterPatientDto } from "@/schemas/auth";
+import { LoginAccountDto, RegisterPatientDto } from "@/schemas/auth";
 
 interface AuthContextType {
   authUser: AuthUser | null;
   setAuthUser: (user: AuthUser) => void;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (userDto: LoginPatientDto) => Promise<boolean>;
+  login: (userDto: LoginAccountDto) => Promise<boolean>;
   register: (patientDto: RegisterPatientDto) => Promise<boolean>;
   logout: () => void;
 }
@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Login handle
   const handleLogin = useCallback(
-    async (userDto: LoginPatientDto): Promise<boolean> => {
+    async (userDto: LoginAccountDto): Promise<boolean> => {
       setIsLoading(true);
       try {
         const { data } = await AuthService.login(userDto);

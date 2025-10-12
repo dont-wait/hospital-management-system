@@ -6,10 +6,10 @@ import { Label } from "@/components/ui/shared/Label";
 import { PasswordInput } from "@/components/ui/login/PasswordInput";
 import { UsernameInput } from "@/components/ui/login/UsernameInput";
 import { LoadingSpinner } from "@/components/ui/shared/LoadingSpinner";
-import { accountSchema, LoginPatientDto } from "@/schemas/auth";
+import { accountSchema, LoginAccountDto } from "@/schemas/auth";
 
 interface LoginFormProps {
-  onSubmit: (patientDto: LoginPatientDto) => Promise<void>;
+  onSubmit: (patientDto: LoginAccountDto) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -18,7 +18,7 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginPatientDto>({
+  } = useForm<LoginAccountDto>({
     resolver: zodResolver(accountSchema),
   });
 

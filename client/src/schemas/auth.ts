@@ -26,7 +26,7 @@ export const newPasswordSchema = z.object({
   newPassword: z.string().min(1, "Mật khẩu mới không được để trống"),
 });
 
-export type LoginPatientDto = z.infer<typeof accountSchema>;
+export type LoginAccountDto = z.infer<typeof accountSchema>;
 export type RegisterPatientDto = z.infer<typeof patientSchema>;
 export type ResetPasswordDto = z.infer<typeof resetPasswordSchema>;
 export type NewPasswordDto = z.infer<typeof newPasswordSchema>;
