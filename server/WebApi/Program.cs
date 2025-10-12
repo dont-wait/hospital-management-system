@@ -3,6 +3,7 @@ using Infrastructure.Persistence.Repositories.Account;
 using Infrastructure.Persistence.Repositories.EmployeeRepository;
 using Application.Services.Auth;
 using Application.Services.Account;
+using Application.Services.Admin;
 using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,7 +40,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

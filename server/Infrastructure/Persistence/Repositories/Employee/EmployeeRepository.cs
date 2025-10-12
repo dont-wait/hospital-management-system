@@ -15,7 +15,7 @@ public class EmployeeRepository : IEmployeeRepository
     {
         var doctors = await _context.user_accounts
             .Include(d => d.Employee)
-                .ThenInclude(e => e!.UserAccount)
+                .ThenInclude(e => e!.Doctor)
                 .ToListAsync();
 
         return doctors;
