@@ -37,31 +37,6 @@ public class UserAccountRepository : IUserAccountRepository
         return patient;
     }
 
-    public async Task<ResponseUserDTO?> GetUserAccountByIdAsync(Guid userId) => await _context.patients
-        .Where(p => p.Id == userId)
-        .Select(p => new ResponseUserDTO
-        {
-            UserAccountId = p.UserAccount.Id,
-            AvatarUrl = p.UserAccount.AvatarUrl,
-            Is_Active = p.UserAccount.Is_Active,
-            CitizenID = p.UserAccount.CitizenID,
-            Patient = new ResponsePatientDTO
-            {
-                PatientId = p.Id,
-                FirstName = p.FirstName,
-                LastName = p.LastName,
-                PhoneNumber = p.PhoneNumber,
-                Email = p.Email,
-                DateOfBirth = p.DateOfBirth,
-                Gender = p.Gender,
-                Address = p.Address,
-                Nationality = p.Nationality,
-                PlaceOfResidence = p.PlaceOfResidence,
-                RoleId = p.RoleId,
-            }
-        })
-        .FirstOrDefaultAsync();
-
     public async Task<UserAccount?> GetUserAccountByCitizenIDAsync(string citizenID)
     {
         UserAccount? rs = await _context.user_accounts

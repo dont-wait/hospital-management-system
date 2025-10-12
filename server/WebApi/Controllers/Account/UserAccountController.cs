@@ -67,7 +67,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut("patient/{patientId}")]
-    [Authorize(Roles = "patient, admin, doctor")]
+    [Authorize(Roles = "patient, admin")]
     public async Task<ApiResponse<ResponseUpdatePatient>> UpdateUserById(Guid patientId, RequestUpdatePatient request)
     {
         var currentUserRole = _userAccountService.RoleId;

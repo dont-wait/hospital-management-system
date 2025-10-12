@@ -76,4 +76,20 @@ public class EmployeeRepository : IEmployeeRepository
             }
         })
         .FirstOrDefaultAsync();
+
+    public async Task<Doctor?> FindDoctorWithAccountByIdAsync(Guid doctorId)
+    {
+        var existingDoctor = await _context.doctors
+            .Include(d => d.Employee)
+                .ThenInclude(e => e.UserAccount)
+            .FirstOrDefaultAsync(d => d.Id == doctorId);
+        return existingDoctor;
+    }
+
+    public async Task UpdateAccountAndDoctorAsync(Doctor doctor, UserAccount userAccount)
+    {
+        _context.doctors.Update(doctor);
+        _context.user_accounts.Update(userAccount);
+        await _context.SaveChangesAsync();
+    }   
 }

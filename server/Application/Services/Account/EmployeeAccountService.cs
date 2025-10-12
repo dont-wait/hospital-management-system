@@ -57,6 +57,44 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }
 
+        public async Task<ServiceResult<ResponseUpdateDoctorDTO>> UpdateUserAccount_Doctor_Async(Guid doctorId, RequestUpdateDoctorDTO request)
+    {
+        var doctorExisting = await _employeeRepository.FindDoctorWithAccountByIdAsync(doctorId);
+        if (doctorExisting == null)
+            return ServiceResult<ResponseUpdateDoctorDTO>.Fail("Không tìm thấy thông tin người dùng");
+
+        var accountOfDoctor = doctorExisting.Employee.UserAccount;
+        if (accountOfDoctor == null)
+            return ServiceResult<ResponseUpdateDoctorDTO>.Fail("Không tìm thấy tài khoản người dùng");
+
+        doctorExisting.Employee.FirstName = request.FirstName;
+        doctorExisting.Employee.LastName = request.LastName;
+        doctorExisting.Employee.PhoneNumber = request.PhoneNumber;
+        doctorExisting.Employee.Gender = request.Gender;
+        doctorExisting.Employee.DateOfBirth = request.DateOfBirth;
+        doctorExisting.Employee.HireDate = request.HireDate;
+        doctorExisting.Employee.CertificateNumber = request.CertificateNumber;
+        doctorExisting.Specialization = request.Specialization;
+        accountOfDoctor.AvatarUrl = request.AvatarUrl;
+
+        await _employeeRepository.UpdateAccountAndDoctorAsync(doctorExisting, accountOfDoctor);
+        
+        ResponseUpdateDoctorDTO responseDoctorDto = new ResponseUpdateDoctorDTO
+        {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            PhoneNumber = request.PhoneNumber,
+            Gender = request.Gender,
+            DateOfBirth = request.DateOfBirth,
+            HireDate = request.HireDate,
+            CertificateNumber = request.CertificateNumber,
+            Specialization = request.Specialization,
+            AvatarUrl = request.AvatarUrl
+        };
+
+        return ServiceResult<ResponseUpdateDoctorDTO>.Success(responseDoctorDto);
+    }
+
     public async Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId)
     {
         var employee = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
