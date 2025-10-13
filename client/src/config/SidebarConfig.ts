@@ -1,4 +1,4 @@
-import { Home, Users, Lock, Pencil } from "@/lib/client/utils";
+import { Users, Lock, Pencil } from "@/lib/client/utils";
 
 export const patientSidebarVariants = {
   hidden: { opacity: 0, y: -10 },
@@ -13,11 +13,6 @@ export const patientSidebarVariants = {
 } as const;
 
 export const PatientSidebarItems = [
-  {
-    route: "/",
-    title: "Trang Chủ",
-    icon: Home,
-  },
   {
     route: "/patient",
     title: "Thông Tin Bệnh Nhân",
