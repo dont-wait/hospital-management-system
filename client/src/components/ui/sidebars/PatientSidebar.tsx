@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUserAuthContext } from "@/contexts/UserAuthContext";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { LogOut, LogIn } from "@/lib/client/utils";
 import {
@@ -9,7 +9,7 @@ import {
 } from "@/config/SidebarConfig";
 
 function PatientSidebar() {
-  const { logout, isAuthenticated } = useAuth();
+  const { logout, isAuthenticated } = useUserAuthContext();
   const { closeSidebar } = useSidebar();
   const router = useRouter();
 

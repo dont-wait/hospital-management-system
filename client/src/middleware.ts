@@ -71,23 +71,12 @@ export async function middleware(req: NextRequest) {
   }
 
   const token = req.cookies.get("accessToken")?.value;
-  if (!token) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
-
-  const payload = TokenService.decodePayload(token);
-  if (!payload || !payload.RoleId) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
-
-  // Kiểm tra hết hạn
-  const now = Math.floor(Date.now() / 1000);
-  if (payload.exp && now >= payload.exp) {
+  if (!token || TokenService.isTokenExpired(token)) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
   // Kiểm tra role
-  const userRole = payload.RoleId as Role;
+  const userRole: Role = TokenService.getUserRole(token);
   for (const [routePrefix, allowedRoles] of Object.entries(ROUTE_ROLE_MAP)) {
     if (pathname.startsWith(routePrefix)) {
       if (!allowedRoles.includes(userRole)) {

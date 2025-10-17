@@ -1,18 +1,18 @@
-import { AuthUser } from "@/types";
+import { Role } from "@/types";
 
 class TokenService {
   static readonly STORAGE_KEYS = {
-    USER: "authUser",
+    USER: "userInfo",
   } as const;
 
-  static saveUser(user: AuthUser): void {
+  static saveUser<T>(user: T): void {
     sessionStorage.setItem(
       TokenService.STORAGE_KEYS.USER,
       JSON.stringify(user),
     );
   }
 
-  static getStoredUser(): AuthUser | null {
+  static getStoredUser<T>(): T | null {
     try {
       const userData = sessionStorage.getItem(TokenService.STORAGE_KEYS.USER);
       return userData ? JSON.parse(userData) : null;
@@ -34,6 +34,20 @@ class TokenService {
     } catch {
       return null;
     }
+  }
+
+  static isTokenExpired(token: string): boolean {
+    const payload = TokenService.decodePayload(token);
+    if (!payload || !payload.exp) return true;
+
+    const currentTime = Math.floor(Date.now() / 1000);
+    return payload.exp < currentTime;
+  }
+
+  static getUserRole(token: string): Role {
+    const payload = TokenService.decodePayload(token);
+    if (!payload || !payload.exp) return "patient";
+    return payload.RoleId;
   }
 }
 

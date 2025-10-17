@@ -2,7 +2,7 @@ import "./globals.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import type { Metadata } from "next";
 import { roboto } from "@/font/font";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { UserAuthProvider } from "@/contexts/UserAuthContext";
 import { Navigation } from "@/components/ui/shared/Navigation";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { SidebarProvider } from "@/contexts/SidebarContext";
@@ -23,13 +23,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={roboto.className}>
         <ToastProvider>
-          <AuthProvider>
+          <UserAuthProvider>
             <SidebarProvider>
               <Navigation />
               <main>{children}</main>
               <Sidebar />
             </SidebarProvider>
-          </AuthProvider>
+          </UserAuthProvider>
         </ToastProvider>
       </body>
     </html>

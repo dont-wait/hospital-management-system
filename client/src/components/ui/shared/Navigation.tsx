@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUserAuthContext } from "@/contexts/UserAuthContext";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { Button } from "@/components/ui/shared/Button";
 import PatientSidebar from "@/components/ui/sidebars/PatientSidebar";
 import { Heart, Bell } from "@/lib/client/utils";
 
 export function Navigation() {
-  const { authUser, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useUserAuthContext();
   const { openSidebar, setContent } = useSidebar();
 
   const handleOpenDetails = () => {
@@ -47,7 +47,7 @@ export function Navigation() {
                   style={{ aspectRatio: "1/1" }}
                 >
                   <Image
-                    src={authUser!.avatarUrl}
+                    src={user!.avatarUrl}
                     width={32}
                     height={32}
                     alt="avatar"

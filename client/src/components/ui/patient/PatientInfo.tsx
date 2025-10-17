@@ -7,28 +7,29 @@ import {
 } from "@/components/ui/shared/Card";
 import { Label } from "@/components/ui/shared/Label";
 import { Button } from "@/components/ui/shared/Button";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUserAuthContext } from "@/contexts/UserAuthContext";
 import { FileText, User, Mail, Phone } from "@/lib/client/utils";
 import PatientDetail from "@/components/ui/patient/PatientDetail";
+import { Patient } from "@/types";
 
 function PatientInfo() {
-  const { authUser } = useAuth();
+  const { user } = useUserAuthContext();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
-      {authUser?.patient && (
+      {user && "patientId" in user && (
         <PatientDetail
           isOpen={isOpen}
           setIsOpen={setIsOpen}
-          patient={authUser.patient}
+          patient={user as Patient}
         />
       )}
       <Card>
         <CardHeader>
           <CardTitle>Thông tin bệnh nhân</CardTitle>
         </CardHeader>
-        {authUser && authUser.patient && (
+        {user && "patientId" in user && (
           <CardContent>
             {/* Name */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -40,7 +41,7 @@ function PatientInfo() {
                 <Label className="text-sm text-gray-600 block truncate">
                   Tên bệnh nhân:{" "}
                   <span>
-                    {authUser.patient.firstName} {authUser.patient.lastName}
+                    {user.firstName} {user.lastName}
                   </span>
                 </Label>
               </div>
@@ -52,7 +53,7 @@ function PatientInfo() {
               >
                 <Mail className="h-4 w-4" />
                 <Label className="text-sm text-gray-600 block truncate">
-                  Email: <span>{authUser.patient.email}</span>
+                  Email: <span>{user.email}</span>
                 </Label>
               </div>
 
@@ -63,7 +64,7 @@ function PatientInfo() {
               >
                 <Phone className="mr-2 h-4 w-4" />
                 <Label className="text-sm text-gray-600 block truncate">
-                  Số điện thoại: <span>{authUser.patient.phoneNumber}</span>
+                  Số điện thoại: <span>{user.phoneNumber}</span>
                 </Label>
               </div>
             </div>

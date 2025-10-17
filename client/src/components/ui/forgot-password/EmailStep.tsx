@@ -1,6 +1,6 @@
 import { useMemo, memo } from "react";
 import { useForm } from "react-hook-form";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUserAuthContext } from "@/contexts/UserAuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordSchema, ResetPasswordDto } from "@/schemas/auth";
 import { Button } from "@/components/ui/shared/Button";
@@ -18,11 +18,11 @@ const EmailStep = memo(function EmailStep({
   isLoading,
   onSubmit,
 }: EmailStepProps) {
-  const { authUser } = useAuth();
+  const { user } = useUserAuthContext();
 
   const defaultEmail = useMemo(() => {
-    return email || authUser?.employee?.email || authUser?.patient?.email || "";
-  }, [authUser, email]);
+    return email || user?.email || "";
+  }, [user, email]);
 
   const {
     register,

@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUserAuthContext } from "@/contexts/UserAuthContext";
 import { Button } from "@/components/ui/shared/Button";
 import { ArrowRight } from "@/lib/client/utils";
 
 function Banner() {
-  const { isAuthenticated, authUser } = useAuth();
+  const { isAuthenticated, user } = useUserAuthContext();
   return (
     <section className="py-20 px-4 bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="max-w-6xl mx-auto text-center">
@@ -34,7 +34,7 @@ function Banner() {
         ) : (
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {authUser && authUser.employee && (
+              {user && "employeeId" in user && (
                 <Link href="/doctor">
                   <Button size="lg">
                     Đi tới Bảng điều khiển Bác sĩ
@@ -42,7 +42,7 @@ function Banner() {
                   </Button>
                 </Link>
               )}
-              {authUser && authUser.patient && (
+              {user && "patientId" in user && (
                 <Link href="/patient">
                   <Button size="lg">
                     Đi tới Cổng thông tin Bệnh nhân

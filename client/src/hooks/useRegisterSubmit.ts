@@ -2,11 +2,11 @@
 
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUserAuthContext } from "@/contexts/UserAuthContext";
 import type { RegisterPatientDto } from "@/schemas/auth";
 
 export function useRegisterSubmit() {
-  const { register, isLoading } = useAuth();
+  const { register, isLoading } = useUserAuthContext();
   const router = useRouter();
 
   const handleSubmit = useCallback(

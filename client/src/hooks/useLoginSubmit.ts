@@ -2,11 +2,11 @@
 
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUserAuthContext } from "@/contexts/UserAuthContext";
 import type { LoginAccountDto } from "@/schemas/auth";
 
 export function useLoginSubmit() {
-  const { login, isLoading } = useAuth();
+  const { login, isLoading } = useUserAuthContext();
   const router = useRouter();
 
   const handleSubmit = useCallback(

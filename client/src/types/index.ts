@@ -17,6 +17,7 @@ export interface Patient {
   nationality: string;
   address: string;
   placeOfResidence: string;
+  avatarUrl: string;
 }
 
 export interface Doctor {
@@ -43,6 +44,7 @@ export interface Employee {
   hireDate: string;
   certificateNumber: string;
   specialization: string;
+  avatarUrl: string;
 }
 
 export interface AuthUser {

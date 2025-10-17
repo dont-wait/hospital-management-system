@@ -10,14 +10,14 @@ import {
   useMemo,
 } from "react";
 import { useRouter } from "next/navigation";
-import { AuthUser } from "@/types";
 import AuthService from "@/services/auth.service";
 import TokenService from "@/services/token.service";
 import { LoginAccountDto, RegisterPatientDto } from "@/schemas/auth";
+import { Employee, Patient, LoginResponse } from "@/types";
 
-interface AuthContextType {
-  authUser: AuthUser | null;
-  setAuthUser: (user: AuthUser) => void;
+interface UserAuthContextType<T> {
+  user: T | null;
+  setUser: (user: T) => void;
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (userDto: LoginAccountDto) => Promise<boolean>;
@@ -25,10 +25,12 @@ interface AuthContextType {
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const UserAuthContext = createContext<UserAuthContextType<
+  Patient | Employee
+> | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+export function UserAuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<Patient | Employee | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -37,10 +39,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (userDto: LoginAccountDto): Promise<boolean> => {
       setIsLoading(true);
       try {
-        const { data } = await AuthService.login(userDto);
-        TokenService.saveUser(data);
-        setAuthUser(data);
-
+        const { data }: LoginResponse = await AuthService.login(userDto);
+        if (data.patient) {
+          const user: Patient = {
+            ...data.patient,
+            avatarUrl: data.avatarUrl,
+          };
+          TokenService.saveUser<Patient>(user);
+          setUser(user);
+        }
         return true;
       } catch {
         return false;
@@ -67,57 +74,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  // Clear user session and show logout message
   const handleLogout = useCallback(async () => {
     await AuthService.logout();
     TokenService.clearStoredUser();
-    setAuthUser(null);
+    setUser(null);
     router.push("/");
   }, [router]);
 
-  // Initialize auth state on component mount
   useEffect(() => {
-    const user = TokenService.getStoredUser();
-    if (user?.accessToken) {
-      try {
-        const payload = TokenService.decodePayload(user.accessToken);
-        const isExpired =
-          !payload || (payload.exp && Date.now() >= payload.exp * 1000);
-        if (isExpired) {
-          handleLogout();
-        } else {
-          setAuthUser(user);
-        }
-      } catch {
-        handleLogout();
-      }
+    const user: Patient | Employee | null = TokenService.getStoredUser();
+    if (user && "patientId" in user) {
+      setUser(user as Patient);
     }
     setIsLoading(false);
-  }, [handleLogout]);
+  }, []);
 
-  // Memoize context value to avoid unnecessary rerenders
   const contextValue = useMemo(
     () => ({
-      authUser,
-      setAuthUser,
+      user,
+      setUser,
       isLoading,
-      isAuthenticated: !!authUser,
+      isAuthenticated: !!user,
       login: handleLogin,
       register: handleRegister,
       logout: handleLogout,
     }),
-    [authUser, isLoading, handleLogin, handleRegister, handleLogout],
+    [user, isLoading, handleLogin, handleRegister, handleLogout],
   );
 
   return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+    <UserAuthContext.Provider value={contextValue}>
+      {children}
+    </UserAuthContext.Provider>
   );
 }
 
-// Hook to access auth context with error handling
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
+export function useUserAuthContext() {
+  const context = useContext(UserAuthContext);
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
