@@ -1,0 +1,11 @@
+{
+  "citizenID": "0000000001",
+  "password": "Admin@123",
+  "email": "admin@hospital.com",
+  "firstName": "System",
+  "lastName": "Administrator",
+  "dateOfBirth": "1990-01-01",
+  "gender": "M",
+  "phoneNumber": "0123456789",
+  "certificateNumber": "CERT000001"
+}

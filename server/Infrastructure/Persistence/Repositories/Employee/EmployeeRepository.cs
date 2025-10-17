@@ -96,20 +96,11 @@ public class EmployeeRepository : IEmployeeRepository
         return existingDoctor;
     }
 
-    public async Task UpdateAccountAndDoctorAsync(Doctor doctor, UserAccount userAccount, RequestUpdateDoctorDTO request)
+    public async Task UpdateAccountAndDoctorAsync(Doctor doctor, UserAccount userAccount)
     {
-        var employee = userAccount.Employee!;
-
-        employee.FirstName = request.FirstName;
-        employee.LastName = request.LastName;
-        employee.PhoneNumber = request.PhoneNumber;
-        employee.Gender = request.Gender;
-        employee.DateOfBirth = request.DateOfBirth;
-        employee.HireDate = request.HireDate;
-        employee.CertificateNumber = request.CertificateNumber;
-        doctor.Specialization = request.Specialization;
-        userAccount.AvatarUrl = request.AvatarUrl;
+        _context.user_accounts.Update(userAccount);
+        _context.doctors.Update(doctor);
 
         await _context.SaveChangesAsync();
-    }   
+    }
 }

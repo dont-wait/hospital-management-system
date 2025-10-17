@@ -63,10 +63,21 @@ public class EmployeeAccountService : IEmployeeAccountService
         if (accountOfDoctor == null)
             return ServiceResult<ResponseUpdateDoctorDTO>.Fail("Không tìm thấy thông tin người dùng");
 
-        var employee = accountOfDoctor.Employee!;
-        var doctor = employee.Doctor!;
 
-        await _employeeRepository.UpdateAccountAndDoctorAsync(doctor, accountOfDoctor, request);
+        var existingEmployee = accountOfDoctor.Employee!;
+        var doctor = existingEmployee.Doctor!;
+
+        existingEmployee.FirstName = request.FirstName;
+        existingEmployee.LastName = request.LastName;
+        existingEmployee.PhoneNumber = request.PhoneNumber;
+        existingEmployee.Gender = request.Gender;
+        existingEmployee.DateOfBirth = request.DateOfBirth;
+        existingEmployee.HireDate = request.HireDate;
+        existingEmployee.CertificateNumber = request.CertificateNumber;
+        doctor.Specialization = request.Specialization;
+        accountOfDoctor.AvatarUrl = request.AvatarUrl;
+
+        await _employeeRepository.UpdateAccountAndDoctorAsync(doctor, accountOfDoctor);
 
         ResponseUpdateDoctorDTO responseDoctorDto = new ResponseUpdateDoctorDTO
         {

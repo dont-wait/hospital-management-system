@@ -51,6 +51,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await DataSeeder.SeedAsync(db);
+//    await DataSeeder.SeedAdminAsync(db);
 }
 
 app.UseCors("CorsPolicy");

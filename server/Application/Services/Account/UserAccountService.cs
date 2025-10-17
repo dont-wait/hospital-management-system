@@ -31,7 +31,7 @@ public class UserAccountService : IUserAccountService
             //implement it
         }
         
-        // 🩺 Cập nhật thông tin bệnh nhân
+        // Cập nhật thông tin bệnh nhân
         patientExisting.FirstName = request.FirstName;
         patientExisting.LastName = request.LastName;
         patientExisting.PhoneNumber = request.PhoneNumber;
