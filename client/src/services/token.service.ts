@@ -38,7 +38,7 @@ class TokenService {
 
   static isTokenExpired(token: string): boolean {
     const payload = TokenService.decodePayload(token);
-    if (!payload || !payload.exp) return true;
+    if (!payload?.exp) return true;
 
     const currentTime = Math.floor(Date.now() / 1000);
     return payload.exp < currentTime;
@@ -46,7 +46,7 @@ class TokenService {
 
   static getUserRole(token: string): Role {
     const payload = TokenService.decodePayload(token);
-    if (!payload || !payload.exp) return "patient";
+    if (!payload?.exp) return "patient";
     return payload.RoleId;
   }
 }
