@@ -3,10 +3,10 @@ import "react-loading-skeleton/dist/skeleton.css";
 import type { Metadata } from "next";
 import { roboto } from "@/font/font";
 import { UserAuthProvider } from "@/contexts/UserAuthContext";
-import { Navigation } from "@/components/ui/shared/Navigation";
+import { Navigation } from "@/components/shared/Navigation";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { SidebarProvider } from "@/contexts/SidebarContext";
-import { Sidebar } from "@/components/ui/shared/Sidebar";
+import { Sidebar } from "@/components/shared/Sidebar";
 
 export const metadata: Metadata = {
   title: "Medica Hospital",

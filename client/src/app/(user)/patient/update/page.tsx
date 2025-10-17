@@ -1,13 +1,13 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/shared/Card";
-import LazySection from "@/components/ui/shared/LazySection";
+import { Card, CardContent } from "@/components/shared/Card";
+import LazySection from "@/components/shared/LazySection";
 import Skeleton from "react-loading-skeleton";
 
 function UpdatePatientPage() {
   return (
     <LazySection
-      importFunc={() => import("@/components/ui/patient/UpdateCard")}
+      importFunc={() => import("@/components/patient/UpdateCard")}
       skeleton={
         <Card className="w-full p-2 shadow-none border-0">
           <CardContent className="space-y-4 w-full md:w-4/6 mx-auto">

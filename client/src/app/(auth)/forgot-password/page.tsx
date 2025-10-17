@@ -1,13 +1,13 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/shared/Card";
-import LazySection from "@/components/ui/shared/LazySection";
+import { Card, CardContent, CardHeader } from "@/components/shared/Card";
+import LazySection from "@/components/shared/LazySection";
 import Skeleton from "react-loading-skeleton";
 
 function ForgotPasswordPage() {
   return (
     <LazySection
-      importFunc={() => import("@/components/ui/forgot-password/MainCard")}
+      importFunc={() => import("@/components/forgot-password/MainCard")}
       skeleton={
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
           <Card className="w-full max-w-md mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">

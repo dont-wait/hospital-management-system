@@ -1,6 +1,6 @@
 "use client";
 
-import LazySection from "@/components/ui/shared/LazySection";
+import LazySection from "@/components/shared/LazySection";
 import Skeleton from "react-loading-skeleton";
 
 function RegisterPage() {
@@ -10,12 +10,12 @@ function RegisterPage() {
       style={{ minHeight: "calc(100vh - 64.8px)" }}
     >
       <LazySection
-        importFunc={() => import("@/components/ui/register/RegisterCard")}
+        importFunc={() => import("@/components/register/RegisterCard")}
         skeleton={
           <div className="w-full max-w-2xl mx-auto p-6 space-y-6 bg-white">
             {/* Form Title Area */}
             <div className="space-y-2 text-center">
-              <Skeleton width={40} height={40} className="mb-4"/>
+              <Skeleton width={40} height={40} className="mb-4" />
               <Skeleton width={150} height={24} />
               <Skeleton width={200} height={16} />
             </div>

@@ -1,12 +1,12 @@
 "use client";
 
 import Skeleton from "react-loading-skeleton";
-import LazySection from "@/components/ui/shared/LazySection";
+import LazySection from "@/components/shared/LazySection";
 
 const NotFound = () => {
   return (
     <LazySection
-      importFunc={() => import("@/components/ui/shared/NotFound")}
+      importFunc={() => import("@/components/shared/NotFound")}
       skeleton={
         <div
           className="flex flex-col items-center justify-center gap-6 bg-gray-50"

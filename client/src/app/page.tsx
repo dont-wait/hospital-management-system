@@ -1,13 +1,13 @@
 "use client";
 
 import Skeleton from "react-loading-skeleton";
-import LazySection from "@/components/ui/shared/LazySection";
+import LazySection from "@/components/shared/LazySection";
 
 function HomePage() {
   return (
     <div>
       <LazySection
-        importFunc={() => import("@/components/ui/home/Banner")}
+        importFunc={() => import("@/components/home/Banner")}
         skeleton={
           <section className="py-20 px-4 bg-gray-50 shadow">
             <div className="max-w-6xl mx-auto text-center">
@@ -27,7 +27,7 @@ function HomePage() {
       />
 
       <LazySection
-        importFunc={() => import("@/components/ui/home/FeaturesSection")}
+        importFunc={() => import("@/components/home/FeaturesSection")}
         skeleton={
           <section className="py-16 px-4 shadow">
             <div className="max-w-6xl mx-auto p-2 text-center">
@@ -68,7 +68,7 @@ function HomePage() {
       />
 
       <LazySection
-        importFunc={() => import("@/components/ui/home/ServicesSection")}
+        importFunc={() => import("@/components/home/ServicesSection")}
         skeleton={
           <section className="py-16 px-4 shadow">
             <div className="max-w-6xl mx-auto p-2 text-center">
@@ -104,7 +104,7 @@ function HomePage() {
       />
 
       <LazySection
-        importFunc={() => import("@/components/ui/home/CTASection")}
+        importFunc={() => import("@/components/home/CTASection")}
         skeleton={
           <section className="py-16 px-4 bg-gray-50">
             <div className="max-w-4xl mx-auto text-center">

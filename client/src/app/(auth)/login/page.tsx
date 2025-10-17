@@ -1,6 +1,6 @@
 "use client";
 
-import LazySection from "@/components/ui/shared/LazySection";
+import LazySection from "@/components/shared/LazySection";
 import Skeleton from "react-loading-skeleton";
 
 export default function LoginPage() {
@@ -10,7 +10,7 @@ export default function LoginPage() {
       style={{ minHeight: "calc(100vh - 64.8px)" }}
     >
       <LazySection
-        importFunc={() => import("@/components/ui/login/LoginCard")}
+        importFunc={() => import("@/components/login/LoginCard")}
         skeleton={
           <div className="w-full mx-auto p-6 space-y-4 bg-white">
             {/* Form Title Area */}

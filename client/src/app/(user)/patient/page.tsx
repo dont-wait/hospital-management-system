@@ -6,10 +6,10 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/ui/shared/Card";
-import { Button } from "@/components/ui/shared/Button";
+} from "@/components/shared/Card";
+import { Button } from "@/components/shared/Button";
 import { Calendar, FileText, Pencil } from "@/lib/client/utils";
-import LazySection from "@/components/ui/shared/LazySection";
+import LazySection from "@/components/shared/LazySection";
 import Skeleton from "react-loading-skeleton";
 
 export default function PatientPage() {
@@ -41,7 +41,7 @@ export default function PatientPage() {
         </Card>
 
         <LazySection
-          importFunc={() => import("@/components/ui/patient/PatientInfo")}
+          importFunc={() => import("@/components/patient/PatientInfo")}
           skeleton={
             <Card>
               <CardHeader>
