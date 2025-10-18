@@ -8,14 +8,16 @@ public static class DataSeeder
     public static async Task SeedAdminAsync(AppDbContext context)
     {
         // Kiểm tra xem đã có admin chưa
-        if (context.admins.Any())
+        if (context.admins.Where(a => a.Employee.UserAccount.CitizenID == "0000000001").Any())
         {
             Console.WriteLine("✅ Admin đã tồn tại trong hệ thống");
             return;
         }
 
-        var path = Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Persistence", "SeedData", "admins.json");
-        var json = await File.ReadAllTextAsync(path);
+        var rootPath = Directory.GetParent(AppContext.BaseDirectory)!.Parent!.Parent!.Parent!.Parent!.FullName;
+        var seedPath = Path.Combine(rootPath, "Infrastructure", "Persistence", "SeedData", "admins.json");
+        var json = File.ReadAllText(seedPath);
+
         var adminData = JsonSerializer.Deserialize<AdminSeedData>(json);
 
         if (adminData == null)
@@ -36,7 +38,7 @@ public static class DataSeeder
             Email = adminData.Email,
             HireDate = DateTime.UtcNow,
             CertificateNumber = adminData.CertificateNumber,
-            RoleId = "Admin"
+            RoleId = "admin"
         };
         context.employees.Add(employee);
         await context.SaveChangesAsync();

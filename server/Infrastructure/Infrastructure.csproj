@@ -17,6 +17,10 @@
     <PackageReference Include="SendGrid" Version="9.29.3" />
     <PackageReference Include="StackExchange.Redis" Version="2.9.25" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Persistence/SeedData/**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
