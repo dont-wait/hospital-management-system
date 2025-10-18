@@ -16,6 +16,7 @@ public class EmployeeRepository : IEmployeeRepository
         var doctors = await _context.user_accounts
             .Include(d => d.Employee)
                 .ThenInclude(e => e!.Doctor)
+            .Where(ua => ua.Employee != null && ua.Employee.Doctor != null)
                 .ToListAsync();
 
         return doctors;
@@ -62,24 +63,18 @@ public class EmployeeRepository : IEmployeeRepository
         return doctor;
     }
 
-    public async Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId) => await _context.employees
-        .Where(e => e.Id == employeeId)
-        .Select(e => new UserAccount
-        {
-            Id = e.UserAccount.Id,
-            AvatarUrl = e.UserAccount.AvatarUrl,
-            Is_Active = e.UserAccount.Is_Active,
-            CitizenID = e.UserAccount.CitizenID,
-            Employee = e.UserAccount.Employee,
-        })
-        .FirstOrDefaultAsync();
-
-    public async Task<UserAccount?> FindDoctorWithAccountByIdAsync(Guid userAccountId)
+    public async Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId)
     {
-        var existingDoctor = await _context.user_accounts
+        return await _context.user_accounts
+        .Include(ua => ua.Employee)
+        .FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employeeId);
+    }
+
+    public async Task<Doctor?> FindDoctorWithAccountByIdAsync(Guid doctorId)
+    {
+        var existingDoctor = await _context.doctors
             .Include(d => d.Employee)
-                .ThenInclude(e => e!.Doctor)
-            .FirstOrDefaultAsync(d => d.Id == userAccountId);
+            .FirstOrDefaultAsync(d => d.Id == doctorId && d.Employee != null);
         return existingDoctor;
     }
 

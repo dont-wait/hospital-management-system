@@ -24,6 +24,6 @@ public class AdminController : ControllerBase
         if (!result.IsSuccess)
             return new ApiResponse<List<ResponseDoctorDTO>>(400, result.Message);
 
-        return new ApiResponse<List<ResponseDoctorDTO>>(200, result.Message, result.Data);
+        return new ApiResponse<List<ResponseDoctorDTO>>(200, "Lấy danh sách bác sĩ thành công", result.Data);
     }
 }
