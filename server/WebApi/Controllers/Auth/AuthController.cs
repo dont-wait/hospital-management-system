@@ -21,7 +21,7 @@ public class AuthController : ControllerBase
         _httpContextAccessor = httpContextAccessor;
     }
 
-    [HttpPost("/patient/register")]
+    [HttpPost("patient/register")]
     public async Task<ApiResponse<ResponsePatientDTO>> PatientRegister(RequestPatientDTO userDto)
     {
         try
@@ -39,7 +39,7 @@ public class AuthController : ControllerBase
         }
     }
 
-    [HttpPost("/doctor/register")]
+    [HttpPost("doctor/register")]
     [Authorize(Roles = "admin")]
     public async Task<ApiResponse<ResponseDoctorDTO>> DoctorRegister(RequestDoctorDTO userDto)
     {
@@ -58,7 +58,7 @@ public class AuthController : ControllerBase
         }
     }
 
-    [HttpPost("/login")]
+    [HttpPost("login")]
     public async Task<ApiResponse<ResponseLoginDTO>> Login(RequestLoginDTO loginDto)
     {
         try
@@ -87,7 +87,7 @@ public class AuthController : ControllerBase
         }
     }
 
-    [HttpPost("/logout")]
+    [HttpPost("logout")]
     public ApiResponse<string> Logout()
     {
         try
@@ -105,7 +105,7 @@ public class AuthController : ControllerBase
     }
 
     //1 Người dùng gửi request yêu cầu đổi mật khẩu
-    [HttpPost("/request-reset")]
+    [HttpPost("request-reset")]
     public async Task<ApiResponse<string>> RequestResetPassword(RequestResetPassword request)
     {
         try
@@ -126,7 +126,7 @@ public class AuthController : ControllerBase
     //2. Sau khi nhận được request server sẽ lưu otp dưới redis
     //Người dùng cần thực hiện check email và nhập lại, nếu sau quá 3 lần thì
     //lặp túc otp invalid
-    [HttpPost("/verify-otp")]
+    [HttpPost("verify-otp")]
     public async Task<IActionResult> VerifyOtp(RequestVerifyOtp request)
     {
         try
@@ -158,7 +158,7 @@ public class AuthController : ControllerBase
     }
 
     // //3. Người dùng gửi request đặt lại mật khẩu mới
-    [HttpPost("/reset-password")]
+    [HttpPost("reset-password")]
     public async Task<ApiResponse<string>> ResetPassword(RequestResetPasswordFinal request)
     {
         try
