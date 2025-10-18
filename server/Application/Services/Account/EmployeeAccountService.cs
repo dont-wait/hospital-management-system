@@ -60,14 +60,13 @@ public class EmployeeAccountService : IEmployeeAccountService
 
     public async Task<ServiceResult<ResponseUpdateDoctorDTO>> UpdateUserAccount_Doctor_Async(Guid doctorId, RequestUpdateDoctorDTO request)
     {
-        UserAccount? accountOfDoctor = await _employeeRepository.FindDoctorWithAccountByIdAsync(doctorId);
-        if (accountOfDoctor == null)
+        Doctor? existingDoctor = await _employeeRepository.FindDoctorWithAccountByIdAsync(doctorId);
+        if (existingDoctor == null)
             return ServiceResult<ResponseUpdateDoctorDTO>.Fail("Không tìm thấy thông tin người dùng");
 
-
-        var existingEmployee = accountOfDoctor.Employee!;
-        var doctor = existingEmployee.Doctor!;
-
+        var existingEmployee = existingDoctor.Employee;
+        var accountOfDoctor = existingDoctor.Employee.UserAccount;
+        
         existingEmployee.FirstName = request.FirstName;
         existingEmployee.LastName = request.LastName;
         existingEmployee.PhoneNumber = request.PhoneNumber;
@@ -75,10 +74,10 @@ public class EmployeeAccountService : IEmployeeAccountService
         existingEmployee.DateOfBirth = request.DateOfBirth;
         existingEmployee.HireDate = request.HireDate;
         existingEmployee.CertificateNumber = request.CertificateNumber;
-        doctor.Specialization = request.Specialization;
+        existingDoctor.Specialization = request.Specialization;
         accountOfDoctor.AvatarUrl = request.AvatarUrl;
 
-        await _employeeRepository.UpdateAccountAndDoctorAsync(doctor, accountOfDoctor);
+        await _employeeRepository.UpdateAccountAndDoctorAsync(existingDoctor, accountOfDoctor);
 
         ResponseUpdateDoctorDTO responseDoctorDto = new ResponseUpdateDoctorDTO
         {
@@ -108,9 +107,8 @@ public class EmployeeAccountService : IEmployeeAccountService
             AvatarUrl = userAccount.AvatarUrl,
             Is_Active = userAccount.Is_Active,
             CitizenID = userAccount.CitizenID,
-            Employee = userAccount.Employee != null ? new ResponseDoctorDTO
+            Employee = userAccount.Employee != null ? new ResponseEmployeeDTO
             {
-                DoctorId = userAccount.Employee.Doctor.Id,
                 EmployeeId = userAccount.Employee.Id,
                 FirstName = userAccount.Employee.FirstName,
                 LastName = userAccount.Employee.LastName,
@@ -120,7 +118,6 @@ public class EmployeeAccountService : IEmployeeAccountService
                 DateOfBirth = userAccount.Employee.DateOfBirth,
                 Gender = userAccount.Employee.Gender,
                 HireDate = userAccount.Employee.HireDate,
-                Specialization = userAccount.Employee.Doctor.Specialization,
                 RoleId = userAccount.Employee.RoleId,
             } : null
         };

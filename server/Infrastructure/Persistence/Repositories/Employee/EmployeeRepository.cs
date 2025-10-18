@@ -74,7 +74,9 @@ public class EmployeeRepository : IEmployeeRepository
     {
         var existingDoctor = await _context.doctors
             .Include(d => d.Employee)
-            .FirstOrDefaultAsync(d => d.Id == doctorId && d.Employee != null);
+                .ThenInclude(e => e.UserAccount)
+            .FirstOrDefaultAsync(d => d.Id == doctorId);
+
         return existingDoctor;
     }
 
