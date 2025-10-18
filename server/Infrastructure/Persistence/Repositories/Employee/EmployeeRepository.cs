@@ -70,7 +70,7 @@ public class EmployeeRepository : IEmployeeRepository
             AvatarUrl = e.UserAccount.AvatarUrl,
             Is_Active = e.UserAccount.Is_Active,
             CitizenID = e.UserAccount.CitizenID,
-            Employee = new ResponseEmployeeDTO
+            Employee = new ResponseDoctorDTO
             {
                 EmployeeId = e.Id,
                 FirstName = e.FirstName,
@@ -81,7 +81,7 @@ public class EmployeeRepository : IEmployeeRepository
                 DateOfBirth = e.DateOfBirth,
                 Gender = e.Gender,
                 HireDate = e.HireDate,
-                Specialization = e.Doctor.Specialization,
+                Specialization =  e.Doctor.Specialization,
                 RoleId = e.RoleId
             }
         })
