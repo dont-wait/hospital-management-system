@@ -19,108 +19,109 @@ public class AuthService : IAuthService
 
     public async Task<ServiceResult<ResponseLoginDTO?>> LoginSync(RequestLoginDTO loginDto)
     {
-        var userAccountExists = await _userAccountRepository.GetUserAccountByCitizenIDAsync(loginDto.CitizenID);
+        var user = await _userAccountRepository.GetUserAccountByCitizenIDAsync(loginDto.CitizenID);
+        if (user == null) return ServiceResult<ResponseLoginDTO?>.Fail("Sai CCCD hoặc mật khẩu.");
 
-        if (userAccountExists == null)
-            return ServiceResult<ResponseLoginDTO?>.Fail("Sai CCCD hoặc mật khẩu.");
+        bool ok = HashPasswordUtil.VerifyPassword(loginDto.Password, user.Password);
+        if (!ok) return ServiceResult<ResponseLoginDTO?>.Fail("Sai CCCD hoặc mật khẩu.");
 
-        bool isPasswordValid = HashPasswordUtil.VerifyPassword(loginDto.Password, userAccountExists.Password);
-        if (!isPasswordValid)
-            return ServiceResult<ResponseLoginDTO?>.Fail("Sai CCCD hoặc mật khẩu.");
-
-        ResponseEmployeeDTO? responseEmployeeDTO = null;
-        if (userAccountExists.Employee != null)
+        // 1. Case: Build Employee DTO
+        ResponseEmployeeDTO? employeeDto = null;
+        if (user.Employee != null && !string.IsNullOrWhiteSpace(user.Employee.RoleId))
         {
-            switch (userAccountExists.Employee.RoleId)
+            switch (user.Employee.RoleId)
             {
                 case "doctor":
-                    ResponseEmployeeDTO responseDoctorDTO = new ResponseDoctorDTO
+                    employeeDto = new ResponseDoctorDTO
                     {
-                        EmployeeId = userAccountExists.Employee.Id,
-                        FirstName = userAccountExists.Employee.FirstName,
-                        LastName = userAccountExists.Employee.LastName,
-                        PhoneNumber = userAccountExists.Employee.PhoneNumber,
-                        Email = userAccountExists.Employee.Email,
-                        CertificateNumber = userAccountExists.Employee.CertificateNumber,
-                        DateOfBirth = userAccountExists.Employee.DateOfBirth,
-                        Gender = userAccountExists.Employee.Gender,
-                        HireDate = userAccountExists.Employee.HireDate,
-                        Specialization = userAccountExists.Employee.Doctor.Specialization,
-                        RoleId = userAccountExists.Employee.RoleId,
+                        EmployeeId = user.Employee.Id,
+                        FirstName = user.Employee.FirstName,
+                        LastName = user.Employee.LastName,
+                        PhoneNumber = user.Employee.PhoneNumber,
+                        Email = user.Employee.Email,
+                        CertificateNumber = user.Employee.CertificateNumber,
+                        DateOfBirth = user.Employee.DateOfBirth,
+                        Gender = user.Employee.Gender,
+                        HireDate = user.Employee.HireDate,
+                        Specialization = user.Employee.Doctor!.Specialization,
+                        RoleId = user.Employee.RoleId
                     };
-                    responseEmployeeDTO = responseDoctorDTO;
                     break;
+
                 case "admin":
-                    ResponseEmployeeDTO responseAdminDTO = new ResponseAdminDto
+                    employeeDto = new ResponseAdminDto
                     {
-                        EmployeeId = userAccountExists.Employee.Id,
-                        FirstName = userAccountExists.Employee.FirstName,
-                        LastName = userAccountExists.Employee.LastName,
-                        PhoneNumber = userAccountExists.Employee.PhoneNumber,
-                        Email = userAccountExists.Employee.Email,
-                        CertificateNumber = userAccountExists.Employee.CertificateNumber,
-                        Gender = userAccountExists.Employee.Gender,
-                        DateOfBirth = userAccountExists.Employee.DateOfBirth,
-                        RoleId = userAccountExists.Employee.RoleId
+                        EmployeeId = user.Employee.Id,
+                        FirstName = user.Employee.FirstName,
+                        LastName = user.Employee.LastName,
+                        PhoneNumber = user.Employee.PhoneNumber,
+                        Email = user.Employee.Email,
+                        CertificateNumber = user.Employee.CertificateNumber,
+                        Gender = user.Employee.Gender,
+                        DateOfBirth = user.Employee.DateOfBirth,
+                        RoleId = user.Employee.RoleId
                     };
-                    responseEmployeeDTO = responseAdminDTO;
                     break;
 
-                //Thêm role thì thêm case
-                //case ... :
-
-                //TH Role không hợp lệ
                 default:
+                    //Role không hợp lệ
                     break;
             }
-
-
-            ResponseLoginDTO responseLoginDTO = new ResponseLoginDTO
-            {
-                UserAccountId = userAccountExists.Id,
-                CitizenID = userAccountExists.CitizenID,
-                AvatarUrl = userAccountExists.AvatarUrl,
-                Is_Active = userAccountExists.Is_Active,
-                Patient = userAccountExists.Patient != null ? new ResponsePatientDTO
-                {
-                    PatientId = userAccountExists.Patient.Id,
-                    FirstName = userAccountExists.Patient.FirstName,
-                    LastName = userAccountExists.Patient.LastName,
-                    PhoneNumber = userAccountExists.Patient.PhoneNumber,
-                    Email = userAccountExists.Patient.Email,
-                    RoleId = userAccountExists.Patient.RoleId,
-                    Gender = userAccountExists.Patient.Gender,
-                    DateOfBirth = userAccountExists.Patient.DateOfBirth,
-                    Address = userAccountExists.Patient.Address,
-                    Nationality = userAccountExists.Patient.Nationality,
-                    PlaceOfResidence = userAccountExists.Patient.PlaceOfResidence
-                } : null,
-                Employee = userAccountExists.Employee != null ? responseEmployeeDTO : null
-            };
-
-            try
-            {
-                string accessToken = _tokenService.GenerateAccessToken(
-                    userAccountExists.Employee?.Id.ToString() ?? userAccountExists.Patient?.Id.ToString()!,
-                    userAccountExists.CitizenID,
-                    responseEmployeeDTO?.RoleId.ToString() ?? userAccountExists.Patient?.RoleId.ToString() ?? "patient"
-                );
-
-                string refreshToken = _tokenService.GenerateRandomToken();
-
-                responseLoginDTO.AccessToken = accessToken;
-                responseLoginDTO.RefreshToken = refreshToken;
-            }
-            catch (Exception ex)
-            {
-                return ServiceResult<ResponseLoginDTO?>.Fail($"Lỗi khi setting cookies: {ex.Message}");
-            }
-
-            return ServiceResult<ResponseLoginDTO?>.Success(responseLoginDTO);
         }
 
-        return ServiceResult<ResponseLoginDTO?>.Fail("Tài khoản không hợp lệ.");
+        // 2. Case: Build Patient DTO (nếu có)
+        ResponsePatientDTO? patientDto = null;
+        if (user.Patient != null)
+        {
+            patientDto = new ResponsePatientDTO
+            {
+                PatientId = user.Patient.Id,
+                FirstName = user.Patient.FirstName,
+                LastName = user.Patient.LastName,
+                PhoneNumber = user.Patient.PhoneNumber,
+                Email = user.Patient.Email,
+                RoleId = user.Patient.RoleId,
+                Gender = user.Patient.Gender,
+                DateOfBirth = user.Patient.DateOfBirth,
+                Address = user.Patient.Address,
+                Nationality = user.Patient.Nationality,
+                PlaceOfResidence = user.Patient.PlaceOfResidence
+            };
+        }
+
+        // 3) Nếu cả hai đều null => không hợp lệ
+        if (employeeDto == null && patientDto == null)
+            return ServiceResult<ResponseLoginDTO?>.Fail("Tài khoản không hợp lệ.");
+
+        // 4) Tạo token & response
+        try
+        {
+            var subjectId = user.Employee?.Id.ToString() ?? user.Patient?.Id.ToString()!;
+            var role = employeeDto?.RoleId ?? patientDto?.RoleId ?? "patient";
+
+            var accessToken = _tokenService.GenerateAccessToken(subjectId, user.CitizenID, role);
+            var refreshToken = _tokenService.GenerateRandomToken();
+
+            var resp = new ResponseLoginDTO
+            {
+                UserAccountId = user.Id,
+                CitizenID = user.CitizenID,
+                AvatarUrl = user.AvatarUrl,
+                Is_Active = user.Is_Active,
+                Employee = employeeDto,
+                Patient = patientDto,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            };
+
+            return ServiceResult<ResponseLoginDTO?>.Success(resp);
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<ResponseLoginDTO?>.Fail($"Lỗi khi setting cookies: {ex.Message}");
+        }
     }
+
 
     public async Task<ServiceResult<string>> RequestPasswordResetAsync(RequestResetPassword request)
     {

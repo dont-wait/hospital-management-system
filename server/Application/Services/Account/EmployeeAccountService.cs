@@ -98,11 +98,34 @@ public class EmployeeAccountService : IEmployeeAccountService
 
     public async Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId)
     {
-        var employee = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
-        if (employee == null)
+        var userAccount = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
+        if (userAccount == null)
             return ServiceResult<ResponseUserDTO?>.Fail("Nhân viên không tồn tại.");
 
-        return ServiceResult<ResponseUserDTO?>.Success(employee);
+        ResponseUserDTO responseUserDto = new ResponseUserDTO
+        {
+            UserAccountId = userAccount.Id,
+            AvatarUrl = userAccount.AvatarUrl,
+            Is_Active = userAccount.Is_Active,
+            CitizenID = userAccount.CitizenID,
+            Employee = userAccount.Employee != null ? new ResponseDoctorDTO
+            {
+                DoctorId = userAccount.Employee.Doctor.Id,
+                EmployeeId = userAccount.Employee.Id,
+                FirstName = userAccount.Employee.FirstName,
+                LastName = userAccount.Employee.LastName,
+                PhoneNumber = userAccount.Employee.PhoneNumber,
+                Email = userAccount.Employee.Email,
+                CertificateNumber = userAccount.Employee.CertificateNumber,
+                DateOfBirth = userAccount.Employee.DateOfBirth,
+                Gender = userAccount.Employee.Gender,
+                HireDate = userAccount.Employee.HireDate,
+                Specialization = userAccount.Employee.Doctor.Specialization,
+                RoleId = userAccount.Employee.RoleId,
+            } : null
+        };
+
+        return ServiceResult<ResponseUserDTO?>.Success(responseUserDto);
     }
 
     public async Task<ServiceResult<List<ResponseDoctorDTO>>> GetAllDoctorsAsync()

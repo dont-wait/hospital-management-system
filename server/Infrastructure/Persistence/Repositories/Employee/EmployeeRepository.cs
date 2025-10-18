@@ -34,6 +34,7 @@ public class EmployeeRepository : IEmployeeRepository
         // Tạo Employee trước để lấy Id
         Employee employee = new Employee
         {
+            
             FirstName = doctorDto.FirstName,
             LastName = doctorDto.LastName,
             PhoneNumber = doctorDto.PhoneNumber,
@@ -51,7 +52,6 @@ public class EmployeeRepository : IEmployeeRepository
 
         Doctor doctor = new Doctor
         {
-            Id = employee.Id, // Gán DoctorId bằng EmployeeId
             Specialization = doctorDto.Specialization,
             Employee = employee
         };
@@ -62,28 +62,15 @@ public class EmployeeRepository : IEmployeeRepository
         return doctor;
     }
 
-    public async Task<ResponseUserDTO?> GetEmployeeByIdAsync(Guid employeeId) => await _context.employees
+    public async Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId) => await _context.employees
         .Where(e => e.Id == employeeId)
-        .Select(e => new ResponseUserDTO
+        .Select(e => new UserAccount
         {
-            UserAccountId = e.UserAccount.Id,
+            Id = e.UserAccount.Id,
             AvatarUrl = e.UserAccount.AvatarUrl,
             Is_Active = e.UserAccount.Is_Active,
             CitizenID = e.UserAccount.CitizenID,
-            Employee = new ResponseDoctorDTO
-            {
-                EmployeeId = e.Id,
-                FirstName = e.FirstName,
-                LastName = e.LastName,
-                PhoneNumber = e.PhoneNumber,
-                Email = e.Email,
-                CertificateNumber = e.CertificateNumber,
-                DateOfBirth = e.DateOfBirth,
-                Gender = e.Gender,
-                HireDate = e.HireDate,
-                Specialization =  e.Doctor.Specialization,
-                RoleId = e.RoleId
-            }
+            Employee = e.UserAccount.Employee,
         })
         .FirstOrDefaultAsync();
 
