@@ -119,6 +119,11 @@ public class UserAccountService : IUserAccountService
                 LastName = userAccount.LastName,
                 PhoneNumber = userAccount.PhoneNumber,
                 Email = userAccount.Email,
+                DateOfBirth = userAccount.DateOfBirth,
+                Gender = userAccount.Gender,
+                Nationality = userAccount.Nationality,
+                Address = userAccount.Address,
+                PlaceOfResidence = userAccount.PlaceOfResidence,
                 RoleId = userAccount.RoleId,
             } : null,
         };

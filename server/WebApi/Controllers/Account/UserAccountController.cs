@@ -27,8 +27,7 @@ public class AccountController : ControllerBase
             var result = await _userAccountService.GetUserAccountByIdAsync(patientId);
             if (result.IsSuccess)
                 return new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data);
-            else
-                return new ApiResponse<ResponseUserDTO>(404, result.Message);
+            return new ApiResponse<ResponseUserDTO>(404, result.Message);
         }
         catch (Exception ex)
         {
