@@ -2,78 +2,92 @@
 
 import LazySection from "@/components/shared/LazySection";
 import Skeleton from "react-loading-skeleton";
+import { cn } from "@/lib/client";
+import cardStyles from "@/styles/card.module.css";
+import authStyles from "@/styles/auth.module.css";
+import labelStyles from "@/styles/label.module.css";
+import inputStyles from "@/styles/input.module.css";
 
 function RegisterPage() {
   return (
-    <div
-      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4"
-      style={{ minHeight: "calc(100vh - 64.8px)" }}
-    >
+    <div className={authStyles["register-page"]}>
       <LazySection
         importFunc={() => import("@/components/register/RegisterCard")}
         skeleton={
-          <div className="w-full max-w-2xl mx-auto p-6 space-y-6 bg-white">
-            {/* Form Title Area */}
-            <div className="space-y-2 text-center">
-              <Skeleton width={40} height={40} className="mb-4" />
-              <Skeleton width={150} height={24} />
-              <Skeleton width={200} height={16} />
+          <div className={cn(cardStyles["card"], authStyles["register-card"])}>
+            {/* Card Header */}
+            <div
+              className={cn(
+                cardStyles["card-header"],
+                authStyles["register-header"],
+              )}
+            >
+              <div className={authStyles["register-header-icon-wrap"]}>
+                <div className={authStyles["register-header-icon"]}>
+                  <Skeleton width="100%" height="100%" />
+                </div>
+              </div>
+              <div
+                className={cn(
+                  cardStyles["card-title"],
+                  authStyles["register-title"],
+                )}
+              >
+                <Skeleton width="60%" height="100%" />
+              </div>
+              <div
+                className={cn(
+                  cardStyles["card-desc"],
+                  authStyles["register-desc"],
+                )}
+              >
+                <Skeleton width="80%" height="100%" />
+              </div>
             </div>
 
-            {/* Grid Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* CitizenID Field */}
-              <div className="space-y-2">
-                <Skeleton width={128} height={16} />
-                <Skeleton height={40} />
-              </div>
+            {/* Card Content */}
+            <div
+              className={cn(
+                cardStyles["card-content"],
+                authStyles["register-content"],
+              )}
+            >
+              <div className={authStyles["register-form"]}>
+                <div className={authStyles["register-groups"]}>
+                  {[...Array(6)].map((_, index) => (
+                    <div key={index} className={authStyles["form-group"]}>
+                      <div className={labelStyles["label"]}>
+                        <Skeleton width="30%" height="100%" />
+                      </div>
+                      <div className={inputStyles["input-skeleton"]}></div>
+                    </div>
+                  ))}
+                </div>
 
-              {/* Email Field */}
-              <div className="space-y-2">
-                <Skeleton width={64} height={16} />
-                <Skeleton height={40} />
-              </div>
+                <div className={authStyles["form-group"]}>
+                  <div className={labelStyles["label"]}>
+                    <Skeleton width="30%" height="100%" />
+                  </div>
+                  <div className={inputStyles["input-skeleton"]}></div>
+                </div>
 
-              {/* First Name Field */}
-              <div className="space-y-2">
-                <Skeleton width={80} height={16} />
-                <Skeleton height={40} />
-              </div>
-
-              {/* Last Name Field */}
-              <div className="space-y-2">
-                <Skeleton width={96} height={16} />
-                <Skeleton height={40} />
-              </div>
-
-              {/* Password Field */}
-              <div className="space-y-2">
-                <Skeleton width={80} height={16} />
-                <div className="relative">
-                  <Skeleton height={40} />
+                <div className={authStyles["submit-btn"]}>
+                  <Skeleton width="100%" height="100%" />
                 </div>
               </div>
 
-              {/* Confirm Password Field */}
-              <div className="space-y-2">
-                <Skeleton width={128} height={16} />
-                <div className="relative">
-                  <Skeleton height={40} />
+              {/* Card Footer */}
+              <div className={authStyles["footer-link-section"]}>
+                <div className={authStyles["footer-link-content"]}>
+                  <div className={authStyles["footer-link"]}>
+                    <Skeleton width="60%" height="100%" />
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Phone Number Field */}
-            <div className="space-y-2">
-              <Skeleton width={112} height={16} />
-              <Skeleton height={40} />
-            </div>
-
-            {/* Submit Button */}
-            <Skeleton height={40} />
           </div>
         }
-        className="w-full md:w-3/4 lg:w-2/5"
+        className={authStyles["register-card-skeleton"]}
       />
     </div>
   );

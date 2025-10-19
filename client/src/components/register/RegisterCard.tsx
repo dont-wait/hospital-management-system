@@ -1,28 +1,27 @@
-import Link from "next/link";
-import { useRegisterSubmit } from "@/hooks/useRegisterSubmit";
-import { Card, CardContent } from "@/components/shared/Card";
-import { RegisterHeader } from "./RegisterHeader";
-import { RegisterForm } from "./RegisterForm";
+import { motion } from "motion/react";
+import { Card, CardContent } from "@/components";
+import {
+  RegisterHeader,
+  RegisterForm,
+  RegisterFooterLink,
+} from "@/components/register";
+import styles from "@/styles/auth.module.css";
 
 function RegisterCard() {
-  const { handleSubmit, isLoading } = useRegisterSubmit();
-
   return (
-    <Card className="w-full">
-      <RegisterHeader />
-      <CardContent className="space-y-6">
-        <RegisterForm onSubmit={handleSubmit} isLoading={isLoading} />
-
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            Bạn đã có tài khoản?{" "}
-            <Link href="/login" className="text-blue-600 hover:underline">
-              Đăng nhập
-            </Link>
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    <motion.section
+      initial={{ y: -10, opacity: 0.6 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <Card className={styles["register-card"]}>
+        <RegisterHeader />
+        <CardContent className={styles["register-content"]}>
+          <RegisterForm />
+          <RegisterFooterLink />
+        </CardContent>
+      </Card>
+    </motion.section>
   );
 }
 

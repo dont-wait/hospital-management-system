@@ -28,12 +28,12 @@ export class AuthService {
   }
 
   // Register service
-  static async register(
-    patientDto: RegisterPatientDto,
-  ): Promise<RegisterResponse> {
-    return api
-      .post<RegisterResponse>("/patient/register", patientDto)
-      .then((response) => response.data);
+  static async register(patientDto: RegisterPatientDto): Promise<boolean> {
+    const { data: response }: { data: RegisterResponse } = await api.post(
+      "/patient/register",
+      patientDto,
+    );
+    return !!response;
   }
 
   // Logout service

@@ -11,15 +11,12 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { AuthService, TokenService } from "@/services";
-import { RegisterPatientDto } from "@/schemas";
 import { Employee, Patient } from "@/types";
 
 interface UserAuthContextType<T> {
   user: T | null;
   setUser: (user: T) => void;
-  isLoading: boolean;
   isAuthenticated: boolean;
-  register: (patientDto: RegisterPatientDto) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -29,24 +26,7 @@ const UserAuthContext = createContext<UserAuthContextType<
 
 export function UserAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Patient | Employee | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-
-  // Register handle
-  const handleRegister = useCallback(
-    async (patientDto: RegisterPatientDto): Promise<boolean> => {
-      setIsLoading(true);
-      try {
-        await AuthService.register(patientDto);
-        return true;
-      } catch {
-        return false;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [],
-  );
 
   const handleLogout = useCallback(async () => {
     await AuthService.logout();
@@ -60,19 +40,16 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
     if (user && "patientId" in user) {
       setUser(user as Patient);
     }
-    setIsLoading(false);
   }, []);
 
   const contextValue = useMemo(
     () => ({
       user,
       setUser,
-      isLoading,
       isAuthenticated: !!user,
-      register: handleRegister,
       logout: handleLogout,
     }),
-    [user, isLoading, handleRegister, handleLogout],
+    [user, handleLogout],
   );
 
   return (
