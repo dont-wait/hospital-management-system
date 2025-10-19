@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, forwardRef, InputHTMLAttributes, MouseEvent } from "react";
 import {
   FieldErrors,
