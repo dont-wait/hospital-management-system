@@ -1,31 +1,23 @@
-import { Card, CardContent } from "@/components/shared/Card";
-import { LoginHeader } from "./LoginHeader";
-import { LoginForm } from "./LoginForm";
-import { useLoginSubmit } from "@/hooks/useLoginSubmit";
-import Link from "next/link";
+import { motion } from "motion/react";
+import { Card, CardContent } from "@/components";
+import { LoginHeader, LoginForm, LoginFooterLink } from "@/components/login";
+import styles from "@/styles/auth.module.css";
 
 function LoginCard() {
-  const { handleSubmit, isLoading } = useLoginSubmit();
-
   return (
-    <Card className="w-full">
-      <LoginHeader />
-      <CardContent className="space-y-4">
-        <LoginForm onSubmit={handleSubmit} isLoading={isLoading} />
-
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            Bạn chưa có tài khoản?{" "}
-            <Link
-              href="/register"
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              Đăng ký
-            </Link>
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    <motion.section
+      initial={{ y: -10, opacity: 0.6 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <Card className={styles["login-card"]}>
+        <LoginHeader />
+        <CardContent className={styles["login-content"]}>
+          <LoginForm />
+          <LoginFooterLink />
+        </CardContent>
+      </Card>
+    </motion.section>
   );
 }
 

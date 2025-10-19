@@ -10,17 +10,15 @@ import {
   useMemo,
 } from "react";
 import { useRouter } from "next/navigation";
-import AuthService from "@/services/auth.service";
-import TokenService from "@/services/token.service";
-import { LoginAccountDto, RegisterPatientDto } from "@/schemas/auth";
-import { Employee, Patient, LoginResponse } from "@/types";
+import { AuthService, TokenService } from "@/services";
+import { RegisterPatientDto } from "@/schemas";
+import { Employee, Patient } from "@/types";
 
 interface UserAuthContextType<T> {
   user: T | null;
   setUser: (user: T) => void;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (userDto: LoginAccountDto) => Promise<boolean>;
   register: (patientDto: RegisterPatientDto) => Promise<boolean>;
   logout: () => void;
 }
@@ -33,30 +31,6 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Patient | Employee | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-
-  // Login handle
-  const handleLogin = useCallback(
-    async (userDto: LoginAccountDto): Promise<boolean> => {
-      setIsLoading(true);
-      try {
-        const { data }: LoginResponse = await AuthService.login(userDto);
-        if (data.patient) {
-          const user: Patient = {
-            ...data.patient,
-            avatarUrl: data.avatarUrl,
-          };
-          TokenService.saveUser<Patient>(user);
-          setUser(user);
-        }
-        return true;
-      } catch {
-        return false;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [],
-  );
 
   // Register handle
   const handleRegister = useCallback(
@@ -95,11 +69,10 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
       setUser,
       isLoading,
       isAuthenticated: !!user,
-      login: handleLogin,
       register: handleRegister,
       logout: handleLogout,
     }),
-    [user, isLoading, handleLogin, handleRegister, handleLogout],
+    [user, isLoading, handleRegister, handleLogout],
   );
 
   return (

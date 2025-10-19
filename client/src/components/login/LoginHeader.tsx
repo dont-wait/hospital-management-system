@@ -1,18 +1,15 @@
-import {
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/shared/Card";
-import { Heart } from "@/lib/client/utils";
+import { CardHeader, CardTitle, CardDescription } from "@/components";
+import { Heart } from "@/lib/client";
+import styles from "@/styles/auth.module.css";
 
 export function LoginHeader() {
   return (
-    <CardHeader className="space-y-1">
-      <div className="flex items-center justify-center mb-4">
-        <Heart className="h-10 w-10 text-blue-600" />
+    <CardHeader className={styles["login-header"]}>
+      <div className={styles["login-header-icon-wrap"]}>
+        <Heart className={styles["login-header-icon"]} />
       </div>
-      <CardTitle className="text-2xl text-center">Đăng Nhập</CardTitle>
-      <CardDescription className="text-center">
+      <CardTitle className={styles["login-title"]}>Đăng Nhập</CardTitle>
+      <CardDescription className={styles["login-desc"]}>
         Đăng nhập ngay với tài khoản của bạn.
       </CardDescription>
     </CardHeader>

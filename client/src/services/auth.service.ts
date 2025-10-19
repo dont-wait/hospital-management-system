@@ -4,13 +4,27 @@ import {
   RegisterPatientDto,
   ResetPasswordDto,
   NewPasswordDto,
-} from "@/schemas/auth";
+} from "@/schemas";
 import api from "@/axios";
+import { TokenService } from "@/services";
+import { Patient, Employee } from "@/types";
 
-class AuthService {
+export class AuthService {
   // Login service
-  static async login(userDto: LoginAccountDto): Promise<LoginResponse> {
-    return api.post("/login", userDto).then((response) => response.data);
+  static async login(userDto: LoginAccountDto): Promise<Patient | Employee> {
+    const { data: response }: { data: LoginResponse } = await api.post(
+      "/login",
+      userDto,
+    );
+    if (response.data?.patient) {
+      const user: Patient = {
+        ...response.data.patient,
+        avatarUrl: response.data.avatarUrl,
+      };
+      TokenService.saveUser<Patient>(user);
+      return user;
+    }
+    return response.data.employee as Employee;
   }
 
   // Register service
@@ -51,5 +65,3 @@ class AuthService {
       .then((response) => response.data);
   }
 }
-
-export default AuthService;

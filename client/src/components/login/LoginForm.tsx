@@ -1,66 +1,70 @@
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/shared/Button";
-import { Label } from "@/components/shared/Label";
-import { PasswordInput } from "@/components/login/PasswordInput";
-import { UsernameInput } from "@/components/login/UsernameInput";
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { accountSchema, LoginAccountDto } from "@/schemas/auth";
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Button, LoadingSpinner, FormField } from "@/components";
+import { useUserAuthContext } from "@/contexts";
+import { AuthService } from "@/services";
+import { accountSchema, LoginAccountDto } from "@/schemas";
+import { Employee, Patient } from "@/types";
+import styles from "@/styles/auth.module.css";
 
-interface LoginFormProps {
-  onSubmit: (patientDto: LoginAccountDto) => Promise<void>;
-  isLoading: boolean;
-}
-
-export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
+export function LoginForm() {
+  const router = useRouter();
+  const { setUser } = useUserAuthContext();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginAccountDto>({
     resolver: zodResolver(accountSchema),
   });
 
+  const onSubmit = useCallback(
+    async (loginAccountDto: LoginAccountDto) => {
+      const user: Patient | Employee = await AuthService.login(loginAccountDto);
+      if (user && "patientId" in user) {
+        setUser(user as Patient);
+        router.push("/");
+      }
+    },
+    [router, setUser],
+  );
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="citizenID">Căn cước công dân</Label>
-        <UsernameInput
-          id="citizenID"
-          placeholder="Nhập số căn cước công dân"
-          {...register("citizenID")}
-          className={errors.citizenID ? "border-red-500" : ""}
-        />
-        {errors.citizenID && (
-          <p className="text-sm text-red-600">{errors.citizenID.message}</p>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles["login-form"]}>
+      <FormField
+        id="citizenID"
+        label="Căn cước công dân"
+        placeholder="Nhập số căn cước công dân"
+        register={register}
+        errors={errors}
+      />
+
+      <FormField
+        id="password"
+        label="Mật khẩu"
+        placeholder="Nhập mật khẩu"
+        type="password"
+        register={register}
+        errors={errors}
+      />
+
+      <Link href="/forgot-password" className={styles["forgot-password-btn"]}>
+        Quên mật khẩu
+      </Link>
+
+      <Button
+        type="submit"
+        className={styles["submit-btn"]}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <LoadingSpinner text="Đang đăng nhập..." />
+        ) : (
+          "Đăng nhập"
         )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="password">Mật khẩu</Label>
-        <PasswordInput
-          id="password"
-          placeholder="Nhập mật khẩu"
-          {...register("password")}
-          error={!!errors.password}
-        />
-        {errors.password && (
-          <p className="text-sm text-red-600">{errors.password.message}</p>
-        )}
-      </div>
-
-      <div>
-        <Link
-          href="/forgot-password"
-          className="flex justify-end text-sm text-blue-600 "
-        >
-          Quên mật khẩu
-        </Link>
-      </div>
-
-      <Button type="submit" className="w-full h-12" disabled={isLoading}>
-        {isLoading ? <LoadingSpinner text="Đang đăng nhập..." /> : "Đăng nhập"}
       </Button>
     </form>
   );

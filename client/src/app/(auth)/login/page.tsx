@@ -2,51 +2,92 @@
 
 import LazySection from "@/components/shared/LazySection";
 import Skeleton from "react-loading-skeleton";
+import { cn } from "@/lib/client";
+import cardStyles from "@/styles/card.module.css";
+import authStyles from "@/styles/auth.module.css";
+import labelStyles from "@/styles/label.module.css";
+import inputStyles from "@/styles/input.module.css";
 
 export default function LoginPage() {
   return (
-    <div
-      className="bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4"
-      style={{ minHeight: "calc(100vh - 64.8px)" }}
-    >
+    <div className={authStyles["login-page"]}>
       <LazySection
         importFunc={() => import("@/components/login/LoginCard")}
         skeleton={
-          <div className="w-full mx-auto p-6 space-y-4 bg-white">
-            {/* Form Title Area */}
-            <div className="space-y-2 mb-6 text-center">
-              <Skeleton width={40} height={40} className="mb-4" />
-              <Skeleton width={128} height={24} />
-              <Skeleton width={192} height={16} />
-            </div>
-
-            {/* CitizenID Field */}
-            <div className="space-y-2">
-              <Skeleton width={144} height={16} />
-              <Skeleton height={40} />
-            </div>
-
-            {/* Password Field */}
-            <div className="space-y-2">
-              <Skeleton width={80} height={16} />
-              <div className="relative">
-                <Skeleton height={40} />
+          <div className={cn(cardStyles["card"], authStyles["login-card"])}>
+            {/* Card Header */}
+            <div
+              className={cn(
+                cardStyles["card-header"],
+                authStyles["login-header"],
+              )}
+            >
+              <div className={authStyles["login-header-icon-wrap"]}>
+                <div className={authStyles["login-header-icon"]}>
+                  <Skeleton width="100%" height="100%" />
+                </div>
+              </div>
+              <div
+                className={cn(
+                  cardStyles["card-title"],
+                  authStyles["login-title"],
+                )}
+              >
+                <Skeleton width="60%" height="100%" />
+              </div>
+              <div
+                className={cn(
+                  cardStyles["card-desc"],
+                  authStyles["login-desc"],
+                )}
+              >
+                <Skeleton width="80%" height="100%" />
               </div>
             </div>
 
-            {/* Submit Button */}
-            <div className="mt-6">
-              <Skeleton height={40} />
-            </div>
+            {/* Card Content */}
+            <div
+              className={cn(
+                cardStyles["card-content"],
+                authStyles["login-content"],
+              )}
+            >
+              <div className={authStyles["login-form"]}>
+                {/* Form Fields */}
+                {[...Array(2)].map((_, index) => (
+                  <div key={index} className={authStyles["form-group"]}>
+                    <div className={labelStyles["label"]}>
+                      <Skeleton width="30%" height="100%" />
+                    </div>
+                    <div className={inputStyles["input-skeleton"]}>
+                      <Skeleton width="100%" height="100%" />
+                    </div>
+                  </div>
+                ))}
 
-            {/* Additional Links Area */}
-            <div className="flex justify-center items-center mt-4 gap-2">
-              <Skeleton width={96} height={12} />
-              <Skeleton width={80} height={12} />
+                {/* forgot password section */}
+                <div className={authStyles["forgot-password-btn"]}>
+                  <Skeleton width="30%" height="100%" />
+                </div>
+
+                {/* submit button */}
+                <div className={authStyles["submit-btn"]}>
+                  <Skeleton width="100%" height="100%" />
+                </div>
+              </div>
+
+              {/* Footer Link */}
+              <div className={authStyles["footer-link-section"]}>
+                <div className={authStyles["footer-link-content"]}>
+                  <div className={authStyles["footer-link"]}>
+                    <Skeleton width="60%" height="100%" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         }
-        className="w-full md:w-1/2 lg:w-2/6"
+        className={authStyles["login-card-sekeleton"]}
       />
     </div>
   );
