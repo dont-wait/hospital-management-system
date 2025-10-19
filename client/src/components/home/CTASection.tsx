@@ -1,25 +1,32 @@
 import Link from "next/link";
-import { Button } from "@/components/shared/Button";
-import { ArrowRight } from "@/lib/client/utils";
+import { motion } from "motion/react";
+import { Button } from "@/components";
+import { ArrowRight } from "@/lib/client";
+import styles from "@/styles/home.module.css";
 
 export default function CTASection() {
   return (
-    <section className="py-16 px-4 bg-gradient-to-br bg-blue-50 from-blue-50 to-indigo-100">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-6">
+    <motion.section
+      initial={{ opacity: 0.5 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1, ease: "easeOut" }}
+      className={styles["banner-card"]}
+    >
+      <div className={styles["banner-content"]}>
+        <h2 className={styles["banner-header"]}>
           Sẵn sàng trải nghiệm dịch vụ chăm sóc sức khỏe chất lượng?
         </h2>
-        <p className="text-xl mb-8">
+        <p className={styles["banner-description"]}>
           Tham gia cùng hàng nghìn bệnh nhân tin tưởng Bệnh viện MediCare cho
           nhu cầu chăm sóc sức khỏe của họ.
         </p>
         <Link href="/register">
           <Button size="lg">
             Đăng ký ngay hôm nay
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <ArrowRight className={styles["icon"]} />
           </Button>
         </Link>
       </div>
-    </section>
+    </motion.section>
   );
 }
