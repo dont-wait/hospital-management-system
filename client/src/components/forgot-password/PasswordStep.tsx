@@ -1,79 +1,56 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/shared/Button";
-import { Input } from "@/components/shared/Input";
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { newPasswordSchema, NewPasswordDto } from "@/schemas/auth";
-import { Eye, EyeOff } from "lucide-react";
+import { Button, LoadingSpinner, FormField } from "@/components";
+import { resetPasswordSchema, ResetPasswordDto } from "@/schemas";
+import styles from "@/styles/auth.module.css";
 
-interface PasswordStepProps {
-  newPassword: string;
-  loading: boolean;
-  onSubmit: (newPasswordDto: NewPasswordDto) => Promise<void>;
-}
+type PasswordStepProps = {
+  resetPassword: (resetPasswordDto: ResetPasswordDto) => void;
+};
 
-function PasswordStep({ newPassword, loading, onSubmit }: PasswordStepProps) {
-  const [showPassword, setShowPassword] = useState(false);
+export function PasswordStep({ resetPassword }: PasswordStepProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<NewPasswordDto>({
-    resolver: zodResolver(newPasswordSchema),
-    defaultValues: {
-      newPassword,
-    },
+    formState: { errors, isSubmitting },
+  } = useForm<ResetPasswordDto>({
+    resolver: zodResolver(resetPasswordSchema),
   });
 
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="relative">
-          <Input
-            id="newPassword"
-            type={showPassword ? "text" : "password"}
-            placeholder="Nhập mật khẩu mới"
-            {...register("newPassword")}
-            className={errors.newPassword ? "border-red-500 pr-10" : "pr-10"}
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {!showPassword ? (
-              <EyeOff className="h-4 w-4 text-gray-400" />
-            ) : (
-              <Eye className="h-4 w-4 text-gray-400" />
-            )}
-          </Button>
-        </div>
-        {errors.newPassword && (
-          <p className="text-sm text-red-600">{errors.newPassword.message}</p>
+    <form
+      onSubmit={handleSubmit(resetPassword)}
+      className={styles["reset-password-form"]}
+    >
+      <FormField
+        label={null}
+        id="newPassword"
+        type="password"
+        placeholder="Nhập mật khẩu mới"
+        errors={errors}
+        register={register}
+      />
+
+      <div className={styles["password-rule-wrap"]}>
+        <p>Mật khẩu phải:</p>
+        <ul className={styles["password-rule-wrap-list"]}>
+          <li>Có ít nhất 8 ký tự</li>
+          <li>Chứa chữ hoa và chữ thường</li>
+          <li>Chứa ít nhất 1 số và ký tự đặc biệt</li>
+        </ul>
+      </div>
+
+      <Button
+        type="submit"
+        className={styles["submit-btn"]}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <LoadingSpinner text="Đang cập nhật..." />
+        ) : (
+          "Đặt lại mật khẩu"
         )}
-
-        <div className="text-xs text-gray-500 space-y-1">
-          <p>Mật khẩu phải:</p>
-          <ul className="list-disc list-inside space-y-1 ml-2">
-            <li>Có ít nhất 8 ký tự</li>
-            <li>Chứa chữ hoa và chữ thường</li>
-            <li>Chứa ít nhất 1 số và ký tự đặc biệt</li>
-          </ul>
-        </div>
-
-        <Button type="submit" className="w-full h-12" disabled={loading}>
-          {loading ? (
-            <LoadingSpinner text="Đang cập nhật..." />
-          ) : (
-            "Đặt lại mật khẩu"
-          )}
-        </Button>
-      </form>
-    </>
+      </Button>
+    </form>
   );
 }
-
-export default PasswordStep;

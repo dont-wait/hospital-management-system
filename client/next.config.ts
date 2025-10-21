@@ -17,7 +17,18 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    optimizePackageImports: ["lucide-react"],
+    optimizePackageImports: [
+      "lucide-react",
+      "@/components",
+      "@/config",
+      "@/contexts",
+      "@/font",
+      "@/hooks",
+      "@/lib",
+      "@/schemas",
+      "@/services",
+    ],
+    esmExternals: true,
   },
 
   images: {

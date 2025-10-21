@@ -1,22 +1,28 @@
 import { forwardRef, ElementRef, ComponentPropsWithoutRef } from "react";
+import { motion } from "motion/react";
 import { Root, Indicator } from "@radix-ui/react-progress";
-import { cn } from "@/lib/client/utils";
+import { cn } from "@/lib/client";
+import styles from "@/styles/progress.module.css";
+
+const MotionIndicator = motion(Indicator);
 
 const Progress = forwardRef<
   ElementRef<typeof Root>,
   ComponentPropsWithoutRef<typeof Root>
->(({ className, value, ...props }, ref) => (
+>(({ className, value = 0, ...props }, ref) => (
   <Root
     ref={ref}
-    className={cn(
-      "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
-      className,
-    )}
+    className={cn(styles["progress-section"], className)}
     {...props}
   >
-    <Indicator
-      className="h-full w-full flex-1 bg-primary transition-all"
-      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+    <MotionIndicator
+      className={styles["progress-indicator"]}
+      initial={{ x: `${-(100 - ((value! - 1) / 3) * 100)}%` }}
+      animate={{ x: `${-(100 - (value! / 3) * 100)}%` }}
+      transition={{
+        duration: 1,
+        ease: "linear",
+      }}
     />
   </Root>
 ));

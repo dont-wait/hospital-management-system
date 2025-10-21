@@ -1,60 +1,46 @@
-import { useMemo, memo } from "react";
 import { useForm } from "react-hook-form";
-import { useUserAuthContext } from "@/contexts/UserAuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { resetPasswordSchema, ResetPasswordDto } from "@/schemas/auth";
-import { Button } from "@/components/shared/Button";
-import { Input } from "@/components/shared/Input";
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { Button, LoadingSpinner, FormField } from "@/components";
+import { sendOtpSchema, SendOtpDto } from "@/schemas";
+import { useUserAuthContext } from "@/contexts";
+import { ResetPasswordState } from "@/types";
+import styles from "@/styles/auth.module.css";
 
-interface EmailStepProps {
-  email: string;
-  isLoading: boolean;
-  onSubmit: (resetPasswordDto: ResetPasswordDto) => Promise<void>;
-}
+type EmailStepProps = {
+  state: ResetPasswordState;
+  sendOtp: (sendOtpDto: SendOtpDto) => void;
+};
 
-const EmailStep = memo(function EmailStep({
-  email,
-  isLoading,
-  onSubmit,
-}: EmailStepProps) {
+export function EmailStep({ state, sendOtp }: EmailStepProps) {
   const { user } = useUserAuthContext();
-
-  const defaultEmail = useMemo(() => {
-    return email || user?.email || "";
-  }, [user, email]);
-
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<ResetPasswordDto>({
-    resolver: zodResolver(resetPasswordSchema),
-    defaultValues: { email: defaultEmail },
+    formState: { errors, isSubmitting },
+  } = useForm<SendOtpDto>({
+    resolver: zodResolver(sendOtpSchema),
+    defaultValues: { email: state.email || user?.email },
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-      <div className="space-y-2">
-        <Input
+    <form onSubmit={handleSubmit(sendOtp)} className={styles["send-otp-form"]}>
+      <div className={styles["form-group"]}>
+        <FormField
           id="email"
+          label={null}
           type="email"
           placeholder="example@email.com"
-          {...register("email")}
-          aria-invalid={errors.email ? "true" : "false"}
-          className={errors.email ? "border-red-500" : ""}
+          errors={errors}
+          register={register}
         />
-        {errors.email && (
-          <p role="alert" className="text-sm text-red-600">
-            {errors.email.message}
-          </p>
-        )}
       </div>
-      <Button type="submit" className="w-full h-12" disabled={isLoading}>
-        {isLoading ? <LoadingSpinner text="Đang gửi..." /> : "Tiếp tục"}
+      <Button
+        type="submit"
+        className={styles["submit-btn"]}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? <LoadingSpinner text="Đang gửi..." /> : "Tiếp tục"}
       </Button>
     </form>
   );
-});
-
-export default EmailStep;
+}

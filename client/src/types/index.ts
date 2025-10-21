@@ -80,15 +80,13 @@ export interface AuthErrorResponse {
   errors?: Record<string, string[]>;
 }
 
-export interface ForgotPasswordState {
-  step: 1 | 2 | 3;
+export type forgotPasswordStep = "send" | "verify" | "reset";
+
+export interface ResetPasswordState {
+  step: forgotPasswordStep;
   email: string;
   otp: string;
-  newPassword: string;
-  loading: boolean;
-  error: string;
-  success: string;
-  payload: number;
+  maxRetries: number;
 }
 
 export interface OtpDto {

@@ -1,142 +1,104 @@
-"use client";
-
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ForgotPasswordState } from "@/types";
-import { ResetPasswordDto, NewPasswordDto } from "@/schemas/auth";
-import AuthService from "@/services/auth.service";
+import { ReactNode, useReducer, useCallback } from "react";
+import { AuthService } from "@/services";
+import { SendOtpDto, VerifyOtpDto, ResetPasswordDto } from "@/schemas";
+import { ResetPasswordState, forgotPasswordStep } from "@/types";
+import {
+  FP_DEFAULT_STATE,
+  FP_ICONS,
+  FP_TITLES,
+  FP_DESCRIPTIONS,
+} from "@/config";
 
-const INITIAL_STATE: ForgotPasswordState = {
-  step: 1,
-  email: "",
-  otp: "",
-  newPassword: "",
-  loading: false,
-  error: "",
-  success: "",
-  payload: 3,
-};
+export type ResetPasswordAction =
+  | { type: "NEXT_STEP"; step: forgotPasswordStep }
+  | { type: "SET_EMAIL"; email: string }
+  | { type: "SET_OTP"; otp: string }
+  | { type: "SET_MAX_RETRIES"; maxRetries: number };
 
-const ERROR_MESSAGES = {
-  GENERIC: "Có lỗi xảy ra. Vui lòng thử lại.",
-  INVALID_OTP: "Mã OTP không chính xác. Vui lòng thử lại.",
-  INVALID_PASSWORD: "Mật khẩu không hợp lệ!",
-} as const;
+function reducer(
+  state: ResetPasswordState,
+  action: ResetPasswordAction,
+): ResetPasswordState {
+  switch (action.type) {
+    case "NEXT_STEP":
+      return { ...state, step: action.step };
+    case "SET_EMAIL":
+      return { ...state, email: action.email };
+    case "SET_OTP":
+      return { ...state, otp: action.otp };
+    case "SET_MAX_RETRIES":
+      return { ...state, maxRetries: action.maxRetries };
+    default:
+      return state;
+  }
+}
 
-export const useForgotPassword = () => {
-  const [state, setState] = useState<ForgotPasswordState>(INITIAL_STATE);
+export function useForgotPassword() {
+  // FP - Forgot Password
+  const [state, dispatch] = useReducer(reducer, FP_DEFAULT_STATE);
   const router = useRouter();
 
-  const clearClipBoard = async () => {
-    try {
-      await navigator.clipboard.writeText("");
-    } catch (clipboardError) {
-      console.error("Failed to clear clipboard:", clipboardError);
-    }
-  };
+  const handleSendOtp = useCallback(
+    async (sendOtpDto: SendOtpDto): Promise<void> => {
+      if (state.maxRetries === 3) await AuthService.sendOtp(sendOtpDto);
+      dispatch({ type: "SET_EMAIL", email: sendOtpDto.email });
+      dispatch({ type: "NEXT_STEP", step: "verify" });
+    },
+    [state.maxRetries],
+  );
 
-  const updateState = (updates: Partial<ForgotPasswordState>) => {
-    setState((prev) => ({ ...prev, ...updates }));
-  };
-
-  const clearMessages = () => {
-    updateState({ error: "", success: "" });
-  };
-
-  const goBack = () => {
-    updateState({
-      step: (state.step - 1) as 1 | 2 | 3,
-      error: "",
-      success: "",
-    });
-  };
-
-  const resetPassword = async (resetPasswordDto: ResetPasswordDto) => {
-    updateState({ loading: true, error: "" });
-
-    // Skip API call if email hasn't changed
-    if (resetPasswordDto.email === state.email) {
-      updateState({
-        loading: false,
-        step: 2,
-      });
-      return;
-    }
-
-    try {
-      await AuthService.resetPassword(resetPasswordDto);
-      updateState({
-        email: resetPasswordDto.email,
-        loading: false,
-        step: 2,
-        success: "Vui lòng kiểm tra mail và xác thực OTP",
-        error: "",
-      });
-    } catch {
-      updateState({
-        loading: false,
-        error: ERROR_MESSAGES.GENERIC,
-      });
-    }
-  };
-
-  const verifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    updateState({ loading: true, error: "" });
-
-    try {
-      const { data } = await AuthService.verifyOtp(state.email, state.otp);
-      updateState({
-        loading: false,
-        step: 3,
-        payload: 3,
-        success: data.message,
-        error: "",
-        otp: "",
-      });
-    } catch {
-      await clearClipBoard();
-      const isLastAttempt = state.payload === 1;
-
-      if (isLastAttempt) {
-        // Reset to initial state after final failed attempt
-        setState(INITIAL_STATE);
-      } else {
-        updateState({
-          loading: false,
-          error: ERROR_MESSAGES.INVALID_OTP,
-          payload: state.payload - 1,
-          otp: "",
-        });
+  const handleVerifyOtp = useCallback(
+    async ({ otp }: { otp: string }): Promise<void> => {
+      try {
+        const verifyOtpDto: VerifyOtpDto = {
+          otp,
+          email: state.email,
+        };
+        await AuthService.verifyOtp(verifyOtpDto);
+        dispatch({ type: "SET_OTP", otp });
+        dispatch({ type: "NEXT_STEP", step: "reset" });
+      } catch {
+        dispatch({ type: "SET_MAX_RETRIES", maxRetries: state.maxRetries - 1 });
+        if (state.maxRetries === 1) {
+          dispatch({ type: "SET_MAX_RETRIES", maxRetries: 3 });
+          dispatch({ type: "NEXT_STEP", step: "send" });
+        }
       }
-    }
-  };
+    },
+    [state.email, state.maxRetries],
+  );
 
-  const createNewPassword = async (newPasswordDto: NewPasswordDto) => {
-    updateState({ loading: true, error: "" });
-
-    try {
-      const { data } = await AuthService.newPassword(newPasswordDto);
-      updateState({
-        loading: false,
-        success: data.message,
-      });
+  const handleResetPassword = useCallback(
+    async (resetPasswordDto: ResetPasswordDto): Promise<void> => {
+      await AuthService.resetPassword(resetPasswordDto);
+      dispatch({ type: "NEXT_STEP", step: "send" });
+      dispatch({ type: "SET_MAX_RETRIES", maxRetries: 3 });
       router.push("/login");
-    } catch {
-      updateState({
-        loading: false,
-        error: ERROR_MESSAGES.INVALID_PASSWORD,
-      });
-    }
-  };
+    },
+    [router],
+  );
 
   return {
     state,
-    updateState,
-    clearMessages,
-    goBack,
-    resetPassword,
-    verifyOtp,
-    createNewPassword,
+    sendOtp: handleSendOtp,
+    verifyOtp: handleVerifyOtp,
+    resetPassword: handleResetPassword,
   };
-};
+}
+
+export function getStepNumber(step: forgotPasswordStep): number {
+  return step === "send" ? 1 : step === "verify" ? 2 : 3;
+}
+
+export function getStepIcon(step: forgotPasswordStep): ReactNode | null {
+  return FP_ICONS[step] || null;
+}
+
+export function getStepTitle(step: forgotPasswordStep): string | null {
+  return FP_TITLES[step] || null;
+}
+
+export function getStepDescription(step: forgotPasswordStep): string | null {
+  return FP_DESCRIPTIONS[step] || null;
+}

@@ -1,54 +1,94 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/shared/Card";
 import LazySection from "@/components/shared/LazySection";
 import Skeleton from "react-loading-skeleton";
+import { cn } from "@/lib/client";
+import cardStyles from "@/styles/card.module.css";
+import authStyles from "@/styles/auth.module.css";
+import labelStyles from "@/styles/label.module.css";
+import inputStyles from "@/styles/input.module.css";
+import progressStyles from "@/styles/progress.module.css";
 
 function ForgotPasswordPage() {
   return (
-    <LazySection
-      importFunc={() => import("@/components/forgot-password/MainCard")}
-      skeleton={
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-md mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="space-y-6">
-              {/* Progress bar skeleton */}
-              <Skeleton className="h-2 w-full rounded-full" />
+    <div className={authStyles["fp-page"]}>
+      <LazySection
+        importFunc={() =>
+          import("@/components/forgot-password/ForgotPasswordCard")
+        }
+        skeleton={
+          <div className={cn(cardStyles["card"], authStyles["fp-card"])}>
+            <div
+              className={cn(
+                cardStyles["card-header"],
+                authStyles["fp-card-header"],
+              )}
+            >
+              {/* Progress Bar */}
+              <div
+                className={cn(
+                  progressStyles["progress-section"],
+                  authStyles["progress"],
+                )}
+              >
+                <Skeleton width="100%" height="100%" />
+              </div>
 
-              <div className="text-center space-y-4">
-                {/* Icon skeleton */}
-                <div className="flex justify-center">
-                  <Skeleton
-                    width={48}
-                    height={48}
-                    style={{ borderRadius: "50%" }}
-                  />
+              {/* Card Header */}
+              <div className={authStyles["fp-header"]}>
+                <div className={authStyles["fp-header-wrap"]}>
+                  <div className={authStyles["fp-header-icon-wrap"]}>
+                    <Skeleton width="100%" height="100%" />
+                  </div>
                 </div>
-
-                {/* Title and description skeleton */}
-                <div className="space-y-2">
-                  <Skeleton
-                    width="48%"
-                    height={32}
-                    className="mx-auto rounded"
-                  />
-                  <Skeleton
-                    width="72%"
-                    height={16}
-                    className="mx-auto rounded"
-                  />
+                <div>
+                  <div
+                    className={cn(
+                      cardStyles["card-title"],
+                      authStyles["fp-header-title"],
+                    )}
+                  >
+                    <Skeleton width="60%" height="100%" />
+                  </div>
+                  <div
+                    className={cn(
+                      cardStyles["card-desc"],
+                      authStyles["fp-desc"],
+                    )}
+                  >
+                    <Skeleton width="80%" height="100%" />
+                  </div>
                 </div>
               </div>
-            </CardHeader>
+            </div>
+            <div
+              className={cn(
+                cardStyles["card-content"],
+                authStyles["fp-card-content"],
+              )}
+            >
+              <div className={authStyles["send-otp-form"]}>
+                {/* Form Fields */}
+                <div className={authStyles["form-group"]}>
+                  <div className={labelStyles["label"]}>
+                    <Skeleton width="30%" height="100%" />
+                  </div>
+                  <div className={inputStyles["input-skeleton"]}>
+                    <Skeleton width="100%" height="100%" />
+                  </div>
+                </div>
 
-            <CardContent className="space-y-6">
-              <Skeleton width="100%" height={40} className="mx-auto rounded" />
-              <Skeleton width="100%" height={48} className="mx-auto rounded" />
-            </CardContent>
-          </Card>
-        </div>
-      }
-    />
+                {/* Submit Button */}
+                <div className={authStyles["submit-btn"]}>
+                  <Skeleton width="100%" height="100%" />
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        className={authStyles["fp-card-skeleton"]}
+      />
+    </div>
   );
 }
 

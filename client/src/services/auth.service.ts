@@ -2,8 +2,9 @@ import { LoginResponse, RegisterResponse, LogoutResponse } from "@/types";
 import {
   LoginAccountDto,
   RegisterPatientDto,
+  SendOtpDto,
+  VerifyOtpDto,
   ResetPasswordDto,
-  NewPasswordDto,
 } from "@/schemas";
 import api from "@/axios";
 import { TokenService } from "@/services";
@@ -44,24 +45,20 @@ export class AuthService {
     });
   }
 
-  // Reset password service
-  static async resetPassword(resetPasswordDto: ResetPasswordDto) {
-    return api
-      .post("/request-reset", resetPasswordDto)
-      .then((response) => response.data);
+  // Send otp service
+  static async sendOtp(sendOtpDto: SendOtpDto): Promise<void> {
+    await api.post("/request-reset", sendOtpDto);
   }
 
   // Verify otp services
-  static async verifyOtp(email: string, otp: string) {
-    return api
-      .post("/verify-otp", { email, otp })
-      .then((response) => response.data);
+  static async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<void> {
+    await api.post("/verify-otp", verifyOtpDto);
   }
 
-  // Create new password services
-  static async newPassword(newPasswordDto: NewPasswordDto) {
-    return api
-      .post("/reset-password", newPasswordDto)
-      .then((response) => response.data);
+  // Reset password services
+  static async resetPassword(
+    resetPasswordDto: ResetPasswordDto,
+  ): Promise<void> {
+    await api.post("/reset-password", resetPasswordDto);
   }
 }
