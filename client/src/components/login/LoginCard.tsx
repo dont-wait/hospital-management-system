@@ -3,21 +3,22 @@ import { Card, CardContent } from "@/components";
 import { LoginHeader, LoginForm, LoginFooterLink } from "@/components/login";
 import styles from "@/styles/auth.module.css";
 
+const CardMotion = motion(Card);
+
 function LoginCard() {
   return (
-    <motion.section
+    <CardMotion
       initial={{ y: -10, opacity: 0.6 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className={styles["login-card"]}
     >
-      <Card className={styles["login-card"]}>
-        <LoginHeader />
-        <CardContent className={styles["login-content"]}>
-          <LoginForm />
-          <LoginFooterLink />
-        </CardContent>
-      </Card>
-    </motion.section>
+      <LoginHeader />
+      <CardContent className={styles["login-content"]}>
+        <LoginForm />
+        <LoginFooterLink />
+      </CardContent>
+    </CardMotion>
   );
 }
 

@@ -1,85 +1,67 @@
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/shared/Card";
-import { Label } from "@/components/shared/Label";
-import { Button } from "@/components/shared/Button";
-import { useUserAuthContext } from "@/contexts/UserAuthContext";
-import { FileText, User, Mail, Phone } from "@/lib/client/utils";
-import PatientDetail from "@/components/patient/PatientDetail";
+import { motion } from "motion/react";
+import { Card, CardContent, CardHeader, CardTitle, Button } from "@/components";
+import { PatientInfoField, PatientDetail } from "@/components/patient";
+import { FileText, User, Mail, Phone } from "@/lib/client";
+import { useUserAuthContext, useModal } from "@/contexts";
 import { Patient } from "@/types";
+import styles from "@/styles/patient.module.css";
+
+const CardMotion = motion(Card);
 
 function PatientInfo() {
   const { user } = useUserAuthContext();
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, toggleModal } = useModal();
 
   return (
     <>
       {user && "patientId" in user && (
         <PatientDetail
           isOpen={isOpen}
-          setIsOpen={setIsOpen}
+          setIsOpen={toggleModal}
           patient={user as Patient}
         />
       )}
-      <Card>
+      <CardMotion
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
         <CardHeader>
           <CardTitle>Thông tin bệnh nhân</CardTitle>
         </CardHeader>
         {user && "patientId" in user && (
-          <CardContent>
-            {/* Name */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div
-                className="flex items-center rounded border
-                  border-gray-300 px-4 py-2 gap-2"
-              >
-                <User className="h-4 w-4" />
-                <Label className="text-sm text-gray-600 block truncate">
-                  Tên bệnh nhân:{" "}
-                  <span>
-                    {user.firstName} {user.lastName}
-                  </span>
-                </Label>
-              </div>
+          <CardContent className={styles["patient-content"]}>
+            <div className={styles["info-section"]}>
+              <PatientInfoField
+                icon={User}
+                label={"Tên bệnh nhân"}
+                content={`${user.firstName} ${user.lastName}`}
+              />
 
-              {/* Email */}
-              <div
-                className="flex items-center rounded border
-                  border-gray-300 px-4 py-2 gap-2"
-              >
-                <Mail className="h-4 w-4" />
-                <Label className="text-sm text-gray-600 block truncate">
-                  Email: <span>{user.email}</span>
-                </Label>
-              </div>
+              <PatientInfoField
+                icon={Mail}
+                label={"Email"}
+                content={user.email}
+              />
 
-              {/* Contact Number */}
-              <div
-                className="flex items-center rounded border
-                  border-gray-300 px-4 py-2 gap-2"
-              >
-                <Phone className="mr-2 h-4 w-4" />
-                <Label className="text-sm text-gray-600 block truncate">
-                  Số điện thoại: <span>{user.phoneNumber}</span>
-                </Label>
-              </div>
+              <PatientInfoField
+                icon={Phone}
+                label={"Số điện thoại"}
+                content={user.phoneNumber}
+              />
             </div>
 
             <Button
-              onClick={() => setIsOpen(!isOpen)}
-              className="w-full justify-start"
+              onClick={toggleModal}
+              className={styles["patient-helper-btn"]}
               variant="outline"
             >
-              <FileText className="mr-2 h-4 w-4" />
+              <FileText className={styles["patient-helper-icon"]} />
               Hồ sơ chi tiết
             </Button>
           </CardContent>
         )}
-      </Card>
+      </CardMotion>
     </>
   );
 }

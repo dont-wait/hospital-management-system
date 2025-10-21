@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export enum Gender {
   Male = "M",
   Female = "F",
@@ -93,3 +95,13 @@ export interface OtpDto {
   email: string;
   otp: string;
 }
+
+export type ModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  children: ReactNode;
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
+  showCloseButton?: boolean;
+};
+

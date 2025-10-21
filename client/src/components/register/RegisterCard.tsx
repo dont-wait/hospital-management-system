@@ -7,21 +7,22 @@ import {
 } from "@/components/register";
 import styles from "@/styles/auth.module.css";
 
+const CardMotion = motion(Card);
+
 function RegisterCard() {
   return (
-    <motion.section
+    <CardMotion
       initial={{ y: -10, opacity: 0.6 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className={styles["register-card"]}
     >
-      <Card className={styles["register-card"]}>
-        <RegisterHeader />
-        <CardContent className={styles["register-content"]}>
-          <RegisterForm />
-          <RegisterFooterLink />
-        </CardContent>
-      </Card>
-    </motion.section>
+      <RegisterHeader />
+      <CardContent className={styles["register-content"]}>
+        <RegisterForm />
+        <RegisterFooterLink />
+      </CardContent>
+    </CardMotion>
   );
 }
 

@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useUserAuthContext } from "@/contexts/UserAuthContext";
-import { useSidebar } from "@/contexts/SidebarContext";
-import { Button } from "@/components/shared/Button";
+import { useUserAuthContext, useSidebar } from "@/contexts";
+import { Button } from "@/components";
 import PatientSidebar from "@/components/sidebars/PatientSidebar";
-import { Heart, Bell } from "@/lib/client/utils";
+import { Heart, Bell } from "@/lib/client";
+import styles from "@/styles/navigation.module.css";
 
 export function Navigation() {
   const { user, isAuthenticated } = useUserAuthContext();
@@ -18,40 +18,36 @@ export function Navigation() {
   };
 
   return (
-    <nav className="bg-white shadow-md border-b">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+    <nav className={styles["nav-section"]}>
+      <div className={styles["nav-wrap"]}>
+        <div className={styles["nav-content"]}>
           {/* Logo section */}
-          <section className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <Heart className="h-8 w-8 text-blue-600" />
-              <span className="font-bold text-xl text-gray-900">MediCare</span>
+          <section className={styles["nav-logo"]}>
+            <Link href="/" className={styles["nav-link"]}>
+              <Heart className={styles["nav-link-icon"]} />
+              <span className={styles["nav-link-title"]}>MediCare</span>
             </Link>
           </section>
 
           {/* Options section */}
-          <section className="flex items-center space-x-4">
+          <section className={styles["nav-options"]}>
             {isAuthenticated ? (
               <>
                 <Button
                   variant="outline"
-                  className="shadow"
-                  style={{ aspectRatio: "1/1" }}
+                  className={styles["nav-notify"]}
                   size="sm"
                 >
-                  <Bell className="h-4 w-4" />
+                  <Bell className={styles["nav-options-icon"]} />
                 </Button>
 
-                <div
-                  className="w-10 border-2 border-gray-500 rounded-full overflow-hidden"
-                  style={{ aspectRatio: "1/1" }}
-                >
+                <div className={styles["nav-avatar"]}>
                   <Image
                     src={user!.avatarUrl}
                     width={32}
                     height={32}
                     alt="avatar"
-                    className="w-full cursor-pointer h-full object-cover object-center"
+                    className={styles["nav-avatar-img"]}
                     loading="lazy"
                     onClick={handleOpenDetails}
                   />
@@ -59,13 +55,13 @@ export function Navigation() {
               </>
             ) : (
               <>
-                <Link href="/login" className="flex items-center space-x-2">
+                <Link href="/login" className={styles["nav-btn"]}>
                   <Button variant="outline" size="sm">
                     Đăng nhập
                   </Button>
                 </Link>
 
-                <Link href="/register" className="flex items-center space-x-2">
+                <Link href="/register" className={styles["nav-btn"]}>
                   <Button size="sm">Đăng ký</Button>
                 </Link>
               </>
