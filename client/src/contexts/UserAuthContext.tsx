@@ -10,7 +10,8 @@ import {
   useMemo,
 } from "react";
 import { useRouter } from "next/navigation";
-import { AuthService, TokenService } from "@/services";
+import { Loading } from "@/components";
+import { AuthService, TokenService, IpGeoService } from "@/services";
 import { Employee, Patient } from "@/types";
 
 interface UserAuthContextType<T> {
@@ -25,6 +26,7 @@ const UserAuthContext = createContext<UserAuthContextType<
 > | null>(null);
 
 export function UserAuthProvider({ children }: { children: ReactNode }) {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<Patient | Employee | null>(null);
   const router = useRouter();
 
@@ -36,10 +38,26 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
   }, [router]);
 
   useEffect(() => {
-    const user: Patient | Employee | null = TokenService.getStoredUser();
-    if (user && "patientId" in user) {
-      setUser(user as Patient);
+    async function getNationality() {
+      try {
+        const user: Patient | Employee | null = TokenService.getStoredUser();
+        if (user && "patientId" in user) {
+          const country = await IpGeoService.getCountry();
+          setUser({
+            ...user,
+            nationality: user.nationality || country,
+          } as Patient);
+        }
+      } catch (error) {
+        console.error("Can't Initialize User", error);
+      } finally {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
+      }
     }
+
+    getNationality();
   }, []);
 
   const contextValue = useMemo(
@@ -51,6 +69,8 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
     }),
     [user, handleLogout],
   );
+
+  if (isLoading) return <Loading />;
 
   return (
     <UserAuthContext.Provider value={contextValue}>
