@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useUserAuthContext, useSidebar } from "@/contexts";
 import { Button } from "@/components";
-import PatientSidebar from "@/components/sidebars/PatientSidebar";
+import { PatientSidebar } from "@/components/patient";
 import { Heart, Bell } from "@/lib/client";
 import styles from "@/styles/navigation.module.css";
 
