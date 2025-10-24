@@ -7,7 +7,7 @@ import {
   ResetPasswordDto,
 } from "@/schemas";
 import api from "@/axios";
-import { TokenService } from "@/services";
+import { TokenUtils } from "@/lib/client";
 import { Patient, Employee } from "@/types";
 
 export class AuthService {
@@ -22,7 +22,7 @@ export class AuthService {
         ...response.data.patient,
         avatarUrl: response.data.avatarUrl,
       };
-      TokenService.saveUser<Patient>(user);
+      TokenUtils.saveUser<Patient>(user);
       return user;
     }
     return response.data.employee as Employee;

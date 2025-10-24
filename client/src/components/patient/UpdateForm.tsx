@@ -14,11 +14,12 @@ import { PatientUpdateDto, patientUpdateSchema } from "@/schemas";
 import { Patient } from "@/types";
 import { GENDER_OPTIONS } from "@/config";
 import { useUserAuthContext } from "@/contexts";
-import { PatientService, TokenService } from "@/services";
+import { PatientService } from "@/services";
+import { TokenUtils } from "@/lib/client";
 import authStyles from "@/styles/auth.module.css";
 import patientStyles from "@/styles/patient.module.css";
 
-function UpdateForm() {
+export function UpdateForm() {
   const router = useRouter();
   const { user, setUser } = useUserAuthContext();
   const patient = user as Patient;
@@ -61,7 +62,7 @@ function UpdateForm() {
         ...updateUser,
       } as Patient);
 
-      TokenService.saveUser<Patient>({
+      TokenUtils.saveUser<Patient>({
         ...user,
         ...updateUser,
       } as Patient);

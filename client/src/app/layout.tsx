@@ -1,12 +1,9 @@
-import "./globals.css";
-import "react-loading-skeleton/dist/skeleton.css";
 import type { Metadata } from "next";
-import { roboto } from "@/font/font";
-import { UserAuthProvider } from "@/contexts/UserAuthContext";
-import { Navigation } from "@/components/shared/Navigation";
-import { ToastProvider } from "@/contexts/ToastContext";
-import { SidebarProvider } from "@/contexts/SidebarContext";
-import { Sidebar } from "@/components/shared/Sidebar";
+import { roboto } from "@/font";
+import { UserAuthProvider, ToastProvider, SidebarProvider } from "@/contexts";
+import { Navigation, Sidebar } from "@/components";
+import "react-loading-skeleton/dist/skeleton.css";
+import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Medica Hospital",

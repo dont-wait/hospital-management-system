@@ -1,6 +1,5 @@
 import api from "@/axios";
-import type { PatientUpdateDto } from "@/schemas/patient";
-import { GENDER_OPTIONS } from "@/config/GenderConfig";
+import type { PatientUpdateDto } from "@/schemas";
 
 export class PatientService {
   static async updatePatient(
@@ -13,14 +12,5 @@ export class PatientService {
       patientUpdateInfo,
     );
     return { ...response.data, email };
-  }
-
-  static formatGender(c: string) {
-    return GENDER_OPTIONS.find(({ value }) => value === c)!.label;
-  }
-
-  static formatDOB(dob: string) {
-    const [year, month, day] = dob.split("T")[0].split("-");
-    return `${day}-${month}-${year}`;
   }
 }

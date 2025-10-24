@@ -1,4 +1,4 @@
-import { Users, Lock, Pencil } from "@/lib/client/utils";
+import { Users, Lock, Pencil } from "@/lib/client";
 
 export const patientSidebarVariants = {
   hidden: { opacity: 0, y: -10 },

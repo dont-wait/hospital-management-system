@@ -11,7 +11,8 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Loading } from "@/components";
-import { AuthService, TokenService, IpGeoService } from "@/services";
+import { AuthService, IpGeoService } from "@/services";
+import { TokenUtils } from "@/lib/client";
 import { Employee, Patient } from "@/types";
 
 interface UserAuthContextType<T> {
@@ -32,7 +33,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
 
   const handleLogout = useCallback(async () => {
     await AuthService.logout();
-    TokenService.clearStoredUser();
+    TokenUtils.clearStoredUser();
     setUser(null);
     router.push("/");
   }, [router]);
@@ -40,7 +41,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function getNationality() {
       try {
-        const user: Patient | Employee | null = TokenService.getStoredUser();
+        const user: Patient | Employee | null = TokenUtils.getStoredUser();
         if (user && "patientId" in user) {
           const country = await IpGeoService.getCountry();
           setUser({

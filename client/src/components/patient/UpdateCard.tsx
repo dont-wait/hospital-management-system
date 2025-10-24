@@ -1,9 +1,8 @@
-import { lazy } from "react";
 import { motion } from "motion/react";
 import { Card, CardContent } from "@/components";
+import { UpdateForm } from "@/components/patient";
 import styles from "@/styles/patient.module.css";
 
-const UpdateForm = lazy(() => import("@/components/patient/UpdateForm"));
 const CardMotion = motion(Card);
 
 function UpdateCard() {

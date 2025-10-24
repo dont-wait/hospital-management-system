@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Label, Modal } from "@/components";
-import { PatientService } from "@/services";
+import { PatientUtils } from "@/lib/client";
 import { Patient } from "@/types";
 import styles from "@/styles/patient.module.css";
 
@@ -26,11 +26,11 @@ export function PatientDetail({
     },
     {
       label: "Giới tính",
-      value: PatientService.formatGender(patient.gender),
+      value: PatientUtils.formatGender(patient.gender),
     },
     {
       label: "Ngày sinh",
-      value: PatientService.formatDOB(patient.dateOfBirth),
+      value: PatientUtils.formatDOB(patient.dateOfBirth),
     },
     {
       label: "Số điện thoại",

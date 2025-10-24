@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
-import { ToastDefaultConfig } from "@/config/ToastConfig";
+import { ToastDefaultConfig } from "@/config";
 import { AuthErrorResponse } from "@/types";
 
 const api = axios.create({

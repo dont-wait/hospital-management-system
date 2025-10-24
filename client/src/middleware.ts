@@ -1,7 +1,6 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import TokenService from "@/services/token.service";
-import { ROUTE_ROLE_MAP } from "@/config/RoleConfig";
+import { NextResponse, type NextRequest } from "next/server";
+import { TokenUtils } from "@/lib/client";
+import { ROUTE_ROLE_MAP } from "@/config";
 import { type Role } from "@/types";
 
 function ForbiddenResponse() {
@@ -71,12 +70,12 @@ export async function middleware(req: NextRequest) {
   }
 
   const token = req.cookies.get("accessToken")?.value;
-  if (!token || TokenService.isTokenExpired(token)) {
+  if (!token || TokenUtils.isTokenExpired(token)) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
   // Kiểm tra role
-  const userRole: Role = TokenService.getUserRole(token);
+  const userRole: Role = TokenUtils.getUserRole(token);
   for (const [routePrefix, allowedRoles] of Object.entries(ROUTE_ROLE_MAP)) {
     if (pathname.startsWith(routePrefix)) {
       if (!allowedRoles.includes(userRole)) {

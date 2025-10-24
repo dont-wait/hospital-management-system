@@ -1,25 +1,14 @@
 import axios from "axios";
 
-class IpGeoService {
-  // Get country service
+export class IpGeoService {
   static async getCountry(): Promise<string> {
     try {
       const response = await axios.get("https://ipwho.is");
-      if (
-        response &&
-        response.data &&
-        typeof response.data.country === "string" &&
-        response.data.country.length > 0
-      ) {
-        return response.data.country;
-      } else {
-        return "Vietnam";
-      }
+      const { country } = response.data;
+      return typeof country === "string" && country ? country : "Vietnam";
     } catch (error) {
       console.error("Failed to fetch country", error);
       return "Vietnam";
     }
   }
 }
-
-export default IpGeoService;
