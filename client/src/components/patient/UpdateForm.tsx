@@ -1,22 +1,18 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, memo, lazy } from "react";
-import { Button } from "@/components/shared/Button";
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { PatientUpdateDto, patientUpdateSchema } from "@/schemas/patient";
+import { SubmitButton } from "@/components";
+import { PatientUpdateDto, patientUpdateSchema } from "@/schemas";
 import { Patient } from "@/types";
+import authStyles from "@/styles/auth.module.css";
 
-const AvatarSection = lazy(
-  () => import("@/components/patient/AvatarSection"),
-);
+const AvatarSection = lazy(() => import("@/components/patient/AvatarSection"));
 
 const AddressSection = lazy(
   () => import("@/components/patient/AddressSection"),
 );
 
-const GenderSection = lazy(
-  () => import("@/components/patient/GenderSection"),
-);
+const GenderSection = lazy(() => import("@/components/patient/GenderSection"));
 
 const DateSection = lazy(() => import("@/components/patient/DateSection"));
 
@@ -26,15 +22,10 @@ const PatientInfoSection = lazy(
 
 interface PatientUpdateFormProps {
   onSubmit: (id: string, patientDto: PatientUpdateDto) => Promise<boolean>;
-  isLoading: boolean;
   initialData: Partial<PatientUpdateDto>;
 }
 
-function UpdateForm({
-  onSubmit,
-  isLoading,
-  initialData,
-}: PatientUpdateFormProps) {
+function UpdateForm({ onSubmit, initialData }: PatientUpdateFormProps) {
   const defaultValues = useMemo(
     () => ({
       address: initialData.address || "",
@@ -54,7 +45,7 @@ function UpdateForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     control,
     setValue,
     watch,
@@ -99,13 +90,12 @@ function UpdateForm({
       <GenderSection control={control} errors={errors} />
 
       {/* Submit button */}
-      <Button type="submit" className="w-full h-12" disabled={isLoading}>
-        {isLoading ? (
-          <LoadingSpinner text="Đang cập nhật..." />
-        ) : (
-          "Cập nhật thông tin"
-        )}
-      </Button>
+      <SubmitButton
+        isSubmitting={isSubmitting}
+        className={authStyles["submit-btn"]}
+        label="Cập nhật thông tin"
+        submittingLabel="Đang cập nhật..."
+      />
     </form>
   );
 }

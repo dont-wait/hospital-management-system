@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import styles from "@/styles/loading.module.css";
 
 interface LoadingSpinnerProps {
@@ -6,7 +7,15 @@ interface LoadingSpinnerProps {
 
 export const LoadingSpinner = ({ text }: LoadingSpinnerProps) => (
   <div className={styles["loading-section"]}>
-    <div className={styles["loading-spin"]} />
+    <motion.div
+      className={styles["loading-spin"]}
+      animate={{ rotate: 360 }}
+      transition={{
+        duration: 1,
+        repeat: Infinity,
+        ease: "linear",
+      }}
+    />
     <span>{text}</span>
   </div>
 );

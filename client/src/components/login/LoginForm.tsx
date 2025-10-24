@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Button, LoadingSpinner, FormField } from "@/components";
+import { SubmitButton, FormField } from "@/components";
 import { useUserAuthContext } from "@/contexts";
 import { AuthService } from "@/services";
 import { accountSchema, LoginAccountDto } from "@/schemas";
@@ -57,17 +57,12 @@ export function LoginForm() {
         Quên mật khẩu
       </Link>
 
-      <Button
-        type="submit"
+      <SubmitButton
+        isSubmitting={isSubmitting}
         className={styles["submit-btn"]}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <LoadingSpinner text="Đang đăng nhập..." />
-        ) : (
-          "Đăng nhập"
-        )}
-      </Button>
+        label="Đăng nhập"
+        submittingLabel="Đang đăng nhập..."
+      />
     </form>
   );
 }

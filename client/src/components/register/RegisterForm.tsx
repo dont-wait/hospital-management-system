@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { FormField, Button, LoadingSpinner } from "@/components";
+import { FormField, SubmitButton } from "@/components";
 import { patientSchema, RegisterPatientDto } from "@/schemas";
 import { AuthService } from "@/services";
 import styles from "@/styles/auth.module.css";
@@ -91,13 +91,12 @@ export function RegisterForm() {
         register={register}
       />
 
-      <Button
-        type="submit"
+      <SubmitButton
+        isSubmitting={isSubmitting}
         className={styles["submit-btn"]}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? <LoadingSpinner text="Đang đăng ký..." /> : "Đăng ký"}
-      </Button>
+        label="Đăng ký"
+        submittingLabel="Đang đăng ký..."
+      />
     </form>
   );
 }

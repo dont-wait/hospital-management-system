@@ -1,10 +1,11 @@
 import { forwardRef, ButtonHTMLAttributes } from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import { LoadingSpinner } from "@/components";
 import { cn } from "@/lib/client";
 import styles from "@/styles/button.module.css";
 
-const buttonVariants = cva(styles["button"], {
+export const buttonVariants = cva(styles["button"], {
   variants: {
     variant: {
       default: styles["button-default"],
@@ -33,7 +34,7 @@ export interface ButtonProps
   asChild?: boolean;
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return (
@@ -47,4 +48,22 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-export { Button, buttonVariants };
+type SubmitButtonProps = {
+  isSubmitting: boolean;
+  className: string;
+  submittingLabel: string;
+  label: string;
+};
+
+export function SubmitButton({
+  isSubmitting,
+  className = "",
+  submittingLabel,
+  label,
+}: SubmitButtonProps) {
+  return (
+    <Button type="submit" className={className} disabled={isSubmitting}>
+      {isSubmitting ? <LoadingSpinner text={submittingLabel} /> : label}
+    </Button>
+  );
+}
