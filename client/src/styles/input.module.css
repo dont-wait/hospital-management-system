@@ -1,0 +1,27 @@
+@reference "./globals.css";
+
+.input {
+  min-height: 40px;
+  @apply flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.date-input {
+  @apply grid grid-cols-3 gap-2 sm:gap-3;
+}
+
+.gender-input-wrap {
+  @apply flex gap-6;
+}
+
+.gender-input {
+  @apply flex items-center gap-2 cursor-pointer;
+}
+
+.input-skeleton {
+  @apply flex h-10 w-full rounded-md border px-3 py-2 bg-gray-300;
+}
+
+.textarea-skeleton {
+  min-height: 117.6px;
+  @apply flex w-full rounded-md border bg-gray-300;
+}
