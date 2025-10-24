@@ -2,16 +2,17 @@ import api from "@/axios";
 import type { PatientUpdateDto } from "@/schemas/patient";
 import { GENDER_OPTIONS } from "@/config/GenderConfig";
 
-class PatientService {
-  // Update patient service
+export class PatientService {
   static async updatePatient(
     id: string,
     patientUpdateDto: PatientUpdateDto,
   ): Promise<PatientUpdateDto> {
     const { email, ...patientUpdateInfo } = patientUpdateDto;
-    return api
-      .put(`api/account/patient/${id}`, patientUpdateInfo)
-      .then((response) => ({ email, ...response.data.data }));
+    const { data: response } = await api.put(
+      `api/account/patient/${id}`,
+      patientUpdateInfo,
+    );
+    return { ...response.data, email };
   }
 
   static formatGender(c: string) {
@@ -23,5 +24,3 @@ class PatientService {
     return `${day}-${month}-${year}`;
   }
 }
-
-export default PatientService;

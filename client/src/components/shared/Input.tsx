@@ -1,14 +1,19 @@
-"use client";
-
-import { useState, forwardRef, InputHTMLAttributes, MouseEvent } from "react";
+import {
+  useState,
+  forwardRef,
+  InputHTMLAttributes,
+  TextareaHTMLAttributes,
+  MouseEvent,
+} from "react";
 import {
   FieldErrors,
   FieldValues,
   Path,
   UseFormRegister,
 } from "react-hook-form";
-import { Button } from "@/components";
 import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components";
+import { months } from "@/config";
 import { cn } from "@/lib/client";
 import authStyles from "@/styles/auth.module.css";
 import inputStyles from "@/styles/input.module.css";
@@ -37,6 +42,30 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 );
 
 Input.displayName = "Input";
+
+export interface TextareaProps
+  extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  error?: boolean;
+  variant?: "default" | "error";
+}
+
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, error, variant, ...props }, ref) => {
+    const hasError = error || variant === "error";
+    return (
+      <textarea
+        ref={ref}
+        className={cn(
+          inputStyles["input"],
+          hasError && authStyles["error-form-control"],
+          className,
+        )}
+        {...props}
+      />
+    );
+  },
+);
+Textarea.displayName = "Textarea";
 
 export interface PasswordInputProps<T extends FieldValues> {
   id: Path<T>;
@@ -85,3 +114,64 @@ export function PasswordInput<T extends FieldValues>({
     </div>
   );
 }
+
+type DayInputProps = {
+  value: string;
+  onChange: (value: string) => void;
+  error?: boolean;
+};
+
+export const DayInput = ({ value, onChange }: DayInputProps) => (
+  <Input
+    placeholder="Ngày"
+    value={value}
+    onChange={(e) => {
+      onChange(e.target.value);
+    }}
+  />
+);
+
+type MonthSelectProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+export const MonthSelect = ({ value, onChange }: MonthSelectProps) => (
+  <select
+    value={value}
+    onChange={(e) => onChange(e.target.value)}
+    className={inputStyles["input"]}
+  >
+    <option value="">Tháng</option>
+    {months.map((m) => (
+      <option key={m.value} value={m.value}>
+        {m.label}
+      </option>
+    ))}
+  </select>
+);
+
+type YearInputProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+export const YearInput = ({ value, onChange }: YearInputProps) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (val === "" || /^\d{1,4}$/.test(val)) {
+      onChange(val);
+    }
+  };
+
+  return (
+    <Input
+      type="number"
+      placeholder="Năm"
+      value={value}
+      onChange={handleChange}
+      min="1900"
+      max="2100"
+    />
+  );
+};
