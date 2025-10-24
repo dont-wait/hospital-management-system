@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { CircleX } from "@/lib/client";
 import { ModalProps } from "@/types";
-import styles from "@/styles/Modal.module.css";
+import styles from "@/styles/modal.module.css";
 
 const maxWidthClasses = {
   sm: styles.maxWidthSm,
