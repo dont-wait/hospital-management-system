@@ -17,7 +17,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("doctors")]
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin")]
     public async Task<ApiResponse<List<ResponseDoctorDTO>>> GetAllDoctors()
     {
         var result = await _employeeAccountService.GetAllDoctorsAsync();
