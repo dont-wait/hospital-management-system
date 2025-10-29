@@ -117,7 +117,7 @@ export function OtpInput({ control }: OtpInputProps) {
           />
           {fieldState.error && (
             <Label className={authStyles["error-message"]}>
-              {fieldState.error.message || "Mã OTP không hợp lệ!"}
+              {fieldState.error.message ?? "Mã OTP không hợp lệ!"}
             </Label>
           )}
         </>
@@ -140,7 +140,7 @@ export function AddressField({
   patient,
 }: AddressFieldProps) {
   const [nationality, setNationality] = useState(
-    patient.nationality || "Vietnam",
+    patient?.nationality ?? "Vietnam",
   );
 
   const handleNationalityChange = useCallback(
@@ -161,7 +161,7 @@ export function AddressField({
           control={control}
           render={({ field }) => (
             <CountryDropdown
-              value={field.value || ""}
+              value={field.value ?? ""}
               onChange={(val) => {
                 handleNationalityChange(val, field.onChange);
               }}
@@ -171,7 +171,7 @@ export function AddressField({
         />
         {errors.nationality && (
           <Label className={authStyles["error-message"]}>
-            {errors.nationality.message || "Quốc tịch không được để trống!"}
+            {errors.nationality.message ?? "Quốc tịch không được để trống!"}
           </Label>
         )}
       </div>
@@ -185,7 +185,7 @@ export function AddressField({
             <RegionDropdown
               key={nationality}
               country={nationality}
-              value={field.value || ""}
+              value={field.value ?? ""}
               onChange={field.onChange}
               className={inputStyles["input"]}
               blankOptionLabel="-- Chọn nơi sinh --"
@@ -195,7 +195,7 @@ export function AddressField({
         />
         {errors.placeOfResidence && (
           <Label className={authStyles["error-message"]}>
-            {errors.placeOfResidence.message || "Nơi sinh không được để trống!"}
+            {errors.placeOfResidence.message ?? "Nơi sinh không được để trống!"}
           </Label>
         )}
       </div>
@@ -234,11 +234,11 @@ export function RadioGroupField<T extends FieldValues>({
         name={name}
         control={control}
         render={({ field }) => (
-          <div className={wrapperClassName || inputStyles["gender-input-wrap"]}>
+          <div className={wrapperClassName ?? inputStyles["gender-input-wrap"]}>
             {options.map(({ value, label }) => (
               <div
                 key={value}
-                className={itemClassName || inputStyles["gender-input"]}
+                className={itemClassName ?? inputStyles["gender-input"]}
               >
                 <Input
                   type="radio"
@@ -253,7 +253,7 @@ export function RadioGroupField<T extends FieldValues>({
         )}
       />
       {error && (
-        <Label className={errorClassName || authStyles["error-message"]}>
+        <Label className={errorClassName ?? authStyles["error-message"]}>
           {error.message as string}
         </Label>
       )}
