@@ -49,7 +49,9 @@ export function PatientDetail({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
+      onClose={() => {
+        setIsOpen(false);
+      }}
       title="Thông tin bệnh nhân"
       maxWidth="md"
     >
