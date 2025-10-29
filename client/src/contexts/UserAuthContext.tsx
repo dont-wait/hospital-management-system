@@ -58,7 +58,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    getNationality();
+    void getNationality();
   }, []);
 
   const contextValue = useMemo(
