@@ -16,7 +16,7 @@ export class AuthService {
     userDto: LoginAccountDto,
   ): Promise<Patient | Employee | null> {
     const { data: response }: { data: LoginResponse } = await api.post(
-      "/login",
+      "auth/login",
       userDto,
     );
     let user: Patient | Employee;

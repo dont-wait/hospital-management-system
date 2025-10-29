@@ -8,7 +8,7 @@ export class PatientService {
   ): Promise<PatientUpdateDto> {
     const { email, ...patientUpdateInfo } = patientUpdateDto;
     const { data: response } = await api.put(
-      `api/account/patient/${id}`,
+      `/account/patient/${id}`,
       patientUpdateInfo,
     );
     return { ...response.data, email };
