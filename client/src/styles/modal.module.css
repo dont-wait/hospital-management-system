@@ -1,0 +1,49 @@
+@reference "./globals.css";
+
+.backdrop {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-40;
+}
+
+.modalContainer {
+  @apply fixed inset-0 flex items-center justify-center z-50 p-4;
+}
+
+.modalContent {
+  @apply bg-white rounded shadow-2xl w-full overflow-hidden;
+}
+
+.maxWidthSm {
+  @apply max-w-sm;
+}
+
+.maxWidthMd {
+  @apply max-w-md;
+}
+
+.maxWidthLg {
+  @apply max-w-lg;
+}
+
+.maxWidthXl {
+  @apply max-w-xl;
+}
+
+.maxWidth2xl {
+  @apply max-w-2xl;
+}
+
+.header {
+  @apply bg-gradient-to-r from-blue-100 to-white p-6 relative;
+}
+
+.title {
+  @apply text-2xl font-bold;
+}
+
+.closeButton {
+  @apply absolute top-4 right-4 rounded-full p-2 transition-colors hover:bg-gray-100;
+}
+
+.body {
+  @apply p-6;
+}

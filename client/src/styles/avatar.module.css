@@ -1,0 +1,17 @@
+@reference "./globals.css";
+
+.avatar-upload-wrap {
+  @apply space-y-2;
+}
+
+.avatar-upload {
+  @apply flex items-center gap-4;
+}
+
+.avatar-image-frame {
+  @apply rounded-full overflow-hidden bg-gray-200 flex items-center justify-center border border-gray-500;
+}
+
+.avatar-image {
+  @apply w-full h-full object-cover object-center;
+}

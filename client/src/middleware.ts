@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { tokenService } from "@/services/token.service";
+import { NextResponse, type NextRequest } from "next/server";
+import { TokenUtils } from "@/lib/client";
+import { ROUTE_ROLE_MAP } from "@/config";
 import { type Role } from "@/types";
 
 function ForbiddenResponse() {
@@ -50,7 +50,7 @@ function ForbiddenResponse() {
     <body>
       <div class="box">
         <h1>403</h1>
-        <p>You don’t have permission to access this page.</p>
+        <p>You don't have permission to access this page.</p>
         <a href="/">Go Home</a>
       </div>
     </body>
@@ -69,37 +69,33 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  const sortedRoutes = Object.entries(ROUTE_ROLE_MAP).sort(
+    ([a], [b]) => b.length - a.length,
+  );
+
+  let matchedRoute: string | null = null;
+  let allowedRoles: Role[] | null = null;
+
+  for (const [route, roles] of sortedRoutes) {
+    if (pathname === route || pathname.startsWith(`${route}/`)) {
+      matchedRoute = route;
+      allowedRoles = roles;
+      break;
+    }
+  }
+
+  if (!matchedRoute || !allowedRoles || allowedRoles.length === 0) {
+    return NextResponse.next();
+  }
+
   const token = req.cookies.get("accessToken")?.value;
-  if (!token) {
+  if (!token || TokenUtils.isTokenExpired(token)) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  const payload = tokenService.decodePayload(token);
-  if (!payload || !payload.RoleId) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
+  const userRole: Role = TokenUtils.getUserRole(token);
 
-  // Kiểm tra hết hạn
-  const now = Math.floor(Date.now() / 1000);
-  if (payload.exp && now >= payload.exp) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
-
-  // Kiểm tra role
-  const role = payload.RoleId as Role;
-  if (pathname.startsWith("/doctor") && role !== "doctor") {
-    return new NextResponse(ForbiddenResponse(), {
-      status: 403,
-      headers: { "Content-Type": "text/html" },
-    });
-  }
-  if (pathname.startsWith("/patient") && role !== "patient") {
-    return new NextResponse(ForbiddenResponse(), {
-      status: 403,
-      headers: { "Content-Type": "text/html" },
-    });
-  }
-  if (pathname.startsWith("/admin") && role !== "admin") {
+  if (!allowedRoles.includes(userRole)) {
     return new NextResponse(ForbiddenResponse(), {
       status: 403,
       headers: { "Content-Type": "text/html" },
@@ -110,5 +106,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/doctor/:path*", "/patient/:path*", "/admin/:path*"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

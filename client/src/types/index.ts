@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export enum Gender {
   Male = "M",
   Female = "F",
@@ -17,6 +19,7 @@ export interface Patient {
   nationality: string;
   address: string;
   placeOfResidence: string;
+  avatarUrl: string;
 }
 
 export interface Doctor {
@@ -43,6 +46,7 @@ export interface Employee {
   hireDate: string;
   certificateNumber: string;
   specialization: string;
+  avatarUrl: string;
 }
 
 export interface AuthUser {
@@ -78,18 +82,26 @@ export interface AuthErrorResponse {
   errors?: Record<string, string[]>;
 }
 
-export interface ForgotPasswordState {
-  step: 1 | 2 | 3;
+export type forgotPasswordStep = "send" | "verify" | "reset";
+
+export interface ResetPasswordState {
+  step: forgotPasswordStep;
   email: string;
   otp: string;
-  newPassword: string;
-  loading: boolean;
-  error: string;
-  success: string;
-  payload: number;
+  maxRetries: number;
 }
 
 export interface OtpDto {
   email: string;
   otp: string;
 }
+
+export type ModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  children: ReactNode;
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
+  showCloseButton?: boolean;
+};
+

@@ -1,0 +1,145 @@
+@reference "./globals.css";
+
+.login-card,
+.register-card,
+.fp-card {
+  @apply w-full;
+}
+
+.login-page,
+.register-page,
+.fp-page {
+  min-height: calc(100vh - 64.8px);
+  @apply bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4;
+}
+
+.login-card-sekeleton,
+.fp-card-skeleton {
+  @apply w-full sm:w-1/2 md:w-4/6 lg:w-2/6;
+}
+
+.register-card-skeleton {
+  @apply w-full sm:mt-4 md:w-3/4 lg:w-2/5;
+}
+
+.login-content,
+.login-form,
+.register-form,
+.send-otp-form,
+.verify-otp-form,
+.reset-password-form {
+  @apply space-y-4;
+}
+
+.login-header,
+.register-header {
+  @apply space-y-1;
+}
+
+.fp-header {
+  @apply text-center space-y-4;
+}
+
+.fp-header-icon-wrap {
+  @apply w-12 h-12 flex justify-center items-center bg-blue-100 rounded-full text-blue-600;
+}
+
+.login-header-icon-wrap,
+.register-header-icon-wrap,
+.fp-header-wrap {
+  @apply flex items-center justify-center mb-4;
+}
+
+.login-header-icon,
+.register-header-icon {
+  @apply h-10 w-10 text-blue-600;
+}
+
+.login-title,
+.register-title {
+  @apply w-full text-2xl text-center;
+}
+
+.login-desc,
+.register-desc {
+  @apply text-center;
+}
+
+.footer-link-section {
+  @apply text-center;
+}
+
+.footer-link-content {
+  @apply text-sm text-gray-600;
+}
+
+.footer-link {
+  @apply font-medium text-blue-600 hover:text-blue-500;
+}
+
+.show-password-btn {
+  transform: translateY(-50%);
+  @apply absolute right-0 top-1/2 px-3 py-2;
+}
+
+.forgot-password-btn {
+  @apply w-full block text-right text-blue-600;
+}
+
+.submit-btn {
+  @apply w-full h-10;
+}
+
+.form-group {
+  @apply space-y-2;
+}
+
+.error-form-control {
+  @apply border-red-500;
+}
+
+.error-message {
+  @apply text-sm text-red-500;
+}
+
+.icon {
+  @apply h-4 w-4;
+}
+
+.register-content,
+.fp-card-header,
+.fp-card-content {
+  @apply space-y-6;
+}
+
+.register-groups {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.otp-input-wrap {
+  @apply flex justify-center;
+}
+
+.password-rule-wrap {
+  @apply text-xs text-gray-500 space-y-1;
+}
+
+.password-rule-wrap-list {
+  @apply list-disc list-inside space-y-1 ml-2;
+}
+
+.progress {
+  @apply h-2;
+}
+
+.fp-icon {
+  @apply w-6 h-6;
+}
+
+.fp-header-title {
+  @apply text-xl font-bold text-gray-900;
+}
+
+.fp-desc {
+  @apply text-gray-600 mt-2;
+}
