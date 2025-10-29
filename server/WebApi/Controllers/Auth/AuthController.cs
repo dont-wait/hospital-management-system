@@ -21,7 +21,7 @@ public class AuthController : ControllerBase
         _httpContextAccessor = httpContextAccessor;
     }
 
-    [HttpPost("/patient/register")]
+    [HttpPost("patient/register")]
     public async Task<ApiResponse<ResponsePatientDTO>> PatientRegister(RequestPatientDTO userDto)
     {
         try
@@ -39,7 +39,7 @@ public class AuthController : ControllerBase
         }
     }
 
-    [HttpPost("/doctor/register")]
+    [HttpPost("doctor/register")]
     [Authorize(Roles = "admin")]
     public async Task<ApiResponse<ResponseDoctorDTO>> DoctorRegister(RequestDoctorDTO userDto)
     {
@@ -58,7 +58,7 @@ public class AuthController : ControllerBase
         }
     }
 
-    [HttpPost("/login")]
+    [HttpPost("login")]
     public async Task<ApiResponse<ResponseLoginDTO>> Login(RequestLoginDTO loginDto)
     {
         try
@@ -87,7 +87,7 @@ public class AuthController : ControllerBase
         }
     }
 
-    [HttpPost("/logout")]
+    [HttpPost("logout")]
     public ApiResponse<string> Logout()
     {
         try
@@ -104,17 +104,8 @@ public class AuthController : ControllerBase
         }
     }
 
-
-    /*
-    1.Để có thể reset password, người dùng cần nhập email đã đăng ký tạo tài khoản
-    2.Hệ thống lúc này sẽ gửi mã otp về email đó để xác thực - trong bước này ta cần lưu mã otp vào db
-        NGười dùng được phép nhập sai tối đa 3 lần, nếu sai quá 3 lần thì mã otp sẽ bị vô hiệu hóa
-        Mã otp chỉ có hiệu lực trong vòng 5 phút kể từ khi gửi
-    3.Sau khi xác thực thành công, người dùng sẽ được phép đặt lại mật khẩu mới
-    */
-
     //1 Người dùng gửi request yêu cầu đổi mật khẩu
-    [HttpPost("/request-reset")]
+    [HttpPost("request-reset")]
     public async Task<ApiResponse<string>> RequestResetPassword(RequestResetPassword request)
     {
         try
@@ -135,7 +126,7 @@ public class AuthController : ControllerBase
     //2. Sau khi nhận được request server sẽ lưu otp dưới redis
     //Người dùng cần thực hiện check email và nhập lại, nếu sau quá 3 lần thì
     //lặp túc otp invalid
-    [HttpPost("/verify-otp")]
+    [HttpPost("verify-otp")]
     public async Task<IActionResult> VerifyOtp(RequestVerifyOtp request)
     {
         try
@@ -167,7 +158,7 @@ public class AuthController : ControllerBase
     }
 
     // //3. Người dùng gửi request đặt lại mật khẩu mới
-    [HttpPost("/reset-password")]
+    [HttpPost("reset-password")]
     public async Task<ApiResponse<string>> ResetPassword(RequestResetPasswordFinal request)
     {
         try

@@ -11,6 +11,17 @@ public class EmployeeRepository : IEmployeeRepository
         _context = context;
     }
 
+    public async Task<List<UserAccount>?> GetAllDoctorAsync()
+    {
+        var doctors = await _context.user_accounts
+            .Include(d => d.Employee)
+                .ThenInclude(e => e!.Doctor)
+            .Where(ua => ua.Employee != null && ua.Employee.Doctor != null)
+                .ToListAsync();
+
+        return doctors;
+    }
+
     public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto)
     {
         UserAccount userAccount = new UserAccount
@@ -24,6 +35,7 @@ public class EmployeeRepository : IEmployeeRepository
         // Tạo Employee trước để lấy Id
         Employee employee = new Employee
         {
+            
             FirstName = doctorDto.FirstName,
             LastName = doctorDto.LastName,
             PhoneNumber = doctorDto.PhoneNumber,
@@ -41,7 +53,6 @@ public class EmployeeRepository : IEmployeeRepository
 
         Doctor doctor = new Doctor
         {
-            Id = employee.Id, // Gán DoctorId bằng EmployeeId
             Specialization = doctorDto.Specialization,
             Employee = employee
         };
@@ -52,28 +63,28 @@ public class EmployeeRepository : IEmployeeRepository
         return doctor;
     }
 
-    public async Task<ResponseUserDTO?> GetEmployeeByIdAsync(Guid employeeId) => await _context.employees
-        .Where(e => e.Id == employeeId)
-        .Select(e => new ResponseUserDTO
-        {
-            UserAccountId = e.UserAccount.Id,
-            AvatarUrl = e.UserAccount.AvatarUrl,
-            Is_Active = e.UserAccount.Is_Active,
-            CitizenID = e.UserAccount.CitizenID,
-            Employee = new ResponseEmployeeDTO
-            {
-                EmployeeId = e.Id,
-                FirstName = e.FirstName,
-                LastName = e.LastName,
-                PhoneNumber = e.PhoneNumber,
-                Email = e.Email,
-                CertificateNumber = e.CertificateNumber,
-                DateOfBirth = e.DateOfBirth,
-                Gender = e.Gender,
-                HireDate = e.HireDate,
-                Specialization = e.Doctor.Specialization,
-                RoleId = e.RoleId
-            }
-        })
-        .FirstOrDefaultAsync();
+    public async Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId)
+    {
+        return await _context.user_accounts
+        .Include(ua => ua.Employee)
+        .FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employeeId);
+    }
+
+    public async Task<Doctor?> FindDoctorWithAccountByIdAsync(Guid doctorId)
+    {
+        var existingDoctor = await _context.doctors
+            .Include(d => d.Employee)
+                .ThenInclude(e => e.UserAccount)
+            .FirstOrDefaultAsync(d => d.Id == doctorId);
+
+        return existingDoctor;
+    }
+
+    public async Task UpdateAccountAndDoctorAsync(Doctor doctor, UserAccount userAccount)
+    {
+        _context.user_accounts.Update(userAccount);
+        _context.doctors.Update(doctor);
+
+        await _context.SaveChangesAsync();
+    }
 }

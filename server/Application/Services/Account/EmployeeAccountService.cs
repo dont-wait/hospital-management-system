@@ -2,6 +2,7 @@ using Domain.Enums;
 using Application.Common.Utils;
 
 namespace Application.Services.Account;
+
 public class EmployeeAccountService : IEmployeeAccountService
 {
     private readonly IEmployeeRepository _employeeRepository;
@@ -57,12 +58,95 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }
 
+    public async Task<ServiceResult<ResponseUpdateDoctorDTO>> UpdateUserAccount_Doctor_Async(Guid doctorId, RequestUpdateDoctorDTO request)
+    {
+        Doctor? existingDoctor = await _employeeRepository.FindDoctorWithAccountByIdAsync(doctorId);
+        if (existingDoctor == null)
+            return ServiceResult<ResponseUpdateDoctorDTO>.Fail("Không tìm thấy thông tin người dùng");
+
+        var existingEmployee = existingDoctor.Employee;
+        var accountOfDoctor = existingDoctor.Employee.UserAccount;
+        
+        existingEmployee.FirstName = request.FirstName;
+        existingEmployee.LastName = request.LastName;
+        existingEmployee.PhoneNumber = request.PhoneNumber;
+        existingEmployee.Gender = request.Gender;
+        existingEmployee.DateOfBirth = request.DateOfBirth;
+        existingEmployee.HireDate = request.HireDate;
+        existingEmployee.CertificateNumber = request.CertificateNumber;
+        existingDoctor.Specialization = request.Specialization;
+        accountOfDoctor.AvatarUrl = request.AvatarUrl;
+
+        await _employeeRepository.UpdateAccountAndDoctorAsync(existingDoctor, accountOfDoctor);
+
+        ResponseUpdateDoctorDTO responseDoctorDto = new ResponseUpdateDoctorDTO
+        {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            PhoneNumber = request.PhoneNumber,
+            Gender = request.Gender,
+            DateOfBirth = request.DateOfBirth,
+            HireDate = request.HireDate,
+            CertificateNumber = request.CertificateNumber,
+            Specialization = request.Specialization,
+            AvatarUrl = request.AvatarUrl
+        };
+
+        return ServiceResult<ResponseUpdateDoctorDTO>.Success(responseDoctorDto);
+    }
+
     public async Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId)
     {
-        var employee = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
-        if (employee == null)
+        var userAccount = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
+        if (userAccount == null)
             return ServiceResult<ResponseUserDTO?>.Fail("Nhân viên không tồn tại.");
 
-        return ServiceResult<ResponseUserDTO?>.Success(employee);
+        ResponseUserDTO responseUserDto = new ResponseUserDTO
+        {
+            UserAccountId = userAccount.Id,
+            AvatarUrl = userAccount.AvatarUrl,
+            Is_Active = userAccount.Is_Active,
+            CitizenID = userAccount.CitizenID,
+            Employee = userAccount.Employee != null ? new ResponseEmployeeDTO
+            {
+                EmployeeId = userAccount.Employee.Id,
+                FirstName = userAccount.Employee.FirstName,
+                LastName = userAccount.Employee.LastName,
+                PhoneNumber = userAccount.Employee.PhoneNumber,
+                Email = userAccount.Employee.Email,
+                CertificateNumber = userAccount.Employee.CertificateNumber,
+                DateOfBirth = userAccount.Employee.DateOfBirth,
+                Gender = userAccount.Employee.Gender,
+                HireDate = userAccount.Employee.HireDate,
+                RoleId = userAccount.Employee.RoleId,
+            } : null
+        };
+
+        return ServiceResult<ResponseUserDTO?>.Success(responseUserDto);
+    }
+
+    public async Task<ServiceResult<List<ResponseDoctorDTO>>> GetAllDoctorsAsync()
+    {
+        List<UserAccount>? doctors = await _employeeRepository.GetAllDoctorAsync();
+
+        if (doctors == null || doctors.Count == 0)
+            return ServiceResult<List<ResponseDoctorDTO>>.Fail("Không tìm thấy bác sĩ nào");
+
+        List<ResponseDoctorDTO> responseDoctors = doctors.Select(doctor => new ResponseDoctorDTO
+        {
+            DoctorId = doctor.Employee!.Doctor!.Id,
+            FirstName = doctor.Employee!.FirstName,
+            LastName = doctor.Employee!.LastName,
+            Email = doctor.Employee!.Email,
+            PhoneNumber = doctor.Employee!.PhoneNumber,
+            Specialization = doctor.Employee!.Doctor!.Specialization,
+            CertificateNumber = doctor.Employee!.CertificateNumber,
+            DateOfBirth = doctor.Employee!.DateOfBirth,
+            Gender = doctor.Employee!.Gender,
+            HireDate = doctor.Employee!.HireDate,
+            RoleId = doctor.Employee!.RoleId,
+        }).ToList();
+
+        return ServiceResult<List<ResponseDoctorDTO>>.Success(responseDoctors);
     }
 }
