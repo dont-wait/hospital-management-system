@@ -25,7 +25,8 @@ export function LoginForm() {
 
   const onSubmit = useCallback(
     async (loginAccountDto: LoginAccountDto) => {
-      const user: Patient | Employee = await AuthService.login(loginAccountDto);
+      const user: Patient | Employee | null =
+        await AuthService.login(loginAccountDto);
       if (user && "patientId" in user) {
         setUser(user as Patient);
         router.push("/");

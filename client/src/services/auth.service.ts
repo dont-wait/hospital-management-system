@@ -12,20 +12,33 @@ import { Patient, Employee } from "@/types";
 
 export class AuthService {
   // Login service
-  static async login(userDto: LoginAccountDto): Promise<Patient | Employee> {
+  static async login(
+    userDto: LoginAccountDto,
+  ): Promise<Patient | Employee | null> {
     const { data: response }: { data: LoginResponse } = await api.post(
       "/login",
       userDto,
     );
+    let user: Patient | Employee;
     if (response.data?.patient) {
-      const user: Patient = {
+      user = {
         ...response.data.patient,
         avatarUrl: response.data.avatarUrl,
       };
       TokenUtils.saveUser<Patient>(user);
       return user;
     }
-    return response.data.employee as Employee;
+
+    if (response.data?.employee) {
+      user = {
+        ...response.data.employee,
+        avatarUrl: response.data.avatarUrl,
+      };
+      TokenUtils.saveUser<Employee>(user);
+      return user;
+    }
+
+    return null;
   }
 
   // Register service
