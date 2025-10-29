@@ -25,7 +25,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, error, variant, ...props }, ref) => {
-    const hasError = error || variant === "error";
+    const hasError = error ?? variant === "error";
 
     return (
       <input
@@ -51,7 +51,7 @@ export interface TextareaProps
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, error, variant, ...props }, ref) => {
-    const hasError = error || variant === "error";
+    const hasError = error ?? variant === "error";
     return (
       <textarea
         ref={ref}
