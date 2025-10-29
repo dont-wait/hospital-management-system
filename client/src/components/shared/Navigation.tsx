@@ -11,6 +11,7 @@ import styles from "@/styles/navigation.module.css";
 export function Navigation() {
   const { user, isAuthenticated } = useUserAuthContext();
   const { openSidebar, setContent } = useSidebar();
+  const defaultAvatarUrl = user?.avatarUrl ?? "/images/df-avatar.webp";
 
   const handleOpenDetails = () => {
     setContent(<PatientSidebar />);
@@ -43,7 +44,7 @@ export function Navigation() {
 
                 <div className={styles["nav-avatar"]}>
                   <Image
-                    src={user!.avatarUrl}
+                    src={defaultAvatarUrl}
                     width={32}
                     height={32}
                     alt="avatar"
