@@ -18,7 +18,7 @@
     <PackageReference Include="StackExchange.Redis" Version="2.9.25" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Persistence/SeedData/**/*.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Persistence/SeedData/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 

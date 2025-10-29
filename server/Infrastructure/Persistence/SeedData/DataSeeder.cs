@@ -14,7 +14,7 @@ public static class DataSeeder
             return;
         }
 
-        var seedPath = Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Persistence", "SeedData", "admins.json");
+        var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "admins.json");
         var json = File.ReadAllText(seedPath);
 
         var adminData = JsonSerializer.Deserialize<AdminSeedData>(json);
@@ -81,7 +81,7 @@ public static class DataSeeder
     {
         if (!context.roles.Any())
         {
-            var seedPath = Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Persistence", "SeedData", "roles.json");
+            var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "roles.json");
             var json = File.ReadAllText(seedPath);
             var roles = JsonSerializer.Deserialize<List<Roles>>(json);
             if (roles != null)
@@ -90,7 +90,7 @@ public static class DataSeeder
 
         if (!context.permissions.Any())
         {
-            var seedPath = Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Persistence", "SeedData", "permissions.json");
+            var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "permissions.json");
             var json = File.ReadAllText(seedPath);
             var permissions = JsonSerializer.Deserialize<List<Permission>>(json);
             if (permissions != null)
@@ -101,7 +101,7 @@ public static class DataSeeder
 
         if (!context.role_permissions.Any())
         {
-            var seedPath = Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Persistence", "SeedData", "rolepermissions.json");
+            var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "rolepermissions.json");
             var json = File.ReadAllText(seedPath);
             var rolePerms = JsonSerializer.Deserialize<List<RolePermission>>(json);
             if (rolePerms != null)
