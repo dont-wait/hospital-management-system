@@ -10,7 +10,7 @@
 .register-page,
 .fp-page {
   min-height: calc(100vh - 64.8px);
-  @apply bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4;
+  @apply bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4;
 }
 
 .login-card-sekeleton,
