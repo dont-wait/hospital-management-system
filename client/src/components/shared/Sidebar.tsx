@@ -13,7 +13,9 @@ export function Sidebar() {
 
   return (
     <>
-      {isOpen && <div className={styles["overlay"]} onClick={closeSidebar} />}
+      {isOpen && showCloseButton && (
+        <div className={styles["overlay"]} onClick={closeSidebar} />
+      )}
       <aside className={sidebarClass}>
         <div className={styles["sidebar-content"]}>
           <div className={styles["sidebar-header"]}>
