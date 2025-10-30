@@ -30,3 +30,11 @@ export const PatientSidebarItems = [
     icon: Lock,
   },
 ] as const;
+
+export const AdminSidebarItems = [
+  {
+    route: "/users",
+    title: "Quản Lý Người Dùng",
+    icon: Users,
+  }
+]

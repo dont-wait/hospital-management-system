@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { roboto } from "@/font";
-import { UserAuthProvider, ToastProvider, SidebarProvider } from "@/contexts";
 import { Navigation, Sidebar } from "@/components";
 import "react-loading-skeleton/dist/skeleton.css";
 import "@/styles/globals.css";
@@ -17,10 +15,10 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <UserAuthProvider>
+    <>
       <Navigation />
       <main>{children}</main>
       <Sidebar />
-    </UserAuthProvider>
+    </>
   );
 }
