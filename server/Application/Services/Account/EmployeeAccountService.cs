@@ -135,6 +135,7 @@ public class EmployeeAccountService : IEmployeeAccountService
         List<ResponseDoctorDTO> responseDoctors = doctors.Select(doctor => new ResponseDoctorDTO
         {
             DoctorId = doctor.Employee!.Doctor!.Id,
+            EmployeeId = doctor.Employee!.Id,
             FirstName = doctor.Employee!.FirstName,
             LastName = doctor.Employee!.LastName,
             Email = doctor.Employee!.Email,
