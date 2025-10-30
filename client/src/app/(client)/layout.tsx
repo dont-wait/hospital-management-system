@@ -11,22 +11,16 @@ export const metadata: Metadata = {
     "Medical care with our dedicated team of professionals and comprehensive healthcare services.",
 };
 
-export default function RootLayout({
+export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={roboto.className}>
-        <ToastProvider>
-          <UserAuthProvider>
-            <SidebarProvider>
-              <main>{children}</main>
-            </SidebarProvider>
-          </UserAuthProvider>
-        </ToastProvider>
-      </body>
-    </html>
+    <UserAuthProvider>
+      <Navigation />
+      <main>{children}</main>
+      <Sidebar />
+    </UserAuthProvider>
   );
 }
