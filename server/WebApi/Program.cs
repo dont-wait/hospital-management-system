@@ -5,6 +5,7 @@ using Application.Services.Auth;
 using Application.Services.Account;
 using Application.Services.Admin;
 using WebApi.Services;
+using WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", policy =>
     {
         policy
-            //.WithOrigins("http://localhost:5500")
+            .WithOrigins("http://localhost:3000")
             .SetIsOriginAllowed(_ => true)
             .AllowCredentials()
             .AllowAnyMethod()
@@ -72,6 +73,8 @@ else
     app.UseExceptionHandler("/error");
     app.UseHsts();
 }
+
+app.UseMiddleware<CookieToHeaderMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
