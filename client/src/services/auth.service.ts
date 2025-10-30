@@ -44,7 +44,7 @@ export class AuthService {
   // Register service
   static async register(patientDto: RegisterPatientDto): Promise<boolean> {
     const { data: response }: { data: RegisterResponse } = await api.post(
-      "/patient/register",
+      "auth/patient/register",
       patientDto,
     );
     return !!response;
@@ -52,7 +52,7 @@ export class AuthService {
 
   // Logout service
   static async logout(): Promise<LogoutResponse> {
-    return api.post("/logout").then((response) => {
+    return api.post("auth/logout").then((response) => {
       delete api.defaults.headers.common.Authorization;
       return response.data;
     });
@@ -60,18 +60,18 @@ export class AuthService {
 
   // Send otp service
   static async sendOtp(sendOtpDto: SendOtpDto): Promise<void> {
-    await api.post("/request-reset", sendOtpDto);
+    await api.post("auth/request-reset", sendOtpDto);
   }
 
   // Verify otp services
   static async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<void> {
-    await api.post("/verify-otp", verifyOtpDto);
+    await api.post("auth/verify-otp", verifyOtpDto);
   }
 
   // Reset password services
   static async resetPassword(
     resetPasswordDto: ResetPasswordDto,
   ): Promise<void> {
-    await api.post("/reset-password", resetPasswordDto);
+    await api.post("auth/reset-password", resetPasswordDto);
   }
 }
