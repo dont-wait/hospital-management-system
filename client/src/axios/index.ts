@@ -58,7 +58,9 @@ api.interceptors.response.use(
         case 400:
           handleValidationErrors(data);
           break;
-
+        case 401:
+          toast.error("Phiên đăng nhập hết hạn", ToastDefaultConfig);
+          break;
         case 500:
           toast.error("Lỗi máy chủ. Vui lòng thử lại sau", ToastDefaultConfig);
           break;

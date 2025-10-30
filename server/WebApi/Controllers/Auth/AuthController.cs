@@ -65,16 +65,26 @@ public class AuthController : ControllerBase
         {
             var result = await _authService.LoginSync(loginDto);
             if (result.IsSuccess) {
-                var cookieOptions = new CookieOptions
+                var accessTokenOption = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTime.UtcNow.AddMinutes(15),
+                    SameSite = SameSiteMode.None,
+                    Secure = true,
+                    Path = "/"
+                };
+
+                var refreshTokenOption = new CookieOptions
                 {
                     HttpOnly = true,
                     Expires = DateTime.UtcNow.AddDays(7),
                     SameSite = SameSiteMode.None,
-                    Secure = true
+                    Secure = true,
+                    Path = "/"
                 };
 
-                _httpContextAccessor.HttpContext?.Response.Cookies.Append("accessToken", result.Data!.AccessToken, cookieOptions);
-                _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", result.Data!.RefreshToken, cookieOptions);
+                _httpContextAccessor.HttpContext?.Response.Cookies.Append("accessToken", result.Data!.AccessToken, accessTokenOption);
+                _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", result.Data!.RefreshToken, refreshTokenOption);
 
                 return new ApiResponse<ResponseLoginDTO>(200, "Đăng nhập thành công.", result.Data);
             }
