@@ -14,12 +14,18 @@ interface SidebarContextType {
   closeSidebar: () => void;
   content: ReactNode | null;
   setContent: (content: ReactNode | null) => void;
+  showCloseButton: boolean;
+  setShowCloseButton: (show: boolean) => void;
+  position: "left" | "right";
+  setPosition: (position: "left" | "right") => void;
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showCloseButton, setShowCloseButton] = useState(true);
+  const [position, setPosition] = useState<"left" | "right">("right");
   const [content, setContent] = useState<ReactNode | null>(null);
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);
@@ -38,6 +44,10 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
         closeSidebar,
         content,
         setContent,
+        showCloseButton,
+        setShowCloseButton,
+        position,
+        setPosition,
       }}
     >
       {children}

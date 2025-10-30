@@ -5,24 +5,28 @@ import { CircleX } from "@/lib/client";
 import styles from "@/styles/sidebar.module.css";
 
 export function Sidebar() {
-  const { isOpen, closeSidebar, content } = useSidebar();
+  const { isOpen, closeSidebar, content, showCloseButton, position } = useSidebar();
+
+  const sidebarClass = isOpen 
+    ? position === "left" ? styles["sidebar-open-left"] : styles["sidebar-open-right"]
+    : position === "left" ? styles["sidebar-close-left"] : styles["sidebar-close-right"];
 
   return (
     <>
       {isOpen && <div className={styles["overlay"]} onClick={closeSidebar} />}
-      <aside
-        className={isOpen ? styles["sidebar-open"] : styles["sidebar-close"]}
-      >
+      <aside className={sidebarClass}>
         <div className={styles["sidebar-content"]}>
           <div className={styles["sidebar-header"]}>
             <h2 className={styles["sidebar-title"]}>Cài đặt</h2>
-            <button
-              onClick={closeSidebar}
-              className={styles["sidebar-close-btn"]}
-              aria-label="Close sidebar"
-            >
-              <CircleX className={styles["sidebar-close-icon"]} />
-            </button>
+            {showCloseButton && (
+              <button
+                onClick={closeSidebar}
+                className={styles["sidebar-close-btn"]}
+                aria-label="Close sidebar"
+              >
+                <CircleX className={styles["sidebar-close-icon"]} />
+              </button>
+            )}
           </div>
           <div className={styles["sidebar-list-items"]}>{content}</div>
         </div>

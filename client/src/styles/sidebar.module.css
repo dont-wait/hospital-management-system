@@ -4,12 +4,20 @@
   @apply fixed inset-0 bg-black/50 z-40 transition-opacity;
 }
 
-.sidebar-open {
+.sidebar-open-right {
   @apply fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out translate-x-0;
 }
 
-.sidebar-close {
+.sidebar-close-right {
   @apply fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out translate-x-full;
+}
+
+.sidebar-open-left {
+  @apply fixed top-0 left-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out translate-x-0;
+}
+
+.sidebar-close-left {
+  @apply fixed top-0 left-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out -translate-x-full;
 }
 
 .sidebar-content {
