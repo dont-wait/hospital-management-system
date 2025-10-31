@@ -48,6 +48,8 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
             ...user,
             nationality: user.nationality || country,
           } as Patient);
+        } else {
+          setUser(user);
         }
       } catch (error) {
         console.error("Can't Initialize User", error);
