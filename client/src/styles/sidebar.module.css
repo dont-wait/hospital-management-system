@@ -5,19 +5,19 @@
 }
 
 .sidebar-open-right {
-  @apply fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out translate-x-0;
+  @apply fixed top-0 right-0 h-full w-full md:w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out translate-x-0;
 }
 
 .sidebar-close-right {
-  @apply fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out translate-x-full;
+  @apply fixed top-0 right-0 h-full w-full md:w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out translate-x-full;
 }
 
 .sidebar-open-left {
-  @apply fixed top-0 left-0 h-full w-full md:w-96 bg-white shadow-2xl z-50;
+  @apply fixed top-0 left-0 h-full w-full md:w-72 bg-white shadow-2xl z-50;
 }
 
 .sidebar-close-left {
-  @apply fixed top-0 left-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out -translate-x-full;
+  @apply fixed top-0 left-0 h-full w-full md:w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out -translate-x-full;
 }
 
 .sidebar-content {
