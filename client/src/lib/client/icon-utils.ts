@@ -99,3 +99,20 @@ export const User = dynamic(() =>
 export const Phone = dynamic(() =>
   import("lucide-react").then((mod) => mod.Phone),
 );
+
+export const LayoutDashboard = dynamic(() =>
+  import("lucide-react").then((mod) => mod.LayoutDashboard),
+);
+
+export const UserRound = dynamic(() =>
+  import("lucide-react").then((mod) => mod.UserRound),
+);
+
+export const Stethoscope = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Stethoscope),
+);
+
+export const Settings = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Settings),
+);
+

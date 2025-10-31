@@ -1,4 +1,13 @@
-import { Users, Lock, Pencil } from "@/lib/client";
+import { 
+  Users, 
+  Lock, 
+  Pencil, 
+  LayoutDashboard, 
+  UserRound, 
+  Stethoscope, 
+  Calendar, 
+  Settings 
+} from "@/lib/client";
 
 export const patientSidebarVariants = {
   hidden: { opacity: 0, y: -10 },
@@ -33,8 +42,33 @@ export const PatientSidebarItems = [
 
 export const AdminSidebarItems = [
   {
-    route: "/users",
+    route: "/admin/dashboard",
+    title: "Dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    route: "/admin/patients",
+    title: "Quản Lý Bệnh Nhân",
+    icon: UserRound,
+  },
+  {
+    route: "/admin/doctors",
+    title: "Quản Lý Bác Sĩ",
+    icon: Stethoscope,
+  },
+  {
+    route: "/admin/appointments",
+    title: "Lịch Hẹn",
+    icon: Calendar,
+  },
+  {
+    route: "/admin/users",
     title: "Quản Lý Người Dùng",
     icon: Users,
-  }
+  },
+  {
+    route: "/admin/settings",
+    title: "Cài Đặt",
+    icon: Settings,
+  },
 ]
