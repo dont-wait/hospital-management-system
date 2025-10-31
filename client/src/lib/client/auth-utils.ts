@@ -41,9 +41,10 @@ export class TokenUtils {
     return payload.exp < currentTime;
   }
 
-  static getUserRole(token: string): Role {
+  static getUserRole(token: string | null): Role {
+    if (!token) return "customer";
     const payload = TokenUtils.decodePayload(token);
-    if (!payload?.exp) return "patient";
+    if (!payload?.exp) return "customer";
     return payload.RoleId;
   }
 }

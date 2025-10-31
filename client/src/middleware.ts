@@ -10,18 +10,23 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  const token = req.cookies.get("accessToken")?.value ?? null;
   const { route: matchedRoute, roles: allowedRoles } =
     MiddlewareUtils.findMatchedRoute(pathname);
-  const token = req.cookies.get("accessToken")?.value;
-  const res = NextResponse.next();
 
-  if (!matchedRoute || allowedRoles.length === 0) {
-    MiddlewareUtils.setHasTokenCookie(res, !!token);
-    return res;
+  if (!matchedRoute) {
+    return NextResponse.next();
   }
 
-  if (!token || TokenUtils.isTokenExpired(token)) {
-    return MiddlewareUtils.handleMissingOrExpiredToken(req);
+  if (!token) {
+    if (allowedRoles.includes("customer")) {
+      return MiddlewareUtils.handleMissingToken();
+    }
+    return MiddlewareUtils.handleUnauthorizedAccess();
+  }
+
+  if (TokenUtils.isTokenExpired(token)) {
+    return MiddlewareUtils.handleExpiredToken(req);
   }
 
   const userRole: Role = TokenUtils.getUserRole(token);
@@ -29,6 +34,7 @@ export async function middleware(req: NextRequest) {
     return MiddlewareUtils.handleUnauthorizedAccess();
   }
 
+  const res = NextResponse.next();
   MiddlewareUtils.setHasTokenCookie(res, true);
   return res;
 }

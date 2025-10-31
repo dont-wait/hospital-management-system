@@ -32,7 +32,15 @@ export class MiddlewareUtils {
     });
   }
 
-  static handleMissingOrExpiredToken(req: NextRequest): NextResponse {
+  static handleMissingToken(): NextResponse {
+    const redirectRes = NextResponse.next();
+    redirectRes.cookies.delete("accessToken");
+    redirectRes.cookies.delete("refreshToken");
+    MiddlewareUtils.setHasTokenCookie(redirectRes, false);
+    return redirectRes;
+  }
+
+  static handleExpiredToken(req: NextRequest): NextResponse {
     const redirectRes = NextResponse.redirect(new URL("/login", req.url));
     redirectRes.cookies.delete("accessToken");
     redirectRes.cookies.delete("refreshToken");
