@@ -31,21 +31,13 @@ api.interceptors.response.use(
   <T>(
     response: AxiosResponse<{ status: number; message: string; data: T }>,
   ) => {
-    const { status, message, data } = response.data;
+    const { status, message } = response.data;
+
     if (status >= 400) {
       toast.error(message, ToastDefaultConfig);
       return Promise.reject(response);
     }
 
-    if (data) {
-      if (typeof data === "object" && data !== null && "accessToken" in data) {
-        const { accessToken } = data as { accessToken: string };
-        if (accessToken) {
-          api.defaults.headers.common["Authorization"] =
-            `Bearer ${accessToken}`;
-        }
-      }
-    }
     toast.success(message, ToastDefaultConfig);
     return response;
   },
