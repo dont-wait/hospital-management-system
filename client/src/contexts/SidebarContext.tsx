@@ -15,6 +15,7 @@ interface SidebarState {
   position: SidebarPosition;
   content: ReactNode | null;
   title: string | ReactNode;
+  bgColor: string;
 }
 
 type SidebarAction =
@@ -24,7 +25,8 @@ type SidebarAction =
   | { type: "SET_CONTENT"; payload: ReactNode | null }
   | { type: "SET_TITLE"; payload: string | ReactNode }
   | { type: "SET_SHOW_CLOSE_BUTTON"; payload: boolean }
-  | { type: "SET_POSITION"; payload: SidebarPosition };
+  | { type: "SET_POSITION"; payload: SidebarPosition }
+  | { type: "SET_COLOR_BACKGROUND"; payload: string };
 
 const initialState: SidebarState = {
   isOpen: false,
@@ -32,6 +34,7 @@ const initialState: SidebarState = {
   position: "right",
   content: null,
   title: "",
+  bgColor: "",
 };
 
 function sidebarReducer(state: SidebarState, action: SidebarAction): SidebarState {
@@ -50,6 +53,8 @@ function sidebarReducer(state: SidebarState, action: SidebarAction): SidebarStat
       return { ...state, showCloseButton: action.payload };
     case "SET_POSITION":
       return { ...state, position: action.payload };
+    case "SET_COLOR_BACKGROUND":
+      return { ...state, bgColor: action.payload };
     default:
       return state;
   }
@@ -63,6 +68,7 @@ interface SidebarContextType extends SidebarState {
   setTitle: (title: string | ReactNode) => void;
   setShowCloseButton: (show: boolean) => void;
   setPosition: (pos: SidebarPosition) => void;
+  setColorBackground: (color: string) => void;
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -77,7 +83,8 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   const setTitle = (title: string | ReactNode) => dispatch({ type: "SET_TITLE", payload: title });
   const setShowCloseButton = (show: boolean) => dispatch({ type: "SET_SHOW_CLOSE_BUTTON", payload: show });
   const setPosition = (pos: SidebarPosition) => dispatch({ type: "SET_POSITION", payload: pos });
-
+  const setColorBackground = (color: string) => dispatch({ type: "SET_COLOR_BACKGROUND", payload: color });
+  
   return (
     <SidebarContext.Provider
       value={{
@@ -89,6 +96,7 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
         setTitle,
         setShowCloseButton,
         setPosition,
+        setColorBackground,
       }}
     >
       {children}

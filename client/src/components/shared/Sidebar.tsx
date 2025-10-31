@@ -5,7 +5,7 @@ import { CircleX } from "@/lib/client";
 import styles from "@/styles/sidebar.module.css";
 
 export function Sidebar() {
-  const { isOpen, closeSidebar, content, showCloseButton, position, title } = useSidebar();
+  const { isOpen, closeSidebar, content, showCloseButton, position, title, bgColor } = useSidebar();
 
   const sidebarClass = isOpen 
     ? position === "left" ? styles["sidebar-open-left"] : styles["sidebar-open-right"]
@@ -18,7 +18,7 @@ export function Sidebar() {
       )}
       <aside className={sidebarClass}>
         <div className={styles["sidebar-content"]}>
-          <div className={styles["sidebar-header"]}>
+          <div className={styles["sidebar-header"]} style={{ backgroundColor: bgColor }}>
             <h2 className={styles["sidebar-title"]}>{title}</h2>
             {showCloseButton && (
               <button
