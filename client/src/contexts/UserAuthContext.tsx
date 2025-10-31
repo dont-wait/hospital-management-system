@@ -62,8 +62,9 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
     const hasToken = Cookie.get("hasToken") === "true";
     if (!hasToken) {
       TokenUtils.clearStoredUser();
+    } else {
+      getNationality();
     }
-    getNationality();
   }, [getNationality]);
 
   const contextValue = useMemo(
