@@ -1,0 +1,151 @@
+@reference "./globals.css";
+
+/* Admin Layout */
+.admin-container {
+  @apply min-h-screen bg-gray-50;
+}
+
+.admin-content {
+  @apply ml-0 md:ml-72 transition-all duration-300 p-4 md:p-8;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+  @apply mb-8;
+}
+
+.dashboard-title {
+  @apply text-3xl font-bold text-gray-800 mb-2;
+}
+
+.dashboard-subtitle {
+  @apply text-gray-600;
+}
+
+/* Stats Grid */
+.stats-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8;
+}
+
+/* Stat Card */
+.stat-card {
+  @apply bg-white rounded-lg shadow-md p-6 transition-all duration-300 hover:shadow-lg border-l-4;
+}
+
+.stat-card-blue {
+  @apply border-blue-500;
+}
+
+.stat-card-green {
+  @apply border-green-500;
+}
+
+.stat-card-purple {
+  @apply border-purple-500;
+}
+
+.stat-card-orange {
+  @apply border-orange-500;
+}
+
+.stat-card-content {
+  @apply space-y-4;
+}
+
+.stat-card-header {
+  @apply flex items-start justify-between;
+}
+
+.stat-card-title {
+  @apply text-sm font-medium text-gray-600;
+}
+
+.stat-card-icon {
+  @apply p-3 rounded-lg;
+}
+
+.stat-card-icon-blue {
+  @apply bg-blue-100 text-blue-600;
+}
+
+.stat-card-icon-green {
+  @apply bg-green-100 text-green-600;
+}
+
+.stat-card-icon-purple {
+  @apply bg-purple-100 text-purple-600;
+}
+
+.stat-card-icon-orange {
+  @apply bg-orange-100 text-orange-600;
+}
+
+.stat-card-body {
+  @apply flex items-end justify-between;
+}
+
+.stat-card-value {
+  @apply text-3xl font-bold text-gray-800;
+}
+
+.stat-card-trend {
+  @apply text-sm font-semibold;
+}
+
+.trend-positive {
+  @apply text-green-600;
+}
+
+.trend-negative {
+  @apply text-red-600;
+}
+
+/* Charts Section */
+.charts-section {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8;
+}
+
+.chart-card {
+  @apply bg-white rounded-lg shadow-md p-6;
+}
+
+.chart-title {
+  @apply text-lg font-semibold text-gray-800 mb-4;
+}
+
+.chart-placeholder {
+  @apply h-64 bg-gray-100 rounded flex items-center justify-center text-gray-500;
+}
+
+/* Recent Activity */
+.recent-activity {
+  @apply bg-white rounded-lg shadow-md p-6;
+}
+
+.activity-title {
+  @apply text-lg font-semibold text-gray-800 mb-4;
+}
+
+.activity-list {
+  @apply space-y-3;
+}
+
+.activity-item {
+  @apply flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors;
+}
+
+.activity-icon {
+  @apply p-2 rounded-full bg-blue-100 text-blue-600;
+}
+
+.activity-content {
+  @apply flex-1;
+}
+
+.activity-text {
+  @apply text-sm text-gray-800;
+}
+
+.activity-time {
+  @apply text-xs text-gray-500;
+}

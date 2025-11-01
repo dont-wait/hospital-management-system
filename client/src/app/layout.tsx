@@ -22,9 +22,7 @@ export default function RootLayout({
         <ToastProvider>
           <UserAuthProvider>
             <SidebarProvider>
-              <Navigation />
               <main>{children}</main>
-              <Sidebar />
             </SidebarProvider>
           </UserAuthProvider>
         </ToastProvider>

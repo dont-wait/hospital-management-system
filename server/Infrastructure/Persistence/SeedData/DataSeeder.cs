@@ -8,7 +8,7 @@ public static class DataSeeder
     public static async Task SeedAdminAsync(AppDbContext context)
     {
         // Kiểm tra xem đã có admin chưa
-        if (context.admins.Where(a => a.Employee.UserAccount.CitizenID == "0000000001").Any())
+        if (context.admins.Where(a => a.Employee.UserAccount.CitizenID == "000000000001").Any())
         {
             Console.WriteLine("✅ Admin đã tồn tại trong hệ thống");
             return;
