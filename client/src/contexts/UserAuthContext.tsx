@@ -62,6 +62,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
     const hasToken = Cookie.get("hasToken") === "true";
     if (!hasToken) {
       TokenUtils.clearStoredUser();
+      setIsLoading(false);
     } else {
       getNationality();
     }
