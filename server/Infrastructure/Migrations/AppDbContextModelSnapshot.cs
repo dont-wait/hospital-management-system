@@ -21,6 +21,23 @@ namespace server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Admin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
+
+                    b.ToTable("admins");
+                });
+
             modelBuilder.Entity("Doctor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -213,8 +230,8 @@ namespace server.Migrations
 
                     b.Property<string>("CitizenID")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
                     b.Property<Guid?>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
@@ -241,6 +258,17 @@ namespace server.Migrations
                         .HasFilter("[PatientId] IS NOT NULL");
 
                     b.ToTable("user_accounts");
+                });
+
+            modelBuilder.Entity("Admin", b =>
+                {
+                    b.HasOne("Employee", "Employee")
+                        .WithOne("Admin")
+                        .HasForeignKey("Admin", "EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("Doctor", b =>
@@ -312,6 +340,9 @@ namespace server.Migrations
 
             modelBuilder.Entity("Employee", b =>
                 {
+                    b.Navigation("Admin")
+                        .IsRequired();
+
                     b.Navigation("Doctor")
                         .IsRequired();
 

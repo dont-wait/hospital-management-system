@@ -1,10 +1,9 @@
-import "./globals.css";
-import "react-loading-skeleton/dist/skeleton.css";
 import type { Metadata } from "next";
-import { roboto } from "@/font/font";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { Navigation } from "@/components/ui/shared/Navigation";
-import { ToastProvider } from "@/contexts/ToastContext";
+import { roboto } from "@/font";
+import { UserAuthProvider, ToastProvider, SidebarProvider } from "@/contexts";
+import { Navigation, Sidebar } from "@/components";
+import "react-loading-skeleton/dist/skeleton.css";
+import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Medica Hospital",
@@ -21,10 +20,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={roboto.className}>
         <ToastProvider>
-          <AuthProvider>
-            <Navigation />
-            <main>{children}</main>
-          </AuthProvider>
+          <UserAuthProvider>
+            <SidebarProvider>
+              <main>{children}</main>
+            </SidebarProvider>
+          </UserAuthProvider>
         </ToastProvider>
       </body>
     </html>

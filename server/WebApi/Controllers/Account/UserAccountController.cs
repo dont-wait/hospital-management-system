@@ -27,8 +27,7 @@ public class AccountController : ControllerBase
             var result = await _userAccountService.GetUserAccountByIdAsync(patientId);
             if (result.IsSuccess)
                 return new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data);
-            else
-                return new ApiResponse<ResponseUserDTO>(404, result.Message);
+            return new ApiResponse<ResponseUserDTO>(404, result.Message);
         }
         catch (Exception ex)
         {
@@ -67,17 +66,17 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut("patient/{patientId}")]
-    [Authorize(Roles = "patient, admin, doctor")]
+    [Authorize(Roles = "patient, admin")]
     public async Task<ApiResponse<ResponseUpdatePatient>> UpdateUserById(Guid patientId, RequestUpdatePatient request)
     {
         var currentUserRole = _userAccountService.RoleId;
         var currentUserId = _userAccountService.CurrentUserId;
         try
         {
-            if (currentUserRole == "patient" && currentUserId != patientId)
+            if (currentUserRole == "patient" && !currentUserId.Equals(patientId))
                 return new ApiResponse<ResponseUpdatePatient>(403,
                     "Bạn không có quyền cập nhật thông tin cho người dùng này.");
-            
+
             var updatedPatientAndAccount = await _userAccountService.UpdateUserAccount_Patient_Async(patientId, request);
             if (!updatedPatientAndAccount.IsSuccess)
                 return new ApiResponse<ResponseUpdatePatient>(404, updatedPatientAndAccount.Message);

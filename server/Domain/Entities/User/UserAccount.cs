@@ -8,7 +8,7 @@ public class UserAccount
     public Guid Id { get; set; } = Guid.NewGuid();
 
     [Required]
-    [MaxLength(10)]
+    [StringLength(12)]
     public string CitizenID { get; set; } = string.Empty;
 
     [Required]

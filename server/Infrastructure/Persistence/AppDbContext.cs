@@ -4,6 +4,8 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+    public DbSet<Admin> admins { get; set; } = null!;
+
     public DbSet<UserAccount> user_accounts { get; set; } = null!;
     public DbSet<Patient> patients { get; set; } = null!;
     public DbSet<Employee> employees { get; set; } = null!;
@@ -14,6 +16,12 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        
+        modelBuilder.Entity<Admin>()
+            .HasOne(ua => ua.Employee)
+            .WithOne(e => e.Admin)
+            .HasForeignKey<Admin>(a => a.EmployeeId);
+        
         modelBuilder.Entity<UserAccount>()
             .HasOne(ua => ua.Patient)
             .WithOne(p => p.UserAccount)

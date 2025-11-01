@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Application.Common.DTOs.Patient;
 using Application.Common.Utils;
 
@@ -32,7 +31,7 @@ public class UserAccountService : IUserAccountService
             //implement it
         }
         
-        // 🩺 Cập nhật thông tin bệnh nhân
+        // Cập nhật thông tin bệnh nhân
         patientExisting.FirstName = request.FirstName;
         patientExisting.LastName = request.LastName;
         patientExisting.PhoneNumber = request.PhoneNumber;
@@ -103,10 +102,32 @@ public class UserAccountService : IUserAccountService
 
     public async Task<ServiceResult<ResponseUserDTO?>> GetUserAccountByIdAsync(Guid userId)
     {
-        var userAccount = await _userAccountRepository.GetUserAccountByIdAsync(userId);
+        var userAccount = await _userAccountRepository.FindPatientWithAccountByIdAsync(userId);
         if (userAccount == null)
             return ServiceResult<ResponseUserDTO?>.Fail("Tài khoản không tồn tại.");
 
-        return ServiceResult<ResponseUserDTO?>.Success(userAccount);
+        ResponseUserDTO userAccountDto = new ResponseUserDTO
+        {
+            UserAccountId = userAccount.Id,
+            CitizenID = userAccount.UserAccount.CitizenID,
+            AvatarUrl = userAccount.UserAccount?.AvatarUrl ?? string.Empty,
+            Is_Active = userAccount.UserAccount?.Is_Active ?? 0,
+            Patient = userAccount != null ? new ResponsePatientDTO
+            {
+                PatientId = userAccount.Id,
+                FirstName = userAccount.FirstName,
+                LastName = userAccount.LastName,
+                PhoneNumber = userAccount.PhoneNumber,
+                Email = userAccount.Email,
+                DateOfBirth = userAccount.DateOfBirth,
+                Gender = userAccount.Gender,
+                Nationality = userAccount.Nationality,
+                Address = userAccount.Address,
+                PlaceOfResidence = userAccount.PlaceOfResidence,
+                RoleId = userAccount.RoleId,
+            } : null,
+        };
+
+        return ServiceResult<ResponseUserDTO?>.Success(userAccountDto);
     }
 }

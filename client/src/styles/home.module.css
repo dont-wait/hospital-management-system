@@ -1,0 +1,81 @@
+@reference "./globals.css";
+
+.banner-card {
+  @apply py-20 px-4 bg-gradient-to-br from-blue-50 to-indigo-100;
+}
+
+.banner-card-skeleton {
+  @apply py-20 px-4 bg-gray-50;
+}
+
+.banner-content,
+.feature-content,
+.service-content {
+  @apply max-w-6xl mx-auto text-center;
+}
+
+.banner-header {
+  @apply text-2xl md:text-4xl font-bold text-gray-900 mb-6;
+}
+
+.banner-header-skeleton {
+  @apply h-8 sm:h-10 md:h-12 w-full md:w-8/12 lg:w-3/4 mx-auto mb-6;
+}
+
+.banner-description {
+  @apply text-sm md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto;
+}
+
+.banner-description-skeleton {
+  @apply w-full md:w-9/12 lg:w-8/12 mx-auto mb-8 max-w-3xl;
+}
+
+.banner-buttons {
+  @apply flex flex-col flex-row gap-4 justify-center;
+}
+
+.banner-buttons-wrap {
+  @apply flex flex-col sm:flex-row gap-4 justify-center;
+}
+
+.icon {
+  @apply ml-2 h-5 w-5;
+}
+
+.feature-section {
+  @apply py-16 px-4 bg-white;
+}
+
+.feature-header,
+.service-header {
+  @apply text-2xl md:text-3xl font-bold text-center text-gray-900 mx-auto mb-12 w-full sm:w-5/12;
+}
+
+.feature-section-skeleton {
+  @apply w-full sm:w-8/12 md:w-7/12 mx-auto mb-12 rounded;
+}
+
+.feature-body {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6;
+}
+
+.feature-title {
+  min-height: 201.6px;
+  @apply text-center;
+}
+
+.feature-icon {
+  @apply h-12 w-12 mx-auto mb-4 rounded-full;
+}
+
+.service-section {
+  @apply py-16 px-4;
+}
+
+.service-body {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.service-card {
+  min-height: 117.6px;
+}

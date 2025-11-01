@@ -1,0 +1,26 @@
+@reference "./globals.css";
+
+.not-found-section {
+  height: calc(100vh - 64.8px);
+  @apply flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 gap-6;
+}
+
+.not-found-skeleton-section {
+  height: calc(100vh - 64.8px);
+  @apply flex flex-col items-center justify-center gap-6 bg-gray-50;
+}
+
+.not-found-header {
+  min-height: 160px;
+  @apply text-[10rem] w-7/12 md:w-4/12 text-center leading-none font-extrabold;
+}
+
+.not-found-desc {
+  @apply text-xl md:text-3xl w-11/12 md:w-8/12 text-center font-semibold drop-shadow-md;
+}
+
+.not-found-button-back {
+  min-width: 177px;
+  min-height: 44px;
+  @apply w-auto;
+}

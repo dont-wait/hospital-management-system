@@ -1,0 +1,53 @@
+@reference "./globals.css";
+
+.nav-section {
+  @apply bg-white shadow-md;
+}
+
+.nav-wrap {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.nav-content {
+  @apply flex justify-between h-16;
+}
+
+.nav-logo {
+  @apply flex items-center;
+}
+
+.nav-link {
+  @apply flex items-center space-x-2;
+}
+
+.nav-link-icon {
+  @apply h-8 w-8 text-blue-600;
+}
+
+.nav-link-title {
+  @apply font-bold text-xl text-gray-900;
+}
+
+.nav-options {
+  @apply flex items-center space-x-4;
+}
+
+.nav-notify {
+  @apply aspect-square shadow;
+}
+
+.nav-options-icon {
+  @apply h-4 w-4;
+}
+
+.nav-avatar {
+  @apply w-10 border-2 border-gray-500 rounded-full overflow-hidden aspect-square;
+}
+
+.nav-avatar-img {
+  @apply w-full cursor-pointer h-full object-cover object-center;
+}
+
+.nav-btn {
+  @apply flex items-center space-x-2;
+}

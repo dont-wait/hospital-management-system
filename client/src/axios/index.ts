@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
-import { defaultOptions } from "@/lib/client/utils";
+import { ToastDefaultConfig } from "@/config";
 import { AuthErrorResponse } from "@/types";
 
 const api = axios.create({
@@ -14,42 +14,31 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor - Thêm token và timestamp
-api.interceptors.request.use(
-  (config) => {
-    const separator = config.url?.includes("?") ? "&" : "?";
-    config.url = `${config.url}${separator}_t=${new Date().getTime()}`;
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
-
 const handleValidationErrors = (data: AuthErrorResponse) => {
   if (data.errors) {
     Object.values(data.errors)
       .flat()
       .forEach((err) => {
-        toast.error(err, defaultOptions);
+        toast.error(err, ToastDefaultConfig);
       });
   } else if (data.message) {
-    toast.error(data.message, defaultOptions);
+    toast.error(data.message, ToastDefaultConfig);
   }
 };
 
-// Response interceptor - Thêm token và timestamp
+// Response interceptor
 api.interceptors.response.use(
-  (response: AxiosResponse<{ status: number; message: string }>) => {
+  <T>(
+    response: AxiosResponse<{ status: number; message: string; data: T }>,
+  ) => {
     const { status, message } = response.data;
 
-    if (status !== 200 && status !== 201) {
-      toast.error(message, defaultOptions);
+    if (status >= 400) {
+      toast.error(message, ToastDefaultConfig);
       return Promise.reject(response);
     }
 
-    toast.success(message, defaultOptions);
+    toast.success(message, ToastDefaultConfig);
     return response;
   },
   (
@@ -59,30 +48,22 @@ api.interceptors.response.use(
       const { status, data } = error.response;
       switch (status) {
         case 400:
-          // Bad Request
           handleValidationErrors(data);
           break;
-
+        case 401:
+          toast.error("Phiên đăng nhập hết hạn", ToastDefaultConfig);
+          break;
         case 500:
-          // Internal Server Error
-          toast.error("Lỗi máy chủ. Vui lòng thử lại sau", defaultOptions);
+          toast.error("Lỗi máy chủ. Vui lòng thử lại sau", ToastDefaultConfig);
           break;
 
         default:
-          toast.error("Có lỗi xảy ra. Vui lòng thử lại", defaultOptions);
+          toast.error("Có lỗi xảy ra. Vui lòng thử lại", ToastDefaultConfig);
       }
     }
 
     return Promise.reject(error);
   },
 );
-
-export const setBearerToken = (token: string) => {
-  api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-};
-
-export const delBearerToken = () => {
-  delete api.defaults.headers.common["Authorization"];
-};
 
 export default api;

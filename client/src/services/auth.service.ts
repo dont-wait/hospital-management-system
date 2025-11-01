@@ -1,50 +1,77 @@
 import { LoginResponse, RegisterResponse, LogoutResponse } from "@/types";
 import {
-  LoginPatientDto,
+  LoginAccountDto,
   RegisterPatientDto,
+  SendOtpDto,
+  VerifyOtpDto,
   ResetPasswordDto,
-  NewPasswordDto,
-} from "@/schemas/auth";
+} from "@/schemas";
 import api from "@/axios";
+import { TokenUtils } from "@/lib/client";
+import { Patient, Employee } from "@/types";
 
-class AuthService {
+export class AuthService {
   // Login service
-  async login(userDto: LoginPatientDto): Promise<LoginResponse> {
-    return api.post("/login", userDto).then((response) => response.data);
+  static async login(
+    userDto: LoginAccountDto,
+  ): Promise<Patient | Employee | null> {
+    const { data: response }: { data: LoginResponse } = await api.post(
+      "auth/login",
+      userDto,
+    );
+    let user: Patient | Employee;
+    if (response.data?.patient) {
+      user = {
+        ...response.data.patient,
+        avatarUrl: response.data.avatarUrl,
+      };
+      TokenUtils.saveUser<Patient>(user);
+      return user;
+    }
+
+    if (response.data?.employee) {
+      user = {
+        ...response.data.employee,
+        avatarUrl: response.data.avatarUrl,
+      };
+      TokenUtils.saveUser<Employee>(user);
+      return user;
+    }
+
+    return null;
   }
 
   // Register service
-  async register(patientDto: RegisterPatientDto): Promise<RegisterResponse> {
-    return api
-      .post<RegisterResponse>("/patient/register", patientDto)
-      .then((response) => response.data);
+  static async register(patientDto: RegisterPatientDto): Promise<boolean> {
+    const { data: response }: { data: RegisterResponse } = await api.post(
+      "auth/patient/register",
+      patientDto,
+    );
+    return !!response;
   }
 
   // Logout service
-  async logout(): Promise<LogoutResponse> {
-    return api.post("/logout").then((response) => response.data);
+  static async logout(): Promise<LogoutResponse> {
+    return api.post("auth/logout").then((response) => {
+      delete api.defaults.headers.common.Authorization;
+      return response.data;
+    });
   }
 
-  // Reset password service
-  async resetPassword(resetPasswordDto: ResetPasswordDto) {
-    return api
-      .post("/request-reset", resetPasswordDto)
-      .then((response) => response.data);
+  // Send otp service
+  static async sendOtp(sendOtpDto: SendOtpDto): Promise<void> {
+    await api.post("auth/request-reset", sendOtpDto);
   }
 
   // Verify otp services
-  async verifyOtp(email: string, otp: string) {
-    return api
-      .post("/verify-otp", { email, otp })
-      .then((response) => response.data);
+  static async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<void> {
+    await api.post("auth/verify-otp", verifyOtpDto);
   }
 
-  // Create new password services
-  async newPassword(newPasswordDto: NewPasswordDto) {
-    return api
-      .post("/reset-password", newPasswordDto)
-      .then((response) => response.data);
+  // Reset password services
+  static async resetPassword(
+    resetPasswordDto: ResetPasswordDto,
+  ): Promise<void> {
+    await api.post("auth/reset-password", resetPasswordDto);
   }
 }
-
-export const authService = new AuthService();

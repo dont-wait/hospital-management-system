@@ -7,9 +7,45 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   /* config options here */
-  experimental: {
-    optimizePackageImports: ["lucide-react"],
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? {
+            exclude: ["error"],
+          }
+        : false,
   },
+
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "@/components",
+      "@/config",
+      "@/contexts",
+      "@/font",
+      "@/hooks",
+      "@/lib",
+      "@/schemas",
+      "@/services",
+    ],
+    esmExternals: true,
+  },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "static.vecteezy.com",
+        port: "",
+        pathname: "/system/resources/previews/**",
+      },
+    ],
+    minimumCacheTTL: 60,
+  },
+
+  compress: true,
+  poweredByHeader: false,
+  output: "standalone",
 };
 
 export default bundleAnalyzer(nextConfig);

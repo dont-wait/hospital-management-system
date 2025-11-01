@@ -3,7 +3,9 @@ using Infrastructure.Persistence.Repositories.Account;
 using Infrastructure.Persistence.Repositories.EmployeeRepository;
 using Application.Services.Auth;
 using Application.Services.Account;
+using Application.Services.Admin;
 using WebApi.Services;
+using WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", policy =>
     {
         policy
-            //.WithOrigins("http://localhost:5500")
+            .WithOrigins("http://localhost:3000")
             .SetIsOriginAllowed(_ => true)
             .AllowCredentials()
             .AllowAnyMethod()
@@ -39,7 +41,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -50,6 +52,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await DataSeeder.SeedAsync(db);
+   await DataSeeder.SeedAdminAsync(db);
 }
 
 app.UseCors("CorsPolicy");
@@ -70,6 +73,8 @@ else
     app.UseExceptionHandler("/error");
     app.UseHsts();
 }
+
+app.UseMiddleware<CookieToHeaderMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

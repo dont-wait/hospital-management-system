@@ -15,18 +15,22 @@ export const patientSchema = z.object({
   phoneNumber: z.string().min(10, "Số điện thoại phải có ít nhất 10 chữ số"),
 });
 
-export const resetPasswordSchema = z.object({
+export const sendOtpSchema = z.object({
   email: z
     .string()
     .min(1, "Email không được để trống")
     .email("Email không hợp lệ"),
 });
 
-export const newPasswordSchema = z.object({
+export const resetPasswordSchema = z.object({
   newPassword: z.string().min(1, "Mật khẩu mới không được để trống"),
 });
 
-export type LoginPatientDto = z.infer<typeof accountSchema>;
+export type LoginAccountDto = z.infer<typeof accountSchema>;
 export type RegisterPatientDto = z.infer<typeof patientSchema>;
+export type SendOtpDto = z.infer<typeof sendOtpSchema>;
+export type VerifyOtpDto = {
+  email: string;
+  otp: string;
+};
 export type ResetPasswordDto = z.infer<typeof resetPasswordSchema>;
-export type NewPasswordDto = z.infer<typeof newPasswordSchema>;
