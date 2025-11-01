@@ -42,9 +42,9 @@ export class TokenUtils {
   }
 
   static getUserRole(token: string | null): Role {
-    if (!token) return "customer";
+    if (!token) return "guest";
     const payload = TokenUtils.decodePayload(token);
-    if (!payload?.exp) return "customer";
+    if (!payload?.exp) return "guest";
     return payload.RoleId;
   }
 }

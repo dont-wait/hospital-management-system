@@ -1,11 +1,11 @@
 import { Role } from "@/types";
 
-const allRoles: Role[] = ["customer", "patient", "doctor", "admin"];
+const allRoles: Role[] = ["guest", "patient", "doctor", "admin"];
 
 export const ROUTE_ROLE_MAP: Record<string, Role[]> = {
   "/": allRoles,
-  "/login": ["customer"],
-  "/register": ["customer"],
+  "/login": ["guest"],
+  "/register": ["guest"],
   "/forgot-password": allRoles,
   "/doctor": ["doctor"],
   "/patient": ["patient"],

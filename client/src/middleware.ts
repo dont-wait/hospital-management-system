@@ -19,7 +19,7 @@ export async function middleware(req: NextRequest) {
   }
 
   if (!token) {
-    if (allowedRoles.includes("customer")) {
+    if (allowedRoles.includes("guest")) {
       return MiddlewareUtils.handleMissingToken();
     }
     return MiddlewareUtils.handleUnauthorizedAccess();
