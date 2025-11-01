@@ -6,7 +6,7 @@ export enum Gender {
   Other = "O",
 }
 
-export type Role = "admin" | "doctor" | "patient";
+export type Role = "guest" | "admin" | "doctor" | "patient";
 
 export interface Patient {
   patientId: string;

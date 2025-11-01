@@ -6,12 +6,12 @@ export class TokenUtils {
   } as const;
 
   static saveUser<T>(user: T): void {
-    sessionStorage.setItem(TokenUtils.STORAGE_KEYS.USER, JSON.stringify(user));
+    localStorage.setItem(TokenUtils.STORAGE_KEYS.USER, JSON.stringify(user));
   }
 
   static getStoredUser<T>(): T | null {
     try {
-      const userData = sessionStorage.getItem(TokenUtils.STORAGE_KEYS.USER);
+      const userData = localStorage.getItem(TokenUtils.STORAGE_KEYS.USER);
       return userData ? JSON.parse(userData) : null;
     } catch {
       TokenUtils.clearStoredUser();
@@ -20,7 +20,7 @@ export class TokenUtils {
   }
 
   static clearStoredUser(): void {
-    sessionStorage.removeItem(TokenUtils.STORAGE_KEYS.USER);
+    localStorage.removeItem(TokenUtils.STORAGE_KEYS.USER);
   }
 
   static decodePayload(token: string) {
@@ -41,9 +41,10 @@ export class TokenUtils {
     return payload.exp < currentTime;
   }
 
-  static getUserRole(token: string): Role {
+  static getUserRole(token: string | null): Role {
+    if (!token) return "guest";
     const payload = TokenUtils.decodePayload(token);
-    if (!payload?.exp) return "patient";
+    if (!payload?.exp) return "guest";
     return payload.RoleId;
   }
 }

@@ -9,6 +9,7 @@ import {
   useCallback,
   useMemo,
 } from "react";
+import Cookie from "js-cookie";
 import { useRouter } from "next/navigation";
 import { Loading } from "@/components";
 import { AuthService, IpGeoService } from "@/services";
@@ -17,7 +18,7 @@ import { Employee, Patient } from "@/types";
 
 interface UserAuthContextType<T> {
   user: T | null;
-  setUser: (user: T) => void;
+  setUser: (user: T | null) => void;
   isAuthenticated: boolean;
   logout: () => void;
 }
@@ -38,30 +39,34 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
     router.push("/");
   }, [router]);
 
-  useEffect(() => {
-    async function getNationality() {
-      try {
-        const user: Patient | Employee | null = TokenUtils.getStoredUser();
-        if (user && "patientId" in user) {
-          const country = await IpGeoService.getCountry();
-          setUser({
-            ...user,
-            nationality: user.nationality || country,
-          } as Patient);
-        } else {
-          setUser(user);
-        }
-      } catch (error) {
-        console.error("Can't Initialize User", error);
-      } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 3000);
+  const getNationality = useCallback(async () => {
+    try {
+      const user: Patient | Employee | null = TokenUtils.getStoredUser();
+      if (user && "patientId" in user) {
+        const country = await IpGeoService.getCountry();
+        setUser({
+          ...user,
+          nationality: user.nationality || country,
+        } as Patient);
       }
+    } catch (error) {
+      console.error("Can't Initialize User", error);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 3000);
     }
-
-    void getNationality();
   }, []);
+
+  useEffect(() => {
+    const hasToken = Cookie.get("hasToken") === "true";
+    if (!hasToken) {
+      TokenUtils.clearStoredUser();
+      setIsLoading(false);
+    } else {
+      getNationality();
+    }
+  }, [getNationality]);
 
   const contextValue = useMemo(
     () => ({

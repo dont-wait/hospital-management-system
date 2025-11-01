@@ -5,3 +5,4 @@ export * from "./HomeConfig";
 export * from "./RoleConfig";
 export * from "./SidebarConfig";
 export * from "./ToastConfig";
+export * from "./ExcludedPathConfig";
