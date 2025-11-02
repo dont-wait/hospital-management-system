@@ -47,24 +47,14 @@ export const AdminSidebarItems = [
     icon: LayoutDashboard,
   },
   {
-    route: "/admin/patients",
-    title: "Quản Lý Bệnh Nhân",
-    icon: UserRound,
-  },
-  {
-    route: "/admin/doctors",
-    title: "Quản Lý Bác Sĩ",
-    icon: Stethoscope,
+    route: "/admin/users",
+    title: "Quản Lý Người Dùng",
+    icon: Users,
   },
   {
     route: "/admin/appointments",
     title: "Lịch Hẹn",
     icon: Calendar,
-  },
-  {
-    route: "/admin/users",
-    title: "Quản Lý Người Dùng",
-    icon: Users,
   },
   {
     route: "/admin/settings",

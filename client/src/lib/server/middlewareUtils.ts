@@ -56,4 +56,18 @@ export class MiddlewareUtils {
     MiddlewareUtils.setHasTokenCookie(forbiddenRes, true);
     return forbiddenRes;
   }
+
+  static handleAdminAccess(req: NextRequest): NextResponse {
+    const { pathname } = req.nextUrl;
+    
+    if (pathname.startsWith("/admin")) {
+      const adminRes = NextResponse.next();
+      MiddlewareUtils.setHasTokenCookie(adminRes, true);
+      return adminRes;
+    }
+    
+    const redirectRes = NextResponse.redirect(new URL("/admin/dashboard", req.url));
+    MiddlewareUtils.setHasTokenCookie(redirectRes, true);
+    return redirectRes;
+  }
 }
