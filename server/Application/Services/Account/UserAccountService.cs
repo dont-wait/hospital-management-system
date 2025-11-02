@@ -28,15 +28,11 @@ public class UserAccountService : IUserAccountService
         if (accountOfPatient == null)
             return ServiceResult<ResponseUpdatePatient>.Fail("Không tìm thấy tài khoản người dùng");
 
-        
         //TODO: Xac thuc phone
         if (patientExisting.PhoneNumber != request.PhoneNumber)
         {
             //implement it
         }
-        
-        // Cập nhật thông tin bệnh nhân
-        _userAccountMapper.Update(accountOfPatient, request);
 
         await _userAccountRepository.UpdateAccountAndPatientAsync(patientExisting, accountOfPatient);
         
