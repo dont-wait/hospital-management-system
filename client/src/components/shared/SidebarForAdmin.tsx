@@ -30,7 +30,7 @@ function SidebarForAdmin() {
 
     useEffect(() => {
         setPosition("left");
-        setColorBackground("#52c5ff"); // màu background bờ lu
+        setColorBackground("#2563EB"); // màu background bờ lu
         setShowCloseButton(false);
         setContent(<AdminSidebar />);
         setTitle(adminProfile(user as Employee));
