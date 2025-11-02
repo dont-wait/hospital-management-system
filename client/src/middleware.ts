@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
     if (allowedRoles.includes("guest")) {
       return MiddlewareUtils.handleMissingToken();
     }
-    return MiddlewareUtils.handleUnauthorizedAccess();
+    return MiddlewareUtils.handleRedirectLogin(req);
   }
 
   if (TokenUtils.isTokenExpired(token)) {

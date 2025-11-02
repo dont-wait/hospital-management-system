@@ -40,6 +40,11 @@ export class MiddlewareUtils {
     return redirectRes;
   }
 
+  static handleRedirectLogin(req: NextRequest): NextResponse {
+    const redirectRes = NextResponse.redirect(new URL("/login", req.url));
+    return redirectRes;
+  }
+
   static handleExpiredToken(req: NextRequest): NextResponse {
     const redirectRes = NextResponse.redirect(new URL("/login", req.url));
     redirectRes.cookies.delete("accessToken");
