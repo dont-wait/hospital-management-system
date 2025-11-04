@@ -41,12 +41,16 @@ export class MiddlewareUtils {
   }
 
   static handleRedirectLogin(req: NextRequest): NextResponse {
-    const redirectRes = NextResponse.redirect(new URL("/login", req.url));
+    const url = new URL("/login", req.url);
+    url.searchParams.set("from", "redirect");
+    const redirectRes = NextResponse.redirect(url);
     return redirectRes;
   }
 
   static handleExpiredToken(req: NextRequest): NextResponse {
-    const redirectRes = NextResponse.redirect(new URL("/login", req.url));
+    const url = new URL("/login", req.url);
+    url.searchParams.set("from", "expired");
+    const redirectRes = NextResponse.redirect(url);
     redirectRes.cookies.delete("accessToken");
     redirectRes.cookies.delete("refreshToken");
     MiddlewareUtils.setHasTokenCookie(redirectRes, false);
