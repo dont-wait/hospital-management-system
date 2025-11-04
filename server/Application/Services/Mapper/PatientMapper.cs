@@ -22,6 +22,24 @@ public class PatientMapper : IPatientMapper
 
     public Patient MapToEntity(RequestPatientDTO patientDto)
     {
-        throw new NotImplementedException();
+        return new Patient
+        {
+            FirstName = patientDto.FirstName,
+            LastName = patientDto.LastName,
+            Email = patientDto.Email,
+            PhoneNumber = patientDto.PhoneNumber,
+            DateOfBirth = patientDto.DateOfBirth,
+            Gender = patientDto.Gender,
+            Nationality = patientDto.Nationality,
+            Address = patientDto.Address,
+            PlaceOfResidence = patientDto.PlaceOfResidence,
+            RoleId = "patient",
+            UserAccount = new UserAccount
+            {
+                AvatarUrl = patientDto.AvatarUrl,
+                Is_Active = 1,
+                CitizenID = patientDto.CitizenID
+            }
+        };
     }
 }

@@ -38,7 +38,7 @@ public class UserAccountMapper : IUserAccountMapper
         throw new NotImplementedException();
     }
 
-    public ResponseUpdatePatient Update(UserAccount userAccount, RequestUpdatePatient userAccountDto)
+    public void Update(UserAccount userAccount, RequestUpdatePatient userAccountDto)
     {
         var patient = userAccount.Patient;
     
@@ -53,19 +53,5 @@ public class UserAccountMapper : IUserAccountMapper
         patient.Address = userAccountDto.Address;
         patient.Nationality = userAccountDto.Nationality;
         patient.PlaceOfResidence = userAccountDto.PlaceOfResidence;
-        return new ResponseUpdatePatient
-        {
-            PatientId = patient.Id,
-            FirstName = patient.FirstName,
-            LastName = patient.LastName,
-            PhoneNumber = patient.PhoneNumber,
-            DateOfBirth = patient.DateOfBirth,
-            Gender = patient.Gender,
-            Nationality = patient.Nationality,
-            Address = patient.Address,
-            PlaceOfResidence = patient.PlaceOfResidence,
-            RoleId = patient.RoleId,
-            AvatarUrl = userAccount.AvatarUrl
-        };
     }
 }

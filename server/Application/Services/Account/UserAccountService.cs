@@ -18,27 +18,29 @@ public class UserAccountService : IUserAccountService
         _patientMapper = patientMapper;
     }
 
-    public async Task<ServiceResult<ResponseUpdatePatient>> UpdateUserAccount_Patient_Async(Guid patientId, RequestUpdatePatient request)
+    public async Task<ServiceResult<ResponsePatientDTO>> UpdateUserAccount_Patient_Async(Guid patientId, RequestUpdatePatient request)
     {
         var patientExisting = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId);
         if (patientExisting == null)
-            return ServiceResult<ResponseUpdatePatient>.Fail("Không tìm thấy thông tin người dùng");
+            return ServiceResult<ResponsePatientDTO>.Fail("Không tìm thấy thông tin người dùng");
 
         var accountOfPatient = patientExisting.UserAccount;
         if (accountOfPatient == null)
-            return ServiceResult<ResponseUpdatePatient>.Fail("Không tìm thấy tài khoản người dùng");
+            return ServiceResult<ResponsePatientDTO>.Fail("Không tìm thấy tài khoản người dùng");
 
         //TODO: Xac thuc phone
         if (patientExisting.PhoneNumber != request.PhoneNumber)
         {
             //implement it
         }
+        _userAccountMapper.Update(accountOfPatient, request);
 
         await _userAccountRepository.UpdateAccountAndPatientAsync(patientExisting, accountOfPatient);
-        
-        var responsePatientDto = _userAccountMapper.Update(accountOfPatient, request);
 
-        return ServiceResult<ResponseUpdatePatient>.Success(responsePatientDto);
+        
+        ResponsePatientDTO responsePatientDto = _patientMapper.MapToDto(patientExisting);
+
+        return ServiceResult<ResponsePatientDTO>.Success(responsePatientDto);
     }
 
     public Guid? CurrentUserId => _currentUserService.CurrentUserId;
