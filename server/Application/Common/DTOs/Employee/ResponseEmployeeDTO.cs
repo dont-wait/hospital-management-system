@@ -1,3 +1,8 @@
+using System.Text.Json.Serialization;
+
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+[JsonDerivedType(typeof(ResponseDoctorDTO), typeDiscriminator: "doctor")]
+[JsonDerivedType(typeof(ResponseAdminDto), typeDiscriminator: "admin")]
 public class ResponseEmployeeDTO
 {
     public Guid EmployeeId { get; set; }

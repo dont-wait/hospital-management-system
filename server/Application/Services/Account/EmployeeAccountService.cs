@@ -101,25 +101,71 @@ public class EmployeeAccountService : IEmployeeAccountService
         if (userAccount == null)
             return ServiceResult<ResponseUserDTO?>.Fail("Nhân viên không tồn tại.");
 
+        ResponseEmployeeDTO? employeeDto = null;
+
+        if (userAccount.Employee != null)
+        {
+            var employee = userAccount.Employee;
+            
+            if (employee.RoleId == RoleEnum.doctor.ToString().ToLower())
+            {
+                employeeDto = new ResponseDoctorDTO
+                {
+                    EmployeeId = employee.Id,
+                    FirstName = employee.FirstName,
+                    LastName = employee.LastName,
+                    PhoneNumber = employee.PhoneNumber,
+                    Email = employee.Email,
+                    CertificateNumber = employee.CertificateNumber,
+                    DateOfBirth = employee.DateOfBirth,
+                    Gender = employee.Gender,
+                    HireDate = employee.HireDate,
+                    RoleId = employee.RoleId,
+                    DoctorId = employee.Doctor?.Id ?? Guid.Empty,
+                    Specialization = employee.Doctor?.Specialization ?? string.Empty
+                };
+            }
+            else if (employee.RoleId == RoleEnum.admin.ToString().ToLower())
+            {
+                employeeDto = new ResponseAdminDto
+                {
+                    EmployeeId = employee.Id,
+                    FirstName = employee.FirstName,
+                    LastName = employee.LastName,
+                    PhoneNumber = employee.PhoneNumber,
+                    Email = employee.Email,
+                    CertificateNumber = employee.CertificateNumber,
+                    DateOfBirth = employee.DateOfBirth,
+                    Gender = employee.Gender,
+                    HireDate = employee.HireDate,
+                    RoleId = employee.RoleId
+                };
+            }
+            else
+            {
+                employeeDto = new ResponseEmployeeDTO
+                {
+                    EmployeeId = employee.Id,
+                    FirstName = employee.FirstName,
+                    LastName = employee.LastName,
+                    PhoneNumber = employee.PhoneNumber,
+                    Email = employee.Email,
+                    CertificateNumber = employee.CertificateNumber,
+                    DateOfBirth = employee.DateOfBirth,
+                    Gender = employee.Gender,
+                    HireDate = employee.HireDate,
+                    RoleId = employee.RoleId
+                };
+            }
+        }
+
         ResponseUserDTO responseUserDto = new ResponseUserDTO
         {
             UserAccountId = userAccount.Id,
             AvatarUrl = userAccount.AvatarUrl,
             Is_Active = userAccount.Is_Active,
             CitizenID = userAccount.CitizenID,
-            Employee = userAccount.Employee != null ? new ResponseEmployeeDTO
-            {
-                EmployeeId = userAccount.Employee.Id,
-                FirstName = userAccount.Employee.FirstName,
-                LastName = userAccount.Employee.LastName,
-                PhoneNumber = userAccount.Employee.PhoneNumber,
-                Email = userAccount.Employee.Email,
-                CertificateNumber = userAccount.Employee.CertificateNumber,
-                DateOfBirth = userAccount.Employee.DateOfBirth,
-                Gender = userAccount.Employee.Gender,
-                HireDate = userAccount.Employee.HireDate,
-                RoleId = userAccount.Employee.RoleId,
-            } : null
+            Employee = employeeDto
         };
 
         return ServiceResult<ResponseUserDTO?>.Success(responseUserDto);
