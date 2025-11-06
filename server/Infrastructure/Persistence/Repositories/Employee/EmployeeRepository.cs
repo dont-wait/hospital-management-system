@@ -66,8 +66,9 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId)
     {
         return await _context.user_accounts
-        .Include(ua => ua.Employee)
-        .FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employeeId);
+            .Include(ua => ua.Employee)
+                .ThenInclude(e => e!.Doctor)
+            .FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employeeId);
     }
 
     public async Task<Doctor?> FindDoctorWithAccountByIdAsync(Guid doctorId)
