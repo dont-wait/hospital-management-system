@@ -17,8 +17,6 @@ public class EmployeeAccountService : IEmployeeAccountService
         _userAccountRepository = userAccountRepository;
         _doctorMapper = doctorMapper;
         _userAccountMapper = userAccountMapper;
-        _doctorMapper = doctorMapper;
-        
     }
 
     public async Task<ServiceResult<ResponseDoctorDTO>> CreateDoctorAsync(RequestDoctorDTO doctorDto)
