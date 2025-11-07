@@ -47,6 +47,7 @@ export interface Employee {
   certificateNumber: string;
   specialization: string;
   avatarUrl: string;
+  roleId: Role;
 }
 
 export interface AuthUser {
@@ -59,6 +60,8 @@ export interface AuthUser {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface AuthUserWithoutTokens extends Omit<AuthUser, 'accessToken' | 'refreshToken'> {}
 
 export interface LoginResponse {
   status: number;
