@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { roboto } from "@/font";
-import { UserAuthProvider, ToastProvider } from "@/contexts";
+import { UserAuthProvider, ToastProvider, SidebarProvider } from "@/contexts";
 import "react-loading-skeleton/dist/skeleton.css";
 import "@/styles/globals.css";
 
@@ -20,7 +20,9 @@ export default function RootLayout({
       <body className={roboto.className}>
         <ToastProvider>
           <UserAuthProvider>
-            <main>{children}</main>
+            <SidebarProvider>
+              <main>{children}</main>
+            </SidebarProvider>
           </UserAuthProvider>
         </ToastProvider>
       </body>
