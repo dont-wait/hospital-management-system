@@ -6,7 +6,7 @@
 }
 
 .admin-content {
-  @apply ml-0 md:ml-72 transition-all duration-300 p-4 md:p-8;
+  @apply transition-all duration-300 p-4 md:p-8;
 }
 
 /* Dashboard Header */
@@ -206,3 +206,5 @@
 .activity-time {
   @apply text-xs text-gray-500;
 }
+
+

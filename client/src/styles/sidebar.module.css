@@ -1,7 +1,7 @@
 @reference "./globals.css";
 
 .overlay {
-  @apply fixed inset-0 bg-black/50 z-40 transition-opacity;
+  @apply fixed inset-0 bg-black/50 z-40 transition-opacity lg:hidden;
 }
 
 .sidebar-open-right {
@@ -13,11 +13,11 @@
 }
 
 .sidebar-open-left {
-  @apply fixed top-0 left-0 h-full w-full md:w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out;
+  @apply fixed top-0 left-0 h-full w-full sm:w-80 lg:w-64 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out translate-x-0;
 }
 
 .sidebar-close-left {
-  @apply fixed top-0 left-0 h-full w-full md:w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out -translate-x-full;
+  @apply fixed top-0 left-0 h-full w-full sm:w-80 lg:w-64 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0;
 }
 
 .sidebar-content {
