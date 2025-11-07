@@ -123,29 +123,22 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<ResponseUserDTO?>.Success(responseUserDto);
     }
 
-    public async Task<ServiceResult<List<ResponseDoctorDTO>>> GetAllDoctorsAsync()
+    public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllDoctorsAsync()
     {
         List<UserAccount>? doctors = await _employeeRepository.GetAllDoctorAsync();
 
         if (doctors == null || doctors.Count == 0)
-            return ServiceResult<List<ResponseDoctorDTO>>.Fail("Không tìm thấy bác sĩ nào");
+            return ServiceResult<List<ResponseUserDTO>>.Fail("Không tìm thấy bác sĩ nào");
 
-        List<ResponseDoctorDTO> responseDoctors = doctors.Select(doctor => new ResponseDoctorDTO
+        List<ResponseUserDTO> responseDoctors = doctors.Select(doctor => new ResponseUserDTO
         {
-            DoctorId = doctor.Employee!.Doctor!.Id,
-            EmployeeId = doctor.Employee!.Id,
-            FirstName = doctor.Employee!.FirstName,
-            LastName = doctor.Employee!.LastName,
-            Email = doctor.Employee!.Email,
-            PhoneNumber = doctor.Employee!.PhoneNumber,
-            Specialization = doctor.Employee!.Doctor!.Specialization,
-            CertificateNumber = doctor.Employee!.CertificateNumber,
-            DateOfBirth = doctor.Employee!.DateOfBirth,
-            Gender = doctor.Employee!.Gender,
-            HireDate = doctor.Employee!.HireDate,
-            RoleId = doctor.Employee!.RoleId,
+            UserAccountId = doctor.Employee.UserAccount.Id,
+            AvatarUrl = doctor.Employee.UserAccount.AvatarUrl,
+            Is_Active = doctor.Employee.UserAccount.Is_Active,
+            CitizenID = doctor.CitizenID,
+            Employee = doctor.Employee != null ? _doctorMapper.MapToDto(doctor.Employee.Doctor!) : null
         }).ToList();
 
-        return ServiceResult<List<ResponseDoctorDTO>>.Success(responseDoctors);
+        return ServiceResult<List<ResponseUserDTO>>.Success(responseDoctors);
     }
 }
