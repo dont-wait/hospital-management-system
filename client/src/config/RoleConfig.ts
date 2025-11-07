@@ -10,5 +10,6 @@ export const ROUTE_ROLE_MAP: Record<string, Role[]> = {
   "/doctor": ["doctor"],
   "/patient": ["patient"],
   "/patient/update": ["patient"],
-  "/admin": ["admin"],
+  "/dashboard": ["admin"],
+  "/dashboard/user": ["admin"],
 } as const;

@@ -30,12 +30,8 @@ export async function middleware(req: NextRequest) {
   }
 
   const userRole: Role = TokenUtils.getUserRole(token);
-  if (userRole === "admin") {
-    return MiddlewareUtils.handleAdminAccess(req);
-  }
-
   if (!allowedRoles.includes(userRole)) {
-    return MiddlewareUtils.handleUnauthorizedAccess();
+    return MiddlewareUtils.handleUnauthorizedAccess(userRole);
   }
 
   const res = NextResponse.next();
