@@ -23,7 +23,6 @@ public class EmployeeAccountService : IEmployeeAccountService
             return ServiceResult<ResponseDoctorDTO>.Fail("Mật khẩu và xác nhận mật khẩu không khớp.");
 
 
-        // TODO: VERIFY EMAIL AND PHONE THAT REAL
         if (!string.IsNullOrWhiteSpace(doctorDto.Email) && await _userAccountRepository
             .IsEmailExistsAsync(doctorDto.Email))
             return ServiceResult<ResponseDoctorDTO>.Fail("Email đã tồn tại.");
@@ -58,11 +57,11 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }
 
-    public async Task<ServiceResult<ResponseUpdateDoctorDTO>> UpdateUserAccount_Doctor_Async(Guid doctorId, RequestUpdateDoctorDTO request)
+    public async Task<ServiceResult<ResponseDoctorDTO>> UpdateUserAccount_Doctor_Async(Guid doctorId, RequestUpdateDoctorDTO request)
     {
         Doctor? existingDoctor = await _employeeRepository.FindDoctorWithAccountByIdAsync(doctorId);
         if (existingDoctor == null)
-            return ServiceResult<ResponseUpdateDoctorDTO>.Fail("Không tìm thấy thông tin người dùng");
+            return ServiceResult<ResponseDoctorDTO>.Fail("Không tìm thấy thông tin người dùng");
 
         var existingEmployee = existingDoctor.Employee;
         var accountOfDoctor = existingDoctor.Employee.UserAccount;
@@ -79,7 +78,7 @@ public class EmployeeAccountService : IEmployeeAccountService
 
         await _employeeRepository.UpdateAccountAndDoctorAsync(existingDoctor, accountOfDoctor);
 
-        ResponseUpdateDoctorDTO responseDoctorDto = new ResponseUpdateDoctorDTO
+        ResponseDoctorDTO responseDoctorDto = new ResponseDoctorDTO
         {
             FirstName = request.FirstName,
             LastName = request.LastName,
@@ -89,10 +88,9 @@ public class EmployeeAccountService : IEmployeeAccountService
             HireDate = request.HireDate,
             CertificateNumber = request.CertificateNumber,
             Specialization = request.Specialization,
-            AvatarUrl = request.AvatarUrl
         };
 
-        return ServiceResult<ResponseUpdateDoctorDTO>.Success(responseDoctorDto);
+        return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }
 
     public async Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId)
