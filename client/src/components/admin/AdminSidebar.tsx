@@ -7,7 +7,11 @@ import { LogOut, LogIn } from "@/lib/client";
 import { AdminSidebarItems, patientSidebarVariants } from "@/config";
 import styles from "@/styles/admin.module.css";
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  onItemClick?: () => void;
+}
+
+export function AdminSidebar({ onItemClick }: AdminSidebarProps) {
   const { logout, isAuthenticated } = useUserAuthContext();
   const router = useRouter();
   const pathname = usePathname();
@@ -18,6 +22,9 @@ export function AdminSidebar() {
     } else {
       router.push(route);
     }
+    
+    // Gọi callback để đóng sidebar trên mobile
+    onItemClick?.();
   };
 
   return (
@@ -44,7 +51,7 @@ export function AdminSidebar() {
                   className={styles["admin-sidebar-item-icon"]}
                 />
               </div>
-              <span className="flex-1 text-left font-medium">{item.title}</span>
+              <span className={styles["admin-sidebar-item-title"]}>{item.title}</span>
             </motion.button>
           );
         })}
@@ -64,7 +71,7 @@ export function AdminSidebar() {
                 className={styles["admin-sidebar-item-icon"]}
               />
             </div>
-            <span className="flex-1 text-left font-medium">Đăng Nhập</span>
+            <span className={styles["admin-sidebar-item-title"]}>Đăng Nhập</span>
           </motion.button>
         ) : (
           <motion.button

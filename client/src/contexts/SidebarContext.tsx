@@ -5,6 +5,7 @@ import React, {
   useContext,
   ReactNode,
   useReducer,
+  useCallback,
 } from "react";
 
 type SidebarPosition = "left" | "right";
@@ -44,7 +45,7 @@ function sidebarReducer(state: SidebarState, action: SidebarAction): SidebarStat
     case "OPEN":
       return { ...state, isOpen: true };
     case "CLOSE":
-      return { ...state, isOpen: false, content: null };
+      return { ...state, isOpen: false };
     case "SET_CONTENT":
       return { ...state, content: action.payload };
     case "SET_TITLE":
@@ -76,14 +77,14 @@ const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 export function SidebarProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(sidebarReducer, initialState);
 
-  const toggleSidebar = () => dispatch({ type: "TOGGLE" });
-  const openSidebar = () => dispatch({ type: "OPEN" });
-  const closeSidebar = () => dispatch({ type: "CLOSE" });
-  const setContent = (content: ReactNode | null) => dispatch({ type: "SET_CONTENT", payload: content });
-  const setTitle = (title: string | ReactNode) => dispatch({ type: "SET_TITLE", payload: title });
-  const setShowCloseButton = (show: boolean) => dispatch({ type: "SET_SHOW_CLOSE_BUTTON", payload: show });
-  const setPosition = (pos: SidebarPosition) => dispatch({ type: "SET_POSITION", payload: pos });
-  const setColorBackground = (color: string) => dispatch({ type: "SET_COLOR_BACKGROUND", payload: color });
+  const toggleSidebar = useCallback(() => dispatch({ type: "TOGGLE" }), []);
+  const openSidebar = useCallback(() => dispatch({ type: "OPEN" }), []);
+  const closeSidebar = useCallback(() => dispatch({ type: "CLOSE" }), []);
+  const setContent = useCallback((content: ReactNode | null) => dispatch({ type: "SET_CONTENT", payload: content }), []);
+  const setTitle = useCallback((title: string | ReactNode) => dispatch({ type: "SET_TITLE", payload: title }), []);
+  const setShowCloseButton = useCallback((show: boolean) => dispatch({ type: "SET_SHOW_CLOSE_BUTTON", payload: show }), []);
+  const setPosition = useCallback((pos: SidebarPosition) => dispatch({ type: "SET_POSITION", payload: pos }), []);
+  const setColorBackground = useCallback((color: string) => dispatch({ type: "SET_COLOR_BACKGROUND", payload: color }), []);
   
   return (
     <SidebarContext.Provider

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Sidebar } from "@/components";
 import { AdminSidebar } from "../admin/AdminSidebar";
 import { useSidebar } from "@/contexts/SidebarContext";
@@ -25,17 +25,43 @@ const adminProfile = (user: Employee) => (
 );
 
 function SidebarForAdmin() {
-    const { setContent, setPosition, openSidebar, setShowCloseButton, setTitle, setColorBackground } = useSidebar();
+    const { setContent, setPosition, openSidebar, setShowCloseButton, setTitle, setColorBackground, closeSidebar } = useSidebar();
     const { user } = useUserAuthContext();
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        setPosition("left");
-        setColorBackground("#2563EB"); // màu background bờ lu
-        setShowCloseButton(false);
-        setContent(<AdminSidebar />);
-        setTitle(adminProfile(user as Employee));
-        openSidebar();
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    useEffect(() => {
+        const handleItemClick = () => {
+            if (isMobile) {
+                closeSidebar();
+            }
+        };
+
+        setContent(<AdminSidebar onItemClick={handleItemClick} />);
+        setPosition("left");
+        setColorBackground("#2563EB");
+        setTitle(adminProfile(user as Employee));
+    }, [user, isMobile, closeSidebar, setContent, setPosition, setColorBackground, setTitle]);
+
+    useEffect(() => {
+        setShowCloseButton(isMobile);
+        
+        if (!isMobile) {
+            openSidebar();
+        } else {
+            closeSidebar();
+        }
+    }, [isMobile, setShowCloseButton, openSidebar, closeSidebar]);
     
     return (
         <Sidebar />
