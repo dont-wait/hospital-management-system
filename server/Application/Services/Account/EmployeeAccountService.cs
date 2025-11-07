@@ -130,7 +130,7 @@ public class EmployeeAccountService : IEmployeeAccountService
 
         List<ResponseUserDTO> responseDoctors = doctors.Select(doctor => new ResponseUserDTO
         {
-            UserAccountId = doctor.Employee.UserAccount.Id,
+            UserAccountId = doctor.Employee!.UserAccount.Id,
             AvatarUrl = doctor.Employee.UserAccount.AvatarUrl,
             Is_Active = doctor.Employee.UserAccount.Is_Active,
             CitizenID = doctor.CitizenID,
