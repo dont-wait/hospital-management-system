@@ -24,8 +24,13 @@ public class DoctorMapper : IDoctorMapper
         return new Doctor
         {
             Specialization = doctorDto.Specialization,
+
             Employee = new Employee
             {
+                UserAccount = new UserAccount
+                {
+                    CitizenID = doctorDto.CitizenID,
+                },
                 FirstName = doctorDto.FirstName,
                 LastName = doctorDto.LastName,
                 Email = doctorDto.Email,
@@ -54,6 +59,7 @@ public class DoctorMapper : IDoctorMapper
             doctor.Employee.Gender = doctorDto.Gender;
             doctor.Employee.HireDate = doctorDto.HireDate;
             doctor.Employee.RoleId = "doctor";
+            doctor.Employee.UserAccount.AvatarUrl = doctorDto.AvatarUrl;
         }
     }
 }

@@ -20,8 +20,6 @@ public class UserAccountRepository : IUserAccountRepository
 
         await _context.user_accounts.AddAsync(userAccount);
 
-        
-
         Patient patient = new Patient
         {
             FirstName = patientDto.FirstName,
@@ -29,6 +27,12 @@ public class UserAccountRepository : IUserAccountRepository
             PhoneNumber = patientDto.PhoneNumber,
             UserAccount = userAccount,
             Email = patientDto.Email,
+            DateOfBirth = patientDto.DateOfBirth,
+            Gender = patientDto.Gender,
+            Nationality = patientDto.Nationality,
+            Address = patientDto.Address,
+            PlaceOfResidence = patientDto.PlaceOfResidence,
+            RoleId = "patient"
         };
 
         await _context.patients.AddAsync(patient);

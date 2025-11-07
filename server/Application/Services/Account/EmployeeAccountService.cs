@@ -8,10 +8,17 @@ public class EmployeeAccountService : IEmployeeAccountService
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IUserAccountRepository _userAccountRepository;
 
-    public EmployeeAccountService(IEmployeeRepository employeeRepository, IUserAccountRepository userAccountRepository)
+    private readonly IDoctorMapper _doctorMapper;
+    private readonly IUserAccountMapper _userAccountMapper;
+
+    public EmployeeAccountService(IEmployeeRepository employeeRepository, IUserAccountRepository userAccountRepository, IDoctorMapper doctorMapper, IUserAccountMapper userAccountMapper)
     {
         _employeeRepository = employeeRepository;
         _userAccountRepository = userAccountRepository;
+        _doctorMapper = doctorMapper;
+        _userAccountMapper = userAccountMapper;
+        _doctorMapper = doctorMapper;
+        
     }
 
     public async Task<ServiceResult<ResponseDoctorDTO>> CreateDoctorAsync(RequestDoctorDTO doctorDto)
@@ -38,21 +45,7 @@ public class EmployeeAccountService : IEmployeeAccountService
         if (newDoctor == null)
             return ServiceResult<ResponseDoctorDTO>.Fail("Tạo tài khoản thất bại.");
 
-        var responseDoctorDto = new ResponseDoctorDTO
-        {
-            DoctorId = newDoctor.Id,
-            EmployeeId = newDoctor.Employee.Id,
-            FirstName = newDoctor.Employee.FirstName,
-            LastName = newDoctor.Employee.LastName,
-            PhoneNumber = newDoctor.Employee.PhoneNumber,
-            Email = newDoctor.Employee.Email,
-            Specialization = newDoctor.Specialization,
-            CertificateNumber = newDoctor.Employee.CertificateNumber,
-            DateOfBirth = newDoctor.Employee.DateOfBirth,
-            Gender = newDoctor.Employee.Gender,
-            HireDate = newDoctor.Employee.HireDate,
-            RoleId = RoleEnum.doctor.ToString().ToLower()
-        };
+        var responseDoctorDto = _doctorMapper.MapToDto(newDoctor);
 
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }
@@ -63,32 +56,14 @@ public class EmployeeAccountService : IEmployeeAccountService
         if (existingDoctor == null)
             return ServiceResult<ResponseDoctorDTO>.Fail("Không tìm thấy thông tin người dùng");
 
-        var existingEmployee = existingDoctor.Employee;
+
         var accountOfDoctor = existingDoctor.Employee.UserAccount;
-        
-        existingEmployee.FirstName = request.FirstName;
-        existingEmployee.LastName = request.LastName;
-        existingEmployee.PhoneNumber = request.PhoneNumber;
-        existingEmployee.Gender = request.Gender;
-        existingEmployee.DateOfBirth = request.DateOfBirth;
-        existingEmployee.HireDate = request.HireDate;
-        existingEmployee.CertificateNumber = request.CertificateNumber;
-        existingDoctor.Specialization = request.Specialization;
-        accountOfDoctor.AvatarUrl = request.AvatarUrl;
+
+        _doctorMapper.Update(existingDoctor, request);
 
         await _employeeRepository.UpdateAccountAndDoctorAsync(existingDoctor, accountOfDoctor);
 
-        ResponseDoctorDTO responseDoctorDto = new ResponseDoctorDTO
-        {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            PhoneNumber = request.PhoneNumber,
-            Gender = request.Gender,
-            DateOfBirth = request.DateOfBirth,
-            HireDate = request.HireDate,
-            CertificateNumber = request.CertificateNumber,
-            Specialization = request.Specialization,
-        };
+        ResponseDoctorDTO responseDoctorDto = _doctorMapper.MapToDto(existingDoctor);
 
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }
@@ -104,24 +79,10 @@ public class EmployeeAccountService : IEmployeeAccountService
         if (userAccount.Employee != null)
         {
             var employee = userAccount.Employee;
-            
+
             if (employee.RoleId == RoleEnum.doctor.ToString().ToLower())
             {
-                employeeDto = new ResponseDoctorDTO
-                {
-                    EmployeeId = employee.Id,
-                    FirstName = employee.FirstName,
-                    LastName = employee.LastName,
-                    PhoneNumber = employee.PhoneNumber,
-                    Email = employee.Email,
-                    CertificateNumber = employee.CertificateNumber,
-                    DateOfBirth = employee.DateOfBirth,
-                    Gender = employee.Gender,
-                    HireDate = employee.HireDate,
-                    RoleId = employee.RoleId,
-                    DoctorId = employee.Doctor?.Id ?? Guid.Empty,
-                    Specialization = employee.Doctor?.Specialization ?? string.Empty
-                };
+                employeeDto = _doctorMapper.MapToDto(employee.Doctor!);
             }
             else if (employee.RoleId == RoleEnum.admin.ToString().ToLower())
             {
@@ -157,14 +118,7 @@ public class EmployeeAccountService : IEmployeeAccountService
             }
         }
 
-        ResponseUserDTO responseUserDto = new ResponseUserDTO
-        {
-            UserAccountId = userAccount.Id,
-            AvatarUrl = userAccount.AvatarUrl,
-            Is_Active = userAccount.Is_Active,
-            CitizenID = userAccount.CitizenID,
-            Employee = employeeDto
-        };
+        ResponseUserDTO? responseUserDto = _userAccountMapper.MapToDto(userAccount);
 
         return ServiceResult<ResponseUserDTO?>.Success(responseUserDto);
     }

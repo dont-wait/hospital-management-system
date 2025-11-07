@@ -9,6 +9,7 @@ public class UserAccountMapper : IUserAccountMapper
             return new ResponseUserDTO();
 
         var patient = userAccount.Patient;
+        var employee = userAccount.Employee;
 
         return new ResponseUserDTO
         {
@@ -19,6 +20,8 @@ public class UserAccountMapper : IUserAccountMapper
             Patient = patient != null ? new ResponsePatientDTO
             {
                 PatientId = patient.Id,
+                CitizenID = patient.UserAccount!.CitizenID,
+                AvatarUrl = patient.UserAccount!.AvatarUrl,
                 FirstName = patient.FirstName,
                 LastName = patient.LastName,
                 PhoneNumber = patient.PhoneNumber,
@@ -29,6 +32,19 @@ public class UserAccountMapper : IUserAccountMapper
                 PlaceOfResidence = patient.PlaceOfResidence,
                 Address = patient.Address,
                 RoleId = patient.RoleId,
+            } : null,
+            Employee = employee != null ? new ResponseEmployeeDTO
+            {
+                EmployeeId = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                PhoneNumber = employee.PhoneNumber,
+                Email = employee.Email,
+                CertificateNumber = employee.CertificateNumber,
+                DateOfBirth = employee.DateOfBirth,
+                Gender = employee.Gender,
+                HireDate = employee.HireDate,
+                RoleId = employee.RoleId
             } : null
         };
     }

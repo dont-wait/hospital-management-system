@@ -45,6 +45,7 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Services.AddScoped<IUserAccountMapper, UserAccountMapper>();
 builder.Services.AddScoped<IPatientMapper, PatientMapper>();
+builder.Services.AddScoped<IDoctorMapper, DoctorMapper>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

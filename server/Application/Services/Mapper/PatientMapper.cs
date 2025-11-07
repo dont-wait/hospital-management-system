@@ -7,6 +7,8 @@ public class PatientMapper : IPatientMapper
         return new ResponsePatientDTO
         {
             PatientId = patient.Id,
+            CitizenID = patient.UserAccount!.CitizenID,
+            AvatarUrl = patient.UserAccount!.AvatarUrl,
             FirstName = patient.FirstName,
             LastName = patient.LastName,
             Email = patient.Email,
