@@ -1,6 +1,6 @@
 import api from "@/axios";
 
-class DoctorService { 
+export class DoctorService { 
     public static async getAllDoctors() {
         return api.get("/admin/doctors").then((response) => response.data);
     }

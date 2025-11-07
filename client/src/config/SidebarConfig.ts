@@ -3,8 +3,6 @@ import {
   Lock, 
   Pencil, 
   LayoutDashboard, 
-  UserRound, 
-  Stethoscope, 
   Calendar, 
   Settings 
 } from "@/lib/client";

@@ -61,7 +61,10 @@ export interface AuthUser {
   refreshToken: string;
 }
 
-export interface AuthUserWithoutTokens extends Omit<AuthUser, 'accessToken' | 'refreshToken'> {}
+export type AuthUserWithoutTokens = Omit<
+  AuthUser,
+  "accessToken" | "refreshToken"
+>;
 
 export interface LoginResponse {
   status: number;
@@ -107,4 +110,3 @@ export type ModalProps = {
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
   showCloseButton?: boolean;
 };
-
