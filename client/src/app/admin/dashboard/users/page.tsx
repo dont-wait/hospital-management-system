@@ -1,9 +1,29 @@
+"use client";
+
 import { AuthUserWithoutTokens, Gender } from "@/types";
 import styles from "@/styles/admin.module.css";
 import userStyles from "@/styles/admin-user-management.module.css";
-import { Eye, SquarePen, Trash2 } from "lucide-react";
+import { Eye, SquarePen, Trash2, ChevronDown } from "lucide-react";
+import { DoctorService } from "@/services/doctor.service";
+import { useState, useRef, useEffect } from "react";
 
 function UsersManagementPage() {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Đóng dropdown khi click bên ngoài
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
     const mockdata: AuthUserWithoutTokens[] = [
         {
             userAccountId: "USR001",
@@ -151,9 +171,49 @@ function UsersManagementPage() {
             <div className={userStyles["users-table-container"]}>
                 <div className={userStyles["table-header"]}>
                     <h2 className={userStyles["table-title"]}>Danh sách người dùng</h2>
-                    <button className={userStyles["add-user-btn"]}>
-                        <span>+</span> Thêm người dùng
-                    </button>   
+                    <div className="flex gap-3">
+                        <div className={userStyles["dropdown-container"]} ref={dropdownRef}>
+                            <button 
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                className={userStyles["dropdown-btn"]}
+                                type="button"
+                            >
+                                Bộ lọc 
+                                <ChevronDown className={`${userStyles["dropdown-icon"]} ${isDropdownOpen ? userStyles["dropdown-icon-open"] : ''}`} />
+                            </button>
+                            
+                            {isDropdownOpen && (
+                                <div className={userStyles["dropdown-menu"]}>
+                                    <ul>
+                                        <li>
+                                            <button 
+                                                onClick={() => {
+                                                    setIsDropdownOpen(false);
+                                                }}
+                                                className={userStyles["dropdown-menu-item"]}
+                                            >
+                                                Bác sĩ
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button 
+                                                onClick={() => {
+                                                    setIsDropdownOpen(false);
+                                                }}
+                                                className={userStyles["dropdown-menu-item"]}
+                                            >
+                                                Bệnh nhân
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                        
+                        <button className={userStyles["add-user-btn"]}>
+                            <span>+</span> Thêm người dùng
+                        </button>   
+                    </div>
                 </div>
 
                 <div className={userStyles["table-wrapper"]}>

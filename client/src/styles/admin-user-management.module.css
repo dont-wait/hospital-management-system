@@ -13,11 +13,40 @@
 }
 
 .add-user-btn {
-  @apply flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium;
+  @apply flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm min-w-[160px];
 }
 
 .add-user-btn span {
-  @apply text-xl font-bold;
+  @apply font-bold;
+}
+
+/* Dropdown Button */
+.dropdown-container {
+  @apply relative;
+}
+
+.dropdown-btn {
+  @apply text-white bg-blue-600 hover:bg-blue-700 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center transition-colors duration-200 min-w-[160px];
+}
+
+.dropdown-icon {
+  @apply w-4 h-4 ms-2 transition-transform duration-200;
+}
+
+.dropdown-icon-open {
+  @apply rotate-180;
+}
+
+.dropdown-menu {
+  @apply absolute left-0 mt-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44 border border-gray-200;
+}
+
+.dropdown-menu ul {
+  @apply py-2 text-sm text-gray-700;
+}
+
+.dropdown-menu-item {
+  @apply w-full text-left block px-4 py-2 hover:bg-gray-100 transition-colors duration-150;
 }
 
 .table-wrapper {
