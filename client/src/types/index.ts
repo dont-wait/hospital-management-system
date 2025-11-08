@@ -6,7 +6,9 @@ export enum Gender {
   Other = "O",
 }
 
-export type Role = "guest" | "admin" | "doctor" | "patient";
+export const roles = ["admin", "guest", "doctor", "patient"] as const;
+
+export type Role = typeof roles[number];
 
 export interface Patient {
   patientId: string;
