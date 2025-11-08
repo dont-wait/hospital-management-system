@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 public class RequestUpdateDoctorDTO
 {
-[Required]
+    [Required]
     [MaxLength(30)]
     public string FirstName { get; set; } = string.Empty;
 

@@ -7,57 +7,40 @@ public class UserAccountService : IUserAccountService
 {
     private readonly IUserAccountRepository _userAccountRepository;
     private readonly ICurrentUserService _currentUserService;
+    private readonly IUserAccountMapper _userAccountMapper;
+    private readonly IPatientMapper _patientMapper;
 
-    public UserAccountService(IUserAccountRepository userAccountRepository, ICurrentUserService currentUserService)
+    public UserAccountService(IUserAccountRepository userAccountRepository, ICurrentUserService currentUserService, IUserAccountMapper userAccountMapper, IPatientMapper patientMapper)
     {
         _userAccountRepository = userAccountRepository;
         _currentUserService = currentUserService;
+        _userAccountMapper = userAccountMapper;
+        _patientMapper = patientMapper;
     }
 
-    public async Task<ServiceResult<ResponseUpdatePatient>> UpdateUserAccount_Patient_Async(Guid patientId, RequestUpdatePatient request)
+    public async Task<ServiceResult<ResponsePatientDTO>> UpdateUserAccount_Patient_Async(Guid patientId, RequestUpdatePatient request)
     {
         var patientExisting = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId);
         if (patientExisting == null)
-            return ServiceResult<ResponseUpdatePatient>.Fail("Không tìm thấy thông tin người dùng");
-        
+            return ServiceResult<ResponsePatientDTO>.Fail("Không tìm thấy thông tin người dùng");
+
         var accountOfPatient = patientExisting.UserAccount;
         if (accountOfPatient == null)
-            return ServiceResult<ResponseUpdatePatient>.Fail("Không tìm thấy tài khoản người dùng");
+            return ServiceResult<ResponsePatientDTO>.Fail("Không tìm thấy tài khoản người dùng");
 
-        
         //TODO: Xac thuc phone
         if (patientExisting.PhoneNumber != request.PhoneNumber)
         {
             //implement it
         }
-        
-        // Cập nhật thông tin bệnh nhân
-        patientExisting.FirstName = request.FirstName;
-        patientExisting.LastName = request.LastName;
-        patientExisting.PhoneNumber = request.PhoneNumber;
-        patientExisting.Gender = request.Gender;
-        patientExisting.DateOfBirth = request.DateOfBirth;
-        patientExisting.Address = request.Address;
-        patientExisting.Nationality = request.Nationality;
-        patientExisting.PlaceOfResidence = request.PlaceOfResidence;
-        accountOfPatient.AvatarUrl = request.AvatarUrl;
-        
+        _userAccountMapper.Update(accountOfPatient, request);
+
         await _userAccountRepository.UpdateAccountAndPatientAsync(patientExisting, accountOfPatient);
+
         
-        ResponseUpdatePatient responsePatientDto = new ResponseUpdatePatient
-        {
-            PatientId = patientId,
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            PhoneNumber = request.PhoneNumber,
-            Gender = request.Gender,
-            DateOfBirth = request.DateOfBirth,
-            Address = request.Address,
-            Nationality = request.Nationality,
-            PlaceOfResidence = request.PlaceOfResidence,
-            AvatarUrl = request.AvatarUrl
-        };
-        return ServiceResult<ResponseUpdatePatient>.Success(responsePatientDto);
+        ResponsePatientDTO responsePatientDto = _patientMapper.MapToDto(patientExisting);
+
+        return ServiceResult<ResponsePatientDTO>.Success(responsePatientDto);
     }
 
     public Guid? CurrentUserId => _currentUserService.CurrentUserId;
@@ -87,15 +70,7 @@ public class UserAccountService : IUserAccountService
         if (patient == null)
             return ServiceResult<ResponsePatientDTO>.Fail("Tạo tài khoản thất bại.");
 
-        var responsePatientDto = new ResponsePatientDTO
-        {
-            PatientId = patient.Id,
-            FirstName = patient.FirstName,
-            LastName = patient.LastName,
-            PhoneNumber = patient.PhoneNumber,
-            Email = patient.Email,
-            RoleId = patient.RoleId,
-        };
+        ResponsePatientDTO responsePatientDto = _patientMapper.MapToDto(patient);
 
         return ServiceResult<ResponsePatientDTO>.Success(responsePatientDto);
     }
@@ -106,27 +81,7 @@ public class UserAccountService : IUserAccountService
         if (userAccount == null)
             return ServiceResult<ResponseUserDTO?>.Fail("Tài khoản không tồn tại.");
 
-        ResponseUserDTO userAccountDto = new ResponseUserDTO
-        {
-            UserAccountId = userAccount.Id,
-            CitizenID = userAccount.UserAccount.CitizenID,
-            AvatarUrl = userAccount.UserAccount?.AvatarUrl ?? string.Empty,
-            Is_Active = userAccount.UserAccount?.Is_Active ?? 0,
-            Patient = userAccount != null ? new ResponsePatientDTO
-            {
-                PatientId = userAccount.Id,
-                FirstName = userAccount.FirstName,
-                LastName = userAccount.LastName,
-                PhoneNumber = userAccount.PhoneNumber,
-                Email = userAccount.Email,
-                DateOfBirth = userAccount.DateOfBirth,
-                Gender = userAccount.Gender,
-                Nationality = userAccount.Nationality,
-                Address = userAccount.Address,
-                PlaceOfResidence = userAccount.PlaceOfResidence,
-                RoleId = userAccount.RoleId,
-            } : null,
-        };
+        var userAccountDto = _userAccountMapper.MapToDto(userAccount.UserAccount!);
 
         return ServiceResult<ResponseUserDTO?>.Success(userAccountDto);
     }

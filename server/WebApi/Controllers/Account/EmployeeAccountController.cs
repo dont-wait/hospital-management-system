@@ -36,30 +36,30 @@ public class EmployeeController : ControllerBase
 
     [HttpPut("doctor/{doctorId}")]
     [Authorize(Roles = "admin, doctor")]
-    public async Task<ApiResponse<ResponseUpdateDoctorDTO>> UpdateDoctorById(Guid doctorId, RequestUpdateDoctorDTO request)
+    public async Task<ApiResponse<ResponseDoctorDTO>> UpdateDoctorById(Guid doctorId, RequestUpdateDoctorDTO request)
     {
         string currentUserRole = _userAccountService.RoleId;
         
         if (!_userAccountService.CurrentUserId.HasValue)
-            return new ApiResponse<ResponseUpdateDoctorDTO>(401, "Không thể xác định người dùng hiện tại.");
+            return new ApiResponse<ResponseDoctorDTO>(401, "Không thể xác định người dùng hiện tại.");
             
         Guid currentUserId = _userAccountService.CurrentUserId.Value;
 
         if (currentUserRole != "admin" && currentUserId != doctorId)
-            return new ApiResponse<ResponseUpdateDoctorDTO>(403, "Bạn không có quyền thực hiện hành động này.");
+            return new ApiResponse<ResponseDoctorDTO>(403, "Bạn không có quyền thực hiện hành động này.");
 
         try
         {
-            ServiceResult<ResponseUpdateDoctorDTO> result = await _employeeAccountService.UpdateUserAccount_Doctor_Async(doctorId, request);
+            ServiceResult<ResponseDoctorDTO> result = await _employeeAccountService.UpdateUserAccount_Doctor_Async(doctorId, request);
             if (result.IsSuccess)
-                return new ApiResponse<ResponseUpdateDoctorDTO>(200, "Cập nhật thông tin tài khoản thành công.", result.Data);
+                return new ApiResponse<ResponseDoctorDTO>(200, "Cập nhật thông tin tài khoản thành công.", result.Data);
 
-            return new ApiResponse<ResponseUpdateDoctorDTO>(400, result.Message);
+            return new ApiResponse<ResponseDoctorDTO>(400, result.Message);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return new ApiResponse<ResponseUpdateDoctorDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+            return new ApiResponse<ResponseDoctorDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
         }
     }
 }

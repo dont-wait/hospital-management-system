@@ -1,3 +1,4 @@
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories.Account;
@@ -20,8 +21,6 @@ public class UserAccountRepository : IUserAccountRepository
 
         await _context.user_accounts.AddAsync(userAccount);
 
-        
-
         Patient patient = new Patient
         {
             FirstName = patientDto.FirstName,
@@ -29,6 +28,12 @@ public class UserAccountRepository : IUserAccountRepository
             PhoneNumber = patientDto.PhoneNumber,
             UserAccount = userAccount,
             Email = patientDto.Email,
+            DateOfBirth = patientDto.DateOfBirth,
+            Gender = patientDto.Gender,
+            Nationality = patientDto.Nationality,
+            Address = patientDto.Address,
+            PlaceOfResidence = patientDto.PlaceOfResidence,
+            RoleId = RoleEnum.patient.ToString().ToLower()
         };
 
         await _context.patients.AddAsync(patient);
@@ -76,7 +81,7 @@ public class UserAccountRepository : IUserAccountRepository
             .Include(ua => ua.Patient)
             .Include(ua => ua.Employee)
             .Where(ua => (ua.Patient != null && ua.Patient.Email == email) ||
-                         (ua.Employee != null && ua.Employee.Email == email))
+                        (ua.Employee != null && ua.Employee.Email == email))
             .FirstOrDefaultAsync();
     }
     public async Task UpdateSync(UserAccount userAccount)
