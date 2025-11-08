@@ -3,7 +3,7 @@
 import { AuthUserWithoutTokens, roles, Role } from "@/types";
 import styles from "@/styles/admin.module.css";
 import userStyles from "@/styles/admin-user-management.module.css";
-import { Eye, SquarePen, Trash2, ChevronDown } from "lucide-react";
+import { Eye, SquarePen, Trash2, ChevronDown, Search } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 interface UserListProps { 
@@ -24,6 +24,7 @@ export function UserList({ users }: UserListProps) {
 const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [selectedRole, setSelectedRole] = useState<Exclude<Role, "admin" | "guest">>("doctor");
+    const [searchTerm, setSearchTerm] = useState("");
 
     // Đóng dropdown khi click bên ngoài
     useEffect(() => {
@@ -63,6 +64,21 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
         return "N/A";
     };
 
+    const filteredUsers = users.filter((user) => {
+        const name = getUserName(user).toLowerCase();
+        const email = getUserEmail(user).toLowerCase();
+        const phone = getUserPhone(user);
+        const citizenID = user.citizenID.toLowerCase();
+        const search = searchTerm.toLowerCase();
+
+        return (
+            name.includes(search) ||
+            email.includes(search) ||
+            phone.includes(search) ||
+            citizenID.includes(search)
+        );
+    });
+
     return (
         <div className={styles["admin-container"]}>
             <div className={styles["dashboard-header"]}>
@@ -76,6 +92,17 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
                 <div className={userStyles["table-header"]}>
                     <h2 className={userStyles["table-title"]}>Danh sách người dùng</h2>
                     <div className="flex gap-3">
+                        <div className={userStyles["search-container"]}>
+                            <Search className={userStyles["search-icon"]} />
+                            <input
+                                type="text"
+                                placeholder="Tìm kiếm theo tên, email, SĐT, CCCD..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className={userStyles["search-input"]}
+                            />
+                        </div>
+                        
                         <div className={userStyles["dropdown-container"]} ref={dropdownRef}>
                             <button 
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -130,7 +157,7 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
                             </tr>
                         </thead>
                         <tbody>
-                            {users.map((user) => (
+                            {filteredUsers.map((user) => (
                                 <tr key={user.userAccountId}>
                                     <td>
                                         <img 
@@ -175,9 +202,14 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
                     </table>
                 </div>
 
-                {users.length === 0 && (
+                {filteredUsers.length === 0 && (
                     <div className={userStyles["empty-state"]}>
-                        <p>Không có người dùng nào trong hệ thống</p>
+                        <p>
+                            {searchTerm 
+                                ? `Không tìm thấy người dùng nào với từ khóa "${searchTerm}"`
+                                : "Không có người dùng nào trong hệ thống"
+                            }
+                        </p>
                     </div>
                 )}
             </div>
