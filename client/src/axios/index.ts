@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { ToastDefaultConfig } from "@/config";
 import { AuthErrorResponse } from "@/types";
 
@@ -85,3 +85,14 @@ export const apiSSR = axios.create({
     Expires: "0",
   },
 });
+
+export const getConfig = (token?: string): AxiosRequestConfig | undefined => {
+    return token ? {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+    } : undefined;
+}
+
+export const getApiInstance = (token?: string) => {
+    return token ? apiSSR : api;
+}

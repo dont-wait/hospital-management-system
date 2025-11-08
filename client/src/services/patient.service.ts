@@ -1,5 +1,6 @@
-import api from "@/axios";
+import api, { getApiInstance, getConfig } from "@/axios";
 import type { PatientUpdateDto } from "@/schemas";
+import { AuthUserWithoutTokens } from "@/types";
 
 export class PatientService {
   static async updatePatient(
@@ -12,5 +13,17 @@ export class PatientService {
       patientUpdateInfo,
     );
     return { ...response.data, email };
+  }
+
+  public static async getAllPatients(token?: string): Promise<AuthUserWithoutTokens[]> {
+    const apiInstance = getApiInstance(token);
+    const config = getConfig(token);
+    
+    const response = await apiInstance.get<{ data: AuthUserWithoutTokens[] }>(
+        "/admin/patients",
+        config
+    );
+    
+    return response.data.data;
   }
 }
