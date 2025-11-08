@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 public class RequestUserDTO
 {
     [Required]
-    [StringLength(12, ErrorMessage = "CCCD phải có 12 ký tự.")]
+    [StringLength(12, MinimumLength = 12, ErrorMessage = "CCCD phải có 12 ký tự.")]
     public string CitizenID { get; set; } = string.Empty;
 
     [Required]

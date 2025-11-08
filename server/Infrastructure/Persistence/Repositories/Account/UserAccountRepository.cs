@@ -81,7 +81,7 @@ public class UserAccountRepository : IUserAccountRepository
             .Include(ua => ua.Patient)
             .Include(ua => ua.Employee)
             .Where(ua => (ua.Patient != null && ua.Patient.Email == email) ||
-                         (ua.Employee != null && ua.Employee.Email == email))
+                        (ua.Employee != null && ua.Employee.Email == email))
             .FirstOrDefaultAsync();
     }
     public async Task UpdateSync(UserAccount userAccount)
