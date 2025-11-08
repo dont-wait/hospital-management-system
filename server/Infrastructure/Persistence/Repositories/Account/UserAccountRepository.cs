@@ -1,3 +1,4 @@
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories.Account;
@@ -32,7 +33,7 @@ public class UserAccountRepository : IUserAccountRepository
             Nationality = patientDto.Nationality,
             Address = patientDto.Address,
             PlaceOfResidence = patientDto.PlaceOfResidence,
-            RoleId = "patient"
+            RoleId = RoleEnum.patient.ToString().ToLower()
         };
 
         await _context.patients.AddAsync(patient);

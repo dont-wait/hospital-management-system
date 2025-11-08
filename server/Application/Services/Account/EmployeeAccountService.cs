@@ -95,7 +95,7 @@ public class EmployeeAccountService : IEmployeeAccountService
                     DateOfBirth = employee.DateOfBirth,
                     Gender = employee.Gender,
                     HireDate = employee.HireDate,
-                    RoleId = employee.RoleId
+                    RoleId = RoleEnum.admin.ToString().ToLower()
                 };
             }
             else

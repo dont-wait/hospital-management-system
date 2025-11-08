@@ -1,3 +1,5 @@
+using Domain.Enums;
+
 public class DoctorMapper : IDoctorMapper
 {
     public ResponseDoctorDTO MapToDto(Doctor doctor)
@@ -39,7 +41,7 @@ public class DoctorMapper : IDoctorMapper
                 DateOfBirth = doctorDto.DateOfBirth,
                 Gender = doctorDto.Gender,
                 HireDate = doctorDto.HireDate,
-                RoleId = "doctor"
+                RoleId = RoleEnum.doctor.ToString().ToLower()
             }
         };
     }
@@ -58,7 +60,7 @@ public class DoctorMapper : IDoctorMapper
             doctor.Employee.DateOfBirth = doctorDto.DateOfBirth;
             doctor.Employee.Gender = doctorDto.Gender;
             doctor.Employee.HireDate = doctorDto.HireDate;
-            doctor.Employee.RoleId = "doctor";
+            doctor.Employee.RoleId =RoleEnum.doctor.ToString().ToLower();
             doctor.Employee.UserAccount.AvatarUrl = doctorDto.AvatarUrl;
         }
     }

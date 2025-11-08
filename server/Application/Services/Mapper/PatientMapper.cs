@@ -1,4 +1,5 @@
 using Application.Common.DTOs.Patient;
+using Domain.Enums;
 
 public class PatientMapper : IPatientMapper
 {
@@ -18,7 +19,7 @@ public class PatientMapper : IPatientMapper
             Nationality = patient.Nationality,
             Address = patient.Address,
             PlaceOfResidence = patient.PlaceOfResidence,
-            RoleId = "patient"
+            RoleId = RoleEnum.patient.ToString().ToLower()
         };
     }
 
@@ -35,7 +36,7 @@ public class PatientMapper : IPatientMapper
             Nationality = patientDto.Nationality,
             Address = patientDto.Address,
             PlaceOfResidence = patientDto.PlaceOfResidence,
-            RoleId = "patient",
+            RoleId = RoleEnum.patient.ToString().ToLower(),
             UserAccount = new UserAccount
             {
                 AvatarUrl = patientDto.AvatarUrl,
