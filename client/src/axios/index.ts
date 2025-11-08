@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { toast } from "react-toastify";
 import { ToastDefaultConfig } from "@/config";
 import { AuthErrorResponse } from "@/types";
 
@@ -14,15 +13,23 @@ const api = axios.create({
   withCredentials: true,
 });
 
-const handleValidationErrors = (data: AuthErrorResponse) => {
+// Dynamic import toast để tránh lỗi SSR
+const showToast = async (message: string, type: "success" | "error" | "info" = "info") => {
+  if (typeof window !== "undefined") {
+    const { toast } = await import("react-toastify");
+    toast[type](message, ToastDefaultConfig);
+  }
+};
+
+const handleValidationErrors = async (data: AuthErrorResponse) => {
   if (data.errors) {
     Object.values(data.errors)
       .flat()
       .forEach((err) => {
-        toast.error(err, ToastDefaultConfig);
+        showToast(err, "error");
       });
   } else if (data.message) {
-    toast.error(data.message, ToastDefaultConfig);
+    showToast(data.message, "error");
   }
 };
 
@@ -34,11 +41,11 @@ api.interceptors.response.use(
     const { status, message } = response.data;
 
     if (status >= 400) {
-      toast.error(message, ToastDefaultConfig);
+      showToast(message, "error");
       return Promise.reject(response);
     }
 
-    toast.success(message, ToastDefaultConfig);
+    showToast(message, "success");
     return response;
   },
   (
@@ -51,14 +58,14 @@ api.interceptors.response.use(
           handleValidationErrors(data);
           break;
         case 401:
-          toast.error("Phiên đăng nhập hết hạn", ToastDefaultConfig);
+          showToast("Phiên đăng nhập hết hạn", "error");
           break;
         case 500:
-          toast.error("Lỗi máy chủ. Vui lòng thử lại sau", ToastDefaultConfig);
+          showToast("Lỗi máy chủ. Vui lòng thử lại sau", "error");
           break;
 
         default:
-          toast.error("Có lỗi xảy ra. Vui lòng thử lại", ToastDefaultConfig);
+          showToast("Có lỗi xảy ra. Vui lòng thử lại", "error");
       }
     }
 
@@ -67,3 +74,14 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+// API instance cho SSR
+export const apiSSR = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
+  },
+});
