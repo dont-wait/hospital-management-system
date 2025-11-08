@@ -23,7 +23,7 @@ const roleIdToName: Record<string, string> = {
 export function UserList({ users }: UserListProps) {
 const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const [selectedRole, setSelectedRole] = useState<Omit<Role, "admin" | "guest">>("doctor");
+    const [selectedRole, setSelectedRole] = useState<Exclude<Role, "admin" | "guest">>("doctor");
 
     // Đóng dropdown khi click bên ngoài
     useEffect(() => {
@@ -82,7 +82,7 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
                                 className={userStyles["dropdown-btn"]}
                                 type="button"
                             >
-                                Bộ lọc 
+                                {roleIdToName[selectedRole] || selectedRole}
                                 <ChevronDown className={`${userStyles["dropdown-icon"]} ${isDropdownOpen ? userStyles["dropdown-icon-open"] : ''}`} />
                             </button>
                             
