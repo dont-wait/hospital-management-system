@@ -67,26 +67,26 @@ public class AccountController : ControllerBase
 
     [HttpPut("patient/{patientId}")]
     [Authorize(Roles = "patient, admin")]
-    public async Task<ApiResponse<ResponseUpdatePatient>> UpdateUserById(Guid patientId, RequestUpdatePatient request)
+    public async Task<ApiResponse<ResponsePatientDTO>> UpdateUserById(Guid patientId, RequestUpdatePatient request)
     {
         var currentUserRole = _userAccountService.RoleId;
         var currentUserId = _userAccountService.CurrentUserId;
         try
         {
             if (currentUserRole == "patient" && !currentUserId.Equals(patientId))
-                return new ApiResponse<ResponseUpdatePatient>(403,
+                return new ApiResponse<ResponsePatientDTO>(403,
                     "Bạn không có quyền cập nhật thông tin cho người dùng này.");
 
             var updatedPatientAndAccount = await _userAccountService.UpdateUserAccount_Patient_Async(patientId, request);
             if (!updatedPatientAndAccount.IsSuccess)
-                return new ApiResponse<ResponseUpdatePatient>(404, updatedPatientAndAccount.Message);
+                return new ApiResponse<ResponsePatientDTO>(404, updatedPatientAndAccount.Message);
 
-            return new ApiResponse<ResponseUpdatePatient>(200, "Thông tin của bạn đã được cập nhật thành công", updatedPatientAndAccount.Data);
+            return new ApiResponse<ResponsePatientDTO>(200, "Thông tin của bạn đã được cập nhật thành công", updatedPatientAndAccount.Data);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return new ApiResponse<ResponseUpdatePatient>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+            return new ApiResponse<ResponsePatientDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
         }        
     }
 }

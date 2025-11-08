@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Application.Common.Utils;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 public static class DataSeeder
@@ -37,7 +38,7 @@ public static class DataSeeder
             Email = adminData.Email,
             HireDate = DateTime.UtcNow,
             CertificateNumber = adminData.CertificateNumber,
-            RoleId = "admin"
+            RoleId = RoleEnum.admin.ToString().ToLower()
         };
         context.employees.Add(employee);
 
