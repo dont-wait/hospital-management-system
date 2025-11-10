@@ -7,6 +7,7 @@ import { Eye, SquarePen, Trash2, ChevronDown, Search } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { getUserRole, getUserName, getUserEmail, getUserPhone, roleIdToName } from "@/lib/helper";
 import { UserDetail } from "./UserDetail";
+import { EmployeeUpdateModal } from "@/components/Employee";
 
 interface UserListProps { 
     users: AuthUserWithoutTokens[];
@@ -22,7 +23,9 @@ export function UserList({ users }: UserListProps) {
     const [selectedRole, setSelectedRole] = useState<Exclude<Role, "admin" | "guest">>("doctor");
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedUser, setSelectedUser] = useState<AuthUserWithoutTokens | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedUpdateUser, setSelectedUpdateUser] = useState<AuthUserWithoutTokens | null>(null);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
     // Đóng dropdown khi click bên ngoài
     useEffect(() => {
@@ -55,7 +58,18 @@ export function UserList({ users }: UserListProps) {
 
     const handleViewUser = (user: AuthUserWithoutTokens) => {
         setSelectedUser(user);
-        setIsModalOpen(true);
+        setIsViewModalOpen(true);
+    };
+
+    const handleUpdateUser = (user: AuthUserWithoutTokens) => {
+        setSelectedUpdateUser(user);
+        setIsUpdateModalOpen(true);
+    };
+
+    const handleUpdateSuccess = (updatedEmployee: AuthUserWithoutTokens) => {
+        // TODO: Cập nhật lại danh sách users sau khi update thành công
+        console.log("Employee updated:", updatedEmployee);
+        // Có thể trigger refetch data ở đây
     };
 
     return (
@@ -172,7 +186,11 @@ export function UserList({ users }: UserListProps) {
                                                 >
                                                     <Eye />
                                                 </button>
-                                                <button className={userStyles["btn-edit"]} title="Chỉnh sửa">
+                                                <button 
+                                                    className={userStyles["btn-edit"]} 
+                                                    title="Chỉnh sửa"
+                                                    onClick={() => handleUpdateUser(user)}
+                                                >
                                                     <SquarePen />
                                                 </button>
                                                 <button className={userStyles["btn-delete"]} title="Xóa">
@@ -201,8 +219,17 @@ export function UserList({ users }: UserListProps) {
             {selectedUser && (
                 <UserDetail
                     user={selectedUser}
-                    isOpen={isModalOpen}
-                    setIsOpen={setIsModalOpen}
+                    isOpen={isViewModalOpen}
+                    setIsOpen={setIsViewModalOpen}
+                />
+            )}
+            {selectedUpdateUser && selectedUpdateUser.employee && (
+                <EmployeeUpdateModal
+                    isOpen={isUpdateModalOpen}
+                    setIsOpen={setIsUpdateModalOpen}
+                    employee={selectedUpdateUser}
+                    isAdmin={true}
+                    onSuccess={handleUpdateSuccess}
                 />
             )}
         </>
