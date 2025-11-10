@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110041521_AddMissingEntityInheritBaseEntity")]
+    partial class AddMissingEntityInheritBaseEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,7 +59,7 @@ namespace server.Migrations
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
-                    b.ToTable("admins", (string)null);
+                    b.ToTable("admins");
                 });
 
             modelBuilder.Entity("Doctor", b =>
@@ -99,7 +102,7 @@ namespace server.Migrations
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
-                    b.ToTable("doctors", (string)null);
+                    b.ToTable("doctors");
                 });
 
             modelBuilder.Entity("Employee", b =>
@@ -174,7 +177,7 @@ namespace server.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("employees", (string)null);
+                    b.ToTable("employees");
                 });
 
             modelBuilder.Entity("Patient", b =>
@@ -255,7 +258,7 @@ namespace server.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("patients", (string)null);
+                    b.ToTable("patients");
                 });
 
             modelBuilder.Entity("Permission", b =>
@@ -290,7 +293,7 @@ namespace server.Migrations
 
                     b.HasKey("PermissionId");
 
-                    b.ToTable("permissions", (string)null);
+                    b.ToTable("permissions");
                 });
 
             modelBuilder.Entity("RolePermission", b =>
@@ -326,7 +329,7 @@ namespace server.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("role_permission", (string)null);
+                    b.ToTable("role_permission");
                 });
 
             modelBuilder.Entity("Roles", b =>
@@ -362,7 +365,7 @@ namespace server.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("roles", (string)null);
+                    b.ToTable("roles");
                 });
 
             modelBuilder.Entity("UserAccount", b =>
@@ -425,7 +428,7 @@ namespace server.Migrations
                         .IsUnique()
                         .HasFilter("[PatientId] IS NOT NULL");
 
-                    b.ToTable("user_accounts", (string)null);
+                    b.ToTable("user_accounts");
                 });
 
             modelBuilder.Entity("Admin", b =>

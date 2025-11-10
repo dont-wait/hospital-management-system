@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("permissions")]
-public class Permission
+public class Permission : BaseEntity
 {
     [Key]
     public string PermissionId { get; set; } = string.Empty;

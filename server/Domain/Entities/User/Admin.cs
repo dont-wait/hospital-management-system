@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("admins")]
-public class Admin
+public class Admin : BaseEntity
 {
     [Key]
     public Guid Id { get; set; }

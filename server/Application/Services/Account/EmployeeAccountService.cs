@@ -51,7 +51,7 @@ public class EmployeeAccountService : IEmployeeAccountService
     public async Task<ServiceResult<ResponseDoctorDTO>> UpdateUserAccount_Doctor_Async(Guid doctorId, RequestUpdateDoctorDTO request)
     {
         Doctor? existingDoctor = await _employeeRepository.FindDoctorWithAccountByIdAsync(doctorId);
-        if (existingDoctor == null)
+        if (existingDoctor == null || existingDoctor.Employee == null || existingDoctor.Employee.DeletedAt != null)
             return ServiceResult<ResponseDoctorDTO>.Fail("Không tìm thấy thông tin người dùng");
 
 
@@ -69,7 +69,7 @@ public class EmployeeAccountService : IEmployeeAccountService
     public async Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId)
     {
         var userAccount = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
-        if (userAccount == null)
+        if (userAccount == null || userAccount.DeletedAt != null)
             return ServiceResult<ResponseUserDTO?>.Fail("Nhân viên không tồn tại.");
 
         ResponseEmployeeDTO? employeeDto = null;
@@ -134,9 +134,22 @@ public class EmployeeAccountService : IEmployeeAccountService
             AvatarUrl = doctor.Employee.UserAccount.AvatarUrl,
             Is_Active = doctor.Employee.UserAccount.Is_Active,
             CitizenID = doctor.CitizenID,
-            Employee = doctor.Employee != null ? _doctorMapper.MapToDto(doctor.Employee.Doctor!) : null
+            Employee = doctor.Employee != null && doctor.Employee.DeletedAt == null ? _doctorMapper.MapToDto(doctor.Employee.Doctor!) : null
         }).ToList();
 
         return ServiceResult<List<ResponseUserDTO>>.Success(responseDoctors);
+    }
+
+    public async Task<ServiceResult<bool>> DeleteEmployeeByIdAsync(Guid employeeId)
+    {
+        var userAccount = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
+        if (userAccount == null || userAccount.Employee == null || userAccount.DeletedAt != null)
+            return ServiceResult<bool>.Fail("Nhân viên không tồn tại.");
+
+        bool isDeleted = await _employeeRepository.DeleteEmployeeByIdAsync(userAccount.Employee);
+        if (!isDeleted)
+            return ServiceResult<bool>.Fail("Xóa nhân viên thất bại.");
+
+        return ServiceResult<bool>.Success(true);
     }
 }

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("user_accounts")]
-public class UserAccount
+public class UserAccount : BaseEntity
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();

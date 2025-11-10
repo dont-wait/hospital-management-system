@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("patients")]
-public class Patient
+public class Patient : BaseEntity
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -38,7 +38,7 @@ public class Patient
     [MaxLength(10)]
     public string PhoneNumber { get; set; } = string.Empty;
 
-    public DateTime RegistrationDate { get; set; } = DateTime.Now;
+    public DateTimeOffset RegistrationDate { get; set; } = DateTimeOffset.UtcNow;
 
     public UserAccount UserAccount { get; set; } = null!;
 
