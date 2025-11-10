@@ -85,7 +85,40 @@ public class EmployeeRepository : IEmployeeRepository
     {
         _context.user_accounts.Update(userAccount);
         _context.doctors.Update(doctor);
+        _context.employees.Update(doctor.Employee!);
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> DeleteEmployeeByIdAsync(Employee employee)
+    {
+        var userAccount = await _context.user_accounts
+            .Include(ua => ua.Employee)
+                .ThenInclude(e => e!.Doctor)
+            .Include(ua => ua.Employee)
+                .ThenInclude(e => e!.Admin)
+            .FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employee.Id);
+
+        if(userAccount == null)
+        {
+            return false;
+        }
+        _context.user_accounts.Remove(userAccount);
+        switch(userAccount.Employee!.RoleId)
+        {
+            case "doctor":
+                if (userAccount.Employee.Doctor != null)
+                    _context.doctors.Remove(userAccount.Employee.Doctor);
+                break;
+            case "admin":
+                if (userAccount.Employee.Admin != null)
+                    _context.admins.Remove(userAccount.Employee.Admin);
+                break;
+            default:
+                break;
+        }
+        _context.employees.Remove(userAccount.Employee);
+
+        return await _context.SaveChangesAsync() > 0;
     }
 }

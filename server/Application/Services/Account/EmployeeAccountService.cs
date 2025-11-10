@@ -139,4 +139,17 @@ public class EmployeeAccountService : IEmployeeAccountService
 
         return ServiceResult<List<ResponseUserDTO>>.Success(responseDoctors);
     }
+
+    public async Task<ServiceResult<bool>> DeleteEmployeeByIdAsync(Guid employeeId)
+    {
+        var userAccount = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
+        if (userAccount == null || userAccount.Employee == null)
+            return ServiceResult<bool>.Fail("Nhân viên không tồn tại.");
+
+        bool isDeleted = await _employeeRepository.DeleteEmployeeByIdAsync(userAccount.Employee);
+        if (!isDeleted)
+            return ServiceResult<bool>.Fail("Xóa nhân viên thất bại.");
+
+        return ServiceResult<bool>.Success(true);
+    }
 }

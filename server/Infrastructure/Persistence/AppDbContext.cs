@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Namotion.Reflection;
 
 public class AppDbContext : DbContext
 {
@@ -76,8 +77,11 @@ public class AppDbContext : DbContext
                     entry.State = EntityState.Modified;
                     entry.Entity.DeletedId = _currentUserService.CurrentUserId;
                     entry.Entity.DeletedAt = DateTimeOffset.UtcNow;
+                    entry.Property(_ => _.CreatedId).IsModified = false;
+                    entry.Property(_ => _.CreatedAt).IsModified = false;
+                    entry.Property(_ => _.ModifiedId).IsModified = false;
+                    entry.Property(_ => _.UpdatedAt).IsModified = false;
                     break;
-
             }
         }
         return base.SaveChangesAsync(cancellationToken);
