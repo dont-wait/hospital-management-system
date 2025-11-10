@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Application.Common.Utils;
 
 namespace WebApi.Controllers.Account;
+
 [Route("api/[controller]")]
 [ApiController]
 public class EmployeeController : ControllerBase
@@ -39,10 +40,10 @@ public class EmployeeController : ControllerBase
     public async Task<ApiResponse<ResponseDoctorDTO>> UpdateDoctorById(Guid doctorId, RequestUpdateDoctorDTO request)
     {
         string currentUserRole = _userAccountService.RoleId;
-        
+
         if (!_userAccountService.CurrentUserId.HasValue)
             return new ApiResponse<ResponseDoctorDTO>(401, "Không thể xác định người dùng hiện tại.");
-            
+
         Guid currentUserId = _userAccountService.CurrentUserId.Value;
 
         if (currentUserRole != "admin" && currentUserId != doctorId)
@@ -60,6 +61,24 @@ public class EmployeeController : ControllerBase
         {
             Console.WriteLine(ex);
             return new ApiResponse<ResponseDoctorDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+        }
+    }
+
+    [HttpDelete("{employeeId}")]
+    [Authorize(Roles = "admin")]
+    public async Task<ApiResponse<string>> DeleteEmployeeById(Guid employeeId)
+    {
+        try
+        {
+            var result = await _employeeAccountService.DeleteEmployeeByIdAsync(employeeId);
+            if (result.IsSuccess)
+                return new ApiResponse<string>(200, "Xóa tài khoản nhân viên thành công.", null);
+            return new ApiResponse<string>(404, result.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
         }
     }
 }
