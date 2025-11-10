@@ -31,7 +31,7 @@ export function EmployeeUpdateModal({
                 setIsOpen(false);
             }}
             title={isAdmin ? "Chỉnh sửa thông tin nhân viên" : "Cập nhật thông tin của bạn"}
-            maxWidth="lg"
+            maxWidth="xl"
         >
             <UpdateEmployeeForm
                 employee={employee}
