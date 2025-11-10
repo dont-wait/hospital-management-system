@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("roles")]
-public class Roles
+public class Roles : BaseEntity
 {
     [Key]
     [StringLength(20)]
