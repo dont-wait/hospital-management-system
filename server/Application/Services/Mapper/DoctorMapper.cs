@@ -46,7 +46,7 @@ public class DoctorMapper : IDoctorMapper
         };
     }
 
-    public void Update(Doctor doctor, RequestUpdateDoctorDTO doctorDto)
+    public void Update(Doctor doctor, RequestUpdateEmployeeDTO doctorDto)
     {
         // Cập nhật các thuộc tính của Doctor
         doctor.Specialization = doctorDto.Specialization;
