@@ -42,7 +42,6 @@ export const employeeUpdateFullSchema = z.object({
     .min(1, "Chứng chỉ hành nghề là bắt buộc")
     .max(50, "Chứng chỉ hành nghề không được quá 50 ký tự"),
   avatarUrl: z.string().url("URL avatar không hợp lệ").optional(),
-  is_Active: z.boolean(),
 });
 
 export type EmployeeUpdateLimitedDto = z.infer<typeof employeeUpdateLimitedSchema>;

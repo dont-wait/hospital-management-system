@@ -20,7 +20,7 @@ import { AuthUserWithoutTokens } from "@/types";
 import { GENDER_OPTIONS } from "@/config";
 import { DoctorService } from "@/services/doctor.service";
 import authStyles from "@/styles/auth.module.css";
-import patientStyles from "@/styles/patient.module.css";
+import styles from "@/styles/employee-update.module.css";
 
 interface UpdateEmployeeFormProps {
   employee: AuthUserWithoutTokens;
@@ -47,7 +47,6 @@ export function UpdateEmployeeForm({
         specialization: employee.employee?.specialization || "",
         certificateNumber: employee.employee?.certificateNumber || "",
         avatarUrl: employee.employee?.avatarUrl || "",
-        is_Active: employee.is_Active ?? true,
       };
     } else {
       return {
@@ -92,7 +91,7 @@ export function UpdateEmployeeForm({
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className="space-y-6"
+      className={styles["form-container"]}
     >
       <AvatarField
         initialUrl={employee?.avatarUrl}
@@ -103,8 +102,8 @@ export function UpdateEmployeeForm({
 
       {isAdmin ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
+          <div className={styles["grid-layout"]}>
+            <div className={styles["column"]}>
               <FormField
                 id="firstName"
                 label="Họ và tên đệm"
@@ -139,7 +138,7 @@ export function UpdateEmployeeForm({
               />
             </div>
 
-            <div className="space-y-4">
+            <div className={styles["column"]}>
               <FormField
                 id="specialization"
                 label="Chuyên khoa"
@@ -170,25 +169,11 @@ export function UpdateEmployeeForm({
                 errors={errors}
                 options={[...GENDER_OPTIONS]}
               />
-
-              {/* Trạng thái hoạt động */}
-              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    {...register("is_Active")}
-                    className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer"
-                  />
-                  <span className="text-sm font-medium text-gray-700">
-                    Kích hoạt tài khoản
-                  </span>
-                </label>
-              </div>
             </div>
           </div>
         </>
       ) : (
-        <div className="max-w-md mx-auto space-y-4">
+        <div className={styles["employee-limited-layout"]}>
           <FormField
             id="email"
             type="email"
@@ -208,12 +193,12 @@ export function UpdateEmployeeForm({
         </div>
       )}
 
-      <div className="flex gap-3 justify-end mt-6 pt-6 border-t border-gray-200">
+      <div className={styles["form-actions"]}>
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-200 font-medium"
+            className={styles["cancel-button"]}
           >
             Hủy
           </button>
