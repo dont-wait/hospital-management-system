@@ -105,4 +105,23 @@ public class UserAccountRepository : IUserAccountRepository
         _context.user_accounts.Update(userAccount);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<bool> DeletePatientByIdAsync(Guid patientId)
+    {
+        var patient = await _context.patients
+            .Include(p => p.UserAccount)
+            .FirstOrDefaultAsync(p => p.Id == patientId);
+
+        if (patient == null)
+            return false;
+
+        if (patient.UserAccount != null)
+        {
+            _context.user_accounts.Remove(patient.UserAccount);
+        }
+
+        _context.patients.Remove(patient);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

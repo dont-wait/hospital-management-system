@@ -56,7 +56,7 @@ namespace server.Migrations
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
-                    b.ToTable("admins");
+                    b.ToTable("admins", (string)null);
                 });
 
             modelBuilder.Entity("Doctor", b =>
@@ -99,7 +99,7 @@ namespace server.Migrations
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
-                    b.ToTable("doctors");
+                    b.ToTable("doctors", (string)null);
                 });
 
             modelBuilder.Entity("Employee", b =>
@@ -174,7 +174,7 @@ namespace server.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("employees");
+                    b.ToTable("employees", (string)null);
                 });
 
             modelBuilder.Entity("Patient", b =>
@@ -255,7 +255,7 @@ namespace server.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("patients");
+                    b.ToTable("patients", (string)null);
                 });
 
             modelBuilder.Entity("Permission", b =>
@@ -290,7 +290,7 @@ namespace server.Migrations
 
                     b.HasKey("PermissionId");
 
-                    b.ToTable("permissions");
+                    b.ToTable("permissions", (string)null);
                 });
 
             modelBuilder.Entity("RolePermission", b =>
@@ -326,7 +326,7 @@ namespace server.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("role_permission");
+                    b.ToTable("role_permission", (string)null);
                 });
 
             modelBuilder.Entity("Roles", b =>
@@ -362,7 +362,7 @@ namespace server.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("roles");
+                    b.ToTable("roles", (string)null);
                 });
 
             modelBuilder.Entity("UserAccount", b =>
@@ -425,7 +425,7 @@ namespace server.Migrations
                         .IsUnique()
                         .HasFilter("[PatientId] IS NOT NULL");
 
-                    b.ToTable("user_accounts");
+                    b.ToTable("user_accounts", (string)null);
                 });
 
             modelBuilder.Entity("Admin", b =>
