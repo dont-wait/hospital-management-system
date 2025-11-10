@@ -121,9 +121,14 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<ResponseUserDTO?>.Success(responseUserDto);
     }
 
-    public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllDoctorsAsync()
+    public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllEmployeesByRoleIdAsync(string roleId)
     {
-        List<UserAccount>? doctors = await _employeeRepository.GetAllDoctorAsync();
+        if (string.IsNullOrWhiteSpace(roleId) ||
+            (roleId.ToLower() != RoleEnum.doctor.ToString().ToLower() &&
+             roleId.ToLower() != RoleEnum.admin.ToString().ToLower()))
+            return ServiceResult<List<ResponseUserDTO>>.Fail("Vai trò không hợp lệ.");
+
+        List<UserAccount>? doctors = await _employeeRepository.GetAllEmployeeByRoleIdAsync(roleId);
 
         if (doctors == null || doctors.Count == 0)
             return ServiceResult<List<ResponseUserDTO>>.Fail("Không tìm thấy bác sĩ nào");

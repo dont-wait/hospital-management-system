@@ -35,6 +35,17 @@ public class EmployeeController : ControllerBase
         }
     }
 
+    [HttpGet("employees")]
+    [Authorize(Roles = "admin")]
+    public async Task<ApiResponse<List<ResponseUserDTO>>> GetAllEmployeesByRoleIdAsync(string roleId)
+    {
+        var result = await _employeeAccountService.GetAllEmployeesByRoleIdAsync(roleId);
+        if (!result.IsSuccess)
+            return new ApiResponse<List<ResponseUserDTO>>(400, result.Message);
+
+        return new ApiResponse<List<ResponseUserDTO>>(200, "Lấy danh sách bác sĩ thành công", result.Data);
+    }
+
     [HttpPut("doctor/{doctorId}")]
     [Authorize(Roles = "admin, doctor")]
     public async Task<ApiResponse<ResponseDoctorDTO>> UpdateDoctorById(Guid doctorId, RequestUpdateDoctorDTO request)

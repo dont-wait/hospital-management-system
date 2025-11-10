@@ -11,15 +11,26 @@ public class EmployeeRepository : IEmployeeRepository
         _context = context;
     }
 
-    public async Task<List<UserAccount>?> GetAllDoctorAsync()
+    public async Task<List<UserAccount>?> GetAllEmployeeByRoleIdAsync(string roleId)
     {
-        var doctors = await _context.user_accounts
-            .Include(d => d.Employee)
-                .ThenInclude(e => e!.Doctor)
-            .Where(ua => ua.Employee != null && ua.Employee.Doctor != null)
-                .ToListAsync();
+        var employees = _context.user_accounts
+            .Include(e => e.Employee).AsQueryable();
 
-        return doctors;
+        employees = roleId.ToLower() switch
+        {
+            "doctor" => employees
+                .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.doctor.ToString().ToLower())
+                .Include(ua => ua.Employee!.Doctor),
+
+            "admin" => employees
+                .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.admin.ToString().ToLower())
+                .Include(ua => ua.Employee!.Admin),
+
+            _ => employees
+                .Where(ua => ua.Employee != null && ua.Employee.RoleId == roleId.ToLower())
+        };
+
+        return await employees.ToListAsync();
     }
 
     public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto)
