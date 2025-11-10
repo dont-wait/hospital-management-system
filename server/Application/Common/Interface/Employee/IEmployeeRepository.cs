@@ -1,9 +1,8 @@
 public interface IEmployeeRepository
 {
     Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto);
-    Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId);
-    Task<Doctor?> FindDoctorWithAccountByIdAsync(Guid doctorId);
+    Task<UserAccount?> GetEmployeeByIdAndRoleIdAsync(Guid employeeId, string roleId);
     Task<List<UserAccount>?> GetAllEmployeeByRoleIdAsync(string roleId);
-    Task UpdateAccountAndDoctorAsync(Doctor doctor, UserAccount userAccount);
+    Task UpdateEmployeeAsync<T>(T employee, UserAccount userAccount) where T : Employee;
     Task<bool> DeleteEmployeeByIdAsync(Employee employee);
 }

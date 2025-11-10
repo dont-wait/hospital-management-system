@@ -48,27 +48,27 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }
 
-    public async Task<ServiceResult<ResponseDoctorDTO>> UpdateUserAccount_Doctor_Async(Guid doctorId, RequestUpdateDoctorDTO request)
+    public async Task<ServiceResult<ResponseEmployeeDTO>> UpdateEmployeeAsync(Guid employeeId, string roleId, RequestUpdateEmployeeDTO request)
     {
-        Doctor? existingDoctor = await _employeeRepository.FindDoctorWithAccountByIdAsync(doctorId);
-        if (existingDoctor == null || existingDoctor.Employee == null || existingDoctor.Employee.DeletedAt != null)
-            return ServiceResult<ResponseDoctorDTO>.Fail("Không tìm thấy thông tin người dùng");
+        UserAccount? existingEmployee = await _employeeRepository.GetEmployeeByIdAndRoleIdAsync(employeeId, roleId);
+        if (existingEmployee == null || existingEmployee.Employee == null || existingEmployee.Employee.DeletedAt != null)
+            return ServiceResult<ResponseEmployeeDTO>.Fail("Không tìm thấy thông tin người dùng");
 
 
-        var accountOfDoctor = existingDoctor.Employee.UserAccount;
+        var accountOfDoctorEmployee = existingEmployee.Employee.UserAccount;
 
-        _doctorMapper.Update(existingDoctor, request);
+        _doctorMapper.Update(existingEmployee.Employee.Doctor, request);
 
-        await _employeeRepository.UpdateAccountAndDoctorAsync(existingDoctor, accountOfDoctor);
+        await _employeeRepository.UpdateEmployeeAsync(existingEmployee.Employee, accountOfDoctorEmployee);
 
-        ResponseDoctorDTO responseDoctorDto = _doctorMapper.MapToDto(existingDoctor);
+        ResponseEmployeeDTO responseDoctorDto = _doctorMapper.MapToDto(existingEmployee.Employee.Doctor);
 
-        return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
+        return ServiceResult<ResponseEmployeeDTO>.Success(responseDoctorDto);
     }
 
-    public async Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId)
+    public async Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId, string roleId)
     {
-        var userAccount = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
+        var userAccount = await _employeeRepository.GetEmployeeByIdAndRoleIdAsync(employeeId, roleId);
         if (userAccount == null || userAccount.DeletedAt != null)
             return ServiceResult<ResponseUserDTO?>.Fail("Nhân viên không tồn tại.");
 
@@ -145,9 +145,9 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<List<ResponseUserDTO>>.Success(responseDoctors);
     }
 
-    public async Task<ServiceResult<bool>> DeleteEmployeeByIdAsync(Guid employeeId)
+    public async Task<ServiceResult<bool>> DeleteEmployeeByIdAsync(Guid employeeId, string roleId)
     {
-        var userAccount = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
+        var userAccount = await _employeeRepository.GetEmployeeByIdAndRoleIdAsync(employeeId, roleId);
         if (userAccount == null || userAccount.Employee == null || userAccount.DeletedAt != null)
             return ServiceResult<bool>.Fail("Nhân viên không tồn tại.");
 

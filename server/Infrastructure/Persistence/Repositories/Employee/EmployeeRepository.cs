@@ -11,7 +11,7 @@ public class EmployeeRepository : IEmployeeRepository
         _context = context;
     }
 
-    public async Task<List<UserAccount>?> GetAllEmployeeByRoleIdAsync(string roleId)
+    private IQueryable<UserAccount> GetEmployeeQueryByRoleId(string roleId)
     {
         var employees = _context.user_accounts
             .Include(e => e.Employee).AsQueryable();
@@ -30,6 +30,12 @@ public class EmployeeRepository : IEmployeeRepository
                 .Where(ua => ua.Employee != null && ua.Employee.RoleId == roleId.ToLower())
         };
 
+        return employees;
+    }
+
+    public async Task<List<UserAccount>?> GetAllEmployeeByRoleIdAsync(string roleId)
+    {
+        var employees = GetEmployeeQueryByRoleId(roleId);
         return await employees.ToListAsync();
     }
 
@@ -74,29 +80,26 @@ public class EmployeeRepository : IEmployeeRepository
         return doctor;
     }
 
-    public async Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId)
+    public async Task<UserAccount?> GetEmployeeByIdAndRoleIdAsync(Guid employeeId, string roleId)
     {
-        return await _context.user_accounts
-            .Include(ua => ua.Employee)
-                .ThenInclude(e => e!.Doctor)
-            .FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employeeId);
+        var employees = this.GetEmployeeQueryByRoleId(roleId);
+        return await employees.FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employeeId);
     }
 
-    public async Task<Doctor?> FindDoctorWithAccountByIdAsync(Guid doctorId)
-    {
-        var existingDoctor = await _context.doctors
-            .Include(d => d.Employee)
-                .ThenInclude(e => e.UserAccount)
-            .FirstOrDefaultAsync(d => d.Id == doctorId);
-
-        return existingDoctor;
-    }
-
-    public async Task UpdateAccountAndDoctorAsync(Doctor doctor, UserAccount userAccount)
+    public async Task UpdateEmployeeAsync<T>(T employee, UserAccount userAccount) where T : Employee
     {
         _context.user_accounts.Update(userAccount);
-        _context.doctors.Update(doctor);
-        _context.employees.Update(doctor.Employee!);
+
+        switch (employee)
+        {
+            case Doctor doctor:
+                _context.doctors.Update(doctor);
+                break;
+            default:
+                throw new ArgumentException("Loại nhân viên không được hỗ trợ để cập nhật.");
+        }
+
+        _context.employees.Update(employee);
 
         await _context.SaveChangesAsync();
     }
