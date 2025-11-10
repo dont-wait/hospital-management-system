@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-public class RequestUpdateDoctorDTO
+public class RequestUpdateEmployeeDTO
 {
     [Required]
     [MaxLength(30)]
