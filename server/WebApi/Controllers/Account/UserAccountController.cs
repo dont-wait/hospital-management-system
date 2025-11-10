@@ -97,7 +97,7 @@ public class AccountController : ControllerBase
         {
             var result = await _userAccountService.DeletePatientByIdAsync(patientId);
             if (result.IsSuccess)
-                return new ApiResponse<string>(200, "Xóa tài khoản thành công.", result.Data);
+                return new ApiResponse<string>(200, "Xóa tài khoản thành công.", null);
             return new ApiResponse<string>(404, result.Message);
         }
         catch (Exception ex)

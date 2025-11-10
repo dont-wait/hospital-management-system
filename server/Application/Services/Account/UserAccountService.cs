@@ -85,13 +85,13 @@ public class UserAccountService : IUserAccountService
 
         return ServiceResult<ResponseUserDTO?>.Success(userAccountDto);
     }
-    public async Task<ServiceResult<string>> DeletePatientByIdAsync(Guid patientId)
+    public async Task<ServiceResult<bool>> DeletePatientByIdAsync(Guid patientId)
     {
-        var patient =  await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId);
+        var patient = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId);
         if (patient == null)
-            return ServiceResult<string>.Fail("Người dùng không tồn tại.");
+            return ServiceResult<bool>.Fail("Người dùng không tồn tại.");
 
         await _userAccountRepository.DeletePatientByIdAsync(patientId);
-        return ServiceResult<string>.Success("Xóa người dùng thành công.");
+        return ServiceResult<bool>.Success(true);
     }
 }

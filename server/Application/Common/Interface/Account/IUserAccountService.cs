@@ -8,5 +8,5 @@ public interface IUserAccountService
     Guid? CurrentUserId { get; }
     string RoleId { get; }
 
-    Task<ServiceResult<string>> DeletePatientByIdAsync(Guid patientId);
+    Task<ServiceResult<bool>> DeletePatientByIdAsync(Guid patientId);
 }
