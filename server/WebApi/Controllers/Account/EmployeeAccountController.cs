@@ -18,7 +18,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("{employeeId}")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin, manager")]
     public async Task<ApiResponse<ResponseUserDTO>> GetUserById(Guid employeeId)
     {
         try

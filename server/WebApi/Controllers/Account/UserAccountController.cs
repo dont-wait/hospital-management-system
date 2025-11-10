@@ -19,7 +19,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("{patientId}")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin, doctor")]
     public async Task<ApiResponse<ResponseUserDTO>> GetUserById(Guid patientId)
     {
         try
