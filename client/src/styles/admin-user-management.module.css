@@ -138,6 +138,10 @@
   @apply p-2 rounded-lg transition-all duration-200;
 }
 
+.action-buttons button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
 .action-buttons button svg {
   @apply w-5 h-5;
 }
