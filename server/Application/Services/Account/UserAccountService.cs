@@ -21,11 +21,11 @@ public class UserAccountService : IUserAccountService
     public async Task<ServiceResult<ResponsePatientDTO>> UpdateUserAccount_Patient_Async(Guid patientId, RequestUpdatePatient request)
     {
         var patientExisting = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId);
-        if (patientExisting == null)
+        if (patientExisting == null || patientExisting.DeletedAt != null)
             return ServiceResult<ResponsePatientDTO>.Fail("Không tìm thấy thông tin người dùng");
 
         var accountOfPatient = patientExisting.UserAccount;
-        if (accountOfPatient == null)
+        if (accountOfPatient == null || accountOfPatient.DeletedAt != null)
             return ServiceResult<ResponsePatientDTO>.Fail("Không tìm thấy tài khoản người dùng");
 
         //TODO: Xac thuc phone
@@ -78,11 +78,20 @@ public class UserAccountService : IUserAccountService
     public async Task<ServiceResult<ResponseUserDTO?>> GetUserAccountByIdAsync(Guid userId)
     {
         var userAccount = await _userAccountRepository.FindPatientWithAccountByIdAsync(userId);
-        if (userAccount == null)
+        if (userAccount == null || userAccount.DeletedAt != null)
             return ServiceResult<ResponseUserDTO?>.Fail("Tài khoản không tồn tại.");
 
         var userAccountDto = _userAccountMapper.MapToDto(userAccount.UserAccount!);
 
         return ServiceResult<ResponseUserDTO?>.Success(userAccountDto);
+    }
+    public async Task<ServiceResult<bool>> DeletePatientByIdAsync(Guid patientId)
+    {
+        var patient = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId);
+        if (patient == null || patient.DeletedAt != null)
+            return ServiceResult<bool>.Fail("Người dùng không tồn tại.");
+
+        await _userAccountRepository.DeletePatientByIdAsync(patientId);
+        return ServiceResult<bool>.Success(true);
     }
 }

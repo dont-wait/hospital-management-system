@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("role_permission")]
-public class RolePermission
+public class RolePermission : BaseEntity
 {
     public string RoleId { get; set; } = string.Empty;
     public Roles Role { get; set; } = null!;

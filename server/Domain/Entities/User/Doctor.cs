@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("doctors")]
-public class Doctor
+public class Doctor : BaseEntity
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();

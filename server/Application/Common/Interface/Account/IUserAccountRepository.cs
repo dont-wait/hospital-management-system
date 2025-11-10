@@ -10,4 +10,5 @@ public interface IUserAccountRepository
     Task<Patient?> FindPatientWithAccountByIdAsync(Guid patientId);
     Task UpdateSync(UserAccount userAccount);
     Task UpdateAccountAndPatientAsync(Patient patient, UserAccount userAccount);
+    Task<bool> DeletePatientByIdAsync(Guid patientId);
 }

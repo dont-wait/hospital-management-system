@@ -19,7 +19,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("{patientId}")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin, doctor")]
     public async Task<ApiResponse<ResponseUserDTO>> GetUserById(Guid patientId)
     {
         try
@@ -87,6 +87,23 @@ public class AccountController : ControllerBase
         {
             Console.WriteLine(ex);
             return new ApiResponse<ResponsePatientDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
-        }        
+        }
+    }
+    [HttpDelete("{patientId}")]
+    [Authorize(Roles = "admin")]
+    public async Task<ApiResponse<string>> DeletePatientById(Guid patientId)
+    {
+        try
+        {
+            var result = await _userAccountService.DeletePatientByIdAsync(patientId);
+            if (result.IsSuccess)
+                return new ApiResponse<string>(200, "Xóa tài khoản thành công.", null);
+            return new ApiResponse<string>(404, result.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+        }
     }
 }

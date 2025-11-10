@@ -7,4 +7,6 @@ public interface IUserAccountService
     Task<ServiceResult<ResponsePatientDTO>> UpdateUserAccount_Patient_Async(Guid patientId, RequestUpdatePatient request);
     Guid? CurrentUserId { get; }
     string RoleId { get; }
+
+    Task<ServiceResult<bool>> DeletePatientByIdAsync(Guid patientId);
 }
