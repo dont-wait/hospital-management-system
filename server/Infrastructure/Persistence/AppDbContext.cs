@@ -2,7 +2,11 @@ using Microsoft.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    private readonly ICurrentUserService _currentUserService;
+    public AppDbContext(DbContextOptions<AppDbContext> options, ICurrentUserService currentUserService) : base(options)
+    {
+        _currentUserService = currentUserService;
+    }
 
     public DbSet<Admin> admins { get; set; } = null!;
 
@@ -16,12 +20,12 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
+
         modelBuilder.Entity<Admin>()
             .HasOne(ua => ua.Employee)
             .WithOne(e => e.Admin)
             .HasForeignKey<Admin>(a => a.EmployeeId);
-        
+
         modelBuilder.Entity<UserAccount>()
             .HasOne(ua => ua.Patient)
             .WithOne(p => p.UserAccount)
@@ -52,5 +56,30 @@ public class AppDbContext : DbContext
             .HasForeignKey(rp => rp.PermissionId);
 
         base.OnModelCreating(modelBuilder);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) {
+        var entries = ChangeTracker.Entries<BaseEntity>();
+        foreach (var entry in entries)
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entry.Entity.CreatedId = _currentUserService.CurrentUserId ?? Guid.Empty;
+                    entry.Entity.CreatedAt = DateTimeOffset.UtcNow;
+                    break;
+                case EntityState.Modified:
+                    entry.Entity.ModifiedId = _currentUserService.CurrentUserId;
+                    entry.Entity.UpdatedAt = DateTimeOffset.UtcNow;
+                    break;
+                case EntityState.Deleted:
+                    entry.State = EntityState.Modified;
+                    entry.Entity.DeletedId = _currentUserService.CurrentUserId;
+                    entry.Entity.DeletedAt = DateTimeOffset.UtcNow;
+                    break;
+
+            }
+        }
+        return base.SaveChangesAsync(cancellationToken);
     }
 }
