@@ -88,7 +88,7 @@ public class UserAccountService : IUserAccountService
     public async Task<ServiceResult<bool>> DeletePatientByIdAsync(Guid patientId)
     {
         var patient = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId);
-        if (patient == null)
+        if (patient == null || patient.DeletedAt != null)
             return ServiceResult<bool>.Fail("Người dùng không tồn tại.");
 
         await _userAccountRepository.DeletePatientByIdAsync(patientId);

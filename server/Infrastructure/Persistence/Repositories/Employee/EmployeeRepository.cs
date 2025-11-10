@@ -99,7 +99,7 @@ public class EmployeeRepository : IEmployeeRepository
                 .ThenInclude(e => e!.Admin)
             .FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employee.Id);
 
-        if(userAccount == null)
+        if (userAccount == null)
         {
             return false;
         }

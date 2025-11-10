@@ -143,7 +143,7 @@ public class EmployeeAccountService : IEmployeeAccountService
     public async Task<ServiceResult<bool>> DeleteEmployeeByIdAsync(Guid employeeId)
     {
         var userAccount = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
-        if (userAccount == null || userAccount.Employee == null)
+        if (userAccount == null || userAccount.Employee == null || userAccount.DeletedAt != null)
             return ServiceResult<bool>.Fail("Nhân viên không tồn tại.");
 
         bool isDeleted = await _employeeRepository.DeleteEmployeeByIdAsync(userAccount.Employee);
