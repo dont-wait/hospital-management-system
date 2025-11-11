@@ -50,22 +50,20 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }
 
-    public async Task<ServiceResult<ResponseEmployeeDTO>> UpdateEmployeeAsync(Guid employeeId, RequestUpdateEmployeeDTO request)
+    public async Task<ServiceResult<ResponseEmployeeDTO>> UpdateEmployeeAsync(Guid employeeId, RequestUpdateEmployeeDTO request, string currentUserRole)
     {
-        UserAccount? existingEmployee = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
-        if (existingEmployee == null || existingEmployee.Employee == null || existingEmployee.Employee.DeletedAt != null)
+        UserAccount? existingUserAccount = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
+        if (existingUserAccount == null || existingUserAccount.Employee == null || existingUserAccount.Employee.DeletedAt != null)
             return ServiceResult<ResponseEmployeeDTO>.Fail("Không tìm thấy thông tin người dùng");
 
+        Employee employee = existingUserAccount.Employee;
+        UserAccount userAccount = existingUserAccount;
 
-        var accountOfDoctorEmployee = existingEmployee.Employee.UserAccount;
+        _employeeMapper.Update(employee, request, currentUserRole);
+        await _employeeRepository.UpdateEmployeeAsync(employee, userAccount);
+        ResponseEmployeeDTO responseEmployeeDto = _employeeMapper.MapToDto(employee);
 
-        _doctorMapper.Update(existingEmployee.Employee.Doctor, request);
-
-        await _employeeRepository.UpdateEmployeeAsync(existingEmployee.Employee, accountOfDoctorEmployee);
-
-        ResponseEmployeeDTO responseDoctorDto = _doctorMapper.MapToDto(existingEmployee.Employee.Doctor);
-
-        return ServiceResult<ResponseEmployeeDTO>.Success(responseDoctorDto);
+        return ServiceResult<ResponseEmployeeDTO>.Success(responseEmployeeDto);
     }
 
     public async Task<ServiceResult<ResponseUserDTO?>> GetEmployeeByIdAsync(Guid employeeId)

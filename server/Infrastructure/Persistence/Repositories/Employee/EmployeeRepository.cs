@@ -96,13 +96,22 @@ public class EmployeeRepository : IEmployeeRepository
     {
         _context.user_accounts.Update(userAccount);
 
-        switch (employee)
+        switch (employee.RoleId.ToLower())
         {
-            case Doctor doctor:
-                _context.doctors.Update(doctor);
+            case "doctor":
+                if (employee.Doctor != null)
+                {
+                    _context.doctors.Update(employee.Doctor);
+                }
+                break;
+            case "admin":
+                if (employee.Admin != null)
+                {
+                    _context.admins.Update(employee.Admin);
+                }
                 break;
             default:
-                throw new ArgumentException("Loại nhân viên không được hỗ trợ để cập nhật.");
+                break;
         }
 
         _context.employees.Update(employee);

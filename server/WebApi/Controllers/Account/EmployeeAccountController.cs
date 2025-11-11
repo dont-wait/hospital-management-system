@@ -46,9 +46,9 @@ public class EmployeeController : ControllerBase
         return new ApiResponse<List<ResponseUserDTO>>(200, "Lấy danh sách bác sĩ thành công", result.Data);
     }
 
-    [HttpPut("{roleId}/{employeeId}")]
+    [HttpPut("{employeeId}")]
     [Authorize(Roles = "admin, doctor")]
-    public async Task<ApiResponse<ResponseEmployeeDTO>> UpdateDoctorById(string roleId, Guid employeeId, RequestUpdateEmployeeDTO request)
+    public async Task<ApiResponse<ResponseEmployeeDTO>> UpdateEmployeeById(Guid employeeId, RequestUpdateEmployeeDTO request)
     {
         string currentUserRole = _userAccountService.RoleId;
 
@@ -62,7 +62,7 @@ public class EmployeeController : ControllerBase
 
         try
         {
-            ServiceResult<ResponseEmployeeDTO> result = await _employeeAccountService.UpdateEmployeeAsync(employeeId, request);
+            ServiceResult<ResponseEmployeeDTO> result = await _employeeAccountService.UpdateEmployeeAsync(employeeId, request, currentUserRole);
             if (result.IsSuccess)
                 return new ApiResponse<ResponseEmployeeDTO>(200, "Cập nhật thông tin tài khoản thành công.", result.Data);
 
