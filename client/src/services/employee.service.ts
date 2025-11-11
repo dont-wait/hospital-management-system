@@ -1,6 +1,6 @@
 import { getApiInstance, getConfig } from "@/axios";
 import { AuthUserWithoutTokens, Role } from "@/types";
-import { EmployeeUpdateLimitedDto, EmployeeUpdateFullDto } from "@/schemas";
+import { EmployeeUpdateDto } from "@/schemas/employee";
 
 type EmployeeRoleId = Exclude<Role, "admin" | "patient" | "guest">;
 
@@ -17,34 +17,17 @@ export class EmployeeService {
         return response.data.data;
     }
 
-    public static async updateEmployeeLimited(
-        employeeId: string,
-        employeeUpdateDto: EmployeeUpdateLimitedDto,
+    public static async updateEmployee(
+        employeeId: string, 
+        data: Partial<EmployeeUpdateDto>,
         token?: string
     ): Promise<AuthUserWithoutTokens> {
         const apiInstance = getApiInstance(token);
         const config = getConfig(token);
         
         const response = await apiInstance.put<{ data: AuthUserWithoutTokens }>(
-            `/employee/${employeeId}`,
-            employeeUpdateDto,
-            config
-        );
-        
-        return response.data.data;
-    }
-
-    public static async updateEmployeeFull(
-        employeeId: string,
-        employeeUpdateDto: EmployeeUpdateFullDto,
-        token?: string
-    ): Promise<AuthUserWithoutTokens> {
-        const apiInstance = getApiInstance(token);
-        const config = getConfig(token);
-        
-        const response = await apiInstance.put<{ data: AuthUserWithoutTokens }>(
-            `/employee/${employeeId}`,
-            employeeUpdateDto,
+            `/employees/${employeeId}`,
+            data,
             config
         );
         
