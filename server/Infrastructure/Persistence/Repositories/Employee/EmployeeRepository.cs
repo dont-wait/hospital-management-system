@@ -80,10 +80,16 @@ public class EmployeeRepository : IEmployeeRepository
         return doctor;
     }
 
-    public async Task<UserAccount?> GetEmployeeByIdAndRoleIdAsync(Guid employeeId, string roleId)
+    public async Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId)
     {
-        var employees = this.GetEmployeeQueryByRoleId(roleId);
-        return await employees.FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employeeId);
+        return await _context.user_accounts
+            .Where(ua => ua.Employee != null && ua.Employee.Id == employeeId)
+            .Include(ua => ua.Employee)
+                .ThenInclude(e => e!.Role)
+            .Include(ua => ua.Employee!.Doctor)
+            .Include(ua => ua.Employee!.Admin)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
     }
 
     public async Task UpdateEmployeeAsync<T>(T employee, UserAccount userAccount) where T : Employee

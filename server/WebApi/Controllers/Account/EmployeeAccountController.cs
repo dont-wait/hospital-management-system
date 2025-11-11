@@ -19,11 +19,11 @@ public class EmployeeController : ControllerBase
 
     [HttpGet("{employeeId}")]
     [Authorize(Roles = "admin, manager")]
-    public async Task<ApiResponse<ResponseUserDTO>> GetEmployeeById(Guid employeeId, string role)
+    public async Task<ApiResponse<ResponseUserDTO>> GetEmployeeById(Guid employeeId)
     {
         try
         {
-            var result = await _employeeAccountService.GetEmployeeByIdAsync(employeeId, role);
+            var result = await _employeeAccountService.GetEmployeeByIdAsync(employeeId);
             if (result.IsSuccess)
                 return new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data);
             return new ApiResponse<ResponseUserDTO>(404, result.Message);
@@ -62,7 +62,7 @@ public class EmployeeController : ControllerBase
 
         try
         {
-            ServiceResult<ResponseEmployeeDTO> result = await _employeeAccountService.UpdateEmployeeAsync(employeeId, roleId, request);
+            ServiceResult<ResponseEmployeeDTO> result = await _employeeAccountService.UpdateEmployeeAsync(employeeId, request);
             if (result.IsSuccess)
                 return new ApiResponse<ResponseEmployeeDTO>(200, "Cập nhật thông tin tài khoản thành công.", result.Data);
 
@@ -77,11 +77,11 @@ public class EmployeeController : ControllerBase
 
     [HttpDelete("{roleId}/{employeeId}")]
     [Authorize(Roles = "admin")]
-    public async Task<ApiResponse<string>> DeleteEmployeeById(string roleId, Guid employeeId)
+    public async Task<ApiResponse<string>> DeleteEmployeeById(Guid employeeId)
     {
         try
         {
-            var result = await _employeeAccountService.DeleteEmployeeByIdAsync(employeeId, roleId);
+            var result = await _employeeAccountService.DeleteEmployeeByIdAsync(employeeId);
             if (result.IsSuccess)
                 return new ApiResponse<string>(200, "Xóa tài khoản nhân viên thành công.", null);
             return new ApiResponse<string>(404, result.Message);
