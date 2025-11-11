@@ -95,9 +95,10 @@ public class EmployeeAccountService : IEmployeeAccountService
 
     public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllEmployeesByRoleIdAsync(string roleId)
     {
-        if (string.IsNullOrWhiteSpace(roleId) ||
-            (roleId.ToLower() != RoleEnum.doctor.ToString().ToLower() &&
-             roleId.ToLower() != RoleEnum.admin.ToString().ToLower()))
+        var validRoles = new[] { RoleEnum.doctor.ToString(), RoleEnum.admin.ToString() };
+        
+        if (string.IsNullOrWhiteSpace(roleId) || 
+            !validRoles.Any(r => r.Equals(roleId, StringComparison.CurrentCultureIgnoreCase)))
             return ServiceResult<List<ResponseUserDTO>>.Fail("Vai trò không hợp lệ.");
 
         List<UserAccount>? employees = await _employeeRepository.GetAllEmployeeByRoleIdAsync(roleId);
