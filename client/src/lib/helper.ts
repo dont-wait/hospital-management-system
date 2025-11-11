@@ -7,7 +7,7 @@ export const roleIdToName: Record<string, string> = {
 };
 
 export const getUserRole = (user: AuthUserWithoutTokens): string => {
-    if (user.patient) return roleIdToName.patient;
+    if (user.patient) return roleIdToName["patient"];
     if (user.employee) return roleIdToName[user.employee.roleId] || "Không rõ";
     return "Không rõ";
 };
