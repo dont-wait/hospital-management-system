@@ -18,7 +18,7 @@ import {
 } from "@/schemas";
 import { AuthUserWithoutTokens } from "@/types";
 import { GENDER_OPTIONS } from "@/config";
-import { DoctorService } from "@/services/doctor.service";
+import { EmployeeService } from "@/services/doctor.service";
 import authStyles from "@/styles/auth.module.css";
 import styles from "@/styles/employee-update.module.css";
 
@@ -74,11 +74,11 @@ export function UpdateEmployeeForm({
     data: EmployeeUpdateFullDto | EmployeeUpdateLimitedDto
   ) => {
     const updatedEmployee = isAdmin
-      ? await DoctorService.updateEmployeeFull(
+      ? await EmployeeService.updateEmployeeFull(
           employee.employee?.employeeId || "",
           data as EmployeeUpdateFullDto
         )
-      : await DoctorService.updateEmployeeLimited(
+      : await EmployeeService.updateEmployeeLimited(
           employee.employee?.employeeId || "",
           data as EmployeeUpdateLimitedDto
         );
