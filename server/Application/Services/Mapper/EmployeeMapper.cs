@@ -48,4 +48,31 @@ public class EmployeeMapper : IEmployeeMapper
             };
         }
     }
+
+    public void Update(Employee employee, RequestUpdateEmployeeDTO request, string currentUserRole)
+    {
+        bool isAdmin = currentUserRole.Equals(RoleEnum.admin.ToString(), StringComparison.CurrentCultureIgnoreCase);
+
+        employee.PhoneNumber = request.PhoneNumber;
+        if (employee.UserAccount != null)
+        {
+            employee.UserAccount.AvatarUrl = request.AvatarUrl;
+        }
+
+        if (isAdmin)
+        {
+            employee.FirstName = request.FirstName;
+            employee.LastName = request.LastName;
+            employee.DateOfBirth = request.DateOfBirth;
+            employee.Gender = request.Gender;
+            employee.HireDate = request.HireDate;
+            employee.CertificateNumber = request.CertificateNumber;
+
+            if (employee.RoleId.Equals(RoleEnum.doctor.ToString(), StringComparison.CurrentCultureIgnoreCase) 
+                && employee.Doctor != null)
+            {
+                employee.Doctor.Specialization = request.Specialization;
+            }
+        }
+    }
 }
