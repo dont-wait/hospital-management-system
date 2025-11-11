@@ -10,15 +10,10 @@ import {
   DateField,
   AvatarField,
 } from "@/components";
-import {
-  EmployeeUpdateLimitedDto,
-  EmployeeUpdateFullDto,
-  employeeUpdateLimitedSchema,
-  employeeUpdateFullSchema,
-} from "@/schemas";
+import { EmployeeUpdateDto, employeeUpdateSchema } from "@/schemas/employee";
 import { AuthUserWithoutTokens } from "@/types";
 import { GENDER_OPTIONS } from "@/config";
-import { EmployeeService } from "@/services/doctor.service";
+import { EmployeeService } from "@/services/employee.service";
 import authStyles from "@/styles/auth.module.css";
 import styles from "@/styles/employee-update.module.css";
 
@@ -35,26 +30,26 @@ export function UpdateEmployeeForm({
   onSuccess,
   onCancel,
 }: UpdateEmployeeFormProps) {
-  const defaultValues = useMemo(() => {
+  const defaultValues = useMemo((): Partial<EmployeeUpdateDto> => {
+    const baseValues: Partial<EmployeeUpdateDto> = {
+      phoneNumber: employee.employee?.phoneNumber || "",
+      avatarUrl: employee.avatarUrl || "",
+    };
+
     if (isAdmin) {
       return {
+        ...baseValues,
         firstName: employee.employee?.firstName || "",
         lastName: employee.employee?.lastName || "",
-        phoneNumber: employee.employee?.phoneNumber || "",
-        email: employee.employee?.email || "",
         dateOfBirth: employee.employee?.dateOfBirth || "",
-        gender: employee.employee?.gender || "",
+        hireDate: employee.employee?.hireDate || "",
+        gender: (employee.employee?.gender as "M" | "F" | "O") || "M",
         specialization: employee.employee?.specialization || "",
         certificateNumber: employee.employee?.certificateNumber || "",
-        avatarUrl: employee.employee?.avatarUrl || "",
-      };
-    } else {
-      return {
-        phoneNumber: employee.employee?.phoneNumber || "",
-        email: employee.employee?.email || "",
-        avatarUrl: employee.avatarUrl || "",
       };
     }
+
+    return baseValues;
   }, [employee, isAdmin]);
 
   const {
@@ -63,28 +58,30 @@ export function UpdateEmployeeForm({
     formState: { errors, isSubmitting },
     control,
     setValue,
-  } = useForm<EmployeeUpdateFullDto | EmployeeUpdateLimitedDto>({
-    resolver: zodResolver(
-      isAdmin ? employeeUpdateFullSchema : employeeUpdateLimitedSchema
-    ),
+  } = useForm<EmployeeUpdateDto>({
+    resolver: zodResolver(employeeUpdateSchema),
     defaultValues,
   });
 
-  const handleFormSubmit = async (
-    data: EmployeeUpdateFullDto | EmployeeUpdateLimitedDto
-  ) => {
-    const updatedEmployee = isAdmin
-      ? await EmployeeService.updateEmployeeFull(
-          employee.employee?.employeeId || "",
-          data as EmployeeUpdateFullDto
-        )
-      : await EmployeeService.updateEmployeeLimited(
-          employee.employee?.employeeId || "",
-          data as EmployeeUpdateLimitedDto
-        );
+  const handleFormSubmit = async (data: EmployeeUpdateDto) => {
+    try {
+      const payload = isAdmin
+        ? data
+        : {
+            phoneNumber: data.phoneNumber,
+            avatarUrl: data.avatarUrl || "",
+          };
 
-    if (onSuccess) {
-      onSuccess(updatedEmployee);
+      const response = await EmployeeService.updateEmployee(
+        employee.employee?.employeeId || "",
+        payload
+      );
+
+      if (onSuccess) {
+        onSuccess(response);
+      }
+    } catch (error) {
+      console.error("Lỗi update:", error);
     }
   };
 
@@ -121,15 +118,6 @@ export function UpdateEmployeeForm({
               />
 
               <FormField
-                id="email"
-                type="email"
-                label="Email"
-                placeholder="Nhập email"
-                errors={errors}
-                register={register}
-              />
-
-              <FormField
                 id="phoneNumber"
                 label="Số điện thoại"
                 placeholder="Nhập số điện thoại"
@@ -155,9 +143,8 @@ export function UpdateEmployeeForm({
                 register={register}
               />
 
-              <DateField<EmployeeUpdateFullDto>
+              <DateField<EmployeeUpdateDto>
                 name="dateOfBirth"
-                // @ts-ignore - Type issue with discriminated union
                 setValue={setValue}
                 errors={errors}
                 defaultValue={employee.employee?.dateOfBirth}
@@ -165,7 +152,7 @@ export function UpdateEmployeeForm({
 
               <RadioGroupField
                 name="gender"
-                control={control}
+                control={control as any}
                 errors={errors}
                 options={[...GENDER_OPTIONS]}
               />
@@ -174,15 +161,6 @@ export function UpdateEmployeeForm({
         </>
       ) : (
         <div className={styles["employee-limited-layout"]}>
-          <FormField
-            id="email"
-            type="email"
-            label="Email"
-            placeholder="Nhập email"
-            errors={errors}
-            register={register}
-          />
-
           <FormField
             id="phoneNumber"
             label="Số điện thoại"

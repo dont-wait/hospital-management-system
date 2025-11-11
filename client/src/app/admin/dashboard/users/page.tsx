@@ -1,5 +1,5 @@
 import { UserList } from "@/components/admin/UserList";
-import { EmployeeService } from "@/services/doctor.service";
+import { EmployeeService } from "@/services/employee.service";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
