@@ -1,29 +1,16 @@
 import { getApiInstance, getConfig } from "@/axios";
-import { AuthUserWithoutTokens, Employee } from "@/types";
+import { AuthUserWithoutTokens, Role } from "@/types";
 import { EmployeeUpdateLimitedDto, EmployeeUpdateFullDto } from "@/schemas";
 
-export class DoctorService {
-    public static async getAllDoctors(token?: string): Promise<AuthUserWithoutTokens[]> {
+type EmployeeRoleId = Exclude<Role, "admin" | "patient" | "guest">;
+
+export class EmployeeService {
+    public static async getAllEmployeesByRole(roleId: EmployeeRoleId, token?: string): Promise<AuthUserWithoutTokens[]> {
         const apiInstance = getApiInstance(token);
         const config = getConfig(token);
         
         const response = await apiInstance.get<{ data: AuthUserWithoutTokens[] }>(
-            "/admin/doctors",
-            config
-        );
-        
-        return response.data.data;
-    }
-
-    public static async getDoctorById(
-        doctorId: string, 
-        token?: string
-    ): Promise<AuthUserWithoutTokens> {
-        const apiInstance = getApiInstance(token);
-        const config = getConfig(token);
-        
-        const response = await apiInstance.get<{ data: AuthUserWithoutTokens }>(
-            `/employee/${doctorId}`,
+            `/employees?role=${roleId}`,
             config
         );
         

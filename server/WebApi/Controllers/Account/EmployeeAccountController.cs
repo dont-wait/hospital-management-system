@@ -4,7 +4,7 @@ using Application.Common.Utils;
 
 namespace WebApi.Controllers.Account;
 
-[Route("api/[controller]")]
+[Route("api/employees")]
 [ApiController]
 public class EmployeeController : ControllerBase
 {
@@ -17,13 +17,13 @@ public class EmployeeController : ControllerBase
         _userAccountService = userAccountService;
     }
 
-    [HttpGet("{roleId}/{employeeId}")]
+    [HttpGet("{employeeId}")]
     [Authorize(Roles = "admin, manager")]
-    public async Task<ApiResponse<ResponseUserDTO>> GetEmployeeById(string roleId, Guid employeeId)
+    public async Task<ApiResponse<ResponseUserDTO>> GetEmployeeById(Guid employeeId, string role)
     {
         try
         {
-            var result = await _employeeAccountService.GetEmployeeByIdAsync(employeeId, roleId);
+            var result = await _employeeAccountService.GetEmployeeByIdAsync(employeeId, role);
             if (result.IsSuccess)
                 return new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data);
             return new ApiResponse<ResponseUserDTO>(404, result.Message);
@@ -35,11 +35,11 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [HttpGet("employees")]
+    [HttpGet]
     [Authorize(Roles = "admin")]
-    public async Task<ApiResponse<List<ResponseUserDTO>>> GetAllEmployeesByRoleIdAsync(string roleId)
+    public async Task<ApiResponse<List<ResponseUserDTO>>> GetAllEmployeesByRoleIdAsync(string role)
     {
-        var result = await _employeeAccountService.GetAllEmployeesByRoleIdAsync(roleId);
+        var result = await _employeeAccountService.GetAllEmployeesByRoleIdAsync(role);
         if (!result.IsSuccess)
             return new ApiResponse<List<ResponseUserDTO>>(400, result.Message);
 

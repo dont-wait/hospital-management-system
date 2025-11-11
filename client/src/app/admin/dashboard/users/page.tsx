@@ -1,5 +1,5 @@
 import { UserList } from "@/components/admin/UserList";
-import { DoctorService } from "@/services/doctor.service";
+import { EmployeeService } from "@/services/doctor.service";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
@@ -18,10 +18,9 @@ async function UsersManagementPage() {
     }
     
     try {
-        const getAllDoctors = await DoctorService.getAllDoctors(token);
-        return <UserList users={getAllDoctors} />;
+        const getAllEmployees = await EmployeeService.getAllEmployeesByRole("doctor", token);
+        return <UserList users={getAllEmployees} />;
     } catch (error) {
-        console.error("Error fetching doctors:", error);
         return <UserList users={[]} />;
     }
 }
