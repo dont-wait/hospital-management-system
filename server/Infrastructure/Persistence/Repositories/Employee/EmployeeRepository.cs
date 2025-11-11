@@ -83,9 +83,13 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId)
     {
         return await _context.user_accounts
-            .Where(ua => ua.Employee != null && ua.Employee.Id == employeeId)
+            .Where(ua => ua.Employee != null 
+                && ua.Employee.Id == employeeId
+                && ua.DeletedAt == null
+                && ua.Employee.DeletedAt == null
+            )
             .Include(ua => ua.Employee)
-                .ThenInclude(e => e!.Role)
+                //.ThenInclude(e => e!.Role)
             .Include(ua => ua.Employee!.Doctor)
             .Include(ua => ua.Employee!.Admin)
             .AsSplitQuery()
