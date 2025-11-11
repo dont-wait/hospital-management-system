@@ -2,7 +2,7 @@ import { Role } from "@/types";
 
 export function ForbiddenResponse(userRole: Role) {
   const isAdmin = userRole === "admin";
-  const redirectUrl = isAdmin ? "/dashboard" : "/";
+  const redirectUrl = isAdmin ? "/admin/dashboard" : "/";
   const redirectLabel = isAdmin ? "Dashboard" : "Home";
 
   return `
