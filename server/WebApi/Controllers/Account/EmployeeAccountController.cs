@@ -43,7 +43,7 @@ public class EmployeeController : ControllerBase
         if (!result.IsSuccess)
             return new ApiResponse<List<ResponseUserDTO>>(400, result.Message);
 
-        return new ApiResponse<List<ResponseUserDTO>>(200, "Lấy danh sách bác sĩ thành công", result.Data);
+        return new ApiResponse<List<ResponseUserDTO>>(200, "Lấy danh sách nhân viên thành công", result.Data);
     }
 
     [HttpPut("{employeeId}")]
@@ -68,14 +68,13 @@ public class EmployeeController : ControllerBase
 
             return new ApiResponse<ResponseEmployeeDTO>(400, result.Message);
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine(ex);
             return new ApiResponse<ResponseEmployeeDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
         }
     }
 
-    [HttpDelete("{roleId}/{employeeId}")]
+    [HttpDelete("{employeeId}")]
     [Authorize(Roles = "admin")]
     public async Task<ApiResponse<string>> DeleteEmployeeById(Guid employeeId)
     {
@@ -86,9 +85,8 @@ public class EmployeeController : ControllerBase
                 return new ApiResponse<string>(200, "Xóa tài khoản nhân viên thành công.", null);
             return new ApiResponse<string>(404, result.Message);
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine(ex);
             return new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
         }
     }
