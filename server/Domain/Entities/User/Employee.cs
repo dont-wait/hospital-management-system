@@ -38,6 +38,10 @@ public class Employee : BaseEntity
     [StringLength(10)]
     public string CertificateNumber { get; set; } = string.Empty;
 
+    public int ExperienceYears { get; set; }
+    public int DepartmentId { get; set; }
+    public virtual Department Department { get; set; } = null!;
+
     public UserAccount UserAccount { get; set; } = null!;
     public Doctor Doctor { get; set; } = null!;
     

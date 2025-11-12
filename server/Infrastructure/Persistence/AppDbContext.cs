@@ -9,6 +9,8 @@ public class AppDbContext : DbContext
         _currentUserService = currentUserService;
     }
 
+    public DbSet<Department> departments { get; set; } = null!;
+    public DbSet<Room> rooms { get; set; } = null!;
     public DbSet<Admin> admins { get; set; } = null!;
 
     public DbSet<UserAccount> user_accounts { get; set; } = null!;

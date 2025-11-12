@@ -6,6 +6,46 @@ using Microsoft.EntityFrameworkCore;
 public static class DataSeeder
 {
 
+    public static async Task SeedDepartmentsAndRoomAsync(AppDbContext appDbContext)
+    {
+        var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "departmentsHaveRooms.json");
+        var json = File.ReadAllText(seedPath);
+
+        var departmentData = JsonSerializer.Deserialize<List<Department>>(json);
+        if (departmentData == null)
+        {
+            Console.WriteLine("❌ Không thể đọc dữ liệu phòng ban từ JSON");
+            return;
+        }
+
+        foreach (var department in departmentData)
+        {
+            // Kiểm tra nếu phòng ban đã tồn tại
+            var existingDepartment = await appDbContext.departments
+                .Include(d => d.Rooms)
+                .FirstOrDefaultAsync(d => d.Name == department.Name && d.Location == department.Location);
+
+            if (existingDepartment == null)
+            {
+                // Thêm phòng ban mới cùng với các phòng bên trong
+                appDbContext.departments.Add(department);
+                Console.WriteLine($"✅ Đã thêm phòng ban: {department.Name} với {department.Rooms.Count} phòng.");
+            }
+            else
+            {
+                // Cập nhật các phòng nếu phòng ban đã tồn tại
+                foreach (var room in department.Rooms)
+                {
+                    if (!existingDepartment.Rooms.Any(r => r.Name == room.Name))
+                    {
+                        existingDepartment.Rooms.Add(room);
+                        Console.WriteLine($"✅ Đã thêm phòng: {room.Name} vào phòng ban: {existingDepartment.Name}");
+                    }
+                }
+            }
+        }
+    }
+
     public static async Task SeedAdminAsync(AppDbContext context)
     {
         // Kiểm tra xem đã có admin chưa
@@ -38,7 +78,9 @@ public static class DataSeeder
             Email = adminData.Email,
             HireDate = DateTime.UtcNow,
             CertificateNumber = adminData.CertificateNumber,
-            RoleId = RoleEnum.admin.ToString().ToLower()
+            RoleId = RoleEnum.admin.ToString().ToLower(),
+            ExperienceYears = 5,
+            DepartmentId = 10
         };
         context.employees.Add(employee);
 

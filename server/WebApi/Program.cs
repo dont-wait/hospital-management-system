@@ -56,8 +56,9 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await DataSeeder.SeedDepartmentsAndRoomAsync(db);
     await DataSeeder.SeedAsync(db);
-   await DataSeeder.SeedAdminAsync(db);
+    await DataSeeder.SeedAdminAsync(db);
 }
 
 app.UseCors("CorsPolicy");

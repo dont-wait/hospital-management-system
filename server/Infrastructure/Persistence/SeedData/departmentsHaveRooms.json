@@ -1,0 +1,110 @@
+[
+  {
+    "Name": "Khoa Khám Bệnh",
+    "Location": "Tầng trệt, Khu A",
+    "Description": "Tiếp nhận khám ngoại trú và sàng lọc bệnh nhân. Điều phối khám chuyên khoa.",
+    "Rooms": [
+      { "Name": "Phòng Tiếp Đón & Đăng Ký", "Capacity": 20 },
+      { "Name": "Phòng Khám Tổng Quát 1", "Capacity": 5 },
+      { "Name": "Phòng Khám Tổng Quát 2", "Capacity": 5 },
+      { "Name": "Phòng Cấp Cứu Ngoại Trú (Sơ cứu ban đầu)", "Capacity": 4 }
+    ]
+  },
+  {
+    "Name": "Khoa Cấp Cứu",
+    "Location": "Tầng trệt, Khu A (Gần cổng chính)",
+    "Description": "Tiếp nhận và xử lý 24/7 các trường hợp bệnh nhân nặng, nguy kịch.",
+    "Rooms": [
+      { "Name": "Phòng Sàng Lọc & Phân Loại Bệnh", "Capacity": 5 },
+      { "Name": "Phòng Hồi Sức Tích Cực (ICU)", "Capacity": 6 },
+      { "Name": "Phòng Thủ Thuật Cấp Cứu", "Capacity": 3 },
+      { "Name": "Phòng Bệnh Nhân Chờ Chuyển Khoa", "Capacity": 8 }
+    ]
+  },
+  {
+    "Name": "Khoa Nội - Nhiễm",
+    "Location": "Lầu 2, Khu A",
+    "Description": "Điều trị bệnh nội khoa và nhiễm khuẩn cho người lớn và trẻ em.",
+    "Rooms": [
+      { "Name": "Phòng Khám Nội (Ngoại trú)", "Capacity": 6 },
+      { "Name": "Phòng Bệnh Nhân Nội Trú 1 (Nam)", "Capacity": 15 },
+      { "Name": "Phòng Bệnh Nhân Nội Trú 2 (Nữ)", "Capacity": 15 },
+      { "Name": "Phòng Cách Ly (Nhiễm)", "Capacity": 4 }
+    ]
+  },
+  {
+    "Name": "Khoa Ngoại Tổng Quát",
+    "Location": "Lầu 3, Khu B",
+    "Description": "Điều trị bằng phẫu thuật các bệnh lý ổ bụng, tiêu hóa, chấn thương.",
+    "Rooms": [
+      { "Name": "Phòng Khám Ngoại (Ngoại trú)", "Capacity": 6 },
+      { "Name": "Phòng Bệnh Nhân Hậu Phẫu 1", "Capacity": 10 },
+      { "Name": "Phòng Bệnh Nhân Hậu Phẫu 2", "Capacity": 10 },
+      { "Name": "Phòng Thay Băng & Tiểu Phẫu", "Capacity": 5 }
+    ]
+  },
+  {
+    "Name": "Khoa Phụ Sản",
+    "Location": "Lầu 1, Khu C",
+    "Description": "Khám thai, đỡ sinh, phẫu thuật và điều trị các bệnh lý phụ khoa.",
+    "Rooms": [
+      { "Name": "Phòng Khám Thai & Phụ Khoa", "Capacity": 8 },
+      { "Name": "Phòng Siêu Âm Sản Khoa", "Capacity": 4 },
+      { "Name": "Phòng Chờ Sinh", "Capacity": 6 },
+      { "Name": "Phòng Sinh Thường", "Capacity": 4 },
+      { "Name": "Phòng Hậu Sản (Nội trú)", "Capacity": 12 }
+    ]
+  },
+  {
+    "Name": "Khoa Nhi",
+    "Location": "Tầng 3, Khu A",
+    "Description": "Chăm sóc và điều trị các bệnh lý trẻ em (dưới 16 tuổi).",
+    "Rooms": [
+      { "Name": "Phòng Khám Nhi (Ngoại trú)", "Capacity": 5 },
+      { "Name": "Phòng Tiêm Chủng (Vaccine)", "Capacity": 10 },
+      { "Name": "Phòng Nằm Nhi 1 (Sơ sinh)", "Capacity": 10 },
+      { "Name": "Phòng Nằm Nhi 2 (Bệnh lý)", "Capacity": 10 }
+    ]
+  },
+  {
+    "Name": "Khoa Tai Mũi Họng",
+    "Location": "Khu C",
+    "Description": "Khám và điều trị các bệnh lý tai, mũi, họng bằng nội soi và điều trị ngoại trú.",
+    "Rooms": [
+      { "Name": "Phòng Khám Tai Mũi Họng 1", "Capacity": 4 },
+      { "Name": "Phòng Nội Soi TMH", "Capacity": 3 },
+      { "Name": "Phòng Thủ Thuật Tai Mũi Họng", "Capacity": 3 }
+    ]
+  },
+  {
+    "Name": "Khoa Mắt",
+    "Location": "Tầng 2, Khu B",
+    "Description": "Khám và điều trị các bệnh lý mắt ngoại trú và nội trú.",
+    "Rooms": [
+      { "Name": "Phòng Khám Mắt 1", "Capacity": 5 },
+      { "Name": "Phòng Khám Mắt 2", "Capacity": 5 },
+      { "Name": "Phòng Đo Khúc Xạ", "Capacity": 3 },
+      { "Name": "Phòng Tiểu Phẫu Mắt", "Capacity": 3 }
+    ]
+  },
+  {
+    "Name": "Khoa Y Học Cổ Truyền - Vật Lý Trị Liệu",
+    "Location": "Khu D",
+    "Description": "Điều trị phục hồi chức năng bằng y học cổ truyền và vật lý trị liệu.",
+    "Rooms": [
+      { "Name": "Phòng Khám YHCT", "Capacity": 4 },
+      { "Name": "Phòng Châm Cứu", "Capacity": 6 },
+      { "Name": "Phòng Xoa Bóp Bấm Huyệt", "Capacity": 4 },
+      { "Name": "Phòng Tập Vật Lý Trị Liệu", "Capacity": 8 }
+    ]
+  },
+  {
+    "Name": "Khoa Kỹ thuật",
+    "Location": "Tầng hầm, Khu A",
+    "Description": "Hỗ trợ kỹ thuật, bảo trì và sửa chữa thiết bị y tế trong bệnh viện.",
+    "Rooms": [
+      { "Name": "Phòng Bảo Trì Thiết Bị Y Tế", "Capacity": 3 },
+      { "Name": "Phòng Lưu Trữ Vật Tư Kỹ Thuật", "Capacity": 4 }
+    ]
+  }
+]
