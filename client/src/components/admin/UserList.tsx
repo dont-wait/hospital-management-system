@@ -4,7 +4,7 @@ import { AuthUserWithoutTokens, roles, Role } from "@/types";
 import styles from "@/styles/admin.module.css";
 import userStyles from "@/styles/admin-user-management.module.css";
 import { Eye, SquarePen, Trash2, ChevronDown, Search } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useReducer, useRef, useEffect, useMemo } from "react";
 import { getUserRole, getUserName, getUserEmail, getUserPhone, roleIdToName } from "@/lib/helper";
 import { UserDetail } from "./UserDetail";
 import { EmployeeUpdateModal } from "@/components/Employee";
@@ -17,21 +17,63 @@ const visibleRoles = roles.filter(
 (r): r is Exclude<Role, "admin" | "guest"> => r !== "admin" && r !== "guest"
 );
 
+type ModalType = "view" | "update" | null;
+
+interface UserListState {
+    isDropdownOpen: boolean;
+    selectedRole: Exclude<Role, "admin" | "guest">;
+    searchTerm: string;
+    selectedUser: AuthUserWithoutTokens | null;
+    activeModal: ModalType;
+}
+
+type UserListAction =
+    | { type: "TOGGLE_DROPDOWN" }
+    | { type: "CLOSE_DROPDOWN" }
+    | { type: "SET_ROLE"; payload: Exclude<Role, "admin" | "guest"> }
+    | { type: "SET_SEARCH"; payload: string }
+    | { type: "OPEN_VIEW_MODAL"; payload: AuthUserWithoutTokens }
+    | { type: "OPEN_UPDATE_MODAL"; payload: AuthUserWithoutTokens }
+    | { type: "CLOSE_MODAL" };
+
+const initialState: UserListState = {
+    isDropdownOpen: false,
+    selectedRole: "doctor",
+    searchTerm: "",
+    selectedUser: null,
+    activeModal: null,
+};
+
+const userListReducer = (state: UserListState, action: UserListAction): UserListState => {
+    switch (action.type) {
+        case "TOGGLE_DROPDOWN":
+            return { ...state, isDropdownOpen: !state.isDropdownOpen };
+        case "CLOSE_DROPDOWN":
+            return { ...state, isDropdownOpen: false };
+        case "SET_ROLE":
+            return { ...state, selectedRole: action.payload, isDropdownOpen: false };
+        case "SET_SEARCH":
+            return { ...state, searchTerm: action.payload };
+        case "OPEN_VIEW_MODAL":
+            return { ...state, selectedUser: action.payload, activeModal: "view" };
+        case "OPEN_UPDATE_MODAL":
+            return { ...state, selectedUser: action.payload, activeModal: "update" };
+        case "CLOSE_MODAL":
+            return { ...state, activeModal: null };
+        default:
+            return state;
+    }
+}
+
 export function UserList({ users }: UserListProps) {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [state, dispatch] = useReducer(userListReducer, initialState);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const [selectedRole, setSelectedRole] = useState<Exclude<Role, "admin" | "guest">>("doctor");
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedUser, setSelectedUser] = useState<AuthUserWithoutTokens | null>(null);
-    const [selectedUpdateUser, setSelectedUpdateUser] = useState<AuthUserWithoutTokens | null>(null);
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
     // Đóng dropdown khi click bên ngoài
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsDropdownOpen(false);
+                dispatch({ type: "CLOSE_DROPDOWN" });
             }
         }
 
@@ -41,35 +83,36 @@ export function UserList({ users }: UserListProps) {
         };
     }, []);
 
-    const filteredUsers = users.filter((user) => {
-        const name = getUserName(user).toLowerCase();
-        const email = getUserEmail(user).toLowerCase();
-        const phone = getUserPhone(user);
-        const citizenID = user.citizenID.toLowerCase();
-        const search = searchTerm.toLowerCase();
+    const filteredUsers = useMemo(() => {
+        return users.filter((user) => {
+            const name = getUserName(user).toLowerCase();
+            const email = getUserEmail(user).toLowerCase();
+            const phone = getUserPhone(user);
+            const citizenID = user.citizenID.toLowerCase();
+            const search = state.searchTerm.toLowerCase();
 
-        return (
-            name.includes(search) ||
-            email.includes(search) ||
-            phone.includes(search) ||
-            citizenID.includes(search)
-        );
-    });
+            return (
+                name.includes(search) ||
+                email.includes(search) ||
+                phone.includes(search) ||
+                citizenID.includes(search)
+            );
+        });
+    }, [users, state.searchTerm]);
 
     const handleViewUser = (user: AuthUserWithoutTokens) => {
-        setSelectedUser(user);
-        setIsViewModalOpen(true);
+        dispatch({ type: "OPEN_VIEW_MODAL", payload: user });
     };
 
     const handleUpdateUser = (user: AuthUserWithoutTokens) => {
-        setSelectedUpdateUser(user);
-        setIsUpdateModalOpen(true);
+        dispatch({ type: "OPEN_UPDATE_MODAL", payload: user });
     };
 
     const handleUpdateSuccess = (updatedEmployee: AuthUserWithoutTokens) => {
         // TODO: Cập nhật lại danh sách users sau khi update thành công
         console.log("Employee updated:", updatedEmployee);
         // Có thể trigger refetch data ở đây
+        dispatch({ type: "CLOSE_MODAL" });
     };
 
     return (
@@ -91,33 +134,30 @@ export function UserList({ users }: UserListProps) {
                                 <input
                                     type="text"
                                     placeholder="Tìm kiếm theo tên, email, SĐT, CCCD..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    value={state.searchTerm}
+                                    onChange={(e) => dispatch({ type: "SET_SEARCH", payload: e.target.value })}
                                     className={userStyles["search-input"]}
                                 />
                             </div>
                             
                             <div className={userStyles["dropdown-container"]} ref={dropdownRef}>
                                 <button 
-                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                    onClick={() => dispatch({ type: "TOGGLE_DROPDOWN" })}
                                     className={userStyles["dropdown-btn"]}
                                     type="button"
                                 >
-                                    {roleIdToName[selectedRole] || selectedRole}
-                                    <ChevronDown className={`${userStyles["dropdown-icon"]} ${isDropdownOpen ? userStyles["dropdown-icon-open"] : ''}`} />
+                                    {roleIdToName[state.selectedRole] || state.selectedRole}
+                                    <ChevronDown className={`${userStyles["dropdown-icon"]} ${state.isDropdownOpen ? userStyles["dropdown-icon-open"] : ''}`} />
                                 </button>
                                 
-                                {isDropdownOpen && (
+                                {state.isDropdownOpen && (
                                     <div className={userStyles["dropdown-menu"]}>
                                         <ul>
                                             {
                                                 visibleRoles.map((role => (
                                                     <li key={role}>
                                                         <button 
-                                                            onClick={() => {
-                                                                setIsDropdownOpen(false);
-                                                                setSelectedRole(role);
-                                                            }}
+                                                            onClick={() => dispatch({ type: "SET_ROLE", payload: role })}
                                                             className={userStyles["dropdown-menu-item"]}
                                                         >
                                                             {roleIdToName[role] || role}
@@ -207,8 +247,8 @@ export function UserList({ users }: UserListProps) {
                     {filteredUsers.length === 0 && (
                         <div className={userStyles["empty-state"]}>
                             <p>
-                                {searchTerm 
-                                    ? `Không tìm thấy người dùng nào với từ khóa "${searchTerm}"`
+                                {state.searchTerm 
+                                    ? `Không tìm thấy người dùng nào với từ khóa "${state.searchTerm}"`
                                     : "Không có người dùng nào trong hệ thống"
                                 }
                             </p>
@@ -216,18 +256,18 @@ export function UserList({ users }: UserListProps) {
                     )}
                 </div>
             </div>
-            {selectedUser && (
+            {state.selectedUser && (
                 <UserDetail
-                    user={selectedUser}
-                    isOpen={isViewModalOpen}
-                    setIsOpen={setIsViewModalOpen}
+                    user={state.selectedUser}
+                    isOpen={state.activeModal === "view"}
+                    setIsOpen={(isOpen) => !isOpen && dispatch({ type: "CLOSE_MODAL" })}
                 />
             )}
-            {selectedUpdateUser && selectedUpdateUser.employee && (
+            {state.selectedUser && state.selectedUser.employee && (
                 <EmployeeUpdateModal
-                    isOpen={isUpdateModalOpen}
-                    setIsOpen={setIsUpdateModalOpen}
-                    employee={selectedUpdateUser}
+                    isOpen={state.activeModal === "update"}
+                    setIsOpen={(isOpen) => !isOpen && dispatch({ type: "CLOSE_MODAL" })}
+                    employee={state.selectedUser}
                     isAdmin={true}
                     onSuccess={handleUpdateSuccess}
                 />
