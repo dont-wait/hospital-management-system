@@ -7,7 +7,7 @@ import { useSidebar } from "@/contexts/SidebarContext";
 import Image from "next/image";
 import { useUserAuthContext } from "@/contexts";
 import { Employee } from "@/types";
-import styles from "@/styles/admin-sidebar.css";
+import styles from "@/styles/admin-sidebar.module.css";
 
 const adminProfile = (user: Employee) => (
     <div className={styles["admin-profile"]}>
@@ -18,7 +18,7 @@ const adminProfile = (user: Employee) => (
             height={50}
             className={styles["admin-avatar"]}
         />
-        <div className={styles["admin-info"]}>
+        <div>
             <h3 className={styles["admin-name"]}>{`${user?.firstName} ${user?.lastName}`}</h3>
             <p className={styles["admin-email"]}>{user?.email}</p>
         </div>
