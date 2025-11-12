@@ -52,7 +52,7 @@ public class EmployeeRepository : IEmployeeRepository
         // Tạo Employee trước để lấy Id
         Employee employee = new Employee
         {
-            
+
             FirstName = doctorDto.FirstName,
             LastName = doctorDto.LastName,
             PhoneNumber = doctorDto.PhoneNumber,
@@ -62,7 +62,9 @@ public class EmployeeRepository : IEmployeeRepository
             DateOfBirth = doctorDto.DateOfBirth,
             Gender = doctorDto.Gender,
             HireDate = doctorDto.HireDate,
-            RoleId = RoleEnum.doctor.ToString().ToLower()
+            RoleId = RoleEnum.doctor.ToString().ToLower(),
+            ExperienceYears = doctorDto.ExperienceYears,
+            DepartmentId = doctorDto.DepartmentId
         };
 
         await _context.employees.AddAsync(employee);
@@ -89,11 +91,18 @@ public class EmployeeRepository : IEmployeeRepository
                 && ua.Employee.DeletedAt == null
             )
             .Include(ua => ua.Employee)
+<<<<<<< HEAD
                 //.ThenInclude(e => e!.Role)
             .Include(ua => ua.Employee!.Doctor)
             .Include(ua => ua.Employee!.Admin)
             .AsSplitQuery()
             .FirstOrDefaultAsync();
+=======
+                .ThenInclude(e => e!.Doctor)
+            .Include(ua => ua.Employee)
+                .ThenInclude(d => d!.Department)
+            .FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employeeId);
+>>>>>>> 845a534 (fix: add missing field important in employee and config Department in query)
     }
 
     public async Task UpdateEmployeeAsync<T>(T employee, UserAccount userAccount) where T : Employee

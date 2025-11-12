@@ -44,7 +44,9 @@ public class AuthService : IAuthService
                         Gender = user.Employee.Gender,
                         HireDate = user.Employee.HireDate,
                         Specialization = user.Employee.Doctor!.Specialization,
-                        RoleId = user.Employee.RoleId
+                        RoleId = user.Employee.RoleId,
+                        ExperienceYears = user.Employee.ExperienceYears,
+                        DepartmentName = user.Employee.Department.Name
                     };
                     break;
 
@@ -59,7 +61,10 @@ public class AuthService : IAuthService
                         CertificateNumber = user.Employee.CertificateNumber,
                         Gender = user.Employee.Gender,
                         DateOfBirth = user.Employee.DateOfBirth,
-                        RoleId = user.Employee.RoleId
+                        RoleId = user.Employee.RoleId,
+                        HireDate = user.Employee.HireDate,
+                        ExperienceYears = user.Employee.ExperienceYears,
+                        DepartmentName = user.Employee.Department.Name
                     };
                     break;
 

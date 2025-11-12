@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 public static class DataSeeder
 {
 
+
+
     public static async Task SeedDepartmentsAndRoomAsync(AppDbContext appDbContext)
     {
         var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "departmentsHaveRooms.json");

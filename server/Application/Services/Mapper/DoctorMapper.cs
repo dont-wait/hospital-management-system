@@ -18,6 +18,8 @@ public class DoctorMapper : IDoctorMapper
             Gender = doctor.Employee!.Gender,
             HireDate = doctor.Employee!.HireDate,
             RoleId = RoleEnum.doctor.ToString().ToLower(),
+            ExperienceYears = doctor.Employee!.ExperienceYears,
+            DepartmentName = doctor.Employee!.Department.Name
         };
     }
 

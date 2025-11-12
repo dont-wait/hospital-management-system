@@ -31,4 +31,7 @@ public class RequestEmployeeDTO : RequestUserDTO
     [Required]
     [StringLength(10, MinimumLength = 10, ErrorMessage = "Số chứng chỉ hành nghề phải đúng 10 ký tự.")]
     public string CertificateNumber { get; set; } = string.Empty;
+
+    public int ExperienceYears { get; set; }
+    public int DepartmentId { get; set; }
 }
