@@ -3,7 +3,7 @@ import { Navigation, Sidebar } from "@/components";
 import "react-loading-skeleton/dist/skeleton.css";
 import "@/styles/globals.css";
 
-export default function AdminLayout({
+export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;
