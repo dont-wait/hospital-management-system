@@ -42,7 +42,6 @@ export class MiddlewareUtils {
 
   static handleRedirectLogin(req: NextRequest): NextResponse {
     const url = new URL("/login", req.url);
-    url.searchParams.set("from", "redirect");
     const redirectRes = NextResponse.redirect(url);
     return redirectRes;
   }
