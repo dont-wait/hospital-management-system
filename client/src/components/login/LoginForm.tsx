@@ -30,7 +30,7 @@ export function LoginForm() {
       if (user) {
         setUser(user);
         if ("roleId" in user && user.roleId === "admin")
-          router.push("/admin/dashboard");
+          window.location.href = "/admin/dashboard";
         else router.push("/");
       }
     },
