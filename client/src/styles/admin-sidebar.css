@@ -1,0 +1,28 @@
+.admin-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-avatar {
+  border-radius: 9999px;
+  margin-bottom: 0.5rem;
+}
+
+.admin-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.75rem;
+}
+
+.admin-email {
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.25rem;
+  color: #000;
+}

@@ -7,19 +7,20 @@ import { useSidebar } from "@/contexts/SidebarContext";
 import Image from "next/image";
 import { useUserAuthContext } from "@/contexts";
 import { Employee } from "@/types";
+import styles from "@/styles/admin-sidebar.css";
 
 const adminProfile = (user: Employee) => (
-    <div className="flex items-center gap-3">
+    <div className={styles["admin-profile"]}>
         <Image 
             src={user?.avatarUrl ?? "/images/df-avatar.webp"}
             alt="Admin Avatar"
             width={50}
             height={50}
-            className="rounded-full mb-2"
+            className={styles["admin-avatar"]}
         />
-        <div>
-            <h3 className="text-lg font-semibold">{`${user?.firstName} ${user?.lastName}`}</h3>
-            <p className="text-sm text-black font-light">{user?.email}</p>
+        <div className={styles["admin-info"]}>
+            <h3 className={styles["admin-name"]}>{`${user?.firstName} ${user?.lastName}`}</h3>
+            <p className={styles["admin-email"]}>{user?.email}</p>
         </div>
     </div>
 );
