@@ -1,7 +1,6 @@
 import { UserList } from "@/components/admin/UserList";
 import { EmployeeService } from "@/services/employee.service";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,10 +11,6 @@ export const metadata: Metadata = {
 async function UsersManagementPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get("accessToken")?.value;
-
-    if (!token) {
-        redirect("/login");
-    }
     
     try {
         const getAllEmployees = await EmployeeService.getAllEmployeesByRole("doctor", token);
