@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Quản lý người dùng | Medica Hospital",
+    title: "Quản lý người dùng | Medicare Hospital",
     description: "Quản lý tất cả người dùng trong hệ thống bệnh viện",
 };
 
