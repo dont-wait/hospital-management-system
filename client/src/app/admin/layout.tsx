@@ -3,17 +3,18 @@
 import { useSidebar } from "@/contexts";
 import SidebarForAdmin from "@/components/shared/SidebarForAdmin";
 import { ReactNode } from "react";
+import styles from "@/styles/admin.module.css";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
     const { openSidebar } = useSidebar();
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className={styles["admin-layout"]}>
             <SidebarForAdmin />
             
             <button
                 onClick={openSidebar}
-                className="lg:hidden fixed top-4 left-4 z-30 p-2 rounded-lg bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors"
+                className={styles["admin-button-sidebar"]}
                 aria-label="Open menu"
             >
                 <svg
@@ -31,7 +32,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 </svg>
             </button>
 
-            <main className="flex-1 w-full transition-all duration-300 ease-in-out lg:ml-64 p-4 md:p-6 pt-16 lg:pt-6">
+            <main className={styles["admin-main"]}>
                 {children}
             </main>
         </div>

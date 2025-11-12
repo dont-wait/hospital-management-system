@@ -1,10 +1,9 @@
 import { motion } from "motion/react";
 import { Label, Modal } from "@/components";
-import { PatientUtils } from "@/lib/client";
+import { PatientUtils, parseDateString } from "@/lib/client";
 import { AuthUserWithoutTokens } from "@/types";
 import styles from "@/styles/patient.module.css";
 import { getUserRole } from "@/lib/helper";
-import { parseDateString } from "@/lib/client";
 import { PatientDetail } from "../patient";
 
 type UserDetailProps = {
