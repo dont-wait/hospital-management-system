@@ -49,7 +49,6 @@ export class MiddlewareUtils {
 
   static handleExpiredToken(req: NextRequest): NextResponse {
     const url = new URL("/login", req.url);
-    url.searchParams.set("from", "expired");
     const redirectRes = NextResponse.redirect(url);
     redirectRes.cookies.delete("accessToken");
     redirectRes.cookies.delete("refreshToken");
