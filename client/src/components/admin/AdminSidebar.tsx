@@ -7,11 +7,7 @@ import { LogOut, LogIn } from "@/lib/client";
 import { AdminSidebarItems, patientSidebarVariants } from "@/config";
 import styles from "@/styles/admin.module.css";
 
-interface AdminSidebarProps {
-  onItemClick?: () => void;
-}
-
-export function AdminSidebar({ onItemClick }: AdminSidebarProps) {
+export function AdminSidebar() {
   const { logout, isAuthenticated } = useUserAuthContext();
   const router = useRouter();
   const pathname = usePathname();
@@ -22,9 +18,6 @@ export function AdminSidebar({ onItemClick }: AdminSidebarProps) {
     } else {
       router.push(route);
     }
-    
-    // Gọi callback để đóng sidebar trên mobile
-    onItemClick?.();
   };
 
   return (
