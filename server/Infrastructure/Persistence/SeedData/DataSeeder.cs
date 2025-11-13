@@ -6,6 +6,99 @@ using Microsoft.EntityFrameworkCore;
 public static class DataSeeder
 {
 
+    
+    public static async Task SeedDoctorsAsync(AppDbContext context)
+    {
+        var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "doctors.json");
+
+        if (!File.Exists(seedPath))
+        {
+            Console.WriteLine("❌ Không tìm thấy doctors.json");
+            return;
+        }
+
+        var json = File.ReadAllText(seedPath);
+        var doctorsData = JsonSerializer.Deserialize<List<DoctorSeedData>>(json);
+
+        if (doctorsData == null)
+        {
+            Console.WriteLine("❌ Không thể đọc dữ liệu doctor từ JSON");
+            return;
+        }
+
+        foreach (var doc in doctorsData)
+        {
+            // Kiểm tra bác sĩ đã tồn tại chưa
+            bool exists = await context.user_accounts.AnyAsync(u => u.CitizenID == doc.CitizenID);
+            if (exists)
+            {
+                Console.WriteLine($"⚠ Bác sĩ với CitizenID {doc.CitizenID} đã tồn tại → bỏ qua");
+                continue;
+            }
+
+            // 1. Tạo Employee
+            var employee = new Employee
+            {
+                Id = Guid.NewGuid(),
+                FirstName = doc.FirstName,
+                LastName = doc.LastName,
+                DateOfBirth = doc.DateOfBirth,
+                Gender = doc.Gender,
+                PhoneNumber = doc.PhoneNumber,
+                Email = doc.Email,
+                HireDate = doc.HireDate,
+                CertificateNumber = doc.CertificateNumber,
+                RoleId = RoleEnum.doctor.ToString().ToLower(),
+                ExperienceYears = doc.ExperienceYears,
+                DepartmentId = doc.DepartmentId
+            };
+            context.employees.Add(employee);
+
+            // 2. Tạo Doctor
+            var doctor = new Doctor
+            {
+                Id = Guid.NewGuid(),
+                EmployeeId = employee.Id,
+                Specialization = doc.Specialization
+            };
+            context.doctors.Add(doctor);
+
+            // 3. Tạo UserAccount
+            var user = new UserAccount
+            {
+                Id = Guid.NewGuid(),
+                CitizenID = doc.CitizenID,
+                Password = HashPasswordUtil.HashPassword(doc.Password),
+                EmployeeId = employee.Id,
+                Is_Active = 1
+            };
+            context.user_accounts.Add(user);
+
+            await context.SaveChangesAsync();
+            Console.WriteLine($"✅ Seed doctor {doc.FirstName} {doc.LastName} thành công!");
+        }
+    }
+
+
+    private class DoctorSeedData
+    {
+        public string CitizenID { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+
+        public DateTime DateOfBirth { get; set; }
+        public string Gender { get; set; } = "M";
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        public string CertificateNumber { get; set; } = string.Empty;
+        public int DepartmentId { get; set; }
+        public string Specialization { get; set; } = string.Empty;
+        public int ExperienceYears { get; set; }
+        public DateTime HireDate { get; set; }
+    }
 
 
     public static async Task SeedDepartmentsAndRoomAsync(AppDbContext appDbContext)
