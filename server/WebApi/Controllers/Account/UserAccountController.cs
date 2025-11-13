@@ -20,32 +20,32 @@ public class AccountController : ControllerBase
 
     [HttpGet("{patientId}")]
     [Authorize(Roles = "admin, doctor")]
-    public async Task<ApiResponse<ResponseUserDTO>> GetUserById(Guid patientId)
+    public async Task<IActionResult> GetUserById(Guid patientId)
     {
         try
         {
             var result = await _userAccountService.GetUserAccountByIdAsync(patientId);
             if (result.IsSuccess)
-                return new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data);
-            return new ApiResponse<ResponseUserDTO>(404, result.Message);
+                return new JsonResult(new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data)) { StatusCode = 200 };
+            return new JsonResult(new ApiResponse<ResponseUserDTO>(404, result.Message)) { StatusCode = 404 };
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return new ApiResponse<ResponseUserDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+            return new JsonResult(new ApiResponse<ResponseUserDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
         }
     }
 
     [HttpGet("@me")]
     [Authorize]
-    public async Task<ApiResponse<ResponseUserDTO>> GetCurrentUser()
+    public async Task<IActionResult> GetCurrentUser()
     {
         try
         {
             var currentUserId = _userAccountService.CurrentUserId;
 
             if (currentUserId == null)
-                return new ApiResponse<ResponseUserDTO>(401, "Người dùng chưa đăng nhập.");
+                return new JsonResult(new ApiResponse<ResponseUserDTO>(401, "Người dùng chưa đăng nhập.")) { StatusCode = 401 };
 
             ServiceResult<ResponseUserDTO?> result = _userAccountService.RoleId switch
             {
@@ -54,56 +54,56 @@ public class AccountController : ControllerBase
             };
 
             if (result.IsSuccess)
-                return new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data);
+                return new JsonResult(new ApiResponse<ResponseUserDTO>(200, "Lấy thông tin tài khoản thành công.", result.Data)) { StatusCode = 200 };
             else
-                return new ApiResponse<ResponseUserDTO>(404, result.Message);
+                return new JsonResult(new ApiResponse<ResponseUserDTO>(404, result.Message)) { StatusCode = 404 };
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return new ApiResponse<ResponseUserDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+            return new JsonResult(new ApiResponse<ResponseUserDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
         }
     }
 
     [HttpPut("patient/{patientId}")]
     [Authorize(Roles = "patient, admin")]
-    public async Task<ApiResponse<ResponsePatientDTO>> UpdateUserById(Guid patientId, RequestUpdatePatient request)
+    public async Task<IActionResult> UpdateUserById(Guid patientId, RequestUpdatePatient request)
     {
         var currentUserRole = _userAccountService.RoleId;
         var currentUserId = _userAccountService.CurrentUserId;
         try
         {
             if (currentUserRole == "patient" && !currentUserId.Equals(patientId))
-                return new ApiResponse<ResponsePatientDTO>(403,
-                    "Bạn không có quyền cập nhật thông tin cho người dùng này.");
+                return new JsonResult(new ApiResponse<ResponsePatientDTO>(403,
+                    "Bạn không có quyền cập nhật thông tin cho người dùng này.")) { StatusCode = 403 };
 
             var updatedPatientAndAccount = await _userAccountService.UpdateUserAccount_Patient_Async(patientId, request);
             if (!updatedPatientAndAccount.IsSuccess)
-                return new ApiResponse<ResponsePatientDTO>(404, updatedPatientAndAccount.Message);
+                return new JsonResult(new ApiResponse<ResponsePatientDTO>(404, updatedPatientAndAccount.Message)) { StatusCode = 404 };
 
-            return new ApiResponse<ResponsePatientDTO>(200, "Thông tin của bạn đã được cập nhật thành công", updatedPatientAndAccount.Data);
+            return new JsonResult(new ApiResponse<ResponsePatientDTO>(200, "Thông tin của bạn đã được cập nhật thành công", updatedPatientAndAccount.Data)) { StatusCode = 200 };
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return new ApiResponse<ResponsePatientDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+            return new JsonResult(new ApiResponse<ResponsePatientDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
         }
     }
     [HttpDelete("{patientId}")]
     [Authorize(Roles = "admin")]
-    public async Task<ApiResponse<string>> DeletePatientById(Guid patientId)
+    public async Task<IActionResult> DeletePatientById(Guid patientId)
     {
         try
         {
             var result = await _userAccountService.DeletePatientByIdAsync(patientId);
             if (result.IsSuccess)
-                return new ApiResponse<string>(200, "Xóa tài khoản thành công.", null);
-            return new ApiResponse<string>(404, result.Message);
+                return new JsonResult(new ApiResponse<string>(200, "Xóa tài khoản thành công.", null)) { StatusCode = 200 };
+            return new JsonResult(new ApiResponse<string>(404, result.Message)) { StatusCode = 404 };
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.");
+            return new JsonResult(new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
         }
     }
 }
