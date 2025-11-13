@@ -28,7 +28,9 @@ public class EmployeeMapper : IEmployeeMapper
                 DateOfBirth = employee.DateOfBirth,
                 Gender = employee.Gender,
                 HireDate = employee.HireDate,
-                RoleId = RoleEnum.admin.ToString().ToLower()
+                RoleId = RoleEnum.admin.ToString().ToLower(),
+                ExperienceYears = employee.ExperienceYears,
+                DepartmentName = employee.Department.Name
             };
         }
         else
