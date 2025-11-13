@@ -16,6 +16,7 @@ async function UsersManagementPage() {
         const getAllEmployees = await EmployeeService.getAllEmployeesByRole("doctor", token);
         return <UserList users={getAllEmployees} />;
     } catch (error) {
+        void error;
         return <UserList users={[]} />;
     }
 }

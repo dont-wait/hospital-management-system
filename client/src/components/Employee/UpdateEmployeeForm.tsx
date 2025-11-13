@@ -74,7 +74,7 @@ export function UpdateEmployeeForm({
 
       const response = await EmployeeService.updateEmployee(
         employee.employee?.employeeId || "",
-        payload
+        payload,
       );
 
       if (onSuccess) {
@@ -152,7 +152,7 @@ export function UpdateEmployeeForm({
 
               <RadioGroupField
                 name="gender"
-                control={control as any}
+                control={control}
                 errors={errors}
                 options={[...GENDER_OPTIONS]}
               />
