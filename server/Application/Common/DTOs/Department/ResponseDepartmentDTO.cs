@@ -1,4 +1,5 @@
 public class ResponseDepartmentDTO
 {
-    public string Name { get; set; } = null!;
+    public int DepartmentId { get; set; }
+    public string DepartmentName { get; set; } = null!;
 }
