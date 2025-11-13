@@ -6,7 +6,7 @@ import {
   VerifyOtpDto,
   ResetPasswordDto,
 } from "@/schemas";
-import api from "@/axios";
+import { api } from "@/axios";
 import { TokenUtils } from "@/lib/client";
 import { Patient, Employee } from "@/types";
 

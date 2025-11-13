@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { AuthUserWithoutTokens, roles, Role } from "@/types";
 import styles from "@/styles/admin.module.css";
 import userStyles from "@/styles/admin-user-management.module.css";
@@ -7,7 +8,7 @@ import { Eye, SquarePen, Trash2, ChevronDown, Search } from "lucide-react";
 import { useReducer, useRef, useEffect, useMemo } from "react";
 import { getUserRole, getUserName, getUserEmail, getUserPhone, roleIdToName } from "@/lib/helper";
 import { UserDetail } from "./UserDetail";
-import { EmployeeUpdateModal } from "@/components/Employee";
+import { EmployeeUpdateModal } from "@/components/employee";
 
 interface UserListProps { 
     users: AuthUserWithoutTokens[];
@@ -194,11 +195,7 @@ export function UserList({ users }: UserListProps) {
                                 {filteredUsers.map((user) => (
                                     <tr key={user.userAccountId}>
                                         <td>
-                                            <img 
-                                                src={user.avatarUrl} 
-                                                alt={getUserName(user)}
-                                                className={userStyles["avatar"]}
-                                            />
+                                            <Image src={user.avatarUrl} width={30} height={30} alt={getUserName(user)} className={userStyles["avatar"]} />
                                         </td>
                                         <td className={userStyles["user-name"]}>{getUserName(user)}</td>
                                         <td>{user.citizenID}</td>

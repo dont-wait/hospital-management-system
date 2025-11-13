@@ -1,4 +1,4 @@
-import api, { getApiInstance, getConfig } from "@/axios";
+import { api, getApiInstance, getConfig } from "@/axios";
 import type { PatientUpdateDto } from "@/schemas";
 import { AuthUserWithoutTokens } from "@/types";
 
@@ -16,7 +16,7 @@ export class PatientService {
   }
 
   public static async getAllPatients(token?: string): Promise<AuthUserWithoutTokens[]> {
-    const apiInstance = getApiInstance(token);
+    const apiInstance = getApiInstance();
     const config = getConfig(token);
     
     const response = await apiInstance.get<{ data: AuthUserWithoutTokens[] }>(
