@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { roboto } from "@/font";
 import { UserAuthProvider, ToastProvider, SidebarProvider } from "@/contexts";
-import { Navigation, Sidebar } from "@/components";
 import "react-loading-skeleton/dist/skeleton.css";
 import "@/styles/globals.css";
 

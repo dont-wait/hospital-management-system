@@ -11,15 +11,32 @@ public class EmployeeRepository : IEmployeeRepository
         _context = context;
     }
 
-    public async Task<List<UserAccount>?> GetAllDoctorAsync()
+    private IQueryable<UserAccount> GetEmployeeQueryByRoleId(string roleId)
     {
-        var doctors = await _context.user_accounts
-            .Include(d => d.Employee)
-                .ThenInclude(e => e!.Doctor)
-            .Where(ua => ua.Employee != null && ua.Employee.Doctor != null)
-                .ToListAsync();
+        var employees = _context.user_accounts
+            .Include(e => e.Employee).AsQueryable();
 
-        return doctors;
+        employees = roleId.ToLower() switch
+        {
+            "doctor" => employees
+                .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.doctor.ToString().ToLower())
+                .Include(ua => ua.Employee!.Doctor),
+
+            "admin" => employees
+                .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.admin.ToString().ToLower())
+                .Include(ua => ua.Employee!.Admin),
+
+            _ => employees
+                .Where(ua => ua.Employee != null && ua.Employee.RoleId == roleId.ToLower())
+        };
+
+        return employees;
+    }
+
+    public async Task<List<UserAccount>?> GetAllEmployeeByRoleIdAsync(string roleId)
+    {
+        var employees = GetEmployeeQueryByRoleId(roleId);
+        return await employees.ToListAsync();
     }
 
     public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto)
@@ -66,26 +83,42 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId)
     {
         return await _context.user_accounts
+            .Where(ua => ua.Employee != null 
+                && ua.Employee.Id == employeeId
+                && ua.DeletedAt == null
+                && ua.Employee.DeletedAt == null
+            )
             .Include(ua => ua.Employee)
-                .ThenInclude(e => e!.Doctor)
-            .FirstOrDefaultAsync(ua => ua.Employee != null && ua.Employee.Id == employeeId);
+                //.ThenInclude(e => e!.Role)
+            .Include(ua => ua.Employee!.Doctor)
+            .Include(ua => ua.Employee!.Admin)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
     }
 
-    public async Task<Doctor?> FindDoctorWithAccountByIdAsync(Guid doctorId)
-    {
-        var existingDoctor = await _context.doctors
-            .Include(d => d.Employee)
-                .ThenInclude(e => e.UserAccount)
-            .FirstOrDefaultAsync(d => d.Id == doctorId);
-
-        return existingDoctor;
-    }
-
-    public async Task UpdateAccountAndDoctorAsync(Doctor doctor, UserAccount userAccount)
+    public async Task UpdateEmployeeAsync<T>(T employee, UserAccount userAccount) where T : Employee
     {
         _context.user_accounts.Update(userAccount);
-        _context.doctors.Update(doctor);
-        _context.employees.Update(doctor.Employee!);
+
+        switch (employee.RoleId.ToLower())
+        {
+            case "doctor":
+                if (employee.Doctor != null)
+                {
+                    _context.doctors.Update(employee.Doctor);
+                }
+                break;
+            case "admin":
+                if (employee.Admin != null)
+                {
+                    _context.admins.Update(employee.Admin);
+                }
+                break;
+            default:
+                break;
+        }
+
+        _context.employees.Update(employee);
 
         await _context.SaveChangesAsync();
     }

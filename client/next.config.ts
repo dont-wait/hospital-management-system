@@ -39,6 +39,12 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/system/resources/previews/**",
       },
+      {
+        protocol: "https",
+        hostname: "i.pinimg.com",
+        port: "",
+        pathname: "/**",
+      }
     ],
     minimumCacheTTL: 60,
   },

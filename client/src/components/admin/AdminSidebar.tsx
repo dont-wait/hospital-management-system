@@ -1,13 +1,17 @@
-import { useRouter } from "next/navigation";
+"use client";
+
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { useUserAuthContext } from "@/contexts";
 import { LogOut, LogIn } from "@/lib/client";
 import { AdminSidebarItems, patientSidebarVariants } from "@/config";
-import styles from "@/styles/patient.module.css";
+import styles from "@/styles/admin.module.css";
 
 export function AdminSidebar() {
   const { logout, isAuthenticated } = useUserAuthContext();
   const router = useRouter();
+  const pathname = usePathname();
+
   const handleItemClick = (route: string) => {
     if (route === "/logout") {
       logout();
@@ -17,8 +21,8 @@ export function AdminSidebar() {
   };
 
   return (
-    <div className={styles["patient-sidebar-body"]}>
-      <nav className={styles["patient-sidebar-content"]}>
+    <div className={styles["admin-sidebar-body"]}>
+      <nav className={styles["admin-sidebar-content"]}>
         {AdminSidebarItems.map((item, index) => {
           const Icon = item.icon;
           return (
@@ -32,35 +36,35 @@ export function AdminSidebar() {
               onClick={() => {
                 handleItemClick(item.route);
               }}
-              className={styles["patient-sidebar-items"]}
+              className={styles["admin-sidebar-items"] + `${item.route === pathname ? ` ${styles["active"]}` : ""}`}
             >
-              <div className={styles["patient-sidebar-item"]}>
+              <div className={styles["admin-sidebar-item"]}>
                 <Icon
                   size={20}
-                  className={styles["patient-sidebar-item-icon"]}
+                  className={styles["admin-sidebar-item-icon"]}
                 />
               </div>
-              <span className="flex-1 text-left font-medium">{item.title}</span>
+              <span className={styles["admin-sidebar-item-title"]}>{item.title}</span>
             </motion.button>
           );
         })}
       </nav>
-      <div className={styles["patient-sidebar-footer"]}>
+      <div className={styles["admin-sidebar-footer"]}>
         {!isAuthenticated ? (
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={() => {
               handleItemClick("/login");
             }}
-            className={styles["patient-sidebar-items"]}
+            className={styles["admin-sidebar-items"]}
           >
-            <div className={styles["patient-sidebar-item"]}>
+            <div className={styles["admin-sidebar-item"]}>
               <LogIn
                 size={20}
-                className={styles["patient-sidebar-item-icon"]}
+                className={styles["admin-sidebar-item-icon"]}
               />
             </div>
-            <span className="flex-1 text-left font-medium">Đăng Nhập</span>
+            <span className={styles["admin-sidebar-item-title"]}>Đăng Nhập</span>
           </motion.button>
         ) : (
           <motion.button
@@ -73,10 +77,10 @@ export function AdminSidebar() {
             <div className={styles["logout-btn-wrap"]}>
               <LogOut
                 size={20}
-                className={styles["patient-sidebar-item-icon"]}
+                className={styles["admin-sidebar-item-icon"]}
               />
             </div>
-            <span className={styles["patient-sidebar-item-title"]}>
+            <span className={styles["admin-sidebar-item-title"]}>
               Đăng Xuất
             </span>
           </motion.button>

@@ -40,16 +40,23 @@ export class MiddlewareUtils {
     return redirectRes;
   }
 
+  static handleRedirectLogin(req: NextRequest): NextResponse {
+    const url = new URL("/login", req.url);
+    const redirectRes = NextResponse.redirect(url);
+    return redirectRes;
+  }
+
   static handleExpiredToken(req: NextRequest): NextResponse {
-    const redirectRes = NextResponse.redirect(new URL("/login", req.url));
+    const url = new URL("/login", req.url);
+    const redirectRes = NextResponse.redirect(url);
     redirectRes.cookies.delete("accessToken");
     redirectRes.cookies.delete("refreshToken");
     MiddlewareUtils.setHasTokenCookie(redirectRes, false);
     return redirectRes;
   }
 
-  static handleUnauthorizedAccess(): NextResponse {
-    const forbiddenRes = new NextResponse(ForbiddenResponse(), {
+  static handleUnauthorizedAccess(userRole: Role): NextResponse {
+    const forbiddenRes = new NextResponse(ForbiddenResponse(userRole), {
       status: 403,
       headers: { "Content-Type": "text/html" },
     });

@@ -1,0 +1,194 @@
+@reference "./globals.css";
+
+.users-table-container {
+  @apply bg-white rounded-lg shadow-md overflow-hidden;
+}
+
+.table-header {
+  @apply flex items-center justify-between p-6 border-b border-gray-200;
+}
+
+.table-title {
+  @apply text-xl font-semibold text-gray-800;
+}
+
+.add-user-btn {
+  @apply flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm min-w-[160px];
+}
+
+.add-user-btn span {
+  @apply font-bold;
+}
+
+/* Search Box */
+.search-container {
+  @apply relative flex-1 max-w-md;
+}
+
+.search-icon {
+  @apply absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400;
+}
+
+.search-input {
+  @apply w-full pl-10 pr-4 py-2.5 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+}
+
+.search-input::placeholder {
+  @apply text-gray-400;
+}
+
+/* Dropdown Button */
+.dropdown-container {
+  @apply relative;
+}
+
+.dropdown-btn {
+  @apply text-white bg-blue-600 hover:bg-blue-700 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center transition-colors duration-200 h-full min-w-[160px];
+}
+
+.dropdown-icon {
+  @apply w-4 h-4 ms-2 transition-transform duration-200;
+}
+
+.dropdown-icon-open {
+  @apply rotate-180;
+}
+
+.dropdown-menu {
+  @apply absolute left-0 mt-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44 border border-gray-200;
+}
+
+.dropdown-menu ul {
+  @apply py-2 text-sm text-gray-700;
+}
+
+.dropdown-menu-item {
+  @apply w-full text-left block px-4 py-2 hover:bg-gray-100 transition-colors duration-150;
+}
+
+.table-wrapper {
+  @apply overflow-x-auto;
+}
+
+.users-table {
+  @apply w-full;
+}
+
+.users-table thead {
+  @apply bg-gray-50 border-b border-gray-200;
+}
+
+.users-table thead tr th {
+  @apply px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider;
+}
+
+.users-table tbody tr {
+  @apply border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150;
+}
+
+.users-table tbody tr:last-child {
+  @apply border-b-0;
+}
+
+.users-table tbody tr td {
+  @apply px-6 py-4 text-sm text-gray-800;
+}
+
+.avatar {
+  @apply w-10 h-10 rounded-full object-cover border-2 border-gray-200;
+}
+
+.user-name {
+  @apply font-medium text-gray-900;
+}
+
+.role-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.role-employee {
+  @apply bg-blue-100 text-blue-700;
+}
+
+.role-patient {
+  @apply bg-green-100 text-green-700;
+}
+
+.role-guest {
+  @apply bg-gray-100 text-gray-700;
+}
+
+.status {
+  @apply inline-flex items-center;
+}
+
+.status-active {
+  @apply h-2.5 w-2.5 rounded-full bg-green-500 me-2;
+}
+
+.status-inactive {
+  @apply h-2.5 w-2.5 rounded-full bg-red-500 me-2;
+}
+
+.action-buttons {
+  @apply flex items-center gap-2;
+}
+
+.action-buttons button {
+  @apply p-2 rounded-lg transition-all duration-200;
+}
+
+.action-buttons button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.action-buttons button svg {
+  @apply w-5 h-5;
+}
+
+.btn-view {
+  @apply text-blue-600 hover:bg-blue-50;
+}
+
+.btn-edit {
+  @apply text-orange-600 hover:bg-orange-50;
+}
+
+.btn-delete {
+  @apply text-red-600 hover:bg-red-50;
+}
+
+.empty-state {
+  @apply py-12 text-center;
+}
+
+.empty-state p {
+  @apply text-gray-500 text-lg;
+}
+
+@media (max-width: 768px) {
+  .table-header {
+    @apply flex-col items-start gap-4;
+  }
+
+  .search-container {
+    @apply max-w-full;
+  }
+
+  .users-table {
+    @apply text-xs;
+  }
+
+  .users-table thead tr th,
+  .users-table tbody tr td {
+    @apply px-3 py-2;
+  }
+
+  .avatar {
+    @apply w-8 h-8;
+  }
+
+  .action-buttons button svg {
+    @apply w-4 h-4;
+  }
+}

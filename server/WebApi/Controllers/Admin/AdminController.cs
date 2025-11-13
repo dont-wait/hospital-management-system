@@ -15,15 +15,4 @@ public class AdminController : ControllerBase
         _adminService = adminService;
         _employeeAccountService = employeeAccountService;
     }
-
-    [HttpGet("doctors")]
-    [Authorize(Roles = "admin")]
-    public async Task<ApiResponse<List<ResponseUserDTO>>> GetAllDoctors()
-    {
-        var result = await _employeeAccountService.GetAllDoctorsAsync();
-        if (!result.IsSuccess)
-            return new ApiResponse<List<ResponseUserDTO>>(400, result.Message);
-
-        return new ApiResponse<List<ResponseUserDTO>>(200, "Lấy danh sách bác sĩ thành công", result.Data);
-    }
 }

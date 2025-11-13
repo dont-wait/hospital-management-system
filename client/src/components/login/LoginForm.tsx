@@ -29,7 +29,9 @@ export function LoginForm() {
         await AuthService.login(loginAccountDto);
       if (user) {
         setUser(user);
-        router.push("/");
+        if ("roleId" in user && user.roleId === "admin")
+          window.location.href = "/admin/dashboard";
+        else router.push("/");
       }
     },
     [router, setUser],

@@ -1,12 +1,12 @@
 @reference "./globals.css";
 
 .not-found-section {
-  height: calc(100vh - 64.8px);
+  height: 100vh;
   @apply flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 gap-6;
 }
 
 .not-found-skeleton-section {
-  height: calc(100vh - 64.8px);
+  height: 100vh;
   @apply flex flex-col items-center justify-center gap-6 bg-gray-50;
 }
 

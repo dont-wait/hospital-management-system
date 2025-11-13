@@ -1,4 +1,10 @@
-export function ForbiddenResponse() {
+import { Role } from "@/types";
+
+export function ForbiddenResponse(userRole: Role) {
+  const isAdmin = userRole === "admin";
+  const redirectUrl = isAdmin ? "/admin/dashboard" : "/";
+  const redirectLabel = isAdmin ? "Dashboard" : "Home";
+
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -46,10 +52,9 @@ export function ForbiddenResponse() {
       <div class="box">
         <h1>403</h1>
         <p>You don't have permission to access this page.</p>
-        <a href="/">Go Home</a>
+        <a href="${redirectUrl}">Go ${redirectLabel}</a>
       </div>
     </body>
   </html>
   `;
 }
-

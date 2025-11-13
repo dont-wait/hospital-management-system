@@ -6,7 +6,9 @@ export enum Gender {
   Other = "O",
 }
 
-export type Role = "guest" | "admin" | "doctor" | "patient";
+export const roles = ["admin", "guest", "doctor", "patient"] as const;
+
+export type Role = typeof roles[number];
 
 export interface Patient {
   patientId: string;
@@ -47,6 +49,7 @@ export interface Employee {
   certificateNumber: string;
   specialization: string;
   avatarUrl: string;
+  roleId: Role;
 }
 
 export interface AuthUser {
@@ -59,6 +62,11 @@ export interface AuthUser {
   accessToken: string;
   refreshToken: string;
 }
+
+export type AuthUserWithoutTokens = Omit<
+  AuthUser,
+  "accessToken" | "refreshToken"
+>;
 
 export interface LoginResponse {
   status: number;
@@ -104,4 +112,3 @@ export type ModalProps = {
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
   showCloseButton?: boolean;
 };
-

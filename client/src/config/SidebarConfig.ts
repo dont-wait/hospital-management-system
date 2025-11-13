@@ -3,8 +3,6 @@ import {
   Lock, 
   Pencil, 
   LayoutDashboard, 
-  UserRound, 
-  Stethoscope, 
   Calendar, 
   Settings 
 } from "@/lib/client";
@@ -47,27 +45,17 @@ export const AdminSidebarItems = [
     icon: LayoutDashboard,
   },
   {
-    route: "/admin/patients",
-    title: "Quản Lý Bệnh Nhân",
-    icon: UserRound,
-  },
-  {
-    route: "/admin/doctors",
-    title: "Quản Lý Bác Sĩ",
-    icon: Stethoscope,
-  },
-  {
-    route: "/admin/appointments",
-    title: "Lịch Hẹn",
-    icon: Calendar,
-  },
-  {
-    route: "/admin/users",
+    route: "/admin/dashboard/users",
     title: "Quản Lý Người Dùng",
     icon: Users,
   },
   {
-    route: "/admin/settings",
+    route: "/admin/dashboard/appointments",
+    title: "Lịch Hẹn",
+    icon: Calendar,
+  },
+  {
+    route: "/admin/dashboard/settings",
     title: "Cài Đặt",
     icon: Settings,
   },

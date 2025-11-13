@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
     if (allowedRoles.includes("guest")) {
       return MiddlewareUtils.handleMissingToken();
     }
-    return MiddlewareUtils.handleUnauthorizedAccess();
+    return MiddlewareUtils.handleRedirectLogin(req);
   }
 
   if (TokenUtils.isTokenExpired(token)) {
@@ -31,7 +31,7 @@ export async function middleware(req: NextRequest) {
 
   const userRole: Role = TokenUtils.getUserRole(token);
   if (!allowedRoles.includes(userRole)) {
-    return MiddlewareUtils.handleUnauthorizedAccess();
+    return MiddlewareUtils.handleUnauthorizedAccess(userRole);
   }
 
   const res = NextResponse.next();
