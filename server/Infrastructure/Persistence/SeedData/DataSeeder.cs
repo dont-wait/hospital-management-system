@@ -6,7 +6,41 @@ using Microsoft.EntityFrameworkCore;
 public static class DataSeeder
 {
 
-    
+    public static async Task SeedServicesAsync(AppDbContext context)
+    {
+        var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "services.json");
+
+        if (!File.Exists(seedPath))
+        {
+            Console.WriteLine("❌ Không tìm thấy services.json");
+            return;
+        }
+
+        var json = File.ReadAllText(seedPath);
+        var servicesData = JsonSerializer.Deserialize<List<Service>>(json);
+
+        if (servicesData == null)
+        {
+            Console.WriteLine("❌ Không thể đọc dữ liệu dịch vụ từ JSON");
+            return;
+        }
+
+        foreach (var service in servicesData)
+        {
+            // Kiểm tra dịch vụ đã tồn tại chưa
+            bool exists = await context.services.AnyAsync(s => s.Name == service.Name);
+            if (exists)
+            {
+                Console.WriteLine($"⚠ Dịch vụ {service.Name} đã tồn tại → bỏ qua");
+                continue;
+            }
+
+            context.services.Add(service);
+            await context.SaveChangesAsync();
+            Console.WriteLine($"✅ Seed dịch vụ {service.Name} thành công!");
+        }
+    }
+
     public static async Task SeedDoctorsAsync(AppDbContext context)
     {
         var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "doctors.json");

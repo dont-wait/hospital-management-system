@@ -1,0 +1,234 @@
+[
+  {
+    "Name": "Khám bệnh BHYT",
+    "InsurancePrice": 45000,
+    "SelfPrice": 0,
+    "OnDemandPrice": 0,
+    "Description": "Khám bệnh theo chế độ BHYT",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh trong giờ",
+    "InsurancePrice": 45000,
+    "SelfPrice": 0,
+    "OnDemandPrice": 0,
+    "Description": "Khám bệnh trong giờ",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh ngoài giờ",
+    "InsurancePrice": 0,
+    "SelfPrice": 120000,
+    "OnDemandPrice": 120000,
+    "Description": "Khám bệnh ngoài giờ",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh ngoài giờ BHYT",
+    "InsurancePrice": 0,
+    "SelfPrice": 75000,
+    "OnDemandPrice": 75000,
+    "Description": "Khám bệnh ngoài giờ BHYT",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh theo yêu cầu",
+    "InsurancePrice": 0,
+    "SelfPrice": 200000,
+    "OnDemandPrice": 0,
+    "Description": "Khám theo yêu cầu",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh theo yêu cầu (Lần 2)",
+    "InsurancePrice": 0,
+    "SelfPrice": 150000,
+    "OnDemandPrice": 0,
+    "Description": "Khám lại theo yêu cầu",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh dịch vụ nhanh",
+    "InsurancePrice": 0,
+    "SelfPrice": 150000,
+    "OnDemandPrice": 0,
+    "Description": "Khám nhanh ưu tiên",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh dịch vụ nhanh (Sản)",
+    "InsurancePrice": 0,
+    "SelfPrice": 150000,
+    "OnDemandPrice": 0,
+    "Description": "Khám nhanh sản khoa",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh dịch vụ nhanh (Mắt)",
+    "InsurancePrice": 0,
+    "SelfPrice": 150000,
+    "OnDemandPrice": 0,
+    "Description": "Khám nhanh mắt",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh dịch vụ nhanh (TMH)",
+    "InsurancePrice": 0,
+    "SelfPrice": 150000,
+    "OnDemandPrice": 0,
+    "Description": "Khám nhanh TMH",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh hẹn giờ qua điện thoại",
+    "InsurancePrice": 0,
+    "SelfPrice": 100000,
+    "OnDemandPrice": 0,
+    "Description": "Khám hẹn qua điện thoại",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh chọn bác sĩ",
+    "InsurancePrice": 0,
+    "SelfPrice": 200000,
+    "OnDemandPrice": 0,
+    "Description": "Chọn bác sĩ khám",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám bệnh dịch vụ nhanh phát sinh sau",
+    "InsurancePrice": 0,
+    "SelfPrice": 105000,
+    "OnDemandPrice": 0,
+    "Description": "Dịch vụ nhanh phát sinh",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Khám và tư vấn BS gia đình",
+    "InsurancePrice": 0,
+    "SelfPrice": 120000,
+    "OnDemandPrice": 120000,
+    "Description": "Khám tư vấn bác sĩ gia đình",
+    "ServiceType": "Clinical"
+  },
+  {
+    "Name": "Giường hồi sức cấp cứu hạng II",
+    "InsurancePrice": 418500,
+    "SelfPrice": 0,
+    "OnDemandPrice": 0,
+    "Description": "Giường hồi sức cấp cứu",
+    "ServiceType": "RoomCharge"
+  },
+  {
+    "Name": "Giường nội khoa loại 1 – Khoa HSCC",
+    "InsurancePrice": 257100,
+    "SelfPrice": 0,
+    "OnDemandPrice": 0,
+    "Description": "Giường loại 1 HSCC",
+    "ServiceType": "RoomCharge"
+  },
+  {
+    "Name": "Giường nội khoa loại 1 – Khoa nội tổng hợp",
+    "InsurancePrice": 257100,
+    "SelfPrice": 0,
+    "OnDemandPrice": 0,
+    "Description": "Giường loại 1 nội tổng hợp",
+    "ServiceType": "RoomCharge"
+  },
+  {
+    "Name": "Giường nội khoa loại 1 – Khoa nhi",
+    "InsurancePrice": 257100,
+    "SelfPrice": 0,
+    "OnDemandPrice": 0,
+    "Description": "Giường loại 1 nhi",
+    "ServiceType": "RoomCharge"
+  },
+  {
+    "Name": "Giường nội khoa loại 2 – Khoa ngoại",
+    "InsurancePrice": 222300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 0,
+    "Description": "Giường loại 2 ngoại",
+    "ServiceType": "RoomCharge"
+  },
+  {
+    "Name": "Giường nội khoa loại 2 – Khoa phụ sản",
+    "InsurancePrice": 222300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 0,
+    "Description": "Giường loại 2 phụ sản",
+    "ServiceType": "RoomCharge"
+  },
+  {
+    "Name": "Chụp X-quang sọ thẳng/nghiêng",
+    "InsurancePrice": 73300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 130000,
+    "Description": "Chụp X-quang sọ thẳng/nghiêng",
+    "ServiceType": "Paraclinical"
+  },
+  {
+    "Name": "Chụp X-quang Blondeau",
+    "InsurancePrice": 73300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 130000,
+    "Description": "Chụp X-quang Blondeau",
+    "ServiceType": "Paraclinical"
+  },
+  {
+    "Name": "Chụp X-quang Hirtz",
+    "InsurancePrice": 73300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 130000,
+    "Description": "Chụp X-quang Hirtz",
+    "ServiceType": "Paraclinical"
+  },
+  {
+    "Name": "Chụp X-quang Schuller",
+    "InsurancePrice": 73300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 130000,
+    "Description": "Chụp X-quang Schuller",
+    "ServiceType": "Paraclinical"
+  },
+  {
+    "Name": "Chụp X-quang xương chính mũi",
+    "InsurancePrice": 73300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 130000,
+    "Description": "Chụp X-quang xương chính mũi",
+    "ServiceType": "Paraclinical"
+  },
+  {
+    "Name": "Chụp X-quang ngực thẳng",
+    "InsurancePrice": 73300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 130000,
+    "Description": "Chụp X-quang ngực thẳng",
+    "ServiceType": "Paraclinical"
+  },
+  {
+    "Name": "Chụp X-quang ngực nghiêng hoặc chếch mỗi bên",
+    "InsurancePrice": 73300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 130000,
+    "Description": "Chụp X-quang ngực nghiêng hoặc chếch mỗi bên",
+    "ServiceType": "Paraclinical"
+  },
+  {
+    "Name": "Chụp X-quang đỉnh phổi ướt",
+    "InsurancePrice": 73300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 130000,
+    "Description": "Chụp X-quang đỉnh phổi ướt",
+    "ServiceType": "Paraclinical"
+  },
+  {
+    "Name": "Chụp X-quang nghiêng hoặc chếch mỗi bên",
+    "InsurancePrice": 73300,
+    "SelfPrice": 0,
+    "OnDemandPrice": 130000,
+    "Description": "Chụp X-quang nghiêng hoặc chếch mỗi bên",
+    "ServiceType": "Paraclinical"
+  }
+]

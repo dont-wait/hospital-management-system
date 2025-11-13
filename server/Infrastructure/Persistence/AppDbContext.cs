@@ -9,6 +9,8 @@ public class AppDbContext : DbContext
         _currentUserService = currentUserService;
     }
 
+    public DbSet<Appointment> appointments { get; set; } = null!;
+    public DbSet<Service> services { get; set; } = null!;
     public DbSet<Department> departments { get; set; } = null!;
     public DbSet<Room> rooms { get; set; } = null!;
     public DbSet<Admin> admins { get; set; } = null!;
@@ -23,6 +25,26 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        modelBuilder.Entity<Appointment>(entity =>
+        {
+            entity.HasOne(a => a.Patient)
+                .WithMany()
+                .HasForeignKey(a => a.PatientId)
+                .OnDelete(DeleteBehavior.NoAction);  
+
+            entity.HasOne(a => a.Doctor)
+                .WithMany()
+                .HasForeignKey(a => a.DoctorId)
+                .OnDelete(DeleteBehavior.NoAction);  
+            entity.HasOne(a => a.Service)
+                .WithMany()
+                .HasForeignKey(a => a.ServiceId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Soft delete filter
+            entity.HasQueryFilter(a => a.DeletedAt == null);
+        });
 
         modelBuilder.Entity<Admin>()
             .HasOne(ua => ua.Employee)
