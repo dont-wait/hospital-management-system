@@ -5,7 +5,7 @@ import axios, {
   AxiosResponse,
 } from "axios";
 import { ToastDefaultConfig } from "@/config";
-import { AuthErrorResponse } from "@/types";
+import { AuthErrorResponse, ApiResponse } from "@/types";
 
 const createBaseInstance = (): AxiosInstance => {
   return axios.create({
@@ -20,15 +20,21 @@ const createBaseInstance = (): AxiosInstance => {
   });
 };
 
+let toastRef: typeof import("react-toastify").toast | null = null;
 const showToast = async (
   message: string,
   type: "success" | "error" | "info" = "info",
 ) => {
-  if (typeof window !== "undefined") {
+  if (typeof window === "undefined") return;
+
+  if (!toastRef) {
     const { toast } = await import("react-toastify");
-    toast[type](message, ToastDefaultConfig);
+    toastRef = toast;
   }
+
+  toastRef[type](message, ToastDefaultConfig);
 };
+
 
 const handleValidationErrors = async (data: AuthErrorResponse) => {
   if (data.errors) {
@@ -46,14 +52,10 @@ const attachInterceptors = (
 ) => {
   instance.interceptors.response.use(
     <T>(
-      response: AxiosResponse<{ status: number; message: string; data: T }>,
+      response: AxiosResponse<ApiResponse<T>>,
     ) => {
-      const { status, message } = response.data;
-      if (status >= 400) {
-        if (options?.withToast) showToast(message, "error");
-        return Promise.reject(response);
-      }
-      if (options?.withToast) showToast(message, "success");
+      if (options?.withToast && response.data.message)
+        showToast(response.data.message, "success");
       return response;
     },
     (
@@ -86,11 +88,14 @@ const attachInterceptors = (
   );
 };
 
-export const api = createBaseInstance();
-export const apiSSR = createBaseInstance();
+const createApiInstance = (withToast: boolean) => {
+  const instance = createBaseInstance();
+  attachInterceptors(instance, { withToast });
+  return instance;
+};
 
-attachInterceptors(api, { withToast: true });
-attachInterceptors(apiSSR, { withToast: false });
+export const api = createApiInstance(true);
+export const apiSSR = createApiInstance(false);
 
 export const getConfig = (token?: string): AxiosRequestConfig | undefined => {
   return token
@@ -98,7 +103,7 @@ export const getConfig = (token?: string): AxiosRequestConfig | undefined => {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       }
-    : undefined;
+    : {};
 };
 
 export const getApiInstance = (

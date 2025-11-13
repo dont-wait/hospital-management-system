@@ -1,5 +1,11 @@
 import { ReactNode } from "react";
 
+export interface ApiResponse<T> {
+  status: number;
+  message: string;
+  data: T;
+}
+
 export enum Gender {
   Male = "M",
   Female = "F",
