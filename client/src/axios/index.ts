@@ -97,7 +97,7 @@ const createApiInstance = (withToast: boolean) => {
 export const api = createApiInstance(true);
 export const apiSSR = createApiInstance(false);
 
-export const getConfig = (token?: string): AxiosRequestConfig | undefined => {
+export const getConfig = (token?: string): AxiosRequestConfig => {
   return token
     ? {
         headers: { Authorization: `Bearer ${token}` },
