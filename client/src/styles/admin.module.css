@@ -41,12 +41,11 @@
 
 /* Admin Sidebar */
 .admin-sidebar-body {
-  min-height: calc(100vh - 70px);
-  @apply flex flex-col bg-white text-gray-700 border-r border-gray-200;
+  @apply flex flex-col h-full bg-white text-gray-700 border-r border-gray-200;
 }
 
 .admin-sidebar-content {
-  @apply flex-1 space-y-1 px-3 py-4;
+  @apply flex-1 space-y-1 px-3 py-4 overflow-y-auto;
 }
 
 .admin-sidebar-items {
