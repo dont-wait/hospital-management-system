@@ -2,13 +2,14 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import { useUserAuthContext } from "@/contexts";
+import { useUserAuthContext, useSidebar } from "@/contexts";
 import { LogOut, LogIn } from "@/lib/client";
 import { DoctorSidebarItems, patientSidebarVariants } from "@/config";
 import styles from "@/styles/admin.module.css";
 
 export function DoctorSidebar() {
   const { logout, isAuthenticated } = useUserAuthContext();
+  const { closeSidebarOnMobile } = useSidebar();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -18,6 +19,7 @@ export function DoctorSidebar() {
     } else {
       router.push(route);
     }
+    closeSidebarOnMobile();
   };
 
   return (
