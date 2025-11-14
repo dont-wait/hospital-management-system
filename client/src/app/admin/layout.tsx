@@ -1,16 +1,19 @@
 "use client";
 
 import { useSidebar } from "@/contexts";
-import SidebarForAdmin from "@/components/shared/SidebarForAdmin";
-import { ReactNode } from "react";
+import SidebarCustomContent from "@/components/shared/SidebarCustomContent";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { ReactNode, useMemo } from "react";
 import styles from "@/styles/admin.module.css";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
     const { openSidebar } = useSidebar();
 
+    const sidebarContent = useMemo(() => <AdminSidebar />, []);
+
     return (
         <div className={styles["admin-layout"]}>
-            <SidebarForAdmin />
+            <SidebarCustomContent content={sidebarContent} />
             
             <button
                 onClick={openSidebar}
