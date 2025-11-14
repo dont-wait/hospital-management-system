@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using Domain.Entities.ScheduleTask;
 
-namespace Domain.Entities.DoctorSchedule;
 
 public class DoctorSchedule : BaseEntity
 {
@@ -13,7 +13,7 @@ public class DoctorSchedule : BaseEntity
     
     [Required]
     public long TaskId { get; set; }
-    public virtual Task Task { get; set; } = null!;
+    public virtual TaskItem Task { get; set; } = null!;
 
     [Required]
     [Range(1, 50)]

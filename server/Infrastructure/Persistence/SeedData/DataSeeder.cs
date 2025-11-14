@@ -31,7 +31,6 @@ public static class DataSeeder
             bool exists = await context.services.AnyAsync(s => s.Name == service.Name);
             if (exists)
             {
-                Console.WriteLine($"⚠ Dịch vụ {service.Name} đã tồn tại → bỏ qua");
                 continue;
             }
 
@@ -66,7 +65,6 @@ public static class DataSeeder
             bool exists = await context.user_accounts.AnyAsync(u => u.CitizenID == doc.CitizenID);
             if (exists)
             {
-                Console.WriteLine($"⚠ Bác sĩ với CitizenID {doc.CitizenID} đã tồn tại → bỏ qua");
                 continue;
             }
 

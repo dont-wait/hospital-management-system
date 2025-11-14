@@ -1,3 +1,4 @@
+using Domain.Entities.ScheduleTask;
 using Microsoft.EntityFrameworkCore;
 using Namotion.Reflection;
 
@@ -8,6 +9,11 @@ public class AppDbContext : DbContext
     {
         _currentUserService = currentUserService;
     }
+
+    public DbSet<DoctorSchedule> doctor_schedules { get; set; } = null!;
+    public DbSet<TaskItem> tasks { get; set; } = null!;
+    public DbSet<TaskRegistration> task_registrations { get; set; } = null!;
+    public DbSet<TaskRequirement> task_requirements { get; set; } = null!;
 
     public DbSet<Appointment> appointments { get; set; } = null!;
     public DbSet<Service> services { get; set; } = null!;
@@ -29,20 +35,15 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Appointment>(entity =>
         {
             entity.HasOne(a => a.Patient)
-                .WithMany()
+                .WithMany(p => p.Appointments)     
                 .HasForeignKey(a => a.PatientId)
-                .OnDelete(DeleteBehavior.NoAction);  
-
-            entity.HasOne(a => a.Doctor)
-                .WithMany()
-                .HasForeignKey(a => a.DoctorId)
-                .OnDelete(DeleteBehavior.NoAction);  
-            entity.HasOne(a => a.Service)
-                .WithMany()
-                .HasForeignKey(a => a.ServiceId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Soft delete filter
+            entity.HasOne(a => a.Doctor)
+                .WithMany(d => d.Appointments)     
+                .HasForeignKey(a => a.DoctorId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
             entity.HasQueryFilter(a => a.DeletedAt == null);
         });
 

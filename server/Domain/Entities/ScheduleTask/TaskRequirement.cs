@@ -9,7 +9,7 @@ public class TaskRequirement : BaseEntity
     public long Id { get; set; }
     
     public long TaskId { get; set; }
-    public virtual Task Task { get; set; } = null!;
+    public virtual TaskItem Task { get; set; } = null!;
     
     [MaxLength(100)]
     public string? RequiredSpecialization { get; set; }  //Cho phep Khong yeu cau chuyen khoa

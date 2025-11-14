@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using Domain.Entities.ScheduleTask;
 using Domain.Enums;
 
 namespace Domain.Entities.ScheduleTask;
 
-public class Task : BaseEntity 
+public class TaskItem : BaseEntity 
 {
     [Key]
     public long Id { get; set; }

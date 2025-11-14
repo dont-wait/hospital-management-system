@@ -9,7 +9,7 @@ public class TaskRegistration : BaseEntity
     
     [Required]
     public long TaskId { get; set; }
-    public virtual Task Task { get; set; } = null!;
+    public virtual TaskItem Task { get; set; } = null!;
     
     [Required]
     public Guid EmployeeId { get; set; }

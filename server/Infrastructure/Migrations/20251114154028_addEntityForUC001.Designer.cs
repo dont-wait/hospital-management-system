@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251114154028_addEntityForUC001")]
+    partial class addEntityForUC001
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,6 +92,9 @@ namespace server.Migrations
                     b.Property<Guid>("DoctorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("DoctorId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<long>("DoctorScheduleId")
                         .HasColumnType("bigint");
 
@@ -96,6 +102,9 @@ namespace server.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PatientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PatientId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ServiceId")
@@ -111,9 +120,13 @@ namespace server.Migrations
 
                     b.HasIndex("DoctorId");
 
+                    b.HasIndex("DoctorId1");
+
                     b.HasIndex("DoctorScheduleId");
 
                     b.HasIndex("PatientId");
+
+                    b.HasIndex("PatientId1");
 
                     b.HasIndex("ServiceId");
 
@@ -829,10 +842,14 @@ namespace server.Migrations
             modelBuilder.Entity("Appointment", b =>
                 {
                     b.HasOne("Doctor", "Doctor")
-                        .WithMany("Appointments")
+                        .WithMany()
                         .HasForeignKey("DoctorId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Doctor", null)
+                        .WithMany("Appointments")
+                        .HasForeignKey("DoctorId1");
 
                     b.HasOne("DoctorSchedule", "DoctorSchedule")
                         .WithMany()
@@ -841,15 +858,19 @@ namespace server.Migrations
                         .IsRequired();
 
                     b.HasOne("Patient", "Patient")
-                        .WithMany("Appointments")
+                        .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Patient", null)
+                        .WithMany("Appointments")
+                        .HasForeignKey("PatientId1");
+
                     b.HasOne("Service", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Doctor");
