@@ -5,7 +5,7 @@
 }
 
 .button-default {
-  @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  @apply bg-primary text-primary-foreground;
 }
 
 .button-size-default {
@@ -25,15 +25,15 @@
 }
 
 .button-destructive {
-  @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
+  @apply bg-destructive text-destructive-foreground;
 }
 
 .button-outline {
-  @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground;
+  @apply border border-input bg-background;
 }
 
 .button-secondary {
-  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  @apply bg-secondary text-secondary-foreground;
 }
 
 .button-ghost {
@@ -41,5 +41,5 @@
 }
 
 .button-link {
-  @apply text-primary underline-offset-4 hover:underline;
+  @apply text-primary underline-offset-4;
 }

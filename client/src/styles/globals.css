@@ -1,10 +1,16 @@
 @import "tailwindcss";
 
-@theme {
-  --content:
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}", "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}";
+:root {
+  --anakiwa: #7FDEFF;
+  --east-bay: #4F518C;
+  --martinique: #2C2A4A;
+  --mauve: #DABFFF;
+  --silver: #C5C5C5;
+  --truev: #907AD6;
+  --white: #FFFFFF;
+}
 
+@theme {
   --default-transition-duration: 150ms;
   --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   --radius-lg: var(--radius);
@@ -15,7 +21,9 @@
     from 180deg at 50% 50%,
     var(--tw-gradient-stops)
   );
-  --color-background: hsl(var(--background));
+  --color-martinique: var(--martinique);
+  --color-mauve: var(--mauve);
+  --color-background: hsl(var(--white));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));

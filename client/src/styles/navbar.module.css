@@ -1,7 +1,7 @@
 @reference "./globals.css";
 
 .nav-section {
-  @apply bg-white shadow-md;
+  @apply bg-martinique shadow-md;
 }
 
 .nav-wrap {
@@ -21,19 +21,19 @@
 }
 
 .nav-link-icon {
-  @apply h-8 w-8 text-blue-600;
+  @apply h-6 w-6 text-mauve fill-mauve;
 }
 
 .nav-link-title {
-  @apply font-bold text-xl text-gray-900;
+  @apply font-bold text-xl text-mauve;
+}
+
+.nav-logo-icon {
+  @apply bg-mauve;
 }
 
 .nav-options {
   @apply flex items-center space-x-4;
-}
-
-.nav-notify {
-  @apply aspect-square shadow;
 }
 
 .nav-options-icon {
@@ -41,7 +41,7 @@
 }
 
 .nav-avatar {
-  @apply w-10 border-2 border-gray-500 rounded-full overflow-hidden aspect-square;
+  @apply w-10 border-2 border-mauve rounded-full overflow-hidden aspect-square;
 }
 
 .nav-avatar-img {
@@ -50,4 +50,12 @@
 
 .nav-btn {
   @apply flex items-center space-x-2;
+}
+
+.nav-btn:first-child {
+  @apply bg-mauve text-martinique border-0;
+}
+
+.nav-btn:last-child {
+  @apply text-mauve border-mauve border bg-transparent;
 }
