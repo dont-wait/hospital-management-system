@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
+a {
+  display: block;
+}
+
 :root {
-  --anakiwa: #7FDEFF;
-  --east-bay: #4F518C;
-  --martinique: #2C2A4A;
-  --mauve: #DABFFF;
-  --silver: #C5C5C5;
-  --truev: #907AD6;
-  --white: #FFFFFF;
+  --anakiwa: #7fdeff;
+  --east-bay: #4f518c;
+  --martinique: #2c2a4a;
+  --mauve: #dabfff;
+  --silver: #c5c5c5;
+  --truev: #907ad6;
 }
 
 @theme {
@@ -23,6 +26,10 @@
   );
   --color-martinique: var(--martinique);
   --color-mauve: var(--mauve);
+  --color-anakiwa: var(--anakiwa);
+  --color-truev: var(--truev);
+  --color-silver: var(--silver);
+  --color-east-bay: var(--east-bay);
   --color-background: hsl(var(--white));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));

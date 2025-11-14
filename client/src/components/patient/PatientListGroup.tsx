@@ -1,40 +1,67 @@
 import Link from "next/link";
-import { motion } from "motion/react";
-import { Card, CardContent, CardHeader, CardTitle, Button } from "@/components";
-import { Calendar, FileText, Pencil } from "@/lib/client";
-import styles from "@/styles/patient.module.css";
-
-const CardMotion = motion(Card);
+import { Icon } from "@/components";
+import { cn } from "@/lib/client";
+import patientStyles from "@/styles/patient.module.css";
+import cardStyles from "@/styles/card.module.css";
+import buttonStyles from "@/styles/button.module.css";
 
 function PatientListGroup() {
   return (
-    <CardMotion
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-    >
-      <CardHeader>
-        <CardTitle>Chức năng</CardTitle>
-      </CardHeader>
-      <CardContent className={styles["patient-content"]}>
-        <Button className={styles["patient-helper-btn"]} variant="outline">
-          <Calendar className={styles["patient-helper-icon"]} />
+    <section className={cardStyles["card"]}>
+      <div className={cardStyles["card-header"]}>
+        <div className={cardStyles["card-title"]}>Chức năng</div>
+      </div>
+      <div
+        className={cn(
+          cardStyles["card-content"],
+          patientStyles["patient-content"],
+        )}
+      >
+        <div
+          className={cn(
+            buttonStyles["button"],
+            buttonStyles["button-outline"],
+            patientStyles["patient-helper-btn"],
+          )}
+        >
+          <Icon
+            name="Calendar"
+            className={patientStyles["patient-helper-icon"]}
+          />
           Lịch khám
-        </Button>
-        <Link href="/forgot-password" className={styles["patient-link"]}>
-          <Button className={styles["patient-helper-btn"]} variant="outline">
-            <FileText className={styles["patient-helper-icon"]} />
+        </div>
+        <Link href="/forgot-password" className={patientStyles["patient-link"]}>
+          <div
+            className={cn(
+              buttonStyles["button"],
+              buttonStyles["button-outline"],
+              patientStyles["patient-helper-btn"],
+            )}
+          >
+            <Icon
+              name="FileText"
+              className={patientStyles["patient-helper-icon"]}
+            />
             Đổi mật khẩu
-          </Button>
+          </div>
         </Link>
-        <Link href="/patient/update" className={styles["patient-link"]}>
-          <Button className={styles["patient-helper-btn"]} variant="outline">
-            <Pencil className={styles["patient-helper-icon"]} />
+        <Link href="/patient/update" className={patientStyles["patient-link"]}>
+          <div
+            className={cn(
+              buttonStyles["button"],
+              buttonStyles["button-outline"],
+              patientStyles["patient-helper-btn"],
+            )}
+          >
+            <Icon
+              name="Pencil"
+              className={patientStyles["patient-helper-icon"]}
+            />
             Cập nhật hồ sơ
-          </Button>
+          </div>
         </Link>
-      </CardContent>
-    </CardMotion>
+      </div>
+    </section>
   );
 }
 

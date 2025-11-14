@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { useUserAuthContext, useSidebar } from "@/contexts";

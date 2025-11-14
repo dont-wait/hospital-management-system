@@ -1,7 +1,7 @@
 @reference "./globals.css";
 
 .backdrop {
-  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-40;
+  @apply fixed inset-0 m-0 bg-martinique backdrop-blur-sm z-40;
 }
 
 .modalContainer {

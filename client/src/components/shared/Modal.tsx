@@ -26,7 +26,7 @@ export function Modal({
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
             className={styles.backdrop}

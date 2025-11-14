@@ -18,15 +18,21 @@ const nextConfig: NextConfig = {
 
   experimental: {
     optimizePackageImports: [
+      "motion/react",
       "lucide-react",
+      "@/app",
+      "@/axios",
       "@/components",
       "@/config",
       "@/contexts",
       "@/font",
       "@/hooks",
       "@/lib",
+      "@/public",
       "@/schemas",
       "@/services",
+      "@/styles",
+      "@/types"
     ],
     esmExternals: true,
   },

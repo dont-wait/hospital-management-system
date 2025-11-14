@@ -3,7 +3,7 @@ import type { PatientUpdateDto } from "@/schemas";
 import { AuthUserWithoutTokens } from "@/types";
 
 export class PatientService {
-  static async updatePatient(
+  public static async updatePatient(
     id: string,
     patientUpdateDto: PatientUpdateDto,
   ): Promise<PatientUpdateDto> {

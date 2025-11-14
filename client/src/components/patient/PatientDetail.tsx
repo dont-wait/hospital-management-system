@@ -10,7 +10,7 @@ type PatientDetailProps = {
   patient: Patient;
 };
 
-export function PatientDetail({
+export default function PatientDetail({
   patient,
   isOpen,
   setIsOpen,
@@ -20,38 +20,18 @@ export function PatientDetail({
       label: "Tên bệnh nhân",
       value: `${patient.firstName} ${patient.lastName}`,
     },
-    {
-      label: "Quốc tịch",
-      value: patient.nationality,
-    },
-    {
-      label: "Giới tính",
-      value: PatientUtils.formatGender(patient.gender),
-    },
-    {
-      label: "Ngày sinh",
-      value: PatientUtils.formatDOB(patient.dateOfBirth),
-    },
-    {
-      label: "Số điện thoại",
-      value: patient.phoneNumber,
-    },
-    {
-      label: "Nơi sinh",
-      value: patient.placeOfResidence,
-    },
-    {
-      label: "Địa chỉ",
-      value: patient.address,
-    },
+    { label: "Quốc tịch", value: patient.nationality },
+    { label: "Giới tính", value: PatientUtils.formatGender(patient.gender) },
+    { label: "Ngày sinh", value: PatientUtils.formatDOB(patient.dateOfBirth) },
+    { label: "Số điện thoại", value: patient.phoneNumber },
+    { label: "Nơi sinh", value: patient.placeOfResidence },
+    { label: "Địa chỉ", value: patient.address },
   ];
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={() => {
-        setIsOpen(false);
-      }}
+      onClose={() => setIsOpen(false)}
       title="Thông tin bệnh nhân"
       maxWidth="md"
     >

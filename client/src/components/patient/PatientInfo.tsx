@@ -1,69 +1,102 @@
-import { motion } from "motion/react";
-import { Card, CardContent, CardHeader, CardTitle, Button } from "@/components";
-import { PatientInfoField, PatientDetail } from "@/components/patient";
-import { FileText, User, Mail, Phone } from "@/lib/client";
-import { useUserAuthContext, useModal } from "@/contexts";
-import { Patient } from "@/types";
-import styles from "@/styles/patient.module.css";
+import { cookies } from "next/headers";
+import { Icon } from "@/components";
+import { ButtonActiveModal } from "@/components/patient/ButtonActiveModal";
+import { PatientService } from "@/services/server";
+import { AuthUserWithoutTokens, Patient } from "@/types";
+import { cn } from "@/lib/client";
+import patientStyles from "@/styles/patient.module.css";
+import cardStyles from "@/styles/card.module.css";
+import buttonStyles from "@/styles/button.module.css";
+import labelStyles from "@/styles/label.module.css";
 
-const CardMotion = motion(Card);
-
-function PatientInfo() {
-  const { user } = useUserAuthContext();
-  const { isOpen, toggleModal } = useModal();
+export default async function PatientInfo() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  const authData: AuthUserWithoutTokens =
+    await PatientService.getPatientInfo(token);
+  const patient: Patient | null = authData.patient;
 
   return (
     <>
-      {user && "patientId" in user && (
-        <PatientDetail
-          isOpen={isOpen}
-          setIsOpen={toggleModal}
-          patient={user as Patient}
-        />
-      )}
-      <CardMotion
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-      >
-        <CardHeader>
-          <CardTitle>Thông tin bệnh nhân</CardTitle>
-        </CardHeader>
-        {user && "patientId" in user && (
-          <CardContent className={styles["patient-content"]}>
-            <div className={styles["info-section"]}>
-              <PatientInfoField
-                icon={User}
-                label={"Tên bệnh nhân"}
-                content={`${user.firstName} ${user.lastName}`}
-              />
+      <section className={cardStyles["card"]}>
+        <div className={cardStyles["card-header"]}>
+          <div className={cardStyles["card-title"]}>Thông tin bệnh nhân</div>
+        </div>
+        {patient && (
+          <div
+            className={cn(
+              cardStyles["card-content"],
+              patientStyles["patient-content"],
+            )}
+          >
+            <div className={patientStyles["info-section"]}>
+              <button
+                className={cn(
+                  buttonStyles["button"],
+                  buttonStyles["button-outline"],
+                  patientStyles["patient-helper-btn"],
+                )}
+              >
+                <Icon
+                  name="User"
+                  className={patientStyles["patient-helper-icon"]}
+                />
+                <div
+                  className={cn(
+                    labelStyles["label"],
+                    patientStyles["patient-info-label"],
+                  )}
+                >
+                  {`Tên bệnh nhân: ${patient.firstName} ${patient.lastName}`}
+                </div>
+              </button>
 
-              <PatientInfoField
-                icon={Mail}
-                label={"Email"}
-                content={user.email}
-              />
+              <button
+                className={cn(
+                  buttonStyles["button"],
+                  buttonStyles["button-outline"],
+                  patientStyles["patient-helper-btn"],
+                )}
+              >
+                <Icon
+                  name="Mail"
+                  className={patientStyles["patient-helper-icon"]}
+                />
+                <div
+                  className={cn(
+                    labelStyles["label"],
+                    patientStyles["patient-info-label"],
+                  )}
+                >
+                  {`Email: ${patient.email}`}
+                </div>
+              </button>
 
-              <PatientInfoField
-                icon={Phone}
-                label={"Số điện thoại"}
-                content={user.phoneNumber}
-              />
+              <button
+                className={cn(
+                  buttonStyles["button"],
+                  buttonStyles["button-outline"],
+                  patientStyles["patient-helper-btn"],
+                )}
+              >
+                <Icon
+                  name="Phone"
+                  className={patientStyles["patient-helper-icon"]}
+                />
+                <div
+                  className={cn(
+                    labelStyles["label"],
+                    patientStyles["patient-info-label"],
+                  )}
+                >
+                  {`Số điện thoại: ${patient.phoneNumber}}`}
+                </div>
+              </button>
             </div>
-
-            <Button
-              onClick={toggleModal}
-              className={styles["patient-helper-btn"]}
-              variant="outline"
-            >
-              <FileText className={styles["patient-helper-icon"]} />
-              Hồ sơ chi tiết
-            </Button>
-          </CardContent>
+            {patient && <ButtonActiveModal patient={patient} />}
+          </div>
         )}
-      </CardMotion>
+      </section>
     </>
   );
 }
-
-export default PatientInfo;

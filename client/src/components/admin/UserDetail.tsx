@@ -4,7 +4,7 @@ import { PatientUtils, parseDateString } from "@/lib/client";
 import { AuthUserWithoutTokens } from "@/types";
 import styles from "@/styles/patient.module.css";
 import { getUserRole } from "@/lib/helper";
-import { PatientDetail } from "../patient";
+import PatientDetail from "@/components/patient/PatientDetail";
 
 type UserDetailProps = {
   isOpen: boolean;
@@ -12,13 +12,9 @@ type UserDetailProps = {
   user: AuthUserWithoutTokens;
 };
 
-export function UserDetail({
-  user,
-  isOpen,
-  setIsOpen,
-}: UserDetailProps) {
+export function UserDetail({ user, isOpen, setIsOpen }: UserDetailProps) {
   const formatHireDate = parseDateString(user.employee?.hireDate || "");
-  
+
   const employeeInfo = [
     {
       label: `Tên ${getUserRole(user)}`,
@@ -51,7 +47,7 @@ export function UserDetail({
     {
       label: "Ngày vào làm",
       value: `${formatHireDate.day}/${formatHireDate.month}/${formatHireDate.year}`,
-    }
+    },
   ];
 
   return (

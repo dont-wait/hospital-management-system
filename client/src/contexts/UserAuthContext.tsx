@@ -56,7 +56,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setTimeout(() => {
         setIsLoading(false);
-      }, 3000);
+      }, 1000);
     }
   }, []);
 
