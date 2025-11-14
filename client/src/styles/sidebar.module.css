@@ -36,6 +36,10 @@
   @apply p-2 hover:bg-black rounded-lg transition-colors;
 }
 
+.sidebar-close-btn-mobile-only {
+  @apply lg:hidden;
+}
+
 .sidebar-close-icon {
   @apply w-5 h-5 text-white;
 }

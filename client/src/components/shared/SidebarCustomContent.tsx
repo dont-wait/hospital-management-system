@@ -25,18 +25,19 @@ const SidebarProfileHeader = (user: Employee) => (
 );
 
 function SidebarCustomContent({ content } : { content: React.ReactNode }) {
-    const { setContent, setPosition, setShowCloseButton, setTitle, setColorBackground } = useSidebar();
+    const { setContent, setPosition, setShowCloseButton, setTitle, setColorBackground, setCloseButtonMode } = useSidebar();
     const { user } = useUserAuthContext();
 
     const title = useMemo(() => SidebarProfileHeader(user as Employee), [user]);
 
     useEffect(() => {
-        setShowCloseButton(false);
+        setShowCloseButton(true);
+        setCloseButtonMode("mobile-only");
         setContent(content);
         setPosition("left");
         setColorBackground("#2563EB");
         setTitle(title);
-    }, [content, title, setShowCloseButton, setContent, setPosition, setColorBackground, setTitle]);
+    }, [content, title, setShowCloseButton, setContent, setPosition, setColorBackground, setTitle, setCloseButtonMode]);
 
     return (
         <Sidebar />
