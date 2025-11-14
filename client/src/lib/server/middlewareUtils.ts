@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { ForbiddenResponse } from "@/lib/server";
-import { ROUTE_ROLE_MAP, EXCLUDED_PATHS } from "@/config";
+import { ROUTE_ROLE_MAP, EXCLUDED_PATHS, DEFAULT_ROLE_ROUTES } from "@/config";
 import { type Role } from "@/types";
 
 export class MiddlewareUtils {
@@ -62,5 +62,13 @@ export class MiddlewareUtils {
     });
     MiddlewareUtils.setHasTokenCookie(forbiddenRes, true);
     return forbiddenRes;
+  }
+
+  static handlePostLoginRedirect(req: NextRequest, userRole: Role): NextResponse {
+    const defaultRoute = DEFAULT_ROLE_ROUTES[userRole] || "/";
+    const url = new URL(defaultRoute, req.url);
+    const redirectRes = NextResponse.redirect(url);
+    MiddlewareUtils.setHasTokenCookie(redirectRes, true);
+    return redirectRes;
   }
 }

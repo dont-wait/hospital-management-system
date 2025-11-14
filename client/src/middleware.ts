@@ -30,6 +30,17 @@ export async function middleware(req: NextRequest) {
   }
 
   const userRole: Role = TokenUtils.getUserRole(token);
+  
+  // ngăn cho user đã login truy cập /login hoặc /register
+  if (allowedRoles.length === 1 && allowedRoles[0] === "guest" && userRole !== "guest") {
+    return MiddlewareUtils.handlePostLoginRedirect(req, userRole);
+  }
+
+  // ngăn cho user đã login truy cập trang chủ trừ guest hoặc patient
+  if (pathname === "/" && userRole !== "guest" && userRole !== "patient") {
+    return MiddlewareUtils.handlePostLoginRedirect(req, userRole);
+  }
+
   if (!allowedRoles.includes(userRole)) {
     return MiddlewareUtils.handleUnauthorizedAccess(userRole);
   }
