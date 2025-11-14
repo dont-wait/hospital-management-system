@@ -27,9 +27,13 @@ public class TaskItem : BaseEntity
     [Required]
     [Range(0, 30)]
     public int RegisteredEmployees { get; set; } = 0;
-    
+
     [Required]
     public string Status { get; set; } = TaskStatusEnum.Opened.ToString();
     
+    public ICollection<TaskRegistration> TaskRegistrations { get; set; } = new List<TaskRegistration>();
     public ICollection<TaskRequirement> TaskRequirements { get; set; } = new List<TaskRequirement>();
+
+    public int? DepartmentId { get; set; } = null;
+    public virtual Department? Department { get; set; } = null;
 }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Domain.Entities.ScheduleTask;
 
 public class Department
 {
@@ -13,7 +14,9 @@ public class Department
     public string Location { get; set; } = string.Empty;
 
     public string Description { get; set; } = string.Empty;
-    
+
     public ICollection<Room> Rooms { get; set; } = new List<Room>();
+    
+    public ICollection<TaskItem> TaskItems { get; set; } = new List<TaskItem>();
 
 }

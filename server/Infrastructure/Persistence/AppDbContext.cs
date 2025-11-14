@@ -32,6 +32,12 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
+        modelBuilder.Entity<TaskItem>()
+        .HasOne(t => t.Department)
+        .WithMany(d => d.TaskItems)
+        .HasForeignKey(t => t.DepartmentId)
+        .OnDelete(DeleteBehavior.SetNull);
+
         modelBuilder.Entity<Appointment>(entity =>
         {
             entity.HasOne(a => a.Patient)

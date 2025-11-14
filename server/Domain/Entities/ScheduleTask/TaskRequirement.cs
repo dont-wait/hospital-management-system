@@ -18,6 +18,5 @@ public class TaskRequirement : BaseEntity
     public string RoleId { get; set; } = RoleEnum.doctor.ToString();       // Phân công cho vai trò nào: doctor, nurse, technician, ...
 
     public int MinExperienceYears { get; set; }          // ví dụ 5
-    public int DepartmentId { get; set; } 
-    public virtual Department Department { get; set; } = null!;
+    
 }
