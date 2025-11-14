@@ -1,10 +1,102 @@
 using System.Text.Json;
 using Application.Common.Utils;
+using Domain.Entities.ScheduleTask;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 public static class DataSeeder
 {
+
+    public static async Task SeedTaskItemsAsync(AppDbContext context)
+    {
+        var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "doctor.schedule.test.json");
+
+        if (!File.Exists(seedPath))
+        {
+            Console.WriteLine("❌ Không tìm thấy doctor.schedule.test.json");
+            return;
+        }
+
+        var json = File.ReadAllText(seedPath);
+        var tasksData = JsonSerializer.Deserialize<List<TaskSeedData>>(json);
+
+        if (tasksData == null)
+        {
+            Console.WriteLine("❌ Không đọc được dữ liệu task");
+            return;
+        }
+
+        foreach (var t in tasksData)
+        {
+            // 1. Tạo TaskItem
+            var task = new TaskItem
+            {
+                Name = t.Name,
+                StartTime = t.StartTime,
+                EndTime = t.EndTime,
+                Description = t.Description,
+                RequiredEmployees = t.RequiredEmployees,
+                RegisteredEmployees = t.RegisteredEmployees,
+                Status = "Opened",
+                DepartmentId = t.DepartmentId
+            };
+
+            context.tasks.Add(task);
+            await context.SaveChangesAsync(); // Generate TaskId
+
+            // 2. Loop tạo DoctorSchedule
+            foreach (var s in t.Schedule)
+            {
+
+                var existsEmp = await context.employees.AnyAsync(e => e.Id == s.EmployeeId);
+
+                if (!existsEmp)
+                {
+                    Console.WriteLine(
+                        $"⚠ Bỏ qua Schedule vì EmployeeId {s.EmployeeId} KHÔNG tồn tại trong hệ thống."
+                    );
+                    continue;
+                }
+
+                var schedule = new DoctorSchedule
+                {
+                    EmployeeId = s.EmployeeId,
+                    TaskId = task.Id, // gán TaskId vừa tạo
+                    Capacity = s.Capacity,
+                    BookedCount = s.BookedCount
+                };
+
+                context.doctor_schedules.Add(schedule);
+            }
+
+            await context.SaveChangesAsync();
+            Console.WriteLine($"✅ Seed task '{task.Name}' + schedules thành công!");
+        }
+    }
+
+    
+        public class TaskSeedData
+    {
+        public string Name { get; set; } = "";
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public string Description { get; set; } = "";
+        public int RequiredEmployees { get; set; }
+        public int RegisteredEmployees { get; set; }
+
+        public int DepartmentId { get; set; }
+
+        public List<TaskScheduleSeedData> Schedule { get; set; } = new();
+    }
+
+    public class TaskScheduleSeedData
+    {
+        public Guid EmployeeId { get; set; }
+        public int Capacity { get; set; }
+        public int BookedCount { get; set; }
+    }
+
+
 
     public static async Task SeedServicesAsync(AppDbContext context)
     {
