@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Domain.Entities.DoctorSchedule;
 
 public class Appointment : BaseEntity
 {
@@ -12,6 +13,11 @@ public class Appointment : BaseEntity
     [Required]
     public Guid DoctorId { get; set; }
     public virtual Doctor? Doctor { get; set; }
+    
+    [Required]
+    public long DoctorScheduleId { get; set; }
+    public virtual DoctorSchedule? DoctorSchedule { get; set; }
+    
     [Required]
     public string AppointmentStatus { get; set; } = AppointmentStatusEnum.Scheduled.ToString();
 
