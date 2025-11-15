@@ -14,7 +14,7 @@ public class Appointment : BaseEntity
     
     [Required]
     public long DoctorScheduleId { get; set; }
-    public virtual DoctorSchedule? DoctorSchedule { get; set; }
+    public virtual EmployeeSchedule? DoctorSchedule { get; set; } //Dat hen vs bac si hoi
 
     public string AppointmentStatus { get; set; } = AppointmentStatusEnum.Scheduled.ToString();
 

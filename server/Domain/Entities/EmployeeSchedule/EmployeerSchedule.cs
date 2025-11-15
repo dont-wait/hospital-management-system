@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Domain.Entities.ScheduleTask;
 
 
-public class DoctorSchedule : BaseEntity
+public class EmployeeSchedule : BaseEntity
 {
     [Key]
     public long Id { get; set; }

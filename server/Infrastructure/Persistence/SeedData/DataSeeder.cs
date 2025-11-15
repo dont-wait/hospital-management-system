@@ -58,7 +58,7 @@ public static class DataSeeder
                     continue;
                 }
 
-                var schedule = new DoctorSchedule
+                var schedule = new EmployeeSchedule
                 {
                     EmployeeId = s.EmployeeId,
                     TaskId = task.Id, // gán TaskId vừa tạo
@@ -66,7 +66,7 @@ public static class DataSeeder
                     BookedCount = s.BookedCount
                 };
 
-                context.doctor_schedules.Add(schedule);
+                context.employee_schedules.Add(schedule);
             }
 
             await context.SaveChangesAsync();
@@ -75,7 +75,7 @@ public static class DataSeeder
     }
 
     
-        public class TaskSeedData
+    public class TaskSeedData
     {
         public string Name { get; set; } = "";
         public DateTime StartTime { get; set; }

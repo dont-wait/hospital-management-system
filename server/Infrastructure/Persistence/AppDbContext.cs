@@ -10,7 +10,7 @@ public class AppDbContext : DbContext
         _currentUserService = currentUserService;
     }
 
-    public DbSet<DoctorSchedule> doctor_schedules { get; set; } = null!;
+    public DbSet<EmployeeSchedule> employee_schedules { get; set; } = null!;
     public DbSet<TaskItem> tasks { get; set; } = null!;
     public DbSet<TaskRegistration> task_registrations { get; set; } = null!;
     public DbSet<TaskRequirement> task_requirements { get; set; } = null!;
