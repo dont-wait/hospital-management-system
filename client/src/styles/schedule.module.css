@@ -1,0 +1,284 @@
+@reference "./globals.css";
+
+/* Date Section */
+.date-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.date-navigation {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-btn {
+    background-color: #f3f4f6;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-btn:hover {
+    background-color: #e5e7eb;
+}
+
+.date-display {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Check-in Section */
+.checkin-section {
+    display: flex;
+    align-items: center;
+}
+
+.checkin-btn {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.checkin-btn:hover {
+    background-color: #059669;
+}
+
+.checkin-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #d1fae5;
+    color: #065f46;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+}
+
+/* Schedule Container */
+.schedule-container {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+}
+
+/* Schedule List */
+.schedule-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    color: #9ca3af;
+    text-align: center;
+}
+
+.empty-state p {
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.schedule-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    transition: all 0.2s;
+}
+
+.schedule-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.task-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status-opened {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-closed {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-canceled {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Card Body */
+.card-body {
+    margin-bottom: 1rem;
+}
+
+.time-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #2563eb;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.task-description {
+    color: #6b7280;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Card Footer */
+.card-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.action-btn-complete {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.action-btn-complete:hover {
+    background-color: #059669;
+}
+
+.action-btn-cancel {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.action-btn-cancel:hover {
+    background-color: #dc2626;
+}
+
+.completed-text {
+    color: #059669;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.canceled-text {
+    color: #dc2626;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .date-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .date-navigation {
+        justify-content: space-between;
+    }
+
+    .checkin-section {
+        justify-content: center;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-btn-complete,
+    .action-btn-cancel {
+        width: 100%;
+        justify-content: center;
+    }
+}
