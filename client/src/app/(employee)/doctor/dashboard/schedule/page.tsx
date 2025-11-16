@@ -19,8 +19,8 @@ import scheduleStyles from "@/styles/schedule.module.css";
 interface WorkShift {
     id: number;
     name: string;
-    startTime: string; // ISO datetime string
-    endTime: string;   // ISO datetime string
+    startTime: string; 
+    endTime: string;   
     description: string;
     shiftStatus: 'Scheduled' | 'Completed' | 'Canceled';
 }
@@ -33,7 +33,6 @@ export default function DoctorSchedulePage() {
     const [isCheckedIn, setIsCheckedIn] = useState(false);
     const [checkInTime, setCheckInTime] = useState<string | null>(null);
 
-    // Mock data - thay bằng API call thực tế (1 tháng dữ liệu)
     const allWorkShifts: WorkShift[] = [
         // Tuần 1
         {
@@ -226,6 +225,41 @@ export default function DoctorSchedulePage() {
         },
     ];
 
+    const getWeekDays = (date: Date) => {
+        const current = new Date(date);
+        const day = current.getDay();
+        const diff = current.getDate() - day + (day === 0 ? -6 : 1); // Điều chỉnh để Thứ 2 là ngày đầu tuần
+        
+        const monday = new Date(current.setDate(diff));
+        const weekDays = [];
+        
+        for (let i = 0; i < 7; i++) {
+            const weekDay = new Date(monday);
+            weekDay.setDate(monday.getDate() + i);
+            weekDays.push(weekDay);
+        }
+        
+        return weekDays;
+    };
+
+    const weekDays = useMemo(() => getWeekDays(selectedDate), [selectedDate]);
+
+    // Lọc ca làm việc theo tuần
+    const weekShifts = useMemo(() => {
+        const shiftsMap = new Map<string, WorkShift[]>();
+        
+        weekDays.forEach(day => {
+            const dayKey = day.toDateString();
+            const dayShifts = allWorkShifts.filter(shift => {
+                const shiftDate = new Date(shift.startTime);
+                return isSameDate(shiftDate, day);
+            });
+            shiftsMap.set(dayKey, dayShifts);
+        });
+        
+        return shiftsMap;
+    }, [weekDays, allWorkShifts]);
+
     // Lọc ca làm việc theo ngày được chọn
     const todayShifts = useMemo(() => {
         return allWorkShifts.filter(shift => {
@@ -250,6 +284,28 @@ export default function DoctorSchedulePage() {
         setSelectedDate(newDate);
         setIsCheckedIn(false);
         setCheckInTime(null);
+    };
+
+    const changeWeek = (weeks: number) => {
+        const newDate = new Date(selectedDate);
+        newDate.setDate(newDate.getDate() + (weeks * 7));
+        setSelectedDate(newDate);
+        setIsCheckedIn(false);
+        setCheckInTime(null);
+    };
+
+    const selectDate = (date: Date) => {
+        setSelectedDate(date);
+        setIsCheckedIn(false);
+        setCheckInTime(null);
+    };
+
+    const getDayName = (date: Date) => {
+        return date.toLocaleDateString('vi-VN', { weekday: 'short' });
+    };
+
+    const getDayMonth = (date: Date) => {
+        return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
     };
 
     const getStatusIcon = (status: string) => {
@@ -289,12 +345,12 @@ export default function DoctorSchedulePage() {
                 </p>
             </div>
 
-            {/* Date Navigation & Check-in */}
             <div className={scheduleStyles["date-section"]}>
                 <div className={scheduleStyles["date-navigation"]}>
                     <button 
-                        onClick={() => changeDate(-1)}
+                        onClick={() => changeWeek(-1)}
                         className={scheduleStyles["nav-btn"]}
+                        title="Tuần trước"
                     >
                         <ChevronLeft size={20} />
                     </button>
@@ -303,8 +359,9 @@ export default function DoctorSchedulePage() {
                         <span>{formatDateDisplay(selectedDate)}</span>
                     </div>
                     <button 
-                        onClick={() => changeDate(1)}
+                        onClick={() => changeWeek(1)}
                         className={scheduleStyles["nav-btn"]}
+                        title="Tuần sau"
                     >
                         <ChevronRight size={20} />
                     </button>
@@ -328,36 +385,63 @@ export default function DoctorSchedulePage() {
                 </div>
             </div>
 
-            {/* Work Shifts List */}
+            <div className={scheduleStyles["week-calendar"]}>
+                {weekDays.map((day, index) => {
+                    const isSelected = isSameDate(day, selectedDate);
+                    const isToday = isSameDate(day, new Date());
+                    const dayShifts = weekShifts.get(day.toDateString()) || [];
+                    
+                    return (
+                        <button
+                            key={index}
+                            onClick={() => selectDate(day)}
+                            className={`${scheduleStyles["day-card"]} ${isSelected ? scheduleStyles["day-selected"] : ""} ${isToday ? scheduleStyles["day-today"] : ""}`}
+                        >
+                            <div className={scheduleStyles["day-header"]}>
+                                <span className={scheduleStyles["day-name"]}>{getDayName(day)}</span>
+                                <span className={scheduleStyles["day-date"]}>{getDayMonth(day)}</span>
+                            </div>
+                            <div className={scheduleStyles["day-shifts"]}>
+                                {dayShifts.length > 0 ? (
+                                    <span className={scheduleStyles["shift-count"]}>{dayShifts.length} ca</span>
+                                ) : (
+                                    <span className={scheduleStyles["no-shift"]}>Nghỉ</span>
+                                )}
+                            </div>
+                        </button>
+                    );
+                })}
+            </div>
+
             <div className={scheduleStyles["schedule-container"]}>
                 <h2 className={scheduleStyles["section-title"]}>
-                    Ca Làm Việc ({todayShifts.length} ca)
+                    Lịch làm việc hôm nay
                 </h2>
                 
                 {todayShifts.length === 0 ? (
                     <div className={scheduleStyles["empty-state"]}>
-                        <Calendar size={48} />
-                        <p>Không có ca làm việc nào trong ngày này</p>
+                        <p>Không có ca làm việc nào trong ngày</p>
                     </div>
                 ) : (
                     <div className={scheduleStyles["schedule-list"]}>
                         {todayShifts.map((shift) => (
-                            <div 
-                                key={shift.id} 
+                            <div
+                                key={shift.id}
                                 className={scheduleStyles["schedule-card"]}
                             >
                                 <div className={scheduleStyles["card-header"]}>
                                     <h3 className={scheduleStyles["task-name"]}>{shift.name}</h3>
                                     <span className={`${scheduleStyles["status-badge"]} ${getStatusClass(shift.shiftStatus)}`}>
                                         {getStatusIcon(shift.shiftStatus)}
-                                        <span>{shift.shiftStatus}</span>
+                                        {shift.shiftStatus === 'Scheduled' ? 'Sắp diễn ra' :
+                                         shift.shiftStatus === 'Completed' ? 'Đã hoàn thành' : 'Đã hủy'}
                                     </span>
                                 </div>
 
                                 <div className={scheduleStyles["card-body"]}>
                                     <div className={scheduleStyles["time-info"]}>
-                                        <Clock size={16} />
-                                        <span>{formatTime(shift.startTime)} - {formatTime(shift.endTime)}</span>
+                                        <Clock size={18} />
+                                        <span>Thời gian: {formatTime(shift.startTime)} - {formatTime(shift.endTime)}</span>
                                     </div>
                                     <p className={scheduleStyles["task-description"]}>
                                         {shift.description}
@@ -368,23 +452,25 @@ export default function DoctorSchedulePage() {
                                     {shift.shiftStatus === 'Scheduled' && (
                                         <>
                                             <button className={scheduleStyles["action-btn-complete"]}>
-                                                <CheckCircle size={16} />
-                                                <span>Hoàn thành ca</span>
+                                                Hoàn thành
                                             </button>
                                             <button className={scheduleStyles["action-btn-cancel"]}>
-                                                <XCircle size={16} />
-                                                <span>Hủy ca</span>
+                                                Hủy ca
                                             </button>
                                         </>
                                     )}
+
                                     {shift.shiftStatus === 'Completed' && (
                                         <span className={scheduleStyles["completed-text"]}>
-                                            ✓ Đã hoàn thành
+                                            <CheckCircle size={18} />
+                                            Ca làm việc đã hoàn thành
                                         </span>
                                     )}
+
                                     {shift.shiftStatus === 'Canceled' && (
                                         <span className={scheduleStyles["canceled-text"]}>
-                                            ✗ Đã hủy
+                                            <XCircle size={18} />
+                                            Ca làm việc đã bị hủy
                                         </span>
                                     )}
                                 </div>
