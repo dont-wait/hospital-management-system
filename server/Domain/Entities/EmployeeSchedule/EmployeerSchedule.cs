@@ -1,22 +1,20 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Entities.ScheduleTask;
 
 
-public class EmployeeSchedule : BaseEntity
+public class EmployeeSchedule
 {
     [Key]
-    public long Id { get; set; }
+    public long Id { get; set; } //ScheduleId
 
     [Required]
     public Guid EmployeeId { get; set; }
     public Employee Employee { get; set; } = null!;
-    
+
     [Required]
     public long TaskId { get; set; }
     public virtual TaskItem Task { get; set; } = null!;
 
-    [Required]
-    [Range(1, 50)]
-    public int Capacity { get; set; } = 20;
-    public int BookedCount { get; set; } = 0;
+    public DoctorSchedule DoctorSchedule { get; set; } = null!;
 }

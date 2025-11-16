@@ -25,7 +25,7 @@ public class AppointmentMapper : IAppointmentMapper
             DoctorScheduleId = appointment.DoctorScheduleId,
             DepartmentId = appointment.DepartmentId,
             ServiceId = appointment.ServiceId,
-            AppointmentStatus = appointment.AppointmentStatus
+            AppointmentStatus = appointment.AppointmentStatus,
         };
     }
 

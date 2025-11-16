@@ -44,11 +44,13 @@ public class Employee : BaseEntity
 
     public UserAccount UserAccount { get; set; } = null!;
     public Doctor Doctor { get; set; } = null!;
-    
+
     public Admin Admin { get; set; } = null!;
 
     [Required]
     [StringLength(20)]
     public string RoleId { get; set; } = null!;
     public Roles Role { get; set; } = null!;
+
+    public ICollection<EmployeeSchedule> EmployeeSchedules { get; set; } = new List<EmployeeSchedule>();
 }

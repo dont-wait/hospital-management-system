@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251116083419_FixMap")]
+    partial class FixMap
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,42 +199,6 @@ namespace server.Migrations
                         .IsUnique();
 
                     b.ToTable("doctors");
-                });
-
-            modelBuilder.Entity("DoctorSchedule", b =>
-                {
-                    b.Property<long>("ScheduleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ScheduleId"));
-
-                    b.Property<int>("AvgVisitMinutes")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("EmployeeScheduleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<TimeOnly>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<DateOnly>("ScheduleDate")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly>("StartTime")
-                        .HasColumnType("time");
-
-                    b.HasKey("ScheduleId");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("EmployeeScheduleId")
-                        .IsUnique();
-
-                    b.ToTable("doctor_schedules");
                 });
 
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskItem", b =>
@@ -484,6 +451,11 @@ namespace server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
+
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
@@ -496,7 +468,11 @@ namespace server.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("employee_schedules");
+                    b.ToTable("EmployeeSchedule");
+
+                    b.HasDiscriminator().HasValue("EmployeeSchedule");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Patient", b =>
@@ -862,6 +838,30 @@ namespace server.Migrations
                     b.ToTable("user_accounts");
                 });
 
+            modelBuilder.Entity("DoctorSchedule", b =>
+                {
+                    b.HasBaseType("EmployeeSchedule");
+
+                    b.Property<int>("AvgVisitMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("DoctorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateOnly>("ScheduleDate")
+                        .HasColumnType("date");
+
+                    b.Property<TimeOnly>("StartTime")
+                        .HasColumnType("time");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasDiscriminator().HasValue("DoctorSchedule");
+                });
+
             modelBuilder.Entity("Admin", b =>
                 {
                     b.HasOne("Employee", "Employee")
@@ -925,25 +925,6 @@ namespace server.Migrations
                         .IsRequired();
 
                     b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("DoctorSchedule", b =>
-                {
-                    b.HasOne("Doctor", "Doctor")
-                        .WithMany("DoctorSchedules")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("EmployeeSchedule", "EmployeeSchedule")
-                        .WithOne("DoctorSchedule")
-                        .HasForeignKey("DoctorSchedule", "EmployeeScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("EmployeeSchedule");
                 });
 
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskItem", b =>
@@ -1068,7 +1049,7 @@ namespace server.Migrations
             modelBuilder.Entity("ScheduleSlot", b =>
                 {
                     b.HasOne("DoctorSchedule", "DoctorSchedule")
-                        .WithMany("ScheduleSlots")
+                        .WithMany()
                         .HasForeignKey("DoctorScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1091,6 +1072,17 @@ namespace server.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("DoctorSchedule", b =>
+                {
+                    b.HasOne("Doctor", "Doctor")
+                        .WithMany("DoctorSchedules")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+                });
+
             modelBuilder.Entity("Department", b =>
                 {
                     b.Navigation("Appointments");
@@ -1105,11 +1097,6 @@ namespace server.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("DoctorSchedules");
-                });
-
-            modelBuilder.Entity("DoctorSchedule", b =>
-                {
-                    b.Navigation("ScheduleSlots");
                 });
 
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskItem", b =>
@@ -1130,12 +1117,6 @@ namespace server.Migrations
                     b.Navigation("EmployeeSchedules");
 
                     b.Navigation("UserAccount")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EmployeeSchedule", b =>
-                {
-                    b.Navigation("DoctorSchedule")
                         .IsRequired();
                 });
 

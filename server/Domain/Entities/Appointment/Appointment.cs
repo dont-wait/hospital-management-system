@@ -14,12 +14,14 @@ public class Appointment : BaseEntity
     
     [Required]
     public long DoctorScheduleId { get; set; }
-    public virtual EmployeeSchedule? DoctorSchedule { get; set; } //Dat hen vs bac si hoi
+    public virtual DoctorSchedule? DoctorSchedule { get; set; } //Dat hen vs bac si hoi
 
     public string AppointmentStatus { get; set; } = AppointmentStatusEnum.Scheduled.ToString();
 
     public virtual Service Service { get; set; } = null!;
     public int ServiceId { get; set; } = 5; //Mac dinh dang ky kham online la 5, 200k
+
+    public DateTimeOffset? CheckInTime { get; set; }  // Thoi gian benh nhan den kham 
 
     [Required]
     public int DepartmentId { get; set; }

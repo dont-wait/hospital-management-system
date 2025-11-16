@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251116081610_UpdateAndAddSomeTableForUC001")]
+    partial class UpdateAndAddSomeTableForUC001
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,8 +122,6 @@ namespace server.Migrations
 
                     b.HasIndex("DoctorId");
 
-                    b.HasIndex("DoctorScheduleId");
-
                     b.HasIndex("PatientId");
 
                     b.HasIndex("ServiceId");
@@ -196,42 +197,6 @@ namespace server.Migrations
                         .IsUnique();
 
                     b.ToTable("doctors");
-                });
-
-            modelBuilder.Entity("DoctorSchedule", b =>
-                {
-                    b.Property<long>("ScheduleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ScheduleId"));
-
-                    b.Property<int>("AvgVisitMinutes")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("EmployeeScheduleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<TimeOnly>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<DateOnly>("ScheduleDate")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly>("StartTime")
-                        .HasColumnType("time");
-
-                    b.HasKey("ScheduleId");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("EmployeeScheduleId")
-                        .IsUnique();
-
-                    b.ToTable("doctor_schedules");
                 });
 
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskItem", b =>
@@ -476,29 +441,6 @@ namespace server.Migrations
                     b.ToTable("employees");
                 });
 
-            modelBuilder.Entity("EmployeeSchedule", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("TaskId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("TaskId");
-
-                    b.ToTable("employee_schedules");
-                });
-
             modelBuilder.Entity("Patient", b =>
                 {
                     b.Property<Guid>("Id")
@@ -712,36 +654,6 @@ namespace server.Migrations
                     b.ToTable("rooms");
                 });
 
-            modelBuilder.Entity("ScheduleSlot", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("CurrentRegistrations")
-                        .HasColumnType("int");
-
-                    b.Property<long>("DoctorScheduleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("MaxRegistrations")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("SlotEndTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("SlotStartTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorScheduleId");
-
-                    b.ToTable("schedule_slots");
-                });
-
             modelBuilder.Entity("Service", b =>
                 {
                     b.Property<int>("Id")
@@ -887,12 +799,6 @@ namespace server.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("DoctorSchedule", "DoctorSchedule")
-                        .WithMany()
-                        .HasForeignKey("DoctorScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Patient", "Patient")
                         .WithMany("Appointments")
                         .HasForeignKey("PatientId")
@@ -909,8 +815,6 @@ namespace server.Migrations
 
                     b.Navigation("Doctor");
 
-                    b.Navigation("DoctorSchedule");
-
                     b.Navigation("Patient");
 
                     b.Navigation("Service");
@@ -925,25 +829,6 @@ namespace server.Migrations
                         .IsRequired();
 
                     b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("DoctorSchedule", b =>
-                {
-                    b.HasOne("Doctor", "Doctor")
-                        .WithMany("DoctorSchedules")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("EmployeeSchedule", "EmployeeSchedule")
-                        .WithOne("DoctorSchedule")
-                        .HasForeignKey("DoctorSchedule", "EmployeeScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("EmployeeSchedule");
                 });
 
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskItem", b =>
@@ -1005,25 +890,6 @@ namespace server.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("EmployeeSchedule", b =>
-                {
-                    b.HasOne("Employee", "Employee")
-                        .WithMany("EmployeeSchedules")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.ScheduleTask.TaskItem", "Task")
-                        .WithMany()
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Task");
-                });
-
             modelBuilder.Entity("Patient", b =>
                 {
                     b.HasOne("Roles", "Role")
@@ -1065,17 +931,6 @@ namespace server.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("ScheduleSlot", b =>
-                {
-                    b.HasOne("DoctorSchedule", "DoctorSchedule")
-                        .WithMany("ScheduleSlots")
-                        .HasForeignKey("DoctorScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DoctorSchedule");
-                });
-
             modelBuilder.Entity("UserAccount", b =>
                 {
                     b.HasOne("Employee", "Employee")
@@ -1103,13 +958,6 @@ namespace server.Migrations
             modelBuilder.Entity("Doctor", b =>
                 {
                     b.Navigation("Appointments");
-
-                    b.Navigation("DoctorSchedules");
-                });
-
-            modelBuilder.Entity("DoctorSchedule", b =>
-                {
-                    b.Navigation("ScheduleSlots");
                 });
 
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskItem", b =>
@@ -1127,15 +975,7 @@ namespace server.Migrations
                     b.Navigation("Doctor")
                         .IsRequired();
 
-                    b.Navigation("EmployeeSchedules");
-
                     b.Navigation("UserAccount")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EmployeeSchedule", b =>
-                {
-                    b.Navigation("DoctorSchedule")
                         .IsRequired();
                 });
 

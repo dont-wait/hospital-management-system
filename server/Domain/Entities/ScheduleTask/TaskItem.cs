@@ -19,17 +19,9 @@ public class TaskItem : BaseEntity
     
     [MaxLength(300)]
     public string Description { get; set; } = string.Empty; 
-    
-    [Required]
-    [Range(1, 30)]
-    public int RequiredEmployees { get; set; }
-    
-    [Required]
-    [Range(0, 30)]
-    public int RegisteredEmployees { get; set; } = 0;
 
     [Required]
-    public string Status { get; set; } = TaskStatusEnum.Opened.ToString();
+    public string TaskStatus { get; set; } = TaskStatusEnum.Opened.ToString();
     
     public ICollection<TaskRegistration> TaskRegistrations { get; set; } = new List<TaskRegistration>();
     public ICollection<TaskRequirement> TaskRequirements { get; set; } = new List<TaskRequirement>();

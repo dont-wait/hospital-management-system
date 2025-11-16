@@ -14,5 +14,6 @@ public class Doctor : BaseEntity
     public Guid EmployeeId { get; set; }
     public Employee Employee { get; set; } = null!;
 
-    public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+    public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+    public ICollection<DoctorSchedule> DoctorSchedules { get; set; } = new List<DoctorSchedule>();
 }

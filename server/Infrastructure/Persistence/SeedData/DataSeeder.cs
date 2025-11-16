@@ -7,72 +7,68 @@ using Microsoft.EntityFrameworkCore;
 public static class DataSeeder
 {
 
-    public static async Task SeedTaskItemsAsync(AppDbContext context)
-    {
-        var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "doctor.schedule.test.json");
+    // public static async Task SeedTaskItemsAsync(AppDbContext context)
+    // {
+    //     var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "doctor.schedule.test.json");
 
-        if (!File.Exists(seedPath))
-        {
-            Console.WriteLine("❌ Không tìm thấy doctor.schedule.test.json");
-            return;
-        }
+    //     if (!File.Exists(seedPath))
+    //     {
+    //         Console.WriteLine("❌ Không tìm thấy doctor.schedule.test.json");
+    //         return;
+    //     }
 
-        var json = File.ReadAllText(seedPath);
-        var tasksData = JsonSerializer.Deserialize<List<TaskSeedData>>(json);
+    //     var json = File.ReadAllText(seedPath);
+    //     var tasksData = JsonSerializer.Deserialize<List<TaskSeedData>>(json);
 
-        if (tasksData == null)
-        {
-            Console.WriteLine("❌ Không đọc được dữ liệu task");
-            return;
-        }
+    //     if (tasksData == null)
+    //     {
+    //         Console.WriteLine("❌ Không đọc được dữ liệu task");
+    //         return;
+    //     }
 
-        foreach (var t in tasksData)
-        {
-            // 1. Tạo TaskItem
-            var task = new TaskItem
-            {
-                Name = t.Name,
-                StartTime = t.StartTime,
-                EndTime = t.EndTime,
-                Description = t.Description,
-                RequiredEmployees = t.RequiredEmployees,
-                RegisteredEmployees = t.RegisteredEmployees,
-                Status = "Opened",
-                DepartmentId = t.DepartmentId
-            };
+    //     foreach (var t in tasksData)
+    //     {
+    //         // 1. Tạo TaskItem
+    //         var task = new TaskItem
+    //         {
+    //             Name = t.Name,
+    //             StartTime = t.StartTime,
+    //             EndTime = t.EndTime,
+    //             Description = t.Description,
+    //             TaskStatus = TaskStatusEnum.Opened.ToString(),
+    //             DepartmentId = t.DepartmentId
+    //         };
 
-            context.tasks.Add(task);
-            await context.SaveChangesAsync(); // Generate TaskId
+    //         context.tasks.Add(task);
+    //         await context.SaveChangesAsync(); // Generate TaskId
 
-            // 2. Loop tạo DoctorSchedule
-            foreach (var s in t.Schedule)
-            {
+    //         // 2. Loop tạo DoctorSchedule
+    //         foreach (var s in t.Schedule)
+    //         {
 
-                var existsEmp = await context.employees.AnyAsync(e => e.Id == s.EmployeeId);
+    //             var existsEmp = await context.employees.AnyAsync(e => e.Id == s.EmployeeId);
 
-                if (!existsEmp)
-                {
-                    Console.WriteLine(
-                        $"⚠ Bỏ qua Schedule vì EmployeeId {s.EmployeeId} KHÔNG tồn tại trong hệ thống."
-                    );
-                    continue;
-                }
+    //             if (!existsEmp)
+    //             {
+    //                 Console.WriteLine(
+    //                     $"⚠ Bỏ qua Schedule vì EmployeeId {s.EmployeeId} KHÔNG tồn tại trong hệ thống."
+    //                 );
+    //                 continue;
+    //             }
 
-                var schedule = new EmployeeSchedule
-                {
-                    EmployeeId = s.EmployeeId,
-                    TaskId = task.Id, // gán TaskId vừa tạo
-                    Capacity = s.Capacity,
-                    BookedCount = s.BookedCount
-                };
+    //             var schedule = new EmployeeSchedule
+    //             {
+    //                 EmployeeId = s.EmployeeId,
+    //                 TaskId = task.Id, // gán TaskId vừa tạo
+    //             };
 
-                context.employee_schedules.Add(schedule);
-            }
+    //             context.employee_schedules.Add(schedule);
+    //         }
 
-            await context.SaveChangesAsync();
-            Console.WriteLine($"✅ Seed task '{task.Name}' + schedules thành công!");
-        }
-    }
+    //         await context.SaveChangesAsync();
+    //         Console.WriteLine($"✅ Seed task '{task.Name}' + schedules thành công!");
+    //     }
+    // }
 
     
     public class TaskSeedData

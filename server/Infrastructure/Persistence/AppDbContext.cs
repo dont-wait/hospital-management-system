@@ -11,6 +11,8 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<EmployeeSchedule> employee_schedules { get; set; } = null!;
+    public DbSet<DoctorSchedule> doctor_schedules { get; set; } = null!;
+    public DbSet<ScheduleSlot> schedule_slots { get; set; } = null!;
     public DbSet<TaskItem> tasks { get; set; } = null!;
     public DbSet<TaskRegistration> task_registrations { get; set; } = null!;
     public DbSet<TaskRequirement> task_requirements { get; set; } = null!;
@@ -31,6 +33,13 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+
+        modelBuilder.Entity<DoctorSchedule>()
+            .HasOne(ds => ds.Doctor)
+            .WithMany(d => d.DoctorSchedules)
+            .HasForeignKey(ds => ds.DoctorId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Appointment>() 
         .HasOne(a => a.Department)

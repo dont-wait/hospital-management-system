@@ -4,8 +4,6 @@
     "StartTime": "2026-11-15T07:00:00",
     "EndTime": "2026-11-15T11:00:00",
     "Description": "Ca làm việc buổi sáng",
-    "RequiredEmployees": 2,
-    "RegisteredEmployees": 2,
     "DepartmentId": 1,
     "Schedule": [
         {
@@ -25,8 +23,6 @@
     "StartTime": "2026-11-15T13:00:00",
     "EndTime": "2026-11-15T17:00:00",
     "Description": "Ca trực buổi chiều",
-    "RequiredEmployees": 3,
-    "RegisteredEmployees": 1,
     "DepartmentId": 1,
     "Schedule": [
         {

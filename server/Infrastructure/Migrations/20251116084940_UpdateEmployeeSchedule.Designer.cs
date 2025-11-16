@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251116084940_UpdateEmployeeSchedule")]
+    partial class UpdateEmployeeSchedule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,8 +231,7 @@ namespace server.Migrations
 
                     b.HasIndex("DoctorId");
 
-                    b.HasIndex("EmployeeScheduleId")
-                        .IsUnique();
+                    b.HasIndex("EmployeeScheduleId");
 
                     b.ToTable("doctor_schedules");
                 });
@@ -936,8 +938,8 @@ namespace server.Migrations
                         .IsRequired();
 
                     b.HasOne("EmployeeSchedule", "EmployeeSchedule")
-                        .WithOne("DoctorSchedule")
-                        .HasForeignKey("DoctorSchedule", "EmployeeScheduleId")
+                        .WithMany()
+                        .HasForeignKey("EmployeeScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1130,12 +1132,6 @@ namespace server.Migrations
                     b.Navigation("EmployeeSchedules");
 
                     b.Navigation("UserAccount")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EmployeeSchedule", b =>
-                {
-                    b.Navigation("DoctorSchedule")
                         .IsRequired();
                 });
 
