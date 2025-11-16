@@ -148,6 +148,30 @@
     @apply flex items-center gap-3 pt-4 border-t border-gray-100;
 }
 
+.attendance-info {
+    @apply w-full;
+}
+
+.attendance-info span {
+    @apply flex items-center gap-2 font-semibold text-sm;
+}
+
+.attendance-checked-in {
+    @apply text-green-600;
+}
+
+.attendance-late {
+    @apply text-orange-600;
+}
+
+.attendance-not-checked {
+    @apply text-gray-500;
+}
+
+.attendance-checked-out {
+    @apply text-blue-600;
+}
+
 .action-btn-complete {
     @apply bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-medium cursor-pointer transition border-none inline-flex items-center gap-2 text-sm;
 }

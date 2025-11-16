@@ -23,6 +23,8 @@ interface WorkShift {
     endTime: string;   
     description: string;
     shiftStatus: 'Scheduled' | 'Completed' | 'Canceled';
+    attendanceStatus?: 'checked-in' | 'late' | 'not-checked-in' | 'checked-out';
+    actualCheckInTime?: string;
 }
 
 export default function DoctorSchedulePage() {
@@ -41,7 +43,8 @@ export default function DoctorSchedulePage() {
             startTime: "2025-11-16T07:00:00",
             endTime: "2025-11-16T12:00:00",
             description: "Khám bệnh ngoại trú - Phòng khám số 3",
-            shiftStatus: "Scheduled"
+            shiftStatus: "Scheduled",
+            attendanceStatus: "not-checked-in"
         },
         {
             id: 2,
@@ -49,7 +52,8 @@ export default function DoctorSchedulePage() {
             startTime: "2025-11-16T13:00:00",
             endTime: "2025-11-16T17:00:00",
             description: "Khám bệnh ngoại trú - Phòng khám số 3",
-            shiftStatus: "Scheduled"
+            shiftStatus: "Scheduled",
+            attendanceStatus: "not-checked-in"
         },
         {
             id: 3,
@@ -73,7 +77,9 @@ export default function DoctorSchedulePage() {
             startTime: "2025-11-18T07:00:00",
             endTime: "2025-11-18T12:00:00",
             description: "Khám bệnh ngoại trú - Phòng khám số 3",
-            shiftStatus: "Completed"
+            shiftStatus: "Completed",
+            attendanceStatus: "checked-out",
+            actualCheckInTime: "07:05"
         },
         {
             id: 6,
@@ -81,7 +87,9 @@ export default function DoctorSchedulePage() {
             startTime: "2025-11-18T13:00:00",
             endTime: "2025-11-18T17:00:00",
             description: "Khám bệnh ngoại trú - Phòng khám số 3",
-            shiftStatus: "Completed"
+            shiftStatus: "Completed",
+            attendanceStatus: "checked-out",
+            actualCheckInTime: "13:15"
         },
         // Tuần 2
         {
@@ -90,7 +98,9 @@ export default function DoctorSchedulePage() {
             startTime: "2025-11-19T07:00:00",
             endTime: "2025-11-19T12:00:00",
             description: "Khám bệnh ngoại trú - Phòng khám số 3",
-            shiftStatus: "Completed"
+            shiftStatus: "Completed",
+            attendanceStatus: "checked-out",
+            actualCheckInTime: "07:25"
         },
         {
             id: 8,
@@ -278,14 +288,6 @@ export default function DoctorSchedulePage() {
         setIsCheckedIn(true);
     };
 
-    const changeDate = (days: number) => {
-        const newDate = new Date(selectedDate);
-        newDate.setDate(newDate.getDate() + days);
-        setSelectedDate(newDate);
-        setIsCheckedIn(false);
-        setCheckInTime(null);
-    };
-
     const changeWeek = (weeks: number) => {
         const newDate = new Date(selectedDate);
         newDate.setDate(newDate.getDate() + (weeks * 7));
@@ -331,6 +333,41 @@ export default function DoctorSchedulePage() {
                 return scheduleStyles['status-canceled'];
             default:
                 return '';
+        }
+    };
+
+    const getAttendanceStatusInfo = (attendanceStatus?: string, actualCheckInTime?: string) => {
+        switch (attendanceStatus) {
+            case 'checked-in':
+                return {
+                    icon: <CheckCircle size={18} />,
+                    text: `Đã chấm công${actualCheckInTime ? ` lúc ${actualCheckInTime}` : ''}`,
+                    className: scheduleStyles['attendance-checked-in']
+                };
+            case 'late':
+                return {
+                    icon: <AlertCircle size={18} />,
+                    text: `Đi trễ - Chấm công lúc ${actualCheckInTime || 'N/A'}`,
+                    className: scheduleStyles['attendance-late']
+                };
+            case 'not-checked-in':
+                return {
+                    icon: <XCircle size={18} />,
+                    text: 'Chưa chấm công',
+                    className: scheduleStyles['attendance-not-checked']
+                };
+            case 'checked-out':
+                return {
+                    icon: <CheckCircle size={18} />,
+                    text: `Đã hoàn thành ca - Chấm công lúc ${actualCheckInTime || 'N/A'}`,
+                    className: scheduleStyles['attendance-checked-out']
+                };
+            default:
+                return {
+                    icon: <Clock size={18} />,
+                    text: 'Chưa có thông tin',
+                    className: scheduleStyles['attendance-not-checked']
+                };
         }
     };
 
@@ -449,29 +486,18 @@ export default function DoctorSchedulePage() {
                                 </div>
 
                                 <div className={scheduleStyles["card-footer"]}>
-                                    {shift.shiftStatus === 'Scheduled' && (
-                                        <>
-                                            <button className={scheduleStyles["action-btn-complete"]}>
-                                                Hoàn thành
-                                            </button>
-                                            <button className={scheduleStyles["action-btn-cancel"]}>
-                                                Hủy ca
-                                            </button>
-                                        </>
-                                    )}
-
-                                    {shift.shiftStatus === 'Completed' && (
-                                        <span className={scheduleStyles["completed-text"]}>
-                                            <CheckCircle size={18} />
-                                            Ca làm việc đã hoàn thành
-                                        </span>
-                                    )}
-
-                                    {shift.shiftStatus === 'Canceled' && (
+                                    {shift.shiftStatus === 'Canceled' ? (
                                         <span className={scheduleStyles["canceled-text"]}>
                                             <XCircle size={18} />
                                             Ca làm việc đã bị hủy
                                         </span>
+                                    ) : (
+                                        <div className={scheduleStyles["attendance-info"]}>
+                                            <span className={getAttendanceStatusInfo(shift.attendanceStatus, shift.actualCheckInTime).className}>
+                                                {getAttendanceStatusInfo(shift.attendanceStatus, shift.actualCheckInTime).icon}
+                                                {getAttendanceStatusInfo(shift.attendanceStatus, shift.actualCheckInTime).text}
+                                            </span>
+                                        </div>
                                     )}
                                 </div>
                             </div>
