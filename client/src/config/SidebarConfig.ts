@@ -68,11 +68,6 @@ export const DoctorSidebarItems = [
     icon: LayoutDashboard,
   },
   {
-    route: "/doctor/dashboard/appointments",
-    title: "Xem Lịch Hẹn",
-    icon: Users,
-  },
-  {
     route: "/doctor/dashboard/schedule",
     title: "Xem lịch làm việc",
     icon: Calendar,
