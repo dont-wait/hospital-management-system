@@ -116,3 +116,14 @@ export const Settings = dynamic(() =>
   import("lucide-react").then((mod) => mod.Settings),
 );
 
+export const XCircle = dynamic(() =>
+  import("lucide-react").then((mod) => mod.XCircle),
+);
+
+export const ChevronLeft = dynamic(() =>
+  import("lucide-react").then((mod) => mod.ChevronLeft),
+);
+
+export const ChevronRight = dynamic(() =>
+  import("lucide-react").then((mod) => mod.ChevronRight),
+);

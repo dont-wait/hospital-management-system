@@ -60,3 +60,24 @@ export const parseDateString = (dateString: string) => {
     year: date.getFullYear().toString(),
   };
 };
+
+export const formatDateDisplay = (date: Date): string => {
+  return date.toLocaleDateString('vi-VN', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
+export const formatTime = (isoString: string): string => {
+  const date = new Date(isoString);
+  return date.toLocaleTimeString('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+export const isSameDate = (date1: Date, date2: Date): boolean => {
+  return date1.toDateString() === date2.toDateString();
+};
