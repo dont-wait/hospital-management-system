@@ -451,47 +451,51 @@ export default function DoctorSchedulePage() {
                     </div>
                 ) : (
                     <div className={scheduleStyles["schedule-list"]}>
-                        {todayShifts.map((shift) => (
-                            <div
-                                key={shift.id}
-                                className={scheduleStyles["schedule-card"]}
-                            >
-                                <div className={scheduleStyles["card-header"]}>
-                                    <h3 className={scheduleStyles["task-name"]}>{shift.name}</h3>
-                                    <span className={`${scheduleStyles["status-badge"]} ${getStatusClass(shift.shiftStatus)}`}>
-                                        {getStatusIcon(shift.shiftStatus)}
-                                        {shift.shiftStatus === 'Scheduled' ? 'Sắp diễn ra' :
-                                         shift.shiftStatus === 'Completed' ? 'Đã hoàn thành' : 'Đã hủy'}
-                                    </span>
-                                </div>
+                        {todayShifts.map((shift) => {
+                            const attendanceStatusInfo = getAttendanceStatusInfo(shift.attendanceStatus, shift.actualCheckInTime);
 
-                                <div className={scheduleStyles["card-body"]}>
-                                    <div className={scheduleStyles["time-info"]}>
-                                        <Clock size={18} />
-                                        <span>Thời gian: {formatTime(shift.startTime)} - {formatTime(shift.endTime)}</span>
-                                    </div>
-                                    <p className={scheduleStyles["task-description"]}>
-                                        {shift.description}
-                                    </p>
-                                </div>
-
-                                <div className={scheduleStyles["card-footer"]}>
-                                    {shift.shiftStatus === 'Canceled' ? (
-                                        <span className={scheduleStyles["canceled-text"]}>
-                                            <XCircle size={18} />
-                                            Ca làm việc đã bị hủy
+                            return (
+                                <div
+                                    key={shift.id}
+                                    className={scheduleStyles["schedule-card"]}
+                                >
+                                    <div className={scheduleStyles["card-header"]}>
+                                        <h3 className={scheduleStyles["task-name"]}>{shift.name}</h3>
+                                        <span className={`${scheduleStyles["status-badge"]} ${getStatusClass(shift.shiftStatus)}`}>
+                                            {getStatusIcon(shift.shiftStatus)}
+                                            {shift.shiftStatus === 'Scheduled' ? 'Sắp diễn ra' :
+                                            shift.shiftStatus === 'Completed' ? 'Đã hoàn thành' : 'Đã hủy'}
                                         </span>
-                                    ) : (
-                                        <div className={scheduleStyles["attendance-info"]}>
-                                            <span className={getAttendanceStatusInfo(shift.attendanceStatus, shift.actualCheckInTime).className}>
-                                                {getAttendanceStatusInfo(shift.attendanceStatus, shift.actualCheckInTime).icon}
-                                                {getAttendanceStatusInfo(shift.attendanceStatus, shift.actualCheckInTime).text}
-                                            </span>
+                                    </div>
+
+                                    <div className={scheduleStyles["card-body"]}>
+                                        <div className={scheduleStyles["time-info"]}>
+                                            <Clock size={18} />
+                                            <span>Thời gian: {formatTime(shift.startTime)} - {formatTime(shift.endTime)}</span>
                                         </div>
-                                    )}
+                                        <p className={scheduleStyles["task-description"]}>
+                                            {shift.description}
+                                        </p>
+                                    </div>
+
+                                    <div className={scheduleStyles["card-footer"]}>
+                                        {shift.shiftStatus === 'Canceled' ? (
+                                            <span className={scheduleStyles["canceled-text"]}>
+                                                <XCircle size={18} />
+                                                Ca làm việc đã bị hủy
+                                            </span>
+                                        ) : (
+                                            <div className={scheduleStyles["attendance-info"]}>
+                                                <span className={attendanceStatusInfo.className}>
+                                                    {attendanceStatusInfo.icon}
+                                                    {attendanceStatusInfo.text}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 )}
             </div>
