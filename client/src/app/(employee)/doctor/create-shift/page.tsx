@@ -6,6 +6,7 @@ import { Employee } from "@/types";
 import styles from "@/styles/admin.module.css";
 import scheduleStyles from "@/styles/doctor.module.css";
 import { Calendar, Clock, Save, X } from "@/lib/client";
+import { toast } from "react-toastify";
 
 export default function CreateShiftPage() {
     const { user } = useUserAuthContext();
@@ -31,7 +32,16 @@ export default function CreateShiftPage() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Creating shift:", formData);
+
+        const { startDate, endDate, startTime, endTime } = formData;
+        if (startDate && endDate) {
+            const start = new Date(`${startDate}T${startTime || "00:00"}`);
+            const end = new Date(`${endDate}T${endTime || "00:00"}`);
+            if (end < start) {
+                toast.error("Ngày/Khoảng thời gian kết thúc phải sau ngày/khoảng thời gian bắt đầu.");
+                return;
+            }
+        }
     };
 
     const handleReset = () => {
