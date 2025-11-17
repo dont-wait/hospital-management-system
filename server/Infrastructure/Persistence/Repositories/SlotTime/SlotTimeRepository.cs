@@ -13,7 +13,7 @@ public class SlotTimeRepository : ISlotTimeRepository
 
     public async Task<List<SlotTime>> GetSlotTimesAsync(Specification<SlotTime> spec)
     {
-        IQueryable<SlotTime> query = _context.SlotTimes.AsQueryable();
+        IQueryable<SlotTime> query = _context.slot_times.AsQueryable();
 
         query = query.Where(spec.Criteria);
         
@@ -38,7 +38,7 @@ public class SlotTimeRepository : ISlotTimeRepository
 
     public async Task<SlotTime?> GetSlotTimeByIdAsync(Specification<SlotTime> spec)
     {
-        IQueryable<SlotTime> query = _context.SlotTimes;
+        IQueryable<SlotTime> query = _context.slot_times;
 
         query = query.Where(spec.Criteria);
 
@@ -50,19 +50,19 @@ public class SlotTimeRepository : ISlotTimeRepository
 
     public async Task AddSlotTimeAsync(SlotTime slot)
     {
-        _context.SlotTimes.Add(slot);
+        _context.slot_times.Add(slot);
         await _context.SaveChangesAsync();
     }
 
     public async Task UpdateSlotTimeAsync(SlotTime slot)
     {
-        _context.SlotTimes.Update(slot);
+        _context.slot_times.Update(slot);
         await _context.SaveChangesAsync();
     }
 
     public async Task<bool> DeleteAsync(SlotTime slot)
     {
-        _context.SlotTimes.Remove(slot);
+        _context.slot_times.Remove(slot);
         await _context.SaveChangesAsync();
         return true;
     }
