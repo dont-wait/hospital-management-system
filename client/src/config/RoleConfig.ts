@@ -7,8 +7,9 @@ export const ROUTE_ROLE_MAP: Record<string, Role[]> = {
   "/forgot-password": roles.slice(),
   "/patient": ["patient"],
   "/patient/update": ["patient"],
-  "/doctor/dashboard": ["doctor"],
-  "/doctor/schedule": ["doctor"],
+  "/doctor/dashboard": ["doctor", "hod"],
+  "/doctor/schedule": ["doctor", "hod"],
+  "/doctor/create-shift": ["hod"],
   "/admin/dashboard": ["admin"],
   "/admin/dashboard/users": ["admin"],
 } as const;
@@ -17,6 +18,7 @@ export const ROUTE_ROLE_MAP: Record<string, Role[]> = {
 export const DEFAULT_ROLE_ROUTES: Record<Role, string> = {
   admin: "/admin/dashboard",
   doctor: "/doctor/dashboard",
+  hod: "/doctor/dashboard",
   patient: "/",
   guest: "/",
 } as const;
