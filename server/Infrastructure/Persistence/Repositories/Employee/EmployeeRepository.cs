@@ -68,9 +68,13 @@ public class EmployeeRepository : IEmployeeRepository
             DateOfBirth = doctorDto.DateOfBirth,
             Gender = doctorDto.Gender,
             HireDate = doctorDto.HireDate,
+<<<<<<< HEAD
             RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower(),
             ExperienceYears = doctorDto.ExperienceYears,
             DepartmentId = doctorDto.DepartmentId
+=======
+            RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower()
+>>>>>>> 0e513d0 (feat: update employee role assignment and mapping to include head of department logic)
         };
 
         await _context.employees.AddAsync(employee);
