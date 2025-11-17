@@ -2,344 +2,222 @@
 
 /* Stats Section */
 .stats-section {
-    margin-bottom: 2rem;
+    @apply mb-8;
 }
 
 .section-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #1f2937;
-    margin-bottom: 1rem;
+    @apply text-xl font-bold text-gray-800 mb-4;
 }
 
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    @apply grid grid-cols-2 gap-4;
 }
 
 @media (min-width: 768px) {
     .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
+        @apply grid-cols-3;
     }
 }
 
 @media (min-width: 1024px) {
     .stats-grid {
-        grid-template-columns: repeat(6, 1fr);
+        @apply grid-cols-6;
     }
 }
 
 .stat-card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 1rem;
-    transition: box-shadow 0.2s;
-}
-
-.stat-card:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    @apply bg-white rounded-lg shadow-sm p-4 transition-shadow hover:shadow-md;
 }
 
 .stat-icon {
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    display: inline-flex;
-    margin-bottom: 0.5rem;
+    @apply p-3 rounded-lg inline-flex mb-2;
 }
 
 .stat-color-blue {
-    background-color: #dbeafe;
-    color: #2563eb;
+    @apply bg-blue-100 text-blue-600;
 }
 
 .stat-color-green {
-    background-color: #d1fae5;
-    color: #059669;
+    @apply bg-green-100 text-green-600;
 }
 
 .stat-color-purple {
-    background-color: #e9d5ff;
-    color: #7c3aed;
+    @apply bg-purple-100 text-purple-600;
 }
 
 .stat-color-orange {
-    background-color: #fed7aa;
-    color: #ea580c;
+    @apply bg-orange-100 text-orange-600;
 }
 
 .stat-color-pink {
-    background-color: #fce7f3;
-    color: #db2777;
+    @apply bg-pink-100 text-pink-600;
 }
 
 .stat-color-teal {
-    background-color: #ccfbf1;
-    color: #0d9488;
+    @apply bg-teal-100 text-teal-600;
 }
 
 .stat-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #1f2937;
+    @apply text-2xl font-bold text-gray-800;
 }
 
 .stat-label {
-    font-size: 0.875rem;
-    color: #6b7280;
+    @apply text-sm text-gray-500;
 }
 
 /* Queue Container */
 .queue-container {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
+    @apply bg-white rounded-lg shadow-sm p-6;
 }
 
 .queue-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
+    @apply flex items-center justify-between mb-4;
 }
 
 .queue-badge {
-    background-color: #fee2e2;
-    color: #dc2626;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    font-weight: 600;
+    @apply bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold;
 }
 
 /* Table */
 .table-wrapper {
-    overflow-x: auto;
+    @apply overflow-x-auto;
 }
 
 .queue-table {
-    width: 100%;
-    border-collapse: collapse;
+    @apply w-full border-collapse;
 }
 
 .table-header-row {
-    border-bottom: 2px solid #e5e7eb;
+    @apply border-b-2 border-gray-200;
 }
 
 .table-header {
-    text-align: left;
-    padding: 0.75rem 1rem;
-    font-weight: 600;
-    color: #374151;
+    @apply text-left px-4 py-3 font-semibold text-gray-700;
 }
 
 .table-header.text-center {
-    text-align: center;
+    @apply text-center;
 }
 
 .table-row {
-    border-bottom: 1px solid #f3f4f6;
-    transition: background-color 0.2s;
-}
-
-.table-row:hover {
-    background-color: #f9fafb;
+    @apply border-b border-gray-100 transition-colors hover:bg-gray-50;
 }
 
 .table-cell {
-    padding: 1rem;
+    @apply p-4;
 }
 
 .table-cell.text-center {
-    text-align: center;
+    @apply text-center;
 }
 
 .stt-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    background-color: #dbeafe;
-    color: #2563eb;
-    border-radius: 9999px;
-    font-weight: 600;
+    @apply inline-flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full font-semibold;
 }
 
 .patient-name {
-    font-weight: 500;
-    color: #1f2937;
+    @apply font-medium text-gray-800;
 }
 
 .symptoms-text {
-    color: #6b7280;
+    @apply text-gray-500;
 }
 
 /* Appointment Type Badges */
 .appointment-type-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.375rem 0.75rem;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 600;
+    @apply inline-flex items-center px-3 py-1.5 rounded-md text-sm font-semibold;
 }
 
 .type-insurance {
-    background-color: #dbeafe;
-    color: #1e40af;
+    @apply bg-blue-100 text-blue-800;
 }
 
 .type-service-offline {
-    background-color: #fef3c7;
-    color: #92400e;
+    @apply bg-yellow-100 text-yellow-800;
 }
 
 .type-service-online {
-    background-color: #d1fae5;
-    color: #065f46;
+    @apply bg-green-100 text-green-800;
 }
 
 .type-default {
-    background-color: #f3f4f6;
-    color: #374151;
+    @apply bg-gray-100 text-gray-700;
 }
 
 /* Start Button */
 .start-btn {
-    background-color: #2563eb;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: none;
-    cursor: pointer;
-}
-
-.start-btn:hover {
-    background-color: #1d4ed8;
+    @apply bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 border-none cursor-pointer hover:bg-blue-700;
 }
 
 .text-center {
-    text-align: center;
+    @apply text-center;
 }
 
 /* Create Shift Form */
 .create-shift-container {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-    margin-top: 1.5rem;
+    @apply bg-white rounded-lg shadow-sm p-8 mt-6;
 }
 
 .shift-form {
-    width: 100%;
+    @apply w-full;
 }
 
 .form-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    @apply grid grid-cols-1 gap-6 mb-8;
 }
 
 @media (min-width: 768px) {
     .form-grid {
-        grid-template-columns: repeat(2, 1fr);
+        @apply grid-cols-2;
     }
 }
 
 .form-group,
 .form-group-full {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    @apply flex flex-col gap-2;
 }
 
 .form-group-full {
-    grid-column: 1 / -1;
+    @apply col-span-full;
 }
 
 .form-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    color: #374151;
-    font-size: 0.875rem;
+    @apply flex items-center gap-2 font-semibold text-gray-700 text-sm;
 }
 
 .form-label .required {
-    color: #dc2626;
+    @apply text-red-600;
 }
 
 .form-input,
 .form-textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    transition: all 0.2s;
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all;
 }
 
 .form-input:focus,
 .form-textarea:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    @apply outline-none border-blue-600 ring-4 ring-blue-100;
 }
 
 .form-textarea {
-    resize: vertical;
-    min-height: 100px;
+    @apply resize-y min-h-[100px];
 }
 
 .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e5e7eb;
+    @apply flex justify-end gap-4 pt-6 border-t border-gray-200;
 }
 
 .btn-reset,
 .btn-submit {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm border-none cursor-pointer transition-all;
 }
 
 .btn-reset {
-    background-color: #f3f4f6;
-    color: #374151;
-}
-
-.btn-reset:hover {
-    background-color: #e5e7eb;
+    @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
 }
 
 .btn-submit {
-    background-color: #2563eb;
-    color: white;
-}
-
-.btn-submit:hover {
-    background-color: #1d4ed8;
+    @apply bg-blue-600 text-white hover:bg-blue-700;
 }
 
 
