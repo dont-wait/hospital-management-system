@@ -12,7 +12,7 @@ export enum Gender {
   Other = "O",
 }
 
-export const roles = ["admin", "guest", "doctor", "patient"] as const;
+export const roles = ["admin", "guest", "doctor", "patient", "hod"] as const;
 
 export type Role = typeof roles[number];
 
@@ -118,3 +118,14 @@ export type ModalProps = {
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
   showCloseButton?: boolean;
 };
+
+export interface WorkShift {
+  id: number;
+  name: string;
+  startTime: string; 
+  endTime: string;   
+  description: string;
+  shiftStatus: 'Scheduled' | 'Completed' | 'Canceled';
+  attendanceStatus?: 'checked-in' | 'late' | 'not-checked-in' | 'checked-out';
+  actualCheckInTime?: string;
+}
