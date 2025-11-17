@@ -127,3 +127,11 @@ export const ChevronLeft = dynamic(() =>
 export const ChevronRight = dynamic(() =>
   import("lucide-react").then((mod) => mod.ChevronRight),
 );
+
+export const Save = dynamic(() =>
+  import("lucide-react").then((mod) => mod.Save),
+);
+
+export const X = dynamic(() =>
+  import("lucide-react").then((mod) => mod.X),
+);
