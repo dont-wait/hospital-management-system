@@ -15,17 +15,7 @@ import {
 import { formatDateDisplay, formatTime, isSameDate } from "@/lib/client";
 import styles from "@/styles/admin.module.css";
 import scheduleStyles from "@/styles/schedule.module.css";
-
-interface WorkShift {
-    id: number;
-    name: string;
-    startTime: string; 
-    endTime: string;   
-    description: string;
-    shiftStatus: 'Scheduled' | 'Completed' | 'Canceled';
-    attendanceStatus?: 'checked-in' | 'late' | 'not-checked-in' | 'checked-out';
-    actualCheckInTime?: string;
-}
+import { WorkShift } from "@/types";
 
 export default function DoctorSchedulePage() {
     const { user } = useUserAuthContext();
