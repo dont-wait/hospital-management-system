@@ -11,9 +11,12 @@ public class EmployeeMapper : IEmployeeMapper
 
     public ResponseEmployeeDTO MapToDto(Employee employee)
     {
-        if (employee.RoleId.Equals(RoleEnum.doctor.ToString(), StringComparison.CurrentCultureIgnoreCase))
+        if (
+                employee.RoleId.Equals(RoleEnum.doctor.ToString(), StringComparison.CurrentCultureIgnoreCase)
+                || employee.RoleId.Equals(RoleEnum.hod.ToString(), StringComparison.CurrentCultureIgnoreCase)
+            )
         {
-            return _doctorMapper.MapToDto(employee.Doctor);
+            return _doctorMapper.MapToDto(employee.Doctor, employee.RoleId.Equals(RoleEnum.hod.ToString(), StringComparison.CurrentCultureIgnoreCase));
         }
         else if (employee.RoleId.Equals(RoleEnum.admin.ToString(), StringComparison.CurrentCultureIgnoreCase))
         {

@@ -2,24 +2,25 @@ using Domain.Enums;
 
 public class DoctorMapper : IDoctorMapper
 {
-    public ResponseDoctorDTO MapToDto(Doctor doctor)
+    public ResponseDoctorDTO MapToDto(Doctor doctor, bool isHeadOfDepartment)
     {
         return new ResponseDoctorDTO
         {
-            DoctorId = doctor.Employee.Doctor.Id,
-            EmployeeId = doctor.Employee.Id,
-            FirstName = doctor.Employee.FirstName,
-            LastName = doctor.Employee.LastName,
-            Email = doctor.Employee.Email,
-            PhoneNumber = doctor.Employee.PhoneNumber,
-            Specialization = doctor.Employee.Doctor.Specialization,
-            CertificateNumber = doctor.Employee.CertificateNumber,
-            DateOfBirth = doctor.Employee.DateOfBirth,
-            Gender = doctor.Employee.Gender,
-            HireDate = doctor.Employee.HireDate,
-            RoleId = RoleEnum.doctor.ToString().ToLower(),
+            DoctorId = doctor.Employee!.Doctor!.Id,
+            EmployeeId = doctor.Employee!.Id,
+            FirstName = doctor.Employee!.FirstName,
+            LastName = doctor.Employee!.LastName,
+            Email = doctor.Employee!.Email,
+            PhoneNumber = doctor.Employee!.PhoneNumber,
+            Specialization = doctor.Employee!.Doctor!.Specialization,
+            CertificateNumber = doctor.Employee!.CertificateNumber,
+            DateOfBirth = doctor.Employee!.DateOfBirth,
+            Gender = doctor.Employee!.Gender,
+            HireDate = doctor.Employee!.HireDate,
             ExperienceYears = doctor.Employee!.ExperienceYears,
-            DepartmentName = doctor.Employee!.Department.Name
+            DepartmentName = doctor.Employee!.Department.Name,
+            RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower(),
+
         };
     }
 
