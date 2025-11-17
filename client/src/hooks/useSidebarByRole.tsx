@@ -5,7 +5,7 @@ import { useMemo, ReactNode } from "react";
 import { DoctorSidebar } from "@/components/emloyee/doctor/DoctorSidebar";
 import { Role } from "@/types";
 
-type EmployeeRole = Exclude<Role, "admin" | "patient" | "guest">;
+type EmployeeRole = Exclude<Role, "admin" | "patient" | "guest" | "hod">;
 
 const sidebarMap: Record<EmployeeRole, ReactNode> = {
   doctor: <DoctorSidebar />,
