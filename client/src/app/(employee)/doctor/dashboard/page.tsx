@@ -33,6 +33,12 @@ export default function DoctorDashboardPage() {
         { id: 4, stt: 4, name: "Hoàng Văn E", symptoms: "Tái khám tiểu đường", appointmentType: "DV Online" },
     ];
 
+    const appointmentTypeClassMap = {
+        "BHYT": doctorStyles["type-insurance"],
+        "DV Offline": doctorStyles["type-service-offline"],
+        "DV Online": doctorStyles["type-service-online"]
+    }
+
     return (
         <div className={styles["admin-container"]}>
             <div className={styles["dashboard-header"]}>
@@ -84,11 +90,7 @@ export default function DoctorDashboardPage() {
                         </thead>
                         <tbody>
                             {waitingQueue.map((patient) => {
-                                const appointmentTypeClass = {
-                                    "BHYT": doctorStyles["type-insurance"],
-                                    "DV Offline": doctorStyles["type-service-offline"],
-                                    "DV Online": doctorStyles["type-service-online"]
-                                }[patient.appointmentType] || doctorStyles["type-default"];
+                                const appointmentTypeClass = appointmentTypeClassMap[patient.appointmentType as keyof typeof appointmentTypeClassMap] || doctorStyles["type-default"];
 
                                 return (
                                     <tr key={patient.id} className={doctorStyles["table-row"]}>
