@@ -21,7 +21,9 @@ public class DepartmentService : IDepartmentService
         var departmentDTOs = departments.Select(d => new ResponseDepartmentDTO
         {
             DepartmentId = d.Id,
-            DepartmentName = d.Name
+            DepartmentName = d.Name,
+            DepartmentLocation = d.Location,
+            DepartmentDescription = d.Description
         }).ToList();
 
         return ServiceResult<List<ResponseDepartmentDTO>>.Success(departmentDTOs);
