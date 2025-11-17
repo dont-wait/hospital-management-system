@@ -62,7 +62,7 @@ public class EmployeeRepository : IEmployeeRepository
             DateOfBirth = doctorDto.DateOfBirth,
             Gender = doctorDto.Gender,
             HireDate = doctorDto.HireDate,
-            RoleId = RoleEnum.doctor.ToString().ToLower()
+            RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower()
         };
 
         await _context.employees.AddAsync(employee);

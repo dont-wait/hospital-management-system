@@ -45,7 +45,7 @@ public class EmployeeAccountService : IEmployeeAccountService
         if (newDoctor == null)
             return ServiceResult<ResponseDoctorDTO>.Fail("Tạo tài khoản thất bại.");
 
-        var responseDoctorDto = _doctorMapper.MapToDto(newDoctor);
+        var responseDoctorDto = _doctorMapper.MapToDto(newDoctor, isHeadOfDepartment);
 
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }

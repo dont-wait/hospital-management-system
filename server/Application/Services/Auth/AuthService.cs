@@ -32,6 +32,7 @@ public class AuthService : IAuthService
             switch (user.Employee.RoleId)
             {
                 case "doctor":
+                case "hod":
                     employeeDto = new ResponseDoctorDTO
                     {
                         EmployeeId = user.Employee.Id,
