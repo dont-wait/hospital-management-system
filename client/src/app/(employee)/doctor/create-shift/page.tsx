@@ -93,7 +93,7 @@ export default function CreateShiftPage() {
                         </div>
 
                         <div className={scheduleStyles["form-group"]}>
-                            <label htmlFor="startDate" className={scheduleStyles["form-label"]}>
+                            <label className={scheduleStyles["form-label"]}>
                                 <Calendar size={16} />
                                 Ngày bắt đầu <span className={scheduleStyles["required"]}>*</span>
                             </label>
@@ -110,7 +110,7 @@ export default function CreateShiftPage() {
                         </div>
 
                         <div className={scheduleStyles["form-group"]}>
-                            <label htmlFor="endDate" className={scheduleStyles["form-label"]}>
+                            <label className={scheduleStyles["form-label"]}>
                                 <Calendar size={16} />
                                 Ngày kết thúc <span className={scheduleStyles["required"]}>*</span>
                             </label>
@@ -127,7 +127,7 @@ export default function CreateShiftPage() {
                         </div>
 
                         <div className={scheduleStyles["form-group"]}>
-                            <label htmlFor="startTime" className={scheduleStyles["form-label"]}>
+                            <label className={scheduleStyles["form-label"]}>
                                 <Clock size={16} />
                                 Giờ bắt đầu <span className={scheduleStyles["required"]}>*</span>
                             </label>
@@ -144,7 +144,7 @@ export default function CreateShiftPage() {
                         </div>
 
                         <div className={scheduleStyles["form-group"]}>
-                            <label htmlFor="endTime" className={scheduleStyles["form-label"]}>
+                            <label className={scheduleStyles["form-label"]}>
                                 <Clock size={16} />
                                 Giờ kết thúc <span className={scheduleStyles["required"]}>*</span>
                             </label>
