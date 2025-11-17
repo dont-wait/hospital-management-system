@@ -4,14 +4,17 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { useUserAuthContext, useSidebar } from "@/contexts";
 import { LogOut, LogIn } from "@/lib/client";
-import { DoctorSidebarItems, patientSidebarVariants } from "@/config";
+import { DoctorSidebarItems, HODSidebarItems, patientSidebarVariants } from "@/config";
 import styles from "@/styles/admin.module.css";
+import { Employee } from "@/types";
 
 export function DoctorSidebar() {
-  const { logout, isAuthenticated } = useUserAuthContext();
+  const { logout, isAuthenticated, user } = useUserAuthContext();
   const { closeSidebarOnMobile } = useSidebar();
   const router = useRouter();
   const pathname = usePathname();
+  
+  const sidebarItems = (user as Employee).roleId === "hod" ? HODSidebarItems : DoctorSidebarItems;
 
   const handleItemClick = (route: string) => {
     if (route === "/logout") {
@@ -25,7 +28,7 @@ export function DoctorSidebar() {
   return (
     <div className={styles["admin-sidebar-body"]}>
       <nav className={styles["admin-sidebar-content"]}>
-        {DoctorSidebarItems.map((item, index) => {
+        {sidebarItems.map((item, index) => {
           const Icon = item.icon;
           return (
             <motion.button
