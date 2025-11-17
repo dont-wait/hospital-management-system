@@ -17,4 +17,6 @@ public class EmployeeSchedule
     public virtual TaskItem Task { get; set; } = null!;
 
     public DoctorSchedule DoctorSchedule { get; set; } = null!;
+    
+    
 }

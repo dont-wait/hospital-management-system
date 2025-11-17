@@ -712,36 +712,6 @@ namespace server.Migrations
                     b.ToTable("rooms");
                 });
 
-            modelBuilder.Entity("ScheduleSlot", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("CurrentRegistrations")
-                        .HasColumnType("int");
-
-                    b.Property<long>("DoctorScheduleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("MaxRegistrations")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("SlotEndTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("SlotStartTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorScheduleId");
-
-                    b.ToTable("schedule_slots");
-                });
-
             modelBuilder.Entity("Service", b =>
                 {
                     b.Property<int>("Id")
@@ -797,6 +767,40 @@ namespace server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("services");
+                });
+
+            modelBuilder.Entity("SlotTime", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("CurrentRegistrations")
+                        .HasColumnType("int");
+
+                    b.Property<long>("DoctorScheduleId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("MaxRegistrations")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("SlotEndTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("SlotStartTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("SlotStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorScheduleId");
+
+                    b.ToTable("SlotTimes");
                 });
 
             modelBuilder.Entity("UserAccount", b =>
@@ -1065,10 +1069,10 @@ namespace server.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("ScheduleSlot", b =>
+            modelBuilder.Entity("SlotTime", b =>
                 {
                     b.HasOne("DoctorSchedule", "DoctorSchedule")
-                        .WithMany("ScheduleSlots")
+                        .WithMany("SlotTimes")
                         .HasForeignKey("DoctorScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1109,7 +1113,7 @@ namespace server.Migrations
 
             modelBuilder.Entity("DoctorSchedule", b =>
                 {
-                    b.Navigation("ScheduleSlots");
+                    b.Navigation("SlotTimes");
                 });
 
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskItem", b =>

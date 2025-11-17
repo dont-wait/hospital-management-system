@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class DoctorSchedule
 {
-
     [Key]
     public long ScheduleId { get; set; }
     [Required]
@@ -20,7 +19,7 @@ public class DoctorSchedule
     public TimeOnly EndTime { get; set; }
     public int AvgVisitMinutes { get; set; } = 12;
 
-    public ICollection<ScheduleSlot> ScheduleSlots { get; set; } = new List<ScheduleSlot>();
+    public ICollection<SlotTime> SlotTimes { get; set; } = new List<SlotTime>();
     public long EmployeeScheduleId { get; set; }
     public virtual EmployeeSchedule EmployeeSchedule { get; set; } = null!;
 }
