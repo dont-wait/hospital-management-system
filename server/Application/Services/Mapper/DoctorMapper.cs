@@ -2,7 +2,7 @@ using Domain.Enums;
 
 public class DoctorMapper : IDoctorMapper
 {
-    public ResponseDoctorDTO MapToDto(Doctor doctor)
+    public ResponseDoctorDTO MapToDto(Doctor doctor, bool isHeadOfDepartment)
     {
         return new ResponseDoctorDTO
         {
@@ -17,7 +17,7 @@ public class DoctorMapper : IDoctorMapper
             DateOfBirth = doctor.Employee.DateOfBirth,
             Gender = doctor.Employee.Gender,
             HireDate = doctor.Employee.HireDate,
-            RoleId = RoleEnum.doctor.ToString().ToLower(),
+            RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower(),
         };
     }
 
