@@ -18,5 +18,6 @@ public class EmployeeSchedule
 
     public DoctorSchedule DoctorSchedule { get; set; } = null!;
     
-    
+    public virtual Department Department { get; set; } = null!;
+    public int DepartmentId { get; set; }
 }
