@@ -1,5 +1,4 @@
 namespace Domain.Enums;
-
 public enum RoleEnum
 {
     admin,
@@ -7,5 +6,6 @@ public enum RoleEnum
     patient,
     manager,
     nurse,
-    pharmacist
+    pharmacist,
+    hod
 }
