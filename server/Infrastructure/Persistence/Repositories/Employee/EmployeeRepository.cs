@@ -39,7 +39,7 @@ public class EmployeeRepository : IEmployeeRepository
         return await employees.ToListAsync();
     }
 
-    public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto)
+    public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto, bool isHeadOfDepartment = false)
     {
         UserAccount userAccount = new UserAccount
         {

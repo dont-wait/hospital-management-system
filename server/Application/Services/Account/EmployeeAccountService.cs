@@ -21,7 +21,7 @@ public class EmployeeAccountService : IEmployeeAccountService
         _employeeMapper = employeeMapper;
     }
 
-    public async Task<ServiceResult<ResponseDoctorDTO>> CreateDoctorAsync(RequestDoctorDTO doctorDto)
+    public async Task<ServiceResult<ResponseDoctorDTO>> CreateDoctorAsync(RequestDoctorDTO doctorDto, bool isHeadOfDepartment)
     {
         if (await _userAccountRepository.GetUserAccountByCitizenIDAsync(doctorDto.CitizenID) != null)
             return ServiceResult<ResponseDoctorDTO>.Fail("Số CMND/CCCD đã tồn tại.");
@@ -41,7 +41,7 @@ public class EmployeeAccountService : IEmployeeAccountService
         string hashedPassword = HashPasswordUtil.HashPassword(doctorDto.Password);
         doctorDto.Password = hashedPassword;
 
-        Doctor newDoctor = await _employeeRepository.CreateDoctorAsync(doctorDto);
+        Doctor newDoctor = await _employeeRepository.CreateDoctorAsync(doctorDto, isHeadOfDepartment);
         if (newDoctor == null)
             return ServiceResult<ResponseDoctorDTO>.Fail("Tạo tài khoản thất bại.");
 
