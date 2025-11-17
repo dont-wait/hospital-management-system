@@ -95,7 +95,8 @@ public class EmployeeAccountService : IEmployeeAccountService
 
     public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllEmployeesByRoleIdAsync(string roleId)
     {
-        var validRoles = new[] { RoleEnum.doctor.ToString(), RoleEnum.admin.ToString() };
+        var validRoles = 
+            new[] { RoleEnum.doctor.ToString(), RoleEnum.admin.ToString(), RoleEnum.hod.ToString() };
         
         if (string.IsNullOrWhiteSpace(roleId) || 
             !validRoles.Any(r => r.Equals(roleId, StringComparison.CurrentCultureIgnoreCase)))

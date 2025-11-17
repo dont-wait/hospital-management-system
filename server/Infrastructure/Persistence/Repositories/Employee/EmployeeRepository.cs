@@ -25,7 +25,10 @@ public class EmployeeRepository : IEmployeeRepository
             "admin" => employees
                 .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.admin.ToString().ToLower())
                 .Include(ua => ua.Employee!.Admin),
-
+            "hod" => employees
+                .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.hod.ToString().ToLower())
+                .Include(ua => ua.Employee!.Doctor),
+                
             _ => employees
                 .Where(ua => ua.Employee != null && ua.Employee.RoleId == roleId.ToLower())
         };
