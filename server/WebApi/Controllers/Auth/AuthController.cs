@@ -41,11 +41,11 @@ public class AuthController : ControllerBase
 
     [HttpPost("doctor/register")]
     [Authorize(Roles = "admin")]
-    public async Task<IActionResult> DoctorRegister(RequestDoctorDTO userDto)
+    public async Task<IActionResult> DoctorRegister(RequestDoctorDTO userDto, [FromQuery] bool hod = false)
     {
         try
         {
-            var result = await _employeeAccountService.CreateDoctorAsync(userDto);
+            var result = await _employeeAccountService.CreateDoctorAsync(userDto, hod);
             if (result.IsSuccess)
                 return new JsonResult(new ApiResponse<ResponseDoctorDTO>(201, "Tạo tài khoản thành công.", result.Data)) { StatusCode = 201 };
             else

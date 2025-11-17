@@ -13,7 +13,7 @@ public class EmployeeMapper : IEmployeeMapper
     {
         if (employee.RoleId.Equals(RoleEnum.doctor.ToString(), StringComparison.CurrentCultureIgnoreCase))
         {
-            return _doctorMapper.MapToDto(employee.Doctor!);
+            return _doctorMapper.MapToDto(employee.Doctor);
         }
         else if (employee.RoleId.Equals(RoleEnum.admin.ToString(), StringComparison.CurrentCultureIgnoreCase))
         {
