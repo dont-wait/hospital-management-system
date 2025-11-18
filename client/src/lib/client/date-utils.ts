@@ -81,3 +81,12 @@ export const formatTime = (isoString: string): string => {
 export const isSameDate = (date1: Date, date2: Date): boolean => {
   return date1.toDateString() === date2.toDateString();
 };
+
+export const getDayName = (date: Date) => {
+    return date.toLocaleDateString('vi-VN', { weekday: 'short' });
+};
+
+export const getDayMonth = (date: Date) => {
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+};
+
