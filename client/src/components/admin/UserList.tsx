@@ -8,7 +8,7 @@ import { Eye, SquarePen, Trash2, ChevronDown, Search } from "lucide-react";
 import { useReducer, useRef, useEffect, useMemo } from "react";
 import { getUserRole, getUserName, getUserEmail, getUserPhone, roleIdToName } from "@/lib/helper";
 import { UserDetail } from "./UserDetail";
-import { EmployeeUpdateModal } from "../emloyee";
+import { EmployeeUpdateModal } from "../employee";
 interface UserListProps { 
     users: AuthUserWithoutTokens[];
 }
