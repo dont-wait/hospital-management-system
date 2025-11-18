@@ -1,51 +1,28 @@
 'use client';
 
-import { useState } from "react";
 import { useUserAuthContext } from "@/contexts";
 import { Employee } from "@/types";
 import styles from "@/styles/admin.module.css";
 import scheduleStyles from "@/styles/doctor.module.css";
 import { Calendar, Clock, Save, X } from "@/lib/client";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createShiftSchema, CreateShiftFormData } from "@/schemas/create-shift";
 import { toast } from "react-toastify";
+import { FormField, Button } from "@/components";
 
 export default function CreateShiftPage() {
     const { user } = useUserAuthContext();
     const hod = user as Employee;
     
-    const [formData, setFormData] = useState({
-        shiftName: "",
-        startDate: "",
-        endDate: "",
-        startTime: "",
-        endTime: "",
-        description: "",
-        room: "",
-    });
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        const { startDate, endDate, startTime, endTime } = formData;
-        if (startDate && endDate) {
-            const start = new Date(`${startDate}T${startTime || "00:00"}`);
-            const end = new Date(`${endDate}T${endTime || "00:00"}`);
-            if (end < start) {
-                toast.error("Ngày/Khoảng thời gian kết thúc phải sau ngày/khoảng thời gian bắt đầu.");
-                return;
-            }
-        }
-    };
-
-    const handleReset = () => {
-        setFormData({
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm<CreateShiftFormData>({
+        resolver: zodResolver(createShiftSchema),
+        defaultValues: {
             shiftName: "",
             startDate: "",
             endDate: "",
@@ -53,7 +30,22 @@ export default function CreateShiftPage() {
             endTime: "",
             description: "",
             room: "",
-        });
+        },
+    });
+
+    const onSubmit = async (data: CreateShiftFormData) => {
+        try {
+            console.log("Creating shift:", data);
+            // TODO: Call API to create shift
+            toast.success("Tạo ca làm việc thành công!");
+            reset();
+        } catch (error) {
+            toast.error("Có lỗi xảy ra khi tạo ca làm việc");
+        }
+    };
+
+    const handleReset = () => {
+        reset();
     };
 
     return (
@@ -68,140 +60,97 @@ export default function CreateShiftPage() {
             </div>
 
             <div className={scheduleStyles["create-shift-container"]}>
-                <form onSubmit={handleSubmit} className={scheduleStyles["shift-form"]}>
+                <form onSubmit={handleSubmit(onSubmit)} className={scheduleStyles["shift-form"]}>
                     <div className={scheduleStyles["form-grid"]}>
-                        <div className={scheduleStyles["form-group"]}>
-                            <label htmlFor="shiftName" className={scheduleStyles["form-label"]}>
-                                Tên ca làm việc <span className={scheduleStyles["required"]}>*</span>
-                            </label>
-                            <input
-                                type="text"
-                                id="shiftName"
-                                name="shiftName"
-                                value={formData.shiftName}
-                                onChange={handleInputChange}
-                                placeholder="Ví dụ: Ca sáng, Ca chiều..."
-                                className={scheduleStyles["form-input"]}
-                                required
-                            />
-                        </div>
+                        <FormField
+                            id="shiftName"
+                            label="Tên ca làm việc"
+                            placeholder="Ví dụ: Ca sáng, Ca chiều..."
+                            type="text"
+                            register={register}
+                            errors={errors}
+                        />
 
-                        <div className={scheduleStyles["form-group"]}>
-                            <label htmlFor="room" className={scheduleStyles["form-label"]}>
-                                Phòng khám <span className={scheduleStyles["required"]}>*</span>
-                            </label>
-                            <input
-                                type="text"
-                                id="room"
-                                name="room"
-                                value={formData.room}
-                                onChange={handleInputChange}
-                                placeholder="Ví dụ: Phòng khám số 3"
-                                className={scheduleStyles["form-input"]}
-                                required
-                            />
-                        </div>
+                        <FormField
+                            id="room"
+                            label="Phòng khám"
+                            placeholder="Ví dụ: Phòng khám số 3"
+                            type="text"
+                            register={register}
+                            errors={errors}
+                        />
 
-                        <div className={scheduleStyles["form-group"]}>
-                            <label className={scheduleStyles["form-label"]}>
-                                <Calendar size={16} />
-                                Ngày bắt đầu <span className={scheduleStyles["required"]}>*</span>
-                            </label>
-                            <input
-                                type="date"
-                                id="startDate"
-                                name="startDate"
-                                value={formData.startDate}
-                                onChange={handleInputChange}
-                                onClick={(e) => e.currentTarget.showPicker()}
-                                className={scheduleStyles["form-input"]}
-                                required
-                            />
-                        </div>
+                        <FormField
+                            id="startDate"
+                            label="Ngày bắt đầu"
+                            type="date"
+                            register={register}
+                            errors={errors}
+                            icon={<Calendar size={16} />}
+                            onClick={(e) => e.currentTarget.showPicker()}
+                        />
 
-                        <div className={scheduleStyles["form-group"]}>
-                            <label className={scheduleStyles["form-label"]}>
-                                <Calendar size={16} />
-                                Ngày kết thúc <span className={scheduleStyles["required"]}>*</span>
-                            </label>
-                            <input
-                                type="date"
-                                id="endDate"
-                                name="endDate"
-                                value={formData.endDate}
-                                onChange={handleInputChange}
-                                onClick={(e) => e.currentTarget.showPicker()}
-                                className={scheduleStyles["form-input"]}
-                                required
-                            />
-                        </div>
+                        <FormField
+                            id="endDate"
+                            label="Ngày kết thúc"
+                            type="date"
+                            register={register}
+                            errors={errors}
+                            icon={<Calendar size={16} />}
+                            onClick={(e) => e.currentTarget.showPicker()}
+                        />
 
-                        <div className={scheduleStyles["form-group"]}>
-                            <label className={scheduleStyles["form-label"]}>
-                                <Clock size={16} />
-                                Giờ bắt đầu <span className={scheduleStyles["required"]}>*</span>
-                            </label>
-                            <input
-                                type="time"
-                                id="startTime"
-                                name="startTime"
-                                value={formData.startTime}
-                                onChange={handleInputChange}
-                                onClick={(e) => e.currentTarget.showPicker()}
-                                className={scheduleStyles["form-input"]}
-                                required
-                            />
-                        </div>
+                        <FormField
+                            id="startTime"
+                            label="Giờ bắt đầu"
+                            type="time"
+                            register={register}
+                            errors={errors}
+                            icon={<Clock size={16} />}
+                            onClick={(e) => e.currentTarget.showPicker()}
+                        />
 
-                        <div className={scheduleStyles["form-group"]}>
-                            <label className={scheduleStyles["form-label"]}>
-                                <Clock size={16} />
-                                Giờ kết thúc <span className={scheduleStyles["required"]}>*</span>
-                            </label>
-                            <input
-                                type="time"
-                                id="endTime"
-                                name="endTime"
-                                value={formData.endTime}
-                                onChange={handleInputChange}
-                                onClick={(e) => e.currentTarget.showPicker()}
-                                className={scheduleStyles["form-input"]}
-                                required
-                            />
-                        </div>
+                        <FormField
+                            id="endTime"
+                            label="Giờ kết thúc"
+                            type="time"
+                            register={register}
+                            errors={errors}
+                            icon={<Clock size={16} />}
+                            onClick={(e) => e.currentTarget.showPicker()}
+                        />
 
                         <div className={scheduleStyles["form-group-full"]}>
-                            <label htmlFor="description" className={scheduleStyles["form-label"]}>
-                                Mô tả
-                            </label>
-                            <textarea
+                            <FormField
                                 id="description"
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
+                                label="Mô tả"
                                 placeholder="Nhập mô tả chi tiết về ca làm việc..."
-                                className={scheduleStyles["form-textarea"]}
+                                type="textarea"
+                                register={register}
+                                errors={errors}
                                 rows={4}
                             />
                         </div>
                     </div>
 
                     <div className={scheduleStyles["form-actions"]}>
-                        <button
+                        <Button
                             type="button"
                             onClick={handleReset}
-                            className={scheduleStyles["btn-reset"]}
+                            variant="secondary"
+                            disabled={isSubmitting}
                         >
                             <X size={20} />
                             Xóa
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="submit"
-                            className={scheduleStyles["btn-submit"]}
+                            variant="default"
+                            disabled={isSubmitting}
                         >
                             <Save size={20} />
-                            Tạo ca làm việc
-                        </button>
+                            {isSubmitting ? "Đang tạo..." : "Tạo ca làm việc"}
+                        </Button>
                     </div>
                 </form>
             </div>
