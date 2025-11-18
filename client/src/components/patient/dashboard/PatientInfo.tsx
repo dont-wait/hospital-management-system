@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { Icon } from "@/components";
-import { ButtonActiveModal } from "@/components/patient/ButtonActiveModal";
+import { ButtonActiveModal } from "@/components/patient/dashboard/ButtonActiveModal";
 import { PatientService } from "@/services/server";
 import { AuthUserWithoutTokens, Patient } from "@/types";
 import { cn } from "@/lib/client";
@@ -37,10 +37,9 @@ export default async function PatientInfo() {
                   patientStyles["patient-helper-btn"],
                 )}
               >
-                <Icon
-                  name="User"
-                  className={patientStyles["patient-helper-icon"]}
-                />
+                <div className={patientStyles["patient-helper-icon"]}>
+                  <Icon name="User" />
+                </div>
                 <div
                   className={cn(
                     labelStyles["label"],
@@ -58,10 +57,9 @@ export default async function PatientInfo() {
                   patientStyles["patient-helper-btn"],
                 )}
               >
-                <Icon
-                  name="Mail"
-                  className={patientStyles["patient-helper-icon"]}
-                />
+                <div className={patientStyles["patient-helper-icon"]}>
+                  <Icon name="Mail" />
+                </div>
                 <div
                   className={cn(
                     labelStyles["label"],
@@ -79,10 +77,9 @@ export default async function PatientInfo() {
                   patientStyles["patient-helper-btn"],
                 )}
               >
-                <Icon
-                  name="Phone"
-                  className={patientStyles["patient-helper-icon"]}
-                />
+                <div className={patientStyles["patient-helper-icon"]}>
+                  <Icon name="Phone" />
+                </div>
                 <div
                   className={cn(
                     labelStyles["label"],

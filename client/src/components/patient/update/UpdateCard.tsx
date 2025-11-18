@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Card, CardContent } from "@/components";
-import { UpdateForm } from "@/components/patient";
+import { UpdateForm } from "@/components/patient/update/UpdateForm";
 import styles from "@/styles/patient.module.css";
 
 const CardMotion = motion(Card);

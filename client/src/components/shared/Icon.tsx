@@ -3,8 +3,8 @@
 import dynamic from "next/dynamic";
 import type Lucide from "lucide-react";
 import Skeleton from "react-loading-skeleton";
+import { IconNames } from "@/types";
 
-export type IconNames = keyof typeof Lucide.icons;
 interface IconProps extends Lucide.LucideProps {
   name: IconNames;
 }
@@ -12,8 +12,19 @@ interface IconProps extends Lucide.LucideProps {
 export function Icon({ name, ...props }: IconProps) {
   const LucideIcon = dynamic(
     () => import("lucide-react").then((mod) => mod[name]),
-    { ssr: false, loading: () => <Skeleton width="100%" height="100%" /> },
+    {
+      ssr: true,
+      loading: () => (
+        <Skeleton
+          circle={true}
+          containerClassName="flex items-center h-full justify-center aspect-square"
+          width="100%"
+          height="100%"
+        />
+      ),
+    },
   );
+
   return <LucideIcon {...props} />;
 }
 

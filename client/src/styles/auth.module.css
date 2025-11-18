@@ -70,7 +70,7 @@
 }
 
 .footer-link-content {
-  @apply text-sm text-gray-600;
+  @apply flex justify-center items-center gap-1 text-sm text-gray-600;
 }
 
 .footer-link {

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import type Lucide from "lucide-react";
 
 export interface ApiResponse<T> {
   status: number;
@@ -14,7 +15,7 @@ export enum Gender {
 
 export const roles = ["admin", "guest", "doctor", "patient"] as const;
 
-export type Role = typeof roles[number];
+export type Role = (typeof roles)[number];
 
 export interface Patient {
   patientId: string;
@@ -118,3 +119,105 @@ export type ModalProps = {
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
   showCloseButton?: boolean;
 };
+export type IconNames = keyof typeof Lucide.icons;
+
+export interface BookingSteps {
+  id: string;
+  label: string;
+}
+
+export type Priority = "specialty" | "doctor" | "date";
+
+export type BookingDoctor = Pick<Doctor, "doctorId" | "specialization"> & {
+  fullName: string;
+};
+
+export interface BaseBookingInfo {
+  patient: Patient;
+  specialty: string;
+  doctor: BookingDoctor;
+  date: string;
+  timeSlot: string;
+  roomName: string;
+  price: number;
+}
+
+export interface BookingRecord {
+  patient: Patient;
+  specialty: string;
+  doctor: BookingDoctor;
+  date: string;
+  timeSlot: string;
+  roomName: string;
+  price: number;
+}
+
+export interface BookingData {
+  step: number;
+  patient: Patient | null;
+  priority: Priority | null;
+  specialty: string;
+  doctor: BookingDoctor | null;
+  date: string;
+  timeSlot: string;
+  roomName: string;
+  records: BookingRecord[];
+  price: number;
+  insurance: string;
+}
+
+export interface PriorityOption {
+  id: Priority;
+  label: string;
+  description: string;
+  iconName: IconNames;
+}
+
+export interface Department {
+  departmentId: number;
+  departmentName: string;
+  departmentLocation: string;
+  departmentDescription: string;
+}
+
+export type ScheduleStatus = "Opened" | "Closed" | "Fulled";
+
+export interface Slot {
+  slotId: string;
+  slotStatus: ScheduleStatus;
+  slotStartTime: string;
+  slotEndTime: string;
+}
+
+export interface Schedule {
+  scheduleId: string;
+  roomName: string;
+  startTime: string;
+  endTime: string;
+  scheduleStatus: ScheduleStatus;
+  priceOfSchedule: string;
+  doctor: Pick<Doctor, "doctorId" | "specialization"> & {
+    fullName: string;
+  };
+  slots: Slot[];
+}
+
+export interface ScheduleData {
+  date: string;
+  departmentId: number;
+  departmentName: string;
+  departmentLocation: string;
+  departmentDescription: string;
+  schedules: Schedule[];
+}
+
+export interface CalendarDay {
+  day: string;
+  dateString: string;
+  isDisabled: boolean;
+}
+
+export interface DateTime {
+  time: string;
+  date: string;
+}

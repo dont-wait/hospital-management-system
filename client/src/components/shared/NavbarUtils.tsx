@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components";
-import { PatientSidebar } from "@/components/patient";
+import { PatientSidebar } from "@/components/patient/sidebar/PatientSidebar";
 import { useUserAuthContext, useSidebar } from "@/contexts";
 import { Bell } from "@/lib/client";
 import styles from "@/styles/navbar.module.css";

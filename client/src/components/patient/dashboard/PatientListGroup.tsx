@@ -24,10 +24,9 @@ function PatientListGroup() {
             patientStyles["patient-helper-btn"],
           )}
         >
-          <Icon
-            name="Calendar"
-            className={patientStyles["patient-helper-icon"]}
-          />
+          <div className={patientStyles["patient-helper-icon"]}>
+            <Icon name="Calendar" />
+          </div>
           Lịch khám
         </div>
         <Link href="/forgot-password" className={patientStyles["patient-link"]}>
@@ -38,10 +37,9 @@ function PatientListGroup() {
               patientStyles["patient-helper-btn"],
             )}
           >
-            <Icon
-              name="FileText"
-              className={patientStyles["patient-helper-icon"]}
-            />
+            <div className={patientStyles["patient-helper-icon"]}>
+              <Icon name="FileText" />
+            </div>
             Đổi mật khẩu
           </div>
         </Link>
@@ -53,10 +51,9 @@ function PatientListGroup() {
               patientStyles["patient-helper-btn"],
             )}
           >
-            <Icon
-              name="Pencil"
-              className={patientStyles["patient-helper-icon"]}
-            />
+            <div className={patientStyles["patient-helper-icon"]}>
+              <Icon name="Pencil" />
+            </div>
             Cập nhật hồ sơ
           </div>
         </Link>

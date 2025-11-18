@@ -4,7 +4,7 @@ import { PatientUtils, parseDateString } from "@/lib/client";
 import { AuthUserWithoutTokens } from "@/types";
 import styles from "@/styles/patient.module.css";
 import { getUserRole } from "@/lib/helper";
-import PatientDetail from "@/components/patient/PatientDetail";
+import PatientDetail from "@/components/patient/dashboard/PatientDetail";
 
 type UserDetailProps = {
   isOpen: boolean;

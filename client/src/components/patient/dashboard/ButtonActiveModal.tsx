@@ -33,7 +33,9 @@ export function ButtonActiveModal({ patient }: ButtonActiveModalProps) {
         className={styles["patient-helper-btn"]}
         variant="outline"
       >
-        <Icon name="FileText" className={styles["patient-helper-icon"]} />
+        <div className={styles["patient-helper-icon"]}>
+          <Icon name="FileText" />
+        </div>
         Hồ sơ chi tiết
       </Button>
     </>

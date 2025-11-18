@@ -1,4 +1,4 @@
-import { SidebarProvider, ModalProvider } from "@/contexts";
+import { SidebarProvider, ModalProvider, BookingProvider } from "@/contexts";
 import { Sidebar, Navbar } from "@/components";
 import "react-loading-skeleton/dist/skeleton.css";
 import "@/styles/globals.css";
@@ -9,12 +9,14 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ModalProvider>
-      <SidebarProvider>
-        <Navbar />
-        <section>{children}</section>
-        <Sidebar />
-      </SidebarProvider>
-    </ModalProvider>
+    <BookingProvider>
+      <ModalProvider>
+        <SidebarProvider>
+          <Navbar />
+          <section>{children}</section>
+          <Sidebar />
+        </SidebarProvider>
+      </ModalProvider>
+    </BookingProvider>
   );
 }
