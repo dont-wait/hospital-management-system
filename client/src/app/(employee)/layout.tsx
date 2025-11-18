@@ -2,14 +2,13 @@
 
 import { useSidebar } from "@/contexts";
 import SidebarCustomContent from "@/components/shared/SidebarCustomContent";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { ReactNode, useMemo } from "react";
+import { useSidebarByRole } from "@/hooks";
+import { ReactNode } from "react";
 import styles from "@/styles/admin.module.css";
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function EmployeeLayout({ children }: { children: ReactNode }) {
     const { openSidebar } = useSidebar();
-
-    const sidebarContent = useMemo(() => <AdminSidebar />, []);
+    const sidebarContent = useSidebarByRole();
 
     return (
         <div className={styles["admin-layout"]}>

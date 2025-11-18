@@ -10,12 +10,13 @@ import styles from "@/styles/navigation.module.css";
 
 export function Navigation() {
   const { user, isAuthenticated } = useUserAuthContext();
-  const { openSidebar, setContent, setTitle, setColorBackground } = useSidebar();
+  const { openSidebar, setContent, setTitle, setColorBackground, setCloseButtonMode } = useSidebar();
   const defaultAvatarUrl = user?.avatarUrl ?? "/images/df-avatar.webp";
 
   const handleOpenDetails = () => {
     setTitle("Cài đặt");
     setColorBackground("#6a7282"); // Gray-500
+    setCloseButtonMode("always"); // Patient sidebar luôn hiện nút close
     setContent(<PatientSidebar />);
     openSidebar();
   };

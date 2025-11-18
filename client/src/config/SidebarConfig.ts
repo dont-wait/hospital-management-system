@@ -60,3 +60,34 @@ export const AdminSidebarItems = [
     icon: Settings,
   },
 ]
+
+export const DoctorSidebarItems = [
+  {
+    route: "/doctor/dashboard",
+    title: "Dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    route: "/doctor/schedule",
+    title: "Xem lịch làm việc",
+    icon: Calendar,
+  },
+];
+
+export const HODSidebarItems = [
+  {
+    route: "/doctor/dashboard",
+    title: "Dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    route: "/doctor/schedule",
+    title: "Xem lịch làm việc",
+    icon: Calendar,
+  },
+  {
+    route: "/doctor/create-shift",
+    title: "Tạo ca làm việc",
+    icon: Pencil,
+  },
+];

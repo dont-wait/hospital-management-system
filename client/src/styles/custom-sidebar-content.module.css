@@ -1,17 +1,17 @@
 @reference "./globals.css";
 
-.admin-profile {
+.profile {
   @apply flex items-center gap-3;
 }
 
-.admin-avatar {
+.avatar {
  @apply rounded-full mb-2;
 }
 
-.admin-name {
+.name {
   @apply text-lg font-semibold;
 }
 
-.admin-email {
+.email {
   @apply text-sm text-black font-light;
 }

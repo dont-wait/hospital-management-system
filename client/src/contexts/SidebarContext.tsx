@@ -17,6 +17,7 @@ interface SidebarState {
   content: ReactNode | null;
   title: string | ReactNode;
   bgColor: string;
+  closeButtonMode: "always" | "mobile-only" | "never";
 }
 
 type SidebarAction =
@@ -27,7 +28,8 @@ type SidebarAction =
   | { type: "SET_TITLE"; payload: string | ReactNode }
   | { type: "SET_SHOW_CLOSE_BUTTON"; payload: boolean }
   | { type: "SET_POSITION"; payload: SidebarPosition }
-  | { type: "SET_COLOR_BACKGROUND"; payload: string };
+  | { type: "SET_COLOR_BACKGROUND"; payload: string }
+  | { type: "SET_CLOSE_BUTTON_MODE"; payload: "always" | "mobile-only" | "never" };
 
 const initialState: SidebarState = {
   isOpen: false,
@@ -36,6 +38,7 @@ const initialState: SidebarState = {
   content: null,
   title: "",
   bgColor: "",
+  closeButtonMode: "always",
 };
 
 function sidebarReducer(state: SidebarState, action: SidebarAction): SidebarState {
@@ -56,6 +59,8 @@ function sidebarReducer(state: SidebarState, action: SidebarAction): SidebarStat
       return { ...state, position: action.payload };
     case "SET_COLOR_BACKGROUND":
       return { ...state, bgColor: action.payload };
+    case "SET_CLOSE_BUTTON_MODE":
+      return { ...state, closeButtonMode: action.payload };
     default:
       return state;
   }
@@ -65,11 +70,13 @@ interface SidebarContextType extends SidebarState {
   toggleSidebar: () => void;
   openSidebar: () => void;
   closeSidebar: () => void;
+  closeSidebarOnMobile: () => void;
   setContent: (content: ReactNode | null) => void;
   setTitle: (title: string | ReactNode) => void;
   setShowCloseButton: (show: boolean) => void;
   setPosition: (pos: SidebarPosition) => void;
   setColorBackground: (color: string) => void;
+  setCloseButtonMode: (mode: "always" | "mobile-only" | "never") => void;
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -80,11 +87,29 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   const toggleSidebar = useCallback(() => dispatch({ type: "TOGGLE" }), []);
   const openSidebar = useCallback(() => dispatch({ type: "OPEN" }), []);
   const closeSidebar = useCallback(() => dispatch({ type: "CLOSE" }), []);
+  
+  const getTailwindLgBreakpoint = (): number => {
+    if (typeof window === "undefined") return 1024;
+    const root = window.getComputedStyle(document.documentElement);
+    const value = root.getPropertyValue('--tw-breakpoint-lg').trim();
+
+    return value.endsWith('px') ? parseInt(value.replace('px', ''), 10) : 1024;
+  }
+
+  // Đóng sidebar chỉ khi ở mobile (dùng cho sidebar có closeButtonMode = "mobile-only")
+  const closeSidebarOnMobile = useCallback(() => {
+    const lgBreakpoint = getTailwindLgBreakpoint();
+    if (state.closeButtonMode === "mobile-only" && window.innerWidth < lgBreakpoint) {
+      dispatch({ type: "CLOSE" });
+    }
+  }, [state.closeButtonMode]);
+  
   const setContent = useCallback((content: ReactNode | null) => dispatch({ type: "SET_CONTENT", payload: content }), []);
   const setTitle = useCallback((title: string | ReactNode) => dispatch({ type: "SET_TITLE", payload: title }), []);
   const setShowCloseButton = useCallback((show: boolean) => dispatch({ type: "SET_SHOW_CLOSE_BUTTON", payload: show }), []);
   const setPosition = useCallback((pos: SidebarPosition) => dispatch({ type: "SET_POSITION", payload: pos }), []);
   const setColorBackground = useCallback((color: string) => dispatch({ type: "SET_COLOR_BACKGROUND", payload: color }), []);
+  const setCloseButtonMode = useCallback((mode: "always" | "mobile-only" | "never") => dispatch({ type: "SET_CLOSE_BUTTON_MODE", payload: mode }), []);
   
   return (
     <SidebarContext.Provider
@@ -93,11 +118,13 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
         toggleSidebar,
         openSidebar,
         closeSidebar,
+        closeSidebarOnMobile,
         setContent,
         setTitle,
         setShowCloseButton,
         setPosition,
         setColorBackground,
+        setCloseButtonMode,
       }}
     >
       {children}

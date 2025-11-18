@@ -25,7 +25,10 @@ public class EmployeeRepository : IEmployeeRepository
             "admin" => employees
                 .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.admin.ToString().ToLower())
                 .Include(ua => ua.Employee!.Admin),
-
+            "hod" => employees
+                .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.hod.ToString().ToLower())
+                .Include(ua => ua.Employee!.Doctor),
+                
             _ => employees
                 .Where(ua => ua.Employee != null && ua.Employee.RoleId == roleId.ToLower())
         };
@@ -39,7 +42,7 @@ public class EmployeeRepository : IEmployeeRepository
         return await employees.ToListAsync();
     }
 
-    public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto)
+    public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto, bool isHeadOfDepartment = false)
     {
         UserAccount userAccount = new UserAccount
         {
@@ -62,7 +65,7 @@ public class EmployeeRepository : IEmployeeRepository
             DateOfBirth = doctorDto.DateOfBirth,
             Gender = doctorDto.Gender,
             HireDate = doctorDto.HireDate,
-            RoleId = RoleEnum.doctor.ToString().ToLower()
+            RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower()
         };
 
         await _context.employees.AddAsync(employee);
