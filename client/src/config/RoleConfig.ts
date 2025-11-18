@@ -1,10 +1,10 @@
 import { Role, roles } from "@/types";
 
-export const ROUTE_ROLE_MAP: Record<string, Role[]> = {
-  "/": roles.slice(),
+export const ROUTE_ROLE_MAP: Record<string, readonly Role[]> = {
+  "/": roles,
   "/login": ["guest"],
   "/register": ["guest"],
-  "/forgot-password": roles.slice(),
+  "/forgot-password": roles,
   "/patient": ["patient"],
   "/patient/update": ["patient"],
   "/doctor/dashboard": ["doctor", "hod"],
