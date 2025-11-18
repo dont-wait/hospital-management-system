@@ -8,7 +8,7 @@ import { Role } from "@/types";
 type EmployeeRole = Exclude<Role, "admin" | "patient" | "guest" | "hod">;
 
 const sidebarMap: Record<EmployeeRole, ReactNode> = {
-  doctor: <DoctorSidebar />,
+  doctor: <DoctorSidebar />, // vì hod cũng dùng DoctorSidebar, khác mỗi 1 item nên không cần tạo component riêng
 };
 
 export function useSidebarByRole(): ReactNode { // hook này dùng để lấy sidebar theo role
