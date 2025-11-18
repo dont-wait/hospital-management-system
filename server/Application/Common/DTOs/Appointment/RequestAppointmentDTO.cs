@@ -16,6 +16,7 @@ public class RequestAppointmentDTO
     [Required(ErrorMessage = "Mã lịch làm việc của bác sĩ không được để trống")]
     public long DoctorScheduleId { get; set; }
     public int ServiceId { get; set; }
-
     public string? AppointmentStatus { get; set; }
+    
+    public long SlotTimeId { get; set; }
 }

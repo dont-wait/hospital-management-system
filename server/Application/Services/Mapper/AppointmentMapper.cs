@@ -1,3 +1,4 @@
+using Application.Common.DTOs.Appointment;
 public class AppointmentMapper : IAppointmentMapper
 {
     public Appointment ToEntity(RequestAppointmentDTO appointmentDto)
@@ -10,7 +11,8 @@ public class AppointmentMapper : IAppointmentMapper
             DoctorScheduleId = appointmentDto.DoctorScheduleId,
             ServiceId = appointmentDto.ServiceId,
             DepartmentId = appointmentDto.DepartmentId,
-            AppointmentStatus = appointmentDto.AppointmentStatus ?? ""
+            AppointmentStatus = appointmentDto.AppointmentStatus ?? "",
+            SlotTimeId = appointmentDto.SlotTimeId
         };
     }
 
@@ -37,5 +39,6 @@ public class AppointmentMapper : IAppointmentMapper
         appointment.ServiceId = appointmentDto.ServiceId;
         appointment.DepartmentId = appointmentDto.DepartmentId;
         appointment.AppointmentStatus = appointmentDto.AppointmentStatus ?? "";
+        
     }
 }
