@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useMemo, ReactNode } from "react";
-import { DoctorSidebar } from "@/components/emloyee/doctor/DoctorSidebar";
+import { DoctorSidebar } from "@/components/employee/doctor/DoctorSidebar";
 import { Role } from "@/types";
 
 type EmployeeRole = Exclude<Role, "admin" | "patient" | "guest" | "hod">;
