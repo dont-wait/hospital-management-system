@@ -88,9 +88,18 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   const openSidebar = useCallback(() => dispatch({ type: "OPEN" }), []);
   const closeSidebar = useCallback(() => dispatch({ type: "CLOSE" }), []);
   
+  const getTailwindLgBreakpoint = (): number => {
+    if (typeof window === "undefined") return 1024;
+    const root = window.getComputedStyle(document.documentElement);
+    const value = root.getPropertyValue('--tw-breakpoint-lg').trim();
+
+    return value.endsWith('px') ? parseInt(value.replace('px', ''), 10) : 1024;
+  }
+
   // Đóng sidebar chỉ khi ở mobile (dùng cho sidebar có closeButtonMode = "mobile-only")
   const closeSidebarOnMobile = useCallback(() => {
-    if (state.closeButtonMode === "mobile-only" && window.innerWidth < 1024) {
+    const lgBreakpoint = getTailwindLgBreakpoint();
+    if (state.closeButtonMode === "mobile-only" && window.innerWidth < lgBreakpoint) {
       dispatch({ type: "CLOSE" });
     }
   }, [state.closeButtonMode]);
