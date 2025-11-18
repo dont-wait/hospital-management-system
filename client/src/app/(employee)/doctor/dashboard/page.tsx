@@ -5,7 +5,6 @@ import { Employee } from "@/types";
 import { 
     Calendar, 
     Users, 
-    Clock, 
     Activity, 
     FileText, 
     Stethoscope
