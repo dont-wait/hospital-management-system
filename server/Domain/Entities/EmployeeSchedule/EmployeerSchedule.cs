@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Entities.ScheduleTask;
 
 
-public class EmployeeSchedule
+public class EmployeeSchedule : BaseEntity
 {
     [Key]
     public long Id { get; set; } //ScheduleId
@@ -20,4 +20,9 @@ public class EmployeeSchedule
     
     public virtual Department Department { get; set; } = null!;
     public int DepartmentId { get; set; }
+    
+    public virtual Room Room { get; set; } = null!;
+    public int RoomId { get; set; }
+
+    public string ScheduleStatus { get; set; } = null!;
 }

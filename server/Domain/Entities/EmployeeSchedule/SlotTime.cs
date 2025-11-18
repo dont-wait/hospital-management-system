@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Domain.Enums;
 
-public class SlotTime
+public class SlotTime : BaseEntity
 {
     [Key]
     public long Id { get; set; }
@@ -17,6 +17,8 @@ public class SlotTime
 
     public int MaxRegistrations { get; set; } = 5;
     public int CurrentRegistrations { get; set; } = 0;
+    
+    public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     
     public string SlotStatus { get; set; } = SlotStatusEnum.Opened.ToString();
 }

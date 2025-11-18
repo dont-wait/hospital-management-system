@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251117161544_SlotIDInAppointment")]
+    partial class SlotIDInAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,14 +232,17 @@ namespace server.Migrations
                     b.Property<long>("EmployeeScheduleId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("EndTime")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("time");
 
                     b.Property<Guid?>("ModifiedId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("StartTime")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateOnly>("ScheduleDate")
+                        .HasColumnType("date");
+
+                    b.Property<TimeOnly>("StartTime")
+                        .HasColumnType("time");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
@@ -525,13 +531,6 @@ namespace server.Migrations
                     b.Property<Guid?>("ModifiedId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ScheduleStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<long>("TaskId")
                         .HasColumnType("bigint");
 
@@ -546,8 +545,6 @@ namespace server.Migrations
                     b.HasIndex("DepartmentId");
 
                     b.HasIndex("EmployeeId");
-
-                    b.HasIndex("RoomId");
 
                     b.HasIndex("TaskId");
 
@@ -1107,12 +1104,6 @@ namespace server.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.ScheduleTask.TaskItem", "Task")
                         .WithMany()
                         .HasForeignKey("TaskId")
@@ -1122,8 +1113,6 @@ namespace server.Migrations
                     b.Navigation("Department");
 
                     b.Navigation("Employee");
-
-                    b.Navigation("Room");
 
                     b.Navigation("Task");
                 });

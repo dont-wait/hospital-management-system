@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class DoctorSchedule
+public class DoctorSchedule : BaseEntity
 {
     [Key]
     public long ScheduleId { get; set; }
@@ -12,11 +12,9 @@ public class DoctorSchedule
     public virtual Doctor? Doctor { get; set; }
     
     [Required]
-    public DateOnly ScheduleDate { get; set; }
+    public DateTimeOffset StartTime { get; set; }
     [Required]
-    public TimeOnly StartTime { get; set; }
-    [Required]
-    public TimeOnly EndTime { get; set; }
+    public DateTimeOffset EndTime { get; set; }
     public int AvgVisitMinutes { get; set; } = 12;
 
     public ICollection<SlotTime> SlotTimes { get; set; } = new List<SlotTime>();

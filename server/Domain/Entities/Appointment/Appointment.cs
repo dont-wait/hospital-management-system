@@ -20,8 +20,9 @@ public class Appointment : BaseEntity
 
     public virtual Service Service { get; set; } = null!;
     public int ServiceId { get; set; } = 5; //Mac dinh dang ky kham online la 5, 200k
-
-    public DateTimeOffset? CheckInTime { get; set; }  // Thoi gian benh nhan den kham 
+    
+    public long SlotTimeId { get; set; }
+    public virtual SlotTime? SlotTime { get; set; }
 
     [Required]
     public int DepartmentId { get; set; }
