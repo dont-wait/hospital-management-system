@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251119051341_removeUnUseTable")]
+    partial class removeUnUseTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,9 +207,6 @@ namespace server.Migrations
                     b.Property<Guid>("CreatedId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -221,8 +221,8 @@ namespace server.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
-                    b.Property<TimeOnly>("EndTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("ModifiedId")
                         .HasColumnType("uniqueidentifier");
@@ -232,8 +232,8 @@ namespace server.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<TimeOnly>("StartTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("TaskStatus")
                         .IsRequired()
@@ -705,55 +705,6 @@ namespace server.Migrations
                     b.ToTable("services");
                 });
 
-            modelBuilder.Entity("SlotTime", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("CreatedId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("DeletedId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ModifiedId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<TimeOnly>("SlotEndTime")
-                        .HasColumnType("time");
-
-                    b.Property<TimeOnly>("SlotStartTime")
-                        .HasColumnType("time");
-
-                    b.Property<string>("SlotStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("TaskItemId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskItemId");
-
-                    b.ToTable("SlotTime");
-                });
-
             modelBuilder.Entity("UserAccount", b =>
                 {
                     b.Property<Guid>("Id")
@@ -887,7 +838,7 @@ namespace server.Migrations
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskRegistration", b =>
                 {
                     b.HasOne("Employee", "Employee")
-                        .WithMany("TaskRegistrations")
+                        .WithMany()
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -974,17 +925,6 @@ namespace server.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("SlotTime", b =>
-                {
-                    b.HasOne("Domain.Entities.ScheduleTask.TaskItem", "TaskItem")
-                        .WithMany("SlotTimes")
-                        .HasForeignKey("TaskItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TaskItem");
-                });
-
             modelBuilder.Entity("UserAccount", b =>
                 {
                     b.HasOne("Employee", "Employee")
@@ -1018,8 +958,6 @@ namespace server.Migrations
 
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskItem", b =>
                 {
-                    b.Navigation("SlotTimes");
-
                     b.Navigation("TaskRegistrations");
 
                     b.Navigation("TaskRequirements");
@@ -1032,8 +970,6 @@ namespace server.Migrations
 
                     b.Navigation("Doctor")
                         .IsRequired();
-
-                    b.Navigation("TaskRegistrations");
 
                     b.Navigation("UserAccount")
                         .IsRequired();

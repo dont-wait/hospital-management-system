@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Entities.ScheduleTask;
 
 [Table("employees")]
 public class Employee : BaseEntity
@@ -51,5 +52,7 @@ public class Employee : BaseEntity
     [StringLength(20)]
     public string RoleId { get; set; } = null!;
     public Roles Role { get; set; } = null!;
+
+    public ICollection<TaskRegistration> TaskRegistrations { get; set; } = new List<TaskRegistration>();
 
 }
