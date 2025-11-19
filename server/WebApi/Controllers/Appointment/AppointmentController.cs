@@ -7,6 +7,11 @@ namespace WebApi.Controllers.Appointment;
 public class AppointmentController : ControllerBase
 {
 
+    private readonly ITaskItemService _taskItemService;
+    public AppointmentController(ITaskItemService taskItemService)
+    {
+        _taskItemService = taskItemService;
+    }
 
     [HttpPost]
     [Authorize(Roles = "admin, doctor, patient, nurse")]
@@ -16,10 +21,23 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpGet("available-slots")]
-    public Task<IActionResult> GetAvailableAppointments([FromQuery] DateTimeOffset? date,
+    public async Task<IActionResult> GetAvailableAppointments([FromQuery] DateOnly? date,
                                                             [FromQuery] int? departmentId,
                                                             [FromQuery] Guid? doctorId)
     {
-        return Task.FromResult<IActionResult>(Ok());
+        try
+        {
+            var result = await _taskItemService.GetAvailableAppointments(date,
+                departmentId,
+                doctorId);
+            if (result.IsSuccess)
+                return new JsonResult(new ApiResponse<ResponseAvailableAppointment>(200, "Lấy danh sách đăng ký khám hợp lệ thành công", result.Data)) { StatusCode = 200 };
+            return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return new JsonResult(new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
+        }
     }
 }

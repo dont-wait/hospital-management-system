@@ -17,10 +17,12 @@ public class TaskItemRepository : ITaskItemRepository
         var query = _context.tasks
             .Include(t => t.SlotTimes.Where(s => s.SlotStatus == SlotStatusEnum.Opened.ToString()))
             .Include(t => t.TaskRegistrations)
-            .ThenInclude(tr => tr.Employee)
+                .ThenInclude(tr => tr.Employee)
+                .ThenInclude(tr => tr.Doctor)
             .Include(t => t.Department)
             .Where(t => t.TaskStatus == TaskStatusEnum.Opened.ToString())
             .AsQueryable();
+        
         if (date.HasValue)
             query = query.Where(t => t.Date == date.Value);
 
