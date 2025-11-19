@@ -20,6 +20,7 @@ public class TaskItemRepository : ITaskItemRepository
                 .ThenInclude(tr => tr.Employee)
                 .ThenInclude(tr => tr.Doctor)
             .Include(t => t.Department)
+            .Include(t => t.Room)
             .Where(t => t.TaskStatus == TaskStatusEnum.Opened.ToString())
             .AsQueryable();
         

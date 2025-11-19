@@ -32,5 +32,8 @@ public class TaskItem : BaseEntity
 
     public int? DepartmentId { get; set; } = null;
     public virtual Department? Department { get; set; } = null;
+    
+    public int? RoomId { get; set; } = null;
+    public virtual Room? Room { get; set; } = null;
 
 }

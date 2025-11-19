@@ -12,9 +12,6 @@ public class TaskItemSerivce : ITaskItemService
     public Task<ServiceResult<ResponseAvailableAppointment>> 
         GetAvailableAppointments(DateOnly? date, int? departmentId, Guid? doctorId)
     {
-        if (date == null)
-            date = DateOnly.FromDateTime(DateTime.Now);
-            
         var availableTaskItems = _taskItemRepository
             .GetAvailableTaskItemsForBooking(date, departmentId, doctorId);
 
@@ -55,6 +52,7 @@ public class TaskItemSerivce : ITaskItemService
                         ? $"{doctorReg.Employee.FirstName} {doctorReg.Employee.LastName}"
                         : string.Empty,
                     Specialization = doctorReg!.Employee.Doctor.Specialization,
+                    RoomName = t.Room!.Name,
                     
                     Slots = t.SlotTimes
                         .Where(s => s.SlotStatus == SlotStatusEnum.Opened.ToString())
