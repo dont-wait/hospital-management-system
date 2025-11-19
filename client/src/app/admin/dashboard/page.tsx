@@ -8,7 +8,6 @@ function AdminPage() {
     return (
         <div className={styles["admin-container"]}>
             <div className={styles["admin-content"]}>
-                {/* Dashboard Header */}
                 <div className={styles["dashboard-header"]}>
                     <h1 className={styles["dashboard-title"]}>Dashboard</h1>
                     <p className={styles["dashboard-subtitle"]}>
@@ -16,7 +15,6 @@ function AdminPage() {
                     </p>
                 </div>
 
-                {/* Statistics Cards */}
                 <div className={styles["stats-grid"]}>
                     <StatCard
                         title="Tổng Bệnh Nhân"
@@ -48,7 +46,6 @@ function AdminPage() {
                     />
                 </div>
 
-                {/* Charts Section */}
                 <div className={styles["charts-section"]}>
                     <div className={styles["chart-card"]}>
                         <h2 className={styles["chart-title"]}>Thống Kê Bệnh Nhân Theo Tháng</h2>
@@ -64,7 +61,6 @@ function AdminPage() {
                     </div>
                 </div>
 
-                {/* Recent Activity */}
                 <div className={styles["recent-activity"]}>
                     <h2 className={styles["activity-title"]}>Hoạt Động Gần Đây</h2>
                     <div className={styles["activity-list"]}>
