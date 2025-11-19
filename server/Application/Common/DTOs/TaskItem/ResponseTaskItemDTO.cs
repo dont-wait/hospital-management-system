@@ -7,5 +7,5 @@
     public Guid DoctorId { get; set;}
     public Guid FullName { get; set;}
     public string Specialization { get; set;} = string.Empty;
-    public List<ResponseTaskItemDTO> Slots { get; set;} = new List<ResponseTaskItemDTO>();
+    public List<ResponseSlotTimeDTO> Slots { get; set;} = new List<ResponseSlotTimeDTO>();
 }
