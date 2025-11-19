@@ -15,5 +15,4 @@ public class Doctor : BaseEntity
     public Employee Employee { get; set; } = null!;
 
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-    public ICollection<DoctorSchedule> DoctorSchedules { get; set; } = new List<DoctorSchedule>();
 }

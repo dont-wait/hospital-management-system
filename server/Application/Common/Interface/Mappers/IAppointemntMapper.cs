@@ -1,4 +1,3 @@
-using Application.Common.Interface.Mappers;
 public interface IAppointmentMapper
 {
     ResponseAppointmentDTO ToResponseDTO(Appointment appointment);

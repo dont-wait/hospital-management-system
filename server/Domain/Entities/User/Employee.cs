@@ -52,5 +52,4 @@ public class Employee : BaseEntity
     public string RoleId { get; set; } = null!;
     public Roles Role { get; set; } = null!;
 
-    public ICollection<EmployeeSchedule> EmployeeSchedules { get; set; } = new List<EmployeeSchedule>();
 }

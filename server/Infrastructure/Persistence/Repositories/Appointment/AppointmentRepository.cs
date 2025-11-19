@@ -44,7 +44,8 @@ public class AppointmentRepository : IAppointmentRepository
 
     public async Task<bool> IsExistingAppointmentAsync(DateTime appointmentDate)
     {
-        return await _context.appointments.AnyAsync(a => a.AppointmentDate == appointmentDate && a.DeletedAt == null);
+        return await _context.appointments
+            .AnyAsync(a => a.AppointmentDate == appointmentDate && a.DeletedAt == null);
     }
 
     public async Task<Appointment> UpdateAppointmentAsync(Appointment appointment)

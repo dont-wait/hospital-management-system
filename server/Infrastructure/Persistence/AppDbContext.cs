@@ -10,9 +10,6 @@ public class AppDbContext : DbContext
         _currentUserService = currentUserService;
     }
 
-    public DbSet<EmployeeSchedule> employee_schedules { get; set; } = null!;
-    public DbSet<DoctorSchedule> doctor_schedules { get; set; } = null!;
-    public DbSet<SlotTime> slot_times { get; set; } = null!;
     public DbSet<TaskItem> tasks { get; set; } = null!;
     public DbSet<TaskRegistration> task_registrations { get; set; } = null!;
     public DbSet<TaskRequirement> task_requirements { get; set; } = null!;
@@ -33,30 +30,6 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
-        modelBuilder.Entity<Appointment>()
-            .HasOne(a => a.SlotTime)
-            .WithMany(st => st.Appointments)
-            .HasForeignKey(a => a.SlotTimeId)
-            .OnDelete(DeleteBehavior.NoAction);
-        
-        modelBuilder.Entity<Department>()
-            .HasMany(d => d.EmployeeSchedules)
-            .WithOne(e => e.Department)
-            .HasForeignKey(e => e.DepartmentId)
-            .OnDelete(DeleteBehavior.NoAction);
-        
-        modelBuilder.Entity<EmployeeSchedule>()
-            .HasOne(es => es.Employee)
-            .WithMany(e => e.EmployeeSchedules)
-            .HasForeignKey(es => es.EmployeeId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        modelBuilder.Entity<DoctorSchedule>()
-            .HasOne(ds => ds.Doctor)
-            .WithMany(d => d.DoctorSchedules)
-            .HasForeignKey(ds => ds.DoctorId)
-            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Appointment>() 
         .HasOne(a => a.Department)

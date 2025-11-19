@@ -23,5 +23,4 @@ public class Department
 
     public ICollection<Employee> Employees { get; set; } = new List<Employee>();
     
-    public ICollection<EmployeeSchedule> EmployeeSchedules { get; set; } = new List<EmployeeSchedule>();
 }
