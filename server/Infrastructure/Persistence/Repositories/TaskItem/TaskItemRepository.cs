@@ -15,7 +15,8 @@ public class TaskItemRepository : ITaskItemRepository
     public List<TaskItem> GetAvailableTaskItemsForBooking(DateOnly? date, int? departmentId, Guid? doctorId)
     {
         var query = _context.tasks
-            .Include(t => t.SlotTimes.Where(s => s.SlotStatus == SlotStatusEnum.Opened.ToString()))
+            .Include(t => t.SlotTimes
+                .Where(s => s.SlotStatus == SlotStatusEnum.Opened.ToString()))
             .Include(t => t.TaskRegistrations)
                 .ThenInclude(tr => tr.Employee)
                 .ThenInclude(tr => tr.Doctor)
@@ -26,7 +27,9 @@ public class TaskItemRepository : ITaskItemRepository
         
         if (date.HasValue)
             query = query.Where(t => t.Date == date.Value);
-
+        else
+            query = query.Where(t => t.Date >= DateOnly.FromDateTime(DateTime.Now)); //Lay lich tu hom nay tro di
+                        
         if (departmentId.HasValue)
             query = query.Where(t => t.DepartmentId == departmentId.Value);
 

@@ -9,9 +9,16 @@ public class TaskItemSerivce : ITaskItemService
         _taskItemRepository = taskItemRepository;
     }
     
-    public Task<ServiceResult<ResponseAvailableAppointment>> 
-        GetAvailableAppointments(DateOnly? date, int? departmentId, Guid? doctorId)
+    public Task<ServiceResult<ResponseAvailableAppointment>> GetAvailableAppointments(DateOnly? date, 
+                                                                                    int? departmentId, 
+                                                                                    Guid? doctorId)
     {
+        
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        if (date.HasValue && date.Value < today)
+            return Task.FromResult(
+                ServiceResult<ResponseAvailableAppointment>.Fail("Ngày chọn phải lớn hơn hoặc bằng hôm nay"));
+        
         var availableTaskItems = _taskItemRepository
             .GetAvailableTaskItemsForBooking(date, departmentId, doctorId);
 
@@ -26,7 +33,7 @@ public class TaskItemSerivce : ITaskItemService
         var response = new ResponseAvailableAppointment
         {
             Date = date ?? first.Date,
-            DepartmentId = departmentId ?? first.DepartmentId ?? 0,
+            DepartmentId = departmentId,
             DoctorId = doctorId,
 
             DepartmentName = first.Department?.Name ?? string.Empty,
