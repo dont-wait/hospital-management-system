@@ -11,7 +11,7 @@ export default function DoctorSchedulePage() {
     const [isCheckedIn, setIsCheckedIn] = useState(false);
     const [checkInTime, setCheckInTime] = useState<string | null>(null);
 
-    const allWorkShifts: WorkShift[] = [
+    const allWorkShifts: WorkShift[] = useMemo(() => [
         // Tuần 1
         {
             id: 1,
@@ -209,7 +209,7 @@ export default function DoctorSchedulePage() {
             description: "Khám bệnh ngoại trú - Phòng khám số 3",
             shiftStatus: "Scheduled"
         },
-    ];
+    ], []);
 
     const weekDays = useMemo(() => getWeekDays(selectedDate), [selectedDate]);
 

@@ -1,3 +1,5 @@
+import { CalendarDay, DateTime } from "@/types";
+
 export const isLeapYear = (year: number): boolean => {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 };
@@ -90,3 +92,50 @@ export const getDayMonth = (date: Date) => {
     return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
 };
 
+export const createDays: (currentDate: Date) => (CalendarDay | null)[] = (
+  currentDate: Date,
+) => {
+  const year: number = currentDate.getFullYear();
+  const month: number = currentDate.getMonth();
+  const firstDay: Date = new Date(year, month, 1);
+  const lastDay: Date = new Date(year, month + 1, 0);
+  const daysInMonth: number = lastDay.getDate();
+  const startingDayOfWeek = firstDay.getDay();
+  const days: (CalendarDay | null)[] = [];
+
+  for (let i = 0; i < startingDayOfWeek; i++) {
+    days.push(null);
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(year, month, day + 1);
+    const dateString = `${year}/${(month + 1).toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}`;
+    const isDisabled = date <= currentDate;
+    days.push({
+      day: day.toString().padStart(2, "0"),
+      dateString,
+      isDisabled,
+    });
+  }
+
+  return days;
+};
+
+export const formatDateTime: (dateTimeString: string) => DateTime | string = (
+  dateTimeString: string,
+) => {
+  const dateObj = new Date(dateTimeString);
+
+  if (isNaN(dateObj.getTime())) return dateTimeString;
+
+  const hours = String(dateObj.getHours()).padStart(2, "0");
+  const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const year = dateObj.getFullYear();
+
+  return {
+    time: `${hours}:${minutes}`,
+    date: `${day}/${month}/${year}`,
+  };
+};
