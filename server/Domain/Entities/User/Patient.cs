@@ -24,7 +24,8 @@ public class Patient : BaseEntity
     [MaxLength(150)]
     public string? Nationality { get; set; } = null;
 
-    public char? Gender { get; set; } = null;
+    [Column(TypeName = "char(1)")]
+    public string? Gender { get; set; }
 
     [MaxLength(150)]
     public string? PlaceOfResidence { get; set; } = null;

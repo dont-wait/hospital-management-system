@@ -23,7 +23,7 @@ public class RequestPatientDTO : RequestUserDTO
 
     public string? Nationality { get; set; } = null;
 
-    public char? Gender { get; set; } = null;
+    public string? Gender { get; set; } = null;
 
     public string? PlaceOfResidence { get; set; } = null;
 
