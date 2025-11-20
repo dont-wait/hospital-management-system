@@ -12,7 +12,9 @@ public class TaskItemRepository : ITaskItemRepository
         _employeeRepository = employeeRepository;
     }
     
-    public List<TaskItem> GetAvailableTaskItemsForBooking(DateOnly? date, int? departmentId, Guid? doctorId)
+    public List<TaskItem> GetAvailableTaskItemsForBooking(DateOnly? date, 
+                                                        int? departmentId, 
+                                                        Guid? doctorId)
     {
         var query = _context.tasks
             .Include(t => t.SlotTimes
@@ -41,5 +43,19 @@ public class TaskItemRepository : ITaskItemRepository
             .OrderBy(t => t.Date)
             .ThenBy(t => t.StartTime)
             .ToList();
+    }
+    public Task<TaskItem?> GetTaskItemBySlotTimeIdAsync(long slotTimeId)
+    {
+        var query = _context.tasks
+            .Include(t => t.SlotTimes)
+            .Include(t => t.Room)
+            .Where(t => t.SlotTimes
+                .Any(s => 
+                    s.Id == slotTimeId && 
+                    s.SlotStatus == SlotStatusEnum.Opened.ToString() && 
+                    t.TaskStatus == TaskStatusEnum.Opened.ToString() && 
+                    s.CurrentAppointments < s.MaxAppointments));
+        
+        return query.FirstOrDefaultAsync();
     }
 }
