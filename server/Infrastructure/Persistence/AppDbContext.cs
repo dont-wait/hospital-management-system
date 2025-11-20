@@ -9,7 +9,9 @@ public class AppDbContext : DbContext
     {
         _currentUserService = currentUserService;
     }
-
+    
+    public DbSet<MedicalVisit> medical_visits { get; set; } = null!;
+    public DbSet<Billing> billings { get; set; } = null!;
     public DbSet<TaskItem> tasks { get; set; } = null!;
     public DbSet<TaskRegistration> task_registrations { get; set; } = null!;
     public DbSet<TaskRequirement> task_requirements { get; set; } = null!;
@@ -31,13 +33,32 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
-        modelBuilder.Entity<Appointment>() 
-        .HasOne(a => a.Department)
-        .WithMany(d => d.Appointments)
-        .HasForeignKey(a => a.DepartmentId)
-        .OnDelete(DeleteBehavior.NoAction);
-    
+        modelBuilder.Entity<Billing>()
+            .HasOne(b => b.Appointment)
+            .WithMany()
+            .IsRequired(false);
+
+        modelBuilder.Entity<MedicalVisit>()
+            .HasOne(mv => mv.Appointment)
+            .WithMany()
+            .IsRequired(false);
+
         
+        
+        modelBuilder.Entity<Appointment>(e =>
+            {
+                e.HasOne(a => a.Room)
+                    .WithMany(d => d.Appointments)
+                    .HasForeignKey(a => a.RoomId)
+                    .OnDelete(DeleteBehavior.NoAction);
+                e.HasOne(a => a.MedicalVisit)
+                    .WithOne(mv => mv.Appointment)
+                    .HasForeignKey<MedicalVisit>(mv => mv.AppointmentId);
+                e.HasOne(a => a.Billing)
+                    .WithOne(b => b.Appointment)
+                    .HasForeignKey<Appointment>(a => a.BillingId);
+            });
+         
         modelBuilder.Entity<TaskItem>()
         .HasOne(t => t.Department)
         .WithMany(d => d.TaskItems)

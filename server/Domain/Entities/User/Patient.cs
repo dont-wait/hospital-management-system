@@ -50,6 +50,4 @@ public class Patient : BaseEntity
     public string DiagnosisSummary { get; set; } = string.Empty;
     public string TreatmentSummary { get; set; } = string.Empty;
     public string Note { get; set; } = string.Empty;
-    
-    public ICollection<MedicalVisit> MedicalVisits { get; set; } = new List<MedicalVisit>();
 }

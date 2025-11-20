@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251120091542_AddMedicalRecordVisitAndBillingForCreateAppointment")]
+    partial class AddMedicalRecordVisitAndBillingForCreateAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,17 +92,20 @@ namespace server.Migrations
                     b.Property<Guid?>("DeletedId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("DoctorId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<long?>("MedicalVisitId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid?>("ModifiedId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PatientId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("RoomId")
-                        .HasColumnType("int");
 
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
@@ -112,15 +118,11 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BillingId")
-                        .IsUnique()
-                        .HasFilter("[BillingId] IS NOT NULL");
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId");
-
-                    b.HasIndex("RoomId");
 
                     b.HasIndex("ServiceId");
 
@@ -135,6 +137,9 @@ namespace server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<long>("AppointmentId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("BillingStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -142,17 +147,16 @@ namespace server.Migrations
                     b.Property<double>("DiscountAmount")
                         .HasColumnType("float");
 
-                    b.Property<double>("PaymentAmount")
-                        .HasColumnType("float");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ServiceId")
+                    b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
+                    b.Property<double>("TotalAmount")
+                        .HasColumnType("float");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
 
                     b.HasIndex("ServiceId");
 
@@ -413,8 +417,8 @@ namespace server.Migrations
                     b.Property<Guid>("CreatedId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("datetimeoffset");
@@ -479,6 +483,59 @@ namespace server.Migrations
                     b.ToTable("employees");
                 });
 
+            modelBuilder.Entity("MedicalRecord", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CreatedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("DeletedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DiagnosisSummary")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.Property<Guid?>("ModifiedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PatientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TreatmentSummary")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId")
+                        .IsUnique()
+                        .HasFilter("[PatientId] IS NOT NULL");
+
+                    b.ToTable("medical_records");
+                });
+
             modelBuilder.Entity("MedicalVisit", b =>
                 {
                     b.Property<long>("Id")
@@ -504,11 +561,14 @@ namespace server.Migrations
 
                     b.Property<string>("Diagnosis")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("NVARCHAR(MAX)");
 
                     b.Property<string>("ImageResult")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("MedicalRecordId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid?>("ModifiedId")
                         .HasColumnType("uniqueidentifier");
@@ -517,20 +577,17 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("PhysicalExamination")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("NVARCHAR(MAX)");
 
                     b.Property<string>("Symptoms")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("NVARCHAR(MAX)");
 
                     b.Property<string>("Treatment")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("NVARCHAR(MAX)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
@@ -543,7 +600,7 @@ namespace server.Migrations
                     b.HasIndex("AppointmentId")
                         .IsUnique();
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex("MedicalRecordId");
 
                     b.ToTable("medical_visits");
                 });
@@ -563,18 +620,14 @@ namespace server.Migrations
                     b.Property<Guid>("CreatedId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly?>("DateOfBirth")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("DeletedId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("DiagnosisSummary")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -603,10 +656,6 @@ namespace server.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<string>("Note")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -623,10 +672,6 @@ namespace server.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("TreatmentSummary")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
@@ -961,10 +1006,10 @@ namespace server.Migrations
 
             modelBuilder.Entity("Appointment", b =>
                 {
-                    b.HasOne("Billing", "Billing")
-                        .WithOne("Appointment")
-                        .HasForeignKey("Appointment", "BillingId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Department", "Department")
+                        .WithMany("Appointments")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Doctor", "Doctor")
@@ -979,33 +1024,36 @@ namespace server.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Room", "Room")
-                        .WithMany("Appointments")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("Service", "Service")
                         .WithMany("Appointments")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Billing");
+                    b.Navigation("Department");
 
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
-
-                    b.Navigation("Room");
 
                     b.Navigation("Service");
                 });
 
             modelBuilder.Entity("Billing", b =>
                 {
-                    b.HasOne("Service", null)
+                    b.HasOne("Appointment", "Appointment")
+                        .WithOne("Billing")
+                        .HasForeignKey("Billing", "AppointmentId");
+
+                    b.HasOne("Service", "Service")
                         .WithMany("Billings")
-                        .HasForeignKey("ServiceId");
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("Doctor", b =>
@@ -1084,21 +1132,31 @@ namespace server.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("MedicalRecord", b =>
+                {
+                    b.HasOne("Patient", "Patient")
+                        .WithOne("MedicalRecord")
+                        .HasForeignKey("MedicalRecord", "PatientId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("MedicalVisit", b =>
                 {
                     b.HasOne("Appointment", "Appointment")
                         .WithOne("MedicalVisit")
                         .HasForeignKey("MedicalVisit", "AppointmentId");
 
-                    b.HasOne("Patient", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId")
+                    b.HasOne("MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalVisits")
+                        .HasForeignKey("MedicalRecordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Appointment");
 
-                    b.Navigation("Patient");
+                    b.Navigation("MedicalRecord");
                 });
 
             modelBuilder.Entity("Patient", b =>
@@ -1170,16 +1228,16 @@ namespace server.Migrations
 
             modelBuilder.Entity("Appointment", b =>
                 {
-                    b.Navigation("MedicalVisit");
-                });
+                    b.Navigation("Billing")
+                        .IsRequired();
 
-            modelBuilder.Entity("Billing", b =>
-                {
-                    b.Navigation("Appointment");
+                    b.Navigation("MedicalVisit");
                 });
 
             modelBuilder.Entity("Department", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("Employees");
 
                     b.Navigation("Rooms");
@@ -1215,9 +1273,16 @@ namespace server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MedicalRecord", b =>
+                {
+                    b.Navigation("MedicalVisits");
+                });
+
             modelBuilder.Entity("Patient", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("MedicalRecord");
 
                     b.Navigation("UserAccount")
                         .IsRequired();
@@ -1235,11 +1300,6 @@ namespace server.Migrations
                     b.Navigation("Patients");
 
                     b.Navigation("RolePermissions");
-                });
-
-            modelBuilder.Entity("Room", b =>
-                {
-                    b.Navigation("Appointments");
                 });
 
             modelBuilder.Entity("Service", b =>

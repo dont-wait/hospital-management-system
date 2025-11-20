@@ -19,8 +19,6 @@ public class Department
 
     public ICollection<TaskItem> TaskItems { get; set; } = new List<TaskItem>();
     
-    public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-
     public ICollection<Employee> Employees { get; set; } = new List<Employee>();
     
 }
