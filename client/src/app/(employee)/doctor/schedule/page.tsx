@@ -227,7 +227,7 @@ export default function DoctorSchedulePage() {
         });
         
         return shiftsMap;
-    }, [weekDays, allWorkShifts]);
+    }, [weekDays]);
 
     // Lọc ca làm việc theo ngày được chọn
     const todayShifts = useMemo(() => {
@@ -235,7 +235,7 @@ export default function DoctorSchedulePage() {
             const shiftDate = new Date(shift.startTime);
             return isSameDate(shiftDate, selectedDate);
         });
-    }, [selectedDate, allWorkShifts]);
+    }, [selectedDate]);
 
     const handleCheckIn = () => {
         const now = new Date();
