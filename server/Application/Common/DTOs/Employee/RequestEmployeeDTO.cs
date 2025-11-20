@@ -11,7 +11,7 @@ public class RequestEmployeeDTO : RequestUserDTO
     public string LastName { get; set; } = string.Empty;
 
     [Required]
-    public DateTime DateOfBirth { get; set; }
+    public DateOnly DateOfBirth { get; set; }
 
     [Required]
     [MaxLength(1)]

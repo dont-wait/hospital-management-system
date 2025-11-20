@@ -40,6 +40,7 @@ export default function CreateShiftPage() {
             toast.success("Tạo ca làm việc thành công!");
             reset();
         } catch (error) {
+            void error;
             toast.error("Có lỗi xảy ra khi tạo ca làm việc");
         }
     };

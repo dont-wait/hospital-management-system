@@ -10,7 +10,7 @@ export class MiddlewareUtils {
 
   static findMatchedRoute(pathname: string): {
     route: string | null;
-    roles: Role[];
+    roles: readonly Role[];
   } {
     const sortedRoutes = Object.entries(ROUTE_ROLE_MAP).sort(
       ([a], [b]) => b.length - a.length,
