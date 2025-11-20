@@ -5,6 +5,7 @@ public class TaskItemRepository : ITaskItemRepository
 {
     private readonly AppDbContext _context;
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly DateOnly _today = DateOnly.FromDateTime(DateTime.Today);
     
     public TaskItemRepository(AppDbContext context, IEmployeeRepository employeeRepository)
     {
@@ -24,14 +25,12 @@ public class TaskItemRepository : ITaskItemRepository
                 .ThenInclude(tr => tr.Doctor)
             .Include(t => t.Department)
             .Include(t => t.Room)
-            .Where(t => t.TaskStatus == TaskStatusEnum.Opened.ToString())
+            .Where(t => t.TaskStatus == TaskStatusEnum.Opened.ToString() && t.Date >= _today && t.DeletedAt == null) 
             .AsQueryable();
         
         if (date.HasValue)
             query = query.Where(t => t.Date == date.Value);
-        else
-            query = query.Where(t => t.Date >= DateOnly.FromDateTime(DateTime.Now)); //Lay lich tu hom nay tro di
-                        
+
         if (departmentId.HasValue)
             query = query.Where(t => t.DepartmentId == departmentId.Value);
 
@@ -46,6 +45,7 @@ public class TaskItemRepository : ITaskItemRepository
     }
     public Task<TaskItem?> GetTaskItemBySlotTimeIdAsync(long slotTimeId)
     {
+        
         var query = _context.tasks
             .Include(t => t.SlotTimes)
             .Include(t => t.Room)
@@ -54,6 +54,8 @@ public class TaskItemRepository : ITaskItemRepository
                     s.Id == slotTimeId && 
                     s.SlotStatus == SlotStatusEnum.Opened.ToString() && 
                     t.TaskStatus == TaskStatusEnum.Opened.ToString() && 
+                    t.Date >= _today &&
+                    t.DeletedAt == null &&
                     s.CurrentAppointments < s.MaxAppointments));
         
         return query.FirstOrDefaultAsync();

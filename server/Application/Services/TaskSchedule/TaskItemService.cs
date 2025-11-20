@@ -51,6 +51,7 @@ public class TaskItemService : ITaskItemService
                     StartTime = t.Date.ToDateTime(t.StartTime),
                     EndTime = t.Date.ToDateTime(t.EndTime),
                     ScheduleStatus = t.TaskStatus,
+                    DepartmentId = t.Department!.Id,
 
                     DoctorId = doctorReg?.Employee.Doctor.Id ?? Guid.Empty,
 
