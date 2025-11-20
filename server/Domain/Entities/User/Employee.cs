@@ -17,7 +17,7 @@ public class Employee : BaseEntity
     public string LastName { get; set; } = string.Empty;
 
     [Required]
-    public DateTime DateOfBirth { get; set; }
+    public DateOnly DateOfBirth { get; set; }
 
     [Required]
     [Column(TypeName = "char(1)")]

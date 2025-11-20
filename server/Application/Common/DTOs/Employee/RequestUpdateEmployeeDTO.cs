@@ -10,7 +10,7 @@ public class RequestUpdateEmployeeDTO
     [MaxLength(150)]
     public string LastName { get; set; } = string.Empty;
 
-    public DateTime DateOfBirth { get; set; }
+    public DateOnly DateOfBirth { get; set; }
 
     [MaxLength(1)]
     public string Gender { get; set; } = string.Empty;

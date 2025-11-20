@@ -19,7 +19,7 @@ public class RequestPatientDTO : RequestUserDTO
     [StringLength(10, MinimumLength = 10, ErrorMessage = "Số điện thoại phải đúng 10 chữ số.")]
     public string PhoneNumber { get; set; } = string.Empty;
 
-    public DateTime? DateOfBirth { get; set; } = null;
+    public DateOnly? DateOfBirth { get; set; } = null;
 
     public string? Nationality { get; set; } = null;
 

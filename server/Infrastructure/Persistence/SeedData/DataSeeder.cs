@@ -121,7 +121,7 @@ public static class DataSeeder
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
 
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
         public string Gender { get; set; } = "M";
         public string PhoneNumber { get; set; } = string.Empty;
 
@@ -241,7 +241,7 @@ public static class DataSeeder
         public string Email { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
         public string Gender { get; set; } = "M";
         public string PhoneNumber { get; set; } = string.Empty;
         public string CertificateNumber { get; set; } = string.Empty;
