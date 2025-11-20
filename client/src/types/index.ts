@@ -13,7 +13,7 @@ export enum Gender {
   Other = "O",
 }
 
-export const roles = ["admin", "guest", "doctor", "patient", "hod"] as const;
+export const roles = ["admin", "guest", "doctor", "patient", "hod", "hod"] as const;
 
 export type Role = (typeof roles)[number];
 

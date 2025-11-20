@@ -6,21 +6,20 @@ public class DoctorMapper : IDoctorMapper
     {
         return new ResponseDoctorDTO
         {
-            DoctorId = doctor.Employee!.Doctor!.Id,
-            EmployeeId = doctor.Employee!.Id,
-            FirstName = doctor.Employee!.FirstName,
-            LastName = doctor.Employee!.LastName,
-            Email = doctor.Employee!.Email,
-            PhoneNumber = doctor.Employee!.PhoneNumber,
-            Specialization = doctor.Employee!.Doctor!.Specialization,
-            CertificateNumber = doctor.Employee!.CertificateNumber,
-            DateOfBirth = doctor.Employee!.DateOfBirth,
-            Gender = doctor.Employee!.Gender,
-            HireDate = doctor.Employee!.HireDate,
-            ExperienceYears = doctor.Employee!.ExperienceYears,
-            DepartmentName = doctor.Employee!.Department.Name,
+            DoctorId = doctor.Employee.Doctor.Id,
+            EmployeeId = doctor.Employee.Id,
+            FirstName = doctor.Employee.FirstName,
+            LastName = doctor.Employee.LastName,
+            Email = doctor.Employee.Email,
+            PhoneNumber = doctor.Employee.PhoneNumber,
+            Specialization = doctor.Employee.Doctor.Specialization,
+            CertificateNumber = doctor.Employee.CertificateNumber,
+            DateOfBirth = doctor.Employee.DateOfBirth,
+            Gender = doctor.Employee.Gender,
+            HireDate = doctor.Employee.HireDate,
+            ExperienceYears = doctor.Employee.ExperienceYears,
+            DepartmentName = doctor.Employee.Department.Name,
             RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower(),
-
         };
     }
 
