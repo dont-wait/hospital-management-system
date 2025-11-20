@@ -3,5 +3,9 @@ public enum RoleEnum
 {
     admin,
     doctor,
-    patient
+    patient,
+    manager,
+    nurse,
+    pharmacist,
+    hod
 }

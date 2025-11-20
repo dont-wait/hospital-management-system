@@ -11,17 +11,24 @@ public class EmployeeAccountService : IEmployeeAccountService
     private readonly IDoctorMapper _doctorMapper;
     private readonly IUserAccountMapper _userAccountMapper;
     private readonly IEmployeeMapper _employeeMapper;
+    private readonly IDepartmentRepository _departmentRepository;
 
-    public EmployeeAccountService(IEmployeeRepository employeeRepository, IUserAccountRepository userAccountRepository, IDoctorMapper doctorMapper, IUserAccountMapper userAccountMapper, IEmployeeMapper employeeMapper)
+    public EmployeeAccountService(IEmployeeRepository employeeRepository, 
+        IUserAccountRepository userAccountRepository, 
+        IDoctorMapper doctorMapper, IUserAccountMapper 
+            userAccountMapper, 
+        IEmployeeMapper employeeMapper, 
+        IDepartmentRepository departmentRepository)
     {
         _employeeRepository = employeeRepository;
         _userAccountRepository = userAccountRepository;
         _doctorMapper = doctorMapper;
         _userAccountMapper = userAccountMapper;
+        _departmentRepository = departmentRepository;
         _employeeMapper = employeeMapper;
     }
 
-    public async Task<ServiceResult<ResponseDoctorDTO>> CreateDoctorAsync(RequestDoctorDTO doctorDto)
+    public async Task<ServiceResult<ResponseDoctorDTO>> CreateDoctorAsync(RequestDoctorDTO doctorDto, bool isHeadOfDepartment)
     {
         if (await _userAccountRepository.GetUserAccountByCitizenIDAsync(doctorDto.CitizenID) != null)
             return ServiceResult<ResponseDoctorDTO>.Fail("Số CMND/CCCD đã tồn tại.");
@@ -38,14 +45,19 @@ public class EmployeeAccountService : IEmployeeAccountService
             .IsPhoneNumberExistsAsync(doctorDto.PhoneNumber))
             return ServiceResult<ResponseDoctorDTO>.Fail("Số điện thoại đã tồn tại.");
 
+        if (await _departmentRepository.GetDepartmentByIdAsync(doctorDto.DepartmentId) == null)
+            return ServiceResult<ResponseDoctorDTO>.Fail("Phòng ban không tồn tại.");
+
         string hashedPassword = HashPasswordUtil.HashPassword(doctorDto.Password);
         doctorDto.Password = hashedPassword;
 
-        Doctor newDoctor = await _employeeRepository.CreateDoctorAsync(doctorDto);
+
+
+        Doctor newDoctor = await _employeeRepository.CreateDoctorAsync(doctorDto, isHeadOfDepartment);
         if (newDoctor == null)
             return ServiceResult<ResponseDoctorDTO>.Fail("Tạo tài khoản thất bại.");
 
-        var responseDoctorDto = _doctorMapper.MapToDto(newDoctor);
+        var responseDoctorDto = _doctorMapper.MapToDto(newDoctor, isHeadOfDepartment);
 
         return ServiceResult<ResponseDoctorDTO>.Success(responseDoctorDto);
     }
@@ -95,7 +107,8 @@ public class EmployeeAccountService : IEmployeeAccountService
 
     public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllEmployeesByRoleIdAsync(string roleId)
     {
-        var validRoles = new[] { RoleEnum.doctor.ToString(), RoleEnum.admin.ToString() };
+        var validRoles = 
+            new[] { RoleEnum.doctor.ToString(), RoleEnum.admin.ToString(), RoleEnum.hod.ToString() };
         
         if (string.IsNullOrWhiteSpace(roleId) || 
             !validRoles.Any(r => r.Equals(roleId, StringComparison.CurrentCultureIgnoreCase)))

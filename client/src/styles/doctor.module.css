@@ -1,0 +1,223 @@
+@reference "./globals.css";
+
+/* Stats Section */
+.stats-section {
+    @apply mb-8;
+}
+
+.section-title {
+    @apply text-xl font-bold text-gray-800 mb-4;
+}
+
+.stats-grid {
+    @apply grid grid-cols-2 gap-4;
+}
+
+@media (min-width: 768px) {
+    .stats-grid {
+        @apply grid-cols-3;
+    }
+}
+
+@media (min-width: 1024px) {
+    .stats-grid {
+        @apply grid-cols-6;
+    }
+}
+
+.stat-card {
+    @apply bg-white rounded-lg shadow-sm p-4 transition-shadow hover:shadow-md;
+}
+
+.stat-icon {
+    @apply p-3 rounded-lg inline-flex mb-2;
+}
+
+.stat-color-blue {
+    @apply bg-blue-100 text-blue-600;
+}
+
+.stat-color-green {
+    @apply bg-green-100 text-green-600;
+}
+
+.stat-color-purple {
+    @apply bg-purple-100 text-purple-600;
+}
+
+.stat-color-orange {
+    @apply bg-orange-100 text-orange-600;
+}
+
+.stat-color-pink {
+    @apply bg-pink-100 text-pink-600;
+}
+
+.stat-color-teal {
+    @apply bg-teal-100 text-teal-600;
+}
+
+.stat-value {
+    @apply text-2xl font-bold text-gray-800;
+}
+
+.stat-label {
+    @apply text-sm text-gray-500;
+}
+
+/* Queue Container */
+.queue-container {
+    @apply bg-white rounded-lg shadow-sm p-6;
+}
+
+.queue-header {
+    @apply flex items-center justify-between mb-4;
+}
+
+.queue-badge {
+    @apply bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold;
+}
+
+/* Table */
+.table-wrapper {
+    @apply overflow-x-auto;
+}
+
+.queue-table {
+    @apply w-full border-collapse;
+}
+
+.table-header-row {
+    @apply border-b-2 border-gray-200;
+}
+
+.table-header {
+    @apply text-left px-4 py-3 font-semibold text-gray-700;
+}
+
+.table-header.text-center {
+    @apply text-center;
+}
+
+.table-row {
+    @apply border-b border-gray-100 transition-colors hover:bg-gray-50;
+}
+
+.table-cell {
+    @apply p-4;
+}
+
+.table-cell.text-center {
+    @apply text-center;
+}
+
+.stt-badge {
+    @apply inline-flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full font-semibold;
+}
+
+.patient-name {
+    @apply font-medium text-gray-800;
+}
+
+.symptoms-text {
+    @apply text-gray-500;
+}
+
+/* Appointment Type Badges */
+.appointment-type-badge {
+    @apply inline-flex items-center px-3 py-1.5 rounded-md text-sm font-semibold;
+}
+
+.type-insurance {
+    @apply bg-blue-100 text-blue-800;
+}
+
+.type-service-offline {
+    @apply bg-yellow-100 text-yellow-800;
+}
+
+.type-service-online {
+    @apply bg-green-100 text-green-800;
+}
+
+.type-default {
+    @apply bg-gray-100 text-gray-700;
+}
+
+/* Start Button */
+.start-btn {
+    @apply bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 border-none cursor-pointer hover:bg-blue-700;
+}
+
+.text-center {
+    @apply text-center;
+}
+
+/* Create Shift Form */
+.create-shift-container {
+    @apply bg-white rounded-lg shadow-sm p-8 mt-6;
+}
+
+.shift-form {
+    @apply w-full;
+}
+
+.form-grid {
+    @apply grid grid-cols-1 gap-6 mb-8;
+}
+
+@media (min-width: 768px) {
+    .form-grid {
+        @apply grid-cols-2;
+    }
+}
+
+.form-group,
+.form-group-full {
+    @apply flex flex-col gap-2;
+}
+
+.form-group-full {
+    @apply col-span-full;
+}
+
+.form-label {
+    @apply flex items-center gap-2 font-semibold text-gray-700 text-sm;
+}
+
+.form-label .required {
+    @apply text-red-600;
+}
+
+.form-input,
+.form-textarea {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    @apply outline-none border-blue-600 ring-4 ring-blue-100;
+}
+
+.form-textarea {
+    @apply resize-y min-h-[100px];
+}
+
+.form-actions {
+    @apply flex justify-end gap-4 pt-6 border-t border-gray-200;
+}
+
+.btn-reset,
+.btn-submit {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm border-none cursor-pointer transition-all;
+}
+
+.btn-reset {
+    @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+}
+
+.btn-submit {
+    @apply bg-blue-600 text-white hover:bg-blue-700;
+}
+
+

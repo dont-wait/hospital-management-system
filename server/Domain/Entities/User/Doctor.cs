@@ -13,4 +13,6 @@ public class Doctor : BaseEntity
 
     public Guid EmployeeId { get; set; }
     public Employee Employee { get; set; } = null!;
+
+    public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 }

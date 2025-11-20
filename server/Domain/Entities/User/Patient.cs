@@ -46,4 +46,6 @@ public class Patient : BaseEntity
     [StringLength(20)]
     public string RoleId { get; set; } = "patient";
     public Roles Role { get; set; } = null!; 
+
+    public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 }

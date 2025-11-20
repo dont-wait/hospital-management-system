@@ -14,18 +14,24 @@ public class EmployeeRepository : IEmployeeRepository
     private IQueryable<UserAccount> GetEmployeeQueryByRoleId(string roleId)
     {
         var employees = _context.user_accounts
-            .Include(e => e.Employee).AsQueryable();
+            .Include(e => e.Employee)
+                .ThenInclude(d => d!.Department)
+            .AsQueryable();
 
         employees = roleId.ToLower() switch
         {
             "doctor" => employees
                 .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.doctor.ToString().ToLower())
-                .Include(ua => ua.Employee!.Doctor),
+                .Include(ua => ua.Employee!.Doctor)
+                ,
 
             "admin" => employees
                 .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.admin.ToString().ToLower())
                 .Include(ua => ua.Employee!.Admin),
-
+            "hod" => employees
+                .Where(ua => ua.Employee != null && ua.Employee.RoleId == RoleEnum.hod.ToString().ToLower())
+                .Include(ua => ua.Employee!.Doctor),
+                
             _ => employees
                 .Where(ua => ua.Employee != null && ua.Employee.RoleId == roleId.ToLower())
         };
@@ -39,7 +45,7 @@ public class EmployeeRepository : IEmployeeRepository
         return await employees.ToListAsync();
     }
 
-    public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto)
+    public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto, bool isHeadOfDepartment = false)
     {
         UserAccount userAccount = new UserAccount
         {
@@ -52,7 +58,7 @@ public class EmployeeRepository : IEmployeeRepository
         // Tạo Employee trước để lấy Id
         Employee employee = new Employee
         {
-            
+
             FirstName = doctorDto.FirstName,
             LastName = doctorDto.LastName,
             PhoneNumber = doctorDto.PhoneNumber,
@@ -62,7 +68,13 @@ public class EmployeeRepository : IEmployeeRepository
             DateOfBirth = doctorDto.DateOfBirth,
             Gender = doctorDto.Gender,
             HireDate = doctorDto.HireDate,
-            RoleId = RoleEnum.doctor.ToString().ToLower()
+<<<<<<< HEAD
+            RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower(),
+            ExperienceYears = doctorDto.ExperienceYears,
+            DepartmentId = doctorDto.DepartmentId
+=======
+            RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower()
+>>>>>>> 0e513d0 (feat: update employee role assignment and mapping to include head of department logic)
         };
 
         await _context.employees.AddAsync(employee);
@@ -80,6 +92,21 @@ public class EmployeeRepository : IEmployeeRepository
         return doctor;
     }
 
+    public async Task<UserAccount?> GetDoctorByDoctorIdAsync(Guid doctorId)
+    {
+        return await _context.user_accounts
+            .Where(ua => ua.Employee != null 
+                && ua.Employee.Doctor.Id == doctorId
+                && ua.DeletedAt == null
+                && ua.Employee.DeletedAt == null
+            )
+            .Include(ua => ua.Employee)
+                .ThenInclude(d => d!.Department)
+            .Include(ua => ua.Employee!.Doctor)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
+    }
+    
     public async Task<UserAccount?> GetEmployeeByIdAsync(Guid employeeId)
     {
         return await _context.user_accounts
@@ -89,7 +116,7 @@ public class EmployeeRepository : IEmployeeRepository
                 && ua.Employee.DeletedAt == null
             )
             .Include(ua => ua.Employee)
-                //.ThenInclude(e => e!.Role)
+                .ThenInclude(d => d!.Department)
             .Include(ua => ua.Employee!.Doctor)
             .Include(ua => ua.Employee!.Admin)
             .AsSplitQuery()

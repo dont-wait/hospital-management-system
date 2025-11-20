@@ -1,3 +1,4 @@
+using Domain.Entities.ScheduleTask;
 using Microsoft.EntityFrameworkCore;
 using Namotion.Reflection;
 
@@ -9,6 +10,14 @@ public class AppDbContext : DbContext
         _currentUserService = currentUserService;
     }
 
+    public DbSet<TaskItem> tasks { get; set; } = null!;
+    public DbSet<TaskRegistration> task_registrations { get; set; } = null!;
+    public DbSet<TaskRequirement> task_requirements { get; set; } = null!;
+    public DbSet<SlotTime> slot_times { get; set; } = null!;
+    public DbSet<Appointment> appointments { get; set; } = null!;
+    public DbSet<Service> services { get; set; } = null!;
+    public DbSet<Department> departments { get; set; } = null!;
+    public DbSet<Room> rooms { get; set; } = null!;
     public DbSet<Admin> admins { get; set; } = null!;
 
     public DbSet<UserAccount> user_accounts { get; set; } = null!;
@@ -21,6 +30,34 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        modelBuilder.Entity<Appointment>() 
+        .HasOne(a => a.Department)
+        .WithMany(d => d.Appointments)
+        .HasForeignKey(a => a.DepartmentId)
+        .OnDelete(DeleteBehavior.NoAction);
+    
+        
+        modelBuilder.Entity<TaskItem>()
+        .HasOne(t => t.Department)
+        .WithMany(d => d.TaskItems)
+        .HasForeignKey(t => t.DepartmentId)
+        .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Appointment>(entity =>
+        {
+            entity.HasOne(a => a.Patient)
+                .WithMany(p => p.Appointments)     
+                .HasForeignKey(a => a.PatientId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(a => a.Doctor)
+                .WithMany(d => d.Appointments)     
+                .HasForeignKey(a => a.DoctorId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasQueryFilter(a => a.DeletedAt == null);
+        });
 
         modelBuilder.Entity<Admin>()
             .HasOne(ua => ua.Employee)

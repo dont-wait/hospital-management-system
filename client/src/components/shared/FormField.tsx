@@ -30,12 +30,14 @@ import inputStyles from "@/styles/input.module.css";
 export interface FormFieldProps<T extends FieldValues> {
   id: Path<T>;
   label: string | null;
-  placeholder: string;
-  type?: "text" | "email" | "password" | "textarea";
+  placeholder?: string;
+  type?: "text" | "email" | "password" | "textarea" | "date" | "time";
   register: UseFormRegister<T>;
   errors: FieldErrors<T>;
   className?: string;
   rows?: number;
+  icon?: React.ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
 }
 export function FormField<T extends FieldValues>({
   id,
@@ -45,6 +47,8 @@ export function FormField<T extends FieldValues>({
   register,
   errors,
   rows = 4,
+  icon,
+  onClick,
 }: FormFieldProps<T>) {
   const error = errors[id];
   const errorMessage = error?.message as string | "lỗi";
@@ -55,7 +59,7 @@ export function FormField<T extends FieldValues>({
         return (
           <PasswordInput
             id={id}
-            placeholder={placeholder}
+            placeholder={placeholder || ""}
             register={register}
             errors={errors}
           />
@@ -68,6 +72,19 @@ export function FormField<T extends FieldValues>({
             placeholder={placeholder}
             rows={rows}
             error={!!error}
+            {...register(id)}
+          />
+        );
+
+      case "date":
+      case "time":
+        return (
+          <Input
+            id={id}
+            type={type}
+            placeholder={placeholder}
+            error={!!error}
+            onClick={onClick}
             {...register(id)}
           />
         );
@@ -87,7 +104,15 @@ export function FormField<T extends FieldValues>({
 
   return (
     <div className={authStyles["form-group"]}>
-      {label && <Label htmlFor={id}>{label}</Label>}
+      {label && (
+        <Label htmlFor={id}>
+          {icon && <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+            {icon}
+            {label}
+          </span>}
+          {!icon && label}
+        </Label>
+      )}
       {renderInput()}
       {errorMessage && (
         <p className={authStyles["error-message"]}>{errorMessage}</p>

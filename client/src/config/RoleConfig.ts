@@ -1,15 +1,24 @@
-import { Role } from "@/types";
+import { Role, roles } from "@/types";
 
-const allRoles: Role[] = ["guest", "patient", "doctor", "admin"];
-
-export const ROUTE_ROLE_MAP: Record<string, Role[]> = {
-  "/": ["patient", "doctor", "guest"],
+export const ROUTE_ROLE_MAP: Record<string, readonly Role[]> = {
+  "/": roles,
   "/login": ["guest"],
   "/register": ["guest"],
-  "/forgot-password": allRoles,
-  "/doctor": ["doctor"],
+  "/forgot-password": roles,
   "/patient": ["patient"],
   "/patient/update": ["patient"],
+  "/doctor/dashboard": ["doctor", "hod"],
+  "/doctor/schedule": ["doctor", "hod"],
+  "/doctor/create-shift": ["hod"],
   "/admin/dashboard": ["admin"],
   "/admin/dashboard/users": ["admin"],
+} as const;
+
+// này mặc định khi đăng nhập sẽ chuyển đến trang nào theo role
+export const DEFAULT_ROLE_ROUTES: Record<Role, string> = {
+  admin: "/admin/dashboard",
+  doctor: "/doctor/dashboard",
+  hod: "/doctor/dashboard",
+  patient: "/",
+  guest: "/",
 } as const;

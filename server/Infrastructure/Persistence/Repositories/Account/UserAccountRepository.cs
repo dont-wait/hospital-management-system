@@ -49,6 +49,8 @@ public class UserAccountRepository : IUserAccountRepository
             .Include(ua => ua.Patient)
             .Include(ua => ua.Employee)
                 .ThenInclude(e => e!.Doctor)
+            .Include(ua => ua.Employee)
+                .ThenInclude(e => e!.Department)
                 .FirstOrDefaultAsync();
 
         return rs;
