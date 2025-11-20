@@ -4,7 +4,12 @@ public class Appointment : BaseEntity
     [Key]
     public long Id { get; set; }
     [Required]
-    public DateTimeOffset AppointmentDate { get; set; }
+    public DateOnly AppointmentDate { get; set; }
+    [Required]
+    public TimeOnly AppointmentStartTime { get; set; }
+    [Required]
+    public TimeOnly AppointmentEndTime { get; set; }
+    
     
     public string AppointmentStatus { get; set; } = AppointmentStatusEnum.Pending.ToString();
     

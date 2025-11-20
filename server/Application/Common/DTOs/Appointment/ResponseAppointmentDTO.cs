@@ -6,10 +6,12 @@ public class ResponseAppointmentDTO
     public string RoomName { get; set; } = string.Empty;
     
     public string FullName { get; set; } = string.Empty;
-    public DateOnly DateOfBirth { get; set; } = new DateOnly();
-    public string Gender { get; set; } = string.Empty;
+    public DateOnly? DateOfBirth { get; set; } = new DateOnly();
+    public string? Gender { get; set; }
     public DateOnly AppointmentDate { get; set; }
-    public TimeOnly AppointmentTime { get; set; } = new TimeOnly(); //Gio bat dau slot kham + gio ket thuc slot kham
+    
+    public TimeOnly AppointmentStartTime { get; set; }
+    public TimeOnly AppointmentEndTime { get; set; }
     public Double PriceOfService { get; set; }
     
     //Phan duoi la thong tin chi tiet ve bac si
