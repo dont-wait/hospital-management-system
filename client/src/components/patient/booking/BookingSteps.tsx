@@ -1,4 +1,4 @@
-import { Icon } from "@/components";
+import Icon from "@/components/shared/Icon";
 import { bookingSteps } from "@/config";
 import styles from "@/styles/booking.module.css";
 

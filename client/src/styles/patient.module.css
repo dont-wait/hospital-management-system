@@ -9,7 +9,7 @@
 }
 
 .patient-page {
-  @apply mx-auto px-4 py-4;
+  @apply overflow-x-hidden mx-auto px-4 py-4;
 }
 
 .patient-content {
@@ -49,11 +49,11 @@
 }
 
 .patient-modal-list-item {
-  @apply flex items-center rounded border border-gray-300 px-4 py-2 gap-2;
+  @apply flex items-center rounded border border-silver px-4 py-2 gap-2;
 }
 
 .modal-label {
-  @apply text-gray-600;
+  @apply text-east-bay;
 }
 
 .modal-content {

@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { ForbiddenResponse } from "@/lib/server";
 import { ROUTE_ROLE_MAP, EXCLUDED_PATHS, DEFAULT_ROLE_ROUTES } from "@/config";
-import { type Role } from "@/types";
+import { type Roles } from "@/types";
 
 export class MiddlewareUtils {
   static shouldSkipMiddleware(pathname: string): boolean {
@@ -10,7 +10,7 @@ export class MiddlewareUtils {
 
   static findMatchedRoute(pathname: string): {
     route: string | null;
-    roles: readonly Role[];
+    roles: readonly Roles[];
   } {
     const sortedRoutes = Object.entries(ROUTE_ROLE_MAP).sort(
       ([a], [b]) => b.length - a.length,
@@ -55,7 +55,7 @@ export class MiddlewareUtils {
     return redirectRes;
   }
 
-  static handleUnauthorizedAccess(userRole: Role): NextResponse {
+  static handleUnauthorizedAccess(userRole: Roles): NextResponse {
     const forbiddenRes = new NextResponse(ForbiddenResponse(userRole), {
       status: 403,
       headers: { "Content-Type": "text/html" },
@@ -64,7 +64,10 @@ export class MiddlewareUtils {
     return forbiddenRes;
   }
 
-  static handlePostLoginRedirect(req: NextRequest, userRole: Role): NextResponse {
+  static handlePostLoginRedirect(
+    req: NextRequest,
+    userRole: Roles,
+  ): NextResponse {
     const defaultRoute = DEFAULT_ROLE_ROUTES[userRole] || "/";
     const url = new URL(defaultRoute, req.url);
     const redirectRes = NextResponse.redirect(url);

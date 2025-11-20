@@ -1,96 +1,123 @@
-import { CalendarDay, DateTime } from "@/types";
+import { CalendarDay, DateTime, DateFields, DateFormatType } from "@/types";
 
-export const isLeapYear = (year: number): boolean => {
-  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-};
-
-export const getDaysInMonth = (month: number, year: number): number => {
-  if (!month || !year) return 31;
-
-  switch (month) {
-    case 2:
-      return isLeapYear(year) ? 29 : 28;
-    case 4:
-    case 6:
-    case 9:
-    case 11:
-      return 30;
-    default:
-      return 31;
+export class DateUtils {
+  public static isLeapYear(year: number): boolean {
+    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
   }
-};
 
-export const validateDay = (
-  day: string,
-  month: string,
-  year: string,
-): string | null => {
-  const dayValue = parseInt(day);
-  const monthValue = parseInt(month);
-  const yearValue = parseInt(year);
+  public static getDaysInMonth(month: number, year: number): number {
+    const lastDay: Date = new Date(year, month, 0);
+    const daysInMonth: number = lastDay.getDate();
+    return daysInMonth;
+  }
 
-  if (!day) return null;
-  if (isNaN(dayValue)) return "Ngày không hợp lệ";
-  if (dayValue < 1) return "Ngày phải từ 1 trở lên";
+  public static validate(
+    day: string,
+    month: string,
+    year: string,
+  ): string | null {
+    const dayValue = parseInt(day);
+    const monthValue = parseInt(month);
+    const yearValue = parseInt(year);
 
-  const maxDays = getDaysInMonth(monthValue, yearValue);
-  if (dayValue > maxDays) {
-    if (monthValue === 2) {
-      return isLeapYear(yearValue)
-        ? "Tháng 2 năm nhuận chỉ có 29 ngày"
-        : "Tháng 2 chỉ có 28 ngày";
+    if (!day) return null;
+    if (isNaN(dayValue)) return "Ngày không hợp lệ";
+    if (dayValue < 1) return "Ngày phải từ 1 trở lên";
+
+    const maxDays: number = DateUtils.getDaysInMonth(monthValue, yearValue);
+    const isLeapYear: boolean = DateUtils.isLeapYear(yearValue);
+    const isValidDay = dayValue <= maxDays;
+
+    if (monthValue !== 2 && !isValidDay) {
+      return `Tháng này chỉ có ${maxDays} ngày`;
     }
-    return `Tháng này chỉ có ${maxDays} ngày`;
+    if (isLeapYear && !isValidDay) {
+      return "Tháng 2 năm nhuận chỉ có 29 ngày";
+    }
+    if (!isLeapYear && !isValidDay) {
+      return "Tháng 2 chỉ có 28 ngày";
+    }
+    return null;
   }
 
-  return null;
-};
+  public static formatDay(day: string): string {
+    return day.padStart(2, "0");
+  }
 
-export const formatDateString = (
-  day: string,
-  month: string,
-  year: string,
-): string => {
-  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-};
+  public static formatMonth(month: string): string {
+    return month.padStart(2, "0");
+  }
 
-export const parseDateString = (dateString: string) => {
-  const date = new Date(dateString);
-  return {
-    day: date.getDate().toString().padStart(2, "0"),
-    month: (date.getMonth() + 1).toString().padStart(2, "0"),
-    year: date.getFullYear().toString(),
-  };
-};
+  public static formatDate(day: string, month: string, year: string): string {
+    return `${year}-${DateUtils.formatMonth(month)}-${DateUtils.formatDay(day)}`;
+  }
 
-export const formatDateDisplay = (date: Date): string => {
-  return date.toLocaleDateString('vi-VN', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
+  public static parseDateString(date: string): DateFields {
+    const dateObj: Date = new Date(date);
+    return {
+      day: DateUtils.formatDay(dateObj.getDate().toString()),
+      month: DateUtils.formatMonth((dateObj.getMonth() + 1).toString()),
+      year: dateObj.getFullYear().toString(),
+    };
+  }
 
-export const formatTime = (isoString: string): string => {
-  const date = new Date(isoString);
-  return date.toLocaleTimeString('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
+  public static getDisplayDateTime(date: string, type: DateFormatType): string {
+    if (!date) return "N/A";
+    const dateObj: Date = new Date(date);
+    switch (type) {
+      case "DayMonth":
+        return dateObj.toLocaleDateString("vi-VN", {
+          day: "2-digit",
+          month: "2-digit",
+        });
+      case "DayMonthYear":
+        return dateObj.toLocaleDateString("vi-VN", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        });
+      case "WeekdayShort":
+        return dateObj.toLocaleDateString("vi-VN", {
+          weekday: "short",
+        });
+      case "Time":
+        return dateObj.toLocaleDateString("vi-VN", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      default:
+        return dateObj.toLocaleDateString("vi-VN", {
+          weekday: "long",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+    }
+  }
 
-export const isSameDate = (date1: Date, date2: Date): boolean => {
-  return date1.toDateString() === date2.toDateString();
-};
+  public static isSameDate(d1: string, d2: string): boolean {
+    const date1 = new Date(d1);
+    const date2 = new Date(d2);
+    return date1.toDateString() === date2.toDateString();
+  }
 
-export const getDayName = (date: Date) => {
-    return date.toLocaleDateString('vi-VN', { weekday: 'short' });
-};
+  public static getWeekDays(date: Date) {
+    const currentDate = new Date(date);
+    const day = currentDate.getDay();
+    const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1);
 
-export const getDayMonth = (date: Date) => {
-    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
-};
+    const monday = new Date(currentDate.setDate(diff));
+    const weekDays = [];
+
+    for (let i = 0; i < 7; i++) {
+      const weekDay = new Date(monday);
+      weekDay.setDate(monday.getDate() + i);
+      weekDays.push(weekDay);
+    }
+
+    return weekDays;
+  }
+}
 
 export const createDays: (currentDate: Date) => (CalendarDay | null)[] = (
   currentDate: Date,

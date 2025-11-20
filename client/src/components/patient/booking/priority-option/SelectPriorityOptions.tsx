@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon } from "@/components";
+import Icon from "@/components/shared/Icon";
 import { priorityOptions } from "@/config";
 import { useBookingExamContext } from "@/contexts";
 import styles from "@/styles/booking.module.css";

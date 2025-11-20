@@ -10,9 +10,9 @@ import {
   DateField,
   AvatarField,
 } from "@/components";
+import { GENDER_OPTIONS } from "@/config";
 import { EmployeeUpdateDto, employeeUpdateSchema } from "@/schemas/employee";
 import { AuthUserWithoutTokens } from "@/types";
-import { GENDER_OPTIONS } from "@/config";
 import { EmployeeService } from "@/services/employee.service";
 import authStyles from "@/styles/auth.module.css";
 import styles from "@/styles/employee-update.module.css";
@@ -64,24 +64,20 @@ export function UpdateEmployeeForm({
   });
 
   const handleFormSubmit = async (data: EmployeeUpdateDto) => {
-    try {
-      const payload = isAdmin
-        ? data
-        : {
-            phoneNumber: data.phoneNumber,
-            avatarUrl: data.avatarUrl || "",
-          };
+    const payload = isAdmin
+      ? data
+      : {
+          phoneNumber: data.phoneNumber,
+          avatarUrl: data.avatarUrl || "",
+        };
 
-      const response = await EmployeeService.updateEmployee(
-        employee.employee?.employeeId || "",
-        payload,
-      );
+    const response = await EmployeeService.updateEmployee(
+      employee.employee?.employeeId || "",
+      payload,
+    );
 
-      if (onSuccess) {
-        onSuccess(response);
-      }
-    } catch (error) {
-      console.error("Lỗi update:", error);
+    if (onSuccess) {
+      onSuccess(response);
     }
   };
 

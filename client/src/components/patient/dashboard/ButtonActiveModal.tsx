@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Button, Icon } from "@/components";
+import { Button } from "@/components";
+import Icon from "@/components/shared/Icon";
 import { useModal } from "@/contexts";
 import { Patient } from "@/types";
 import styles from "@/styles/patient.module.css";

@@ -13,9 +13,15 @@ export enum Gender {
   Other = "O",
 }
 
-export const roles = ["admin", "guest", "doctor", "patient", "hod", "hod"] as const;
+export const RolesList = [
+  "admin",
+  "guest",
+  "doctor",
+  "patient",
+  "hod",
+] as const;
 
-export type Role = (typeof roles)[number];
+export type Roles = (typeof RolesList)[number];
 
 export interface Patient {
   patientId: string;
@@ -56,7 +62,7 @@ export interface Employee {
   certificateNumber: string;
   specialization: string;
   avatarUrl: string;
-  roleId: Role;
+  roleId: Roles;
 }
 
 export interface AuthUser {
@@ -231,4 +237,27 @@ export interface CalendarDay {
 export interface DateTime {
   time: string;
   date: string;
+}
+
+export interface DateFields {
+  day: string;
+  month: string;
+  year: string;
+}
+
+export type DateFormatType =
+  | "FullDate"
+  | "DayMonth"
+  | "DayMonthYear"
+  | "Time"
+  | "WeekdayShort";
+
+export type ModalType = "view" | "update" | null;
+
+export interface UserListState {
+  isDropdownOpen: boolean;
+  selectedRole: Exclude<Roles, "admin" | "guest">;
+  searchTerm: string;
+  selectedUser: AuthUserWithoutTokens | null;
+  activeModal: ModalType;
 }

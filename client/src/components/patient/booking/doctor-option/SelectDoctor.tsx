@@ -1,5 +1,5 @@
 import PrevButton from "../PrevButton";
-import { Icon } from "@/components";
+import Icon from "@/components/shared/Icon";
 import SelectDoctorOptions from "./SelectDoctorOptions";
 import { AppointmentService } from "@/services/server";
 import { ApiResponse, ScheduleData } from "@/types";

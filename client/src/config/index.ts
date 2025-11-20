@@ -7,3 +7,4 @@ export * from "./SidebarConfig";
 export * from "./ToastConfig";
 export * from "./ExcludedPathConfig";
 export * from "./BookingConfig";
+export * from "./UserManagementConfig";

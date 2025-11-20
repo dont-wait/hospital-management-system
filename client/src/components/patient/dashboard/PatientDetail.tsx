@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Label, Modal } from "@/components";
-import { PatientUtils } from "@/lib/client";
+import { PatientUtils, DateUtils } from "@/lib/client";
 import { Patient } from "@/types";
 import styles from "@/styles/patient.module.css";
 
@@ -22,7 +22,7 @@ export default function PatientDetail({
     },
     { label: "Quốc tịch", value: patient.nationality },
     { label: "Giới tính", value: PatientUtils.formatGender(patient.gender) },
-    { label: "Ngày sinh", value: PatientUtils.formatDOB(patient.dateOfBirth) },
+    { label: "Ngày sinh", value: DateUtils.getDisplayDateTime(patient.dateOfBirth, "DayMonthYear") },
     { label: "Số điện thoại", value: patient.phoneNumber },
     { label: "Nơi sinh", value: patient.placeOfResidence },
     { label: "Địa chỉ", value: patient.address },

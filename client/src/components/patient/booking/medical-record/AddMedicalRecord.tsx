@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { PatientService } from "@/services/server";
-import { PatientUtils } from "@/lib/client";
+import { PatientUtils, DateUtils } from "@/lib/client";
 import AddMedicalButton from "./AddMedicalButton";
 import { AuthUserWithoutTokens, Patient } from "@/types";
 import styles from "@/styles/booking.module.css";
@@ -32,7 +32,7 @@ export default async function AddMedicalRecord() {
               Ngày sinh
             </label>
             <div className={styles["medical-record-text"]}>
-              {PatientUtils.formatDOB(patient.dateOfBirth)}
+              {DateUtils.getDisplayDateTime(patient.dateOfBirth, "DayMonthYear")}
             </div>
           </div>
 

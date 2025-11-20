@@ -9,9 +9,9 @@
 }
 
 .name {
-  @apply text-lg font-semibold;
+  @apply text-base text-mauve font-semibold;
 }
 
 .email {
-  @apply text-sm text-black font-light;
+  @apply text-xs text-white font-light;
 }

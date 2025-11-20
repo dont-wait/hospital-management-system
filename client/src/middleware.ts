@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { TokenUtils } from "@/lib/client";
 import { MiddlewareUtils } from "@/lib/server";
-import { type Role } from "@/types";
+import { type Roles } from "@/types";
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -29,7 +29,7 @@ export async function middleware(req: NextRequest) {
     return MiddlewareUtils.handleExpiredToken(req);
   }
 
-  const userRole: Role = TokenUtils.getUserRole(token);
+  const userRole: Roles = TokenUtils.getUserRole(token);
   
   // ngăn cho user đã login truy cập /login hoặc /register
   if (allowedRoles.length === 1 && allowedRoles[0] === "guest" && userRole !== "guest") {

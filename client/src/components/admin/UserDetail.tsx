@@ -1,10 +1,9 @@
 import { motion } from "motion/react";
 import { Label, Modal } from "@/components";
-import { PatientUtils, parseDateString } from "@/lib/client";
+import PatientDetail from "@/components/patient/dashboard/PatientDetail";
+import { PatientUtils, DateUtils, UserManagementUtils } from "@/lib/client";
 import { AuthUserWithoutTokens } from "@/types";
 import styles from "@/styles/patient.module.css";
-import { getUserRole } from "@/lib/helper";
-import PatientDetail from "@/components/patient/dashboard/PatientDetail";
 
 type UserDetailProps = {
   isOpen: boolean;
@@ -13,11 +12,9 @@ type UserDetailProps = {
 };
 
 export function UserDetail({ user, isOpen, setIsOpen }: UserDetailProps) {
-  const formatHireDate = parseDateString(user.employee?.hireDate || "");
-
   const employeeInfo = [
     {
-      label: `Tên ${getUserRole(user)}`,
+      label: `Tên ${UserManagementUtils.getUserRole(user)}`,
       value: `${user.employee?.firstName} ${user.employee?.lastName}`,
     },
     {
@@ -26,7 +23,10 @@ export function UserDetail({ user, isOpen, setIsOpen }: UserDetailProps) {
     },
     {
       label: "Ngày sinh",
-      value: PatientUtils.formatDOB(user.employee?.dateOfBirth || ""),
+      value: DateUtils.getDisplayDateTime(
+        user.employee?.dateOfBirth || "",
+        "DayMonthYear",
+      ),
     },
     {
       label: "Số điện thoại",
@@ -46,7 +46,10 @@ export function UserDetail({ user, isOpen, setIsOpen }: UserDetailProps) {
     },
     {
       label: "Ngày vào làm",
-      value: `${formatHireDate.day}/${formatHireDate.month}/${formatHireDate.year}`,
+      value: DateUtils.getDisplayDateTime(
+        user.employee?.hireDate ?? "",
+        "DayMonthYear",
+      ),
     },
   ];
 
@@ -64,7 +67,7 @@ export function UserDetail({ user, isOpen, setIsOpen }: UserDetailProps) {
           onClose={() => {
             setIsOpen(false);
           }}
-          title={`Thông tin ${getUserRole(user)}`}
+          title={`Thông tin ${UserManagementUtils.getUserRole(user)}`}
           maxWidth="md"
         >
           <ul className={styles["patient-modal-list"]}>

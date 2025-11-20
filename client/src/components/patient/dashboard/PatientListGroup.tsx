@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Icon } from "@/components";
+import Icon from "@/components/shared/Icon";
 import { cn } from "@/lib/client";
 import patientStyles from "@/styles/patient.module.css";
 import cardStyles from "@/styles/card.module.css";

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { roboto } from "@/font";
+import { ToastContainer } from "react-toastify";
 import { UserAuthProvider, ToastProvider, SidebarProvider } from "@/contexts";
 import "react-loading-skeleton/dist/skeleton.css";
 import "@/styles/globals.css";
-import { ToastContainer } from 'react-toastify';
 
 export const metadata: Metadata = {
   title: "Medica Hospital",

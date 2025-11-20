@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { Icon } from "@/components";
+import Icon from "@/components/shared/Icon";
 import { ButtonActiveModal } from "@/components/patient/dashboard/ButtonActiveModal";
 import { PatientService } from "@/services/server";
 import { AuthUserWithoutTokens, Patient } from "@/types";

@@ -87,7 +87,7 @@
 }
 
 .submit-btn {
-  @apply w-full h-10;
+  @apply bg-east-bay text-white w-full h-10;
 }
 
 .form-group {

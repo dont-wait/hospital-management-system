@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon } from "@/components/shared";
+import Icon from "@/components/shared/Icon";
 import { IconNames } from "@/types";
 
 export default function BookingItem({

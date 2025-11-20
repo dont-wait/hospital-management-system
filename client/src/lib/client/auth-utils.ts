@@ -1,4 +1,4 @@
-import { Role } from "@/types";
+import { Roles } from "@/types";
 
 export class TokenUtils {
   static readonly STORAGE_KEYS = {
@@ -41,7 +41,7 @@ export class TokenUtils {
     return payload.exp < currentTime;
   }
 
-  static getUserRole(token: string | null): Role {
+  static getUserRole(token: string | null): Roles {
     if (!token) return "guest";
     const payload = TokenUtils.decodePayload(token);
     if (!payload?.exp) return "guest";

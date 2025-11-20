@@ -12,4 +12,3 @@ export * from "./Modal";
 export * from "./Loading";
 export * from "./AvatarUpload";
 export * from "./Navbar";
-export * from "./Icon";

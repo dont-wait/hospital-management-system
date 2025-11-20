@@ -5,7 +5,7 @@
 }
 
 .button-default {
-  @apply bg-primary text-primary-foreground;
+  @apply bg-east-bay text-white
 }
 
 .button-size-default {

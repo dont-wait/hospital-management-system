@@ -1,5 +1,6 @@
 "use client";
 
+import {memo} from "react";
 import dynamic from "next/dynamic";
 import type Lucide from "lucide-react";
 import Skeleton from "react-loading-skeleton";
@@ -9,7 +10,7 @@ interface IconProps extends Lucide.LucideProps {
   name: IconNames;
 }
 
-export function Icon({ name, ...props }: IconProps) {
+function Icon({ name, ...props }: IconProps) {
   const LucideIcon = dynamic(
     () => import("lucide-react").then((mod) => mod[name]),
     {
@@ -27,5 +28,7 @@ export function Icon({ name, ...props }: IconProps) {
 
   return <LucideIcon {...props} />;
 }
+
+export default memo(Icon);
 
 export type { IconProps };

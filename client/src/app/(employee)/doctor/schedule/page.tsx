@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from "react";
-import { isSameDate, getWeekDays } from "@/lib/client";
+import { DateUtils } from "@/lib/client";
 import styles from "@/styles/admin.module.css";
 import { WorkShift } from "@/types";
 import { ScheduleHeader, WeekCalendar, ScheduleContainer } from "@/components/employee";
@@ -211,7 +211,7 @@ export default function DoctorSchedulePage() {
         },
     ], []);
 
-    const weekDays = useMemo(() => getWeekDays(selectedDate), [selectedDate]);
+    const weekDays = useMemo(() => DateUtils.getWeekDays(selectedDate), [selectedDate]);
 
     // Lọc ca làm việc theo tuần
     const weekShifts = useMemo(() => {
@@ -220,8 +220,7 @@ export default function DoctorSchedulePage() {
         weekDays.forEach(day => {
             const dayKey = day.toDateString();
             const dayShifts = allWorkShifts.filter(shift => {
-                const shiftDate = new Date(shift.startTime);
-                return isSameDate(shiftDate, day);
+                return DateUtils.isSameDate(shift.startTime, day.toString());
             });
             shiftsMap.set(dayKey, dayShifts);
         });
@@ -232,8 +231,7 @@ export default function DoctorSchedulePage() {
     // Lọc ca làm việc theo ngày được chọn
     const todayShifts = useMemo(() => {
         return allWorkShifts.filter(shift => {
-            const shiftDate = new Date(shift.startTime);
-            return isSameDate(shiftDate, selectedDate);
+            return DateUtils.isSameDate(shift.startTime, selectedDate.toString());
         });
     }, [selectedDate, allWorkShifts]);
 

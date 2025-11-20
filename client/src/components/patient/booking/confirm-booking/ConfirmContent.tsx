@@ -1,10 +1,10 @@
 "use client";
 
 import { useBookingExamContext } from "@/contexts";
-import { Icon } from "@/components/shared";
+import Icon from "@/components/shared/Icon";
 import BookingItem from "./BookingItem";
 import InfoItem from "./InfoItem";
-import { PatientUtils, CurrencyUtils } from "@/lib/client";
+import { PatientUtils, CurrencyUtils, DateUtils } from "@/lib/client";
 
 export default function ConfirmContent() {
   const { state, removeBookingRecord } = useBookingExamContext();
@@ -22,7 +22,7 @@ export default function ConfirmContent() {
           />
           <InfoItem
             label="Ngày sinh"
-            value={PatientUtils.formatDOB(state.patient!.dateOfBirth)}
+            value={DateUtils.getDisplayDateTime(state.patient!.dateOfBirth, "DayMonthYear")}
           />
           <InfoItem
             label="Giới tính"

@@ -1,3 +1,5 @@
+"use client";
+
 import { Modal } from "../shared";
 import { UpdateEmployeeForm } from "./UpdateEmployeeForm";
 import { AuthUserWithoutTokens } from "@/types";
@@ -31,7 +33,7 @@ export function EmployeeUpdateModal({
                 setIsOpen(false);
             }}
             title={isAdmin ? "Chỉnh sửa thông tin nhân viên" : "Cập nhật thông tin của bạn"}
-            maxWidth="xl"
+            maxWidth="2xl"
         >
             <UpdateEmployeeForm
                 employee={employee}

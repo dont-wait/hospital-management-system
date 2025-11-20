@@ -5,7 +5,8 @@
 }
 
 .modalContainer {
-  @apply fixed inset-0 flex items-center justify-center z-50 p-4;
+  @apply absolute inset-0 flex items-center justify-center z-50 p-4;
+  height: 100vh;
 }
 
 .modalContent {
@@ -33,7 +34,7 @@
 }
 
 .header {
-  @apply bg-gradient-to-r from-blue-100 to-white p-6 relative;
+  @apply bg-east-bay text-white p-6 relative;
 }
 
 .title {
@@ -41,7 +42,7 @@
 }
 
 .closeButton {
-  @apply absolute top-4 right-4 rounded-full p-2 transition-colors hover:bg-gray-100;
+  @apply absolute top-4 right-4 rounded-full p-2 transition-colors;
 }
 
 .body {

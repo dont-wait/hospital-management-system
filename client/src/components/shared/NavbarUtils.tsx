@@ -6,11 +6,12 @@ import { Button } from "@/components";
 import { PatientSidebar } from "@/components/patient/sidebar/PatientSidebar";
 import { useUserAuthContext, useSidebar } from "@/contexts";
 import { Bell } from "@/lib/client";
+import defautlAvatar from "@/public/images/df-avatar.webp";
 import styles from "@/styles/navbar.module.css";
 
 export function NavbarUtils() {
   const { user, isAuthenticated } = useUserAuthContext();
-  const defaultAvatarUrl = user?.avatarUrl ?? "/images/df-avatar.webp";
+  const defaultAvatarUrl = user?.avatarUrl ?? defautlAvatar;
   const { openSidebar, setContent, setTitle, setColorBackground } =
     useSidebar();
 
