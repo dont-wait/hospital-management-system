@@ -1,24 +1,23 @@
 ﻿using Application.Common.Utils;
 using Domain.Enums;
-public class TaskItemSerivce : ITaskItemService
+public class TaskItemService : ITaskItemService
 {
     private readonly ITaskItemRepository _taskItemRepository;
     
-    public TaskItemSerivce(ITaskItemRepository taskItemRepository)
+    public TaskItemService(ITaskItemRepository taskItemRepository)
     {
         _taskItemRepository = taskItemRepository;
     }
     
-    public Task<ServiceResult<ResponseAvailableAppointment>> GetAvailableAppointments(DateOnly? date, 
-                                                                                    int? departmentId, 
+    public Task<ServiceResult<ResponseAvailableAppointment>> GetAvailableAppointments(DateOnly? date,
+                                                                                    int? departmentId,
                                                                                     Guid? doctorId)
     {
-        
         var today = DateOnly.FromDateTime(DateTime.Now);
         if (date.HasValue && date.Value < today)
             return Task.FromResult(
                 ServiceResult<ResponseAvailableAppointment>.Fail("Ngày chọn phải lớn hơn hoặc bằng hôm nay"));
-        
+    
         var availableTaskItems = _taskItemRepository
             .GetAvailableTaskItemsForBooking(date, departmentId, doctorId);
 
@@ -52,7 +51,7 @@ public class TaskItemSerivce : ITaskItemService
                     StartTime = t.Date.ToDateTime(t.StartTime),
                     EndTime = t.Date.ToDateTime(t.EndTime),
                     ScheduleStatus = t.TaskStatus,
-                    
+
                     DoctorId = doctorReg?.Employee.Doctor.Id ?? Guid.Empty,
 
                     FullName = doctorReg != null
@@ -60,7 +59,7 @@ public class TaskItemSerivce : ITaskItemService
                         : string.Empty,
                     Specialization = doctorReg!.Employee.Doctor.Specialization,
                     RoomName = t.Room!.Name,
-                    
+
                     Slots = t.SlotTimes
                         .Where(s => s.SlotStatus == SlotStatusEnum.Opened.ToString())
                         .Select(s => new ResponseSlotTimeDTO
@@ -77,5 +76,4 @@ public class TaskItemSerivce : ITaskItemService
 
         return Task.FromResult(ServiceResult<ResponseAvailableAppointment>.Success(response));
     }
-
 }

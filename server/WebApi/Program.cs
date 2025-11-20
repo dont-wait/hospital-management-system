@@ -42,11 +42,15 @@ builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
-builder.Services.AddScoped<ITaskItemService, TaskItemSerivce>();
+builder.Services.AddScoped<ITaskItemService, TaskItemService>();
+builder.Services.AddScoped<ISlotTimeRepository, SlotTimeRepository>();
+builder.Services.AddScoped<IBillingRepository, BillingRepository>();
+
 
 builder.Services.AddScoped<IUserAccountMapper, UserAccountMapper>();
 builder.Services.AddScoped<IPatientMapper, PatientMapper>();

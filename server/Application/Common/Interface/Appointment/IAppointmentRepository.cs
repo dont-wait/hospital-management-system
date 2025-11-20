@@ -1,6 +1,6 @@
 public interface IAppointmentRepository
 {
-    Task<bool> IsExistingAppointmentAsync(DateTime appointmentDate);
+    Task<bool> IsExistingAppointmentAsync(DateOnly appointmentDate, TimeOnly appointmentStartTime, TimeOnly appointmentEndTime);
     Task<Appointment> CreateAppointmentAsync(Appointment appointment); 
     Task<List<Appointment>> GetAllAppointmentsAsync();
 

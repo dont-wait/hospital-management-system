@@ -42,10 +42,13 @@ public class AppointmentRepository : IAppointmentRepository
             .FirstOrDefaultAsync(a => a.Id == appointmentId && a.DeletedAt == null);
     }
 
-    public async Task<bool> IsExistingAppointmentAsync(DateTime appointmentDate)
+    public async Task<bool> IsExistingAppointmentAsync(DateOnly appointmentDate, TimeOnly appointmentStartTime, TimeOnly appointmentEndTime)
     {
         return await _context.appointments
-            .AnyAsync(a => a.AppointmentDate == appointmentDate && a.DeletedAt == null);
+            .AnyAsync(a => a.AppointmentDate == appointmentDate && 
+                           a.AppointmentStartTime ==  appointmentStartTime && 
+                           a.AppointmentEndTime == appointmentEndTime && 
+                           a.DeletedAt == null);
     }
 
     public async Task<Appointment> UpdateAppointmentAsync(Appointment appointment)

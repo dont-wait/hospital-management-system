@@ -67,8 +67,14 @@ namespace server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTimeOffset>("AppointmentDate")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateOnly>("AppointmentDate")
+                        .HasColumnType("date");
+
+                    b.Property<TimeOnly>("AppointmentEndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("AppointmentStartTime")
+                        .HasColumnType("time");
 
                     b.Property<string>("AppointmentStatus")
                         .IsRequired()
@@ -586,7 +592,7 @@ namespace server.Migrations
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("char(1)");
 
                     b.Property<int>("Is_Insurance")
                         .HasColumnType("int");
