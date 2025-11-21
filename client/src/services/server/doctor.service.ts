@@ -1,5 +1,6 @@
 import "server-only";
-import { Doctor, Gender } from "@/types";
+import { getApiInstance, getConfig } from "@/axios";
+import { Doctor, Gender, AuthUserWithoutTokens } from "@/types";
 
 const doctors: Doctor[] = [
   {
@@ -77,6 +78,15 @@ const doctors: Doctor[] = [
 ];
 
 export class DoctorService {
+  public static async getDoctorInfo(
+    token?: string,
+  ): Promise<AuthUserWithoutTokens> {
+    const apiInstance = getApiInstance();
+    const config = getConfig(token);
+    const response = await apiInstance.get("account/@me", config);
+    return response.data.data;
+  }
+
   public static async getDoctors(specialty: string = ""): Promise<Doctor[]> {
     return doctors.filter((doctor) =>
       doctor.specialization.includes(specialty),

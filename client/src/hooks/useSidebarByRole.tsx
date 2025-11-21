@@ -2,13 +2,13 @@
 
 import { usePathname } from "next/navigation";
 import { useMemo, ReactNode } from "react";
-import { DoctorSidebar } from "@/components/employee/doctor/DoctorSidebar";
+import DoctorSidebarBody from "@/components/employee/doctor/DoctorSidebarBody";
 import { Roles } from "@/types";
 
 type EmployeeRole = Exclude<Roles, "admin" | "patient" | "guest" | "hod">;
 
 const sidebarMap: Record<EmployeeRole, ReactNode> = {
-  doctor: <DoctorSidebar />, // vì hod cũng dùng DoctorSidebar, khác mỗi 1 item nên không cần tạo component riêng
+  doctor: <DoctorSidebarBody />,
 };
 
 export function useSidebarByRole(): ReactNode {

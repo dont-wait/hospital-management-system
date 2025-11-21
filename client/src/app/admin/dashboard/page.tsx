@@ -1,7 +1,7 @@
 import AdminContentHeader from "@/components/admin/AdminContentHeader";
 import DashboardCharts from "@/components/admin/DashboardCharts";
 import DashboardHistory from "@/components/admin/DashboardHistory";
-import StatCard from "@/components/admin/StatCard";
+import StatCard from "@/components/shared/StatCard";
 import styles from "@/styles/admin.module.css";
 
 export default function AdminPage() {

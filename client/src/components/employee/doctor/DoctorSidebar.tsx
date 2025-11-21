@@ -1,96 +1,25 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { motion } from "motion/react";
-import { useUserAuthContext, useSidebar } from "@/contexts";
-import { LogOut, LogIn } from "@/lib/client";
-import { DoctorSidebarItems, HODSidebarItems, patientSidebarVariants } from "@/config";
+import SidebarCustomContent from "@/components/shared/SidebarCustomContent";
+import Icon from "@/components/shared/Icon";
+import { useSidebar } from "@/contexts";
+import { useSidebarByRole } from "@/hooks";
 import styles from "@/styles/admin.module.css";
-import { Employee } from "@/types";
 
-export function DoctorSidebar() {
-  const { logout, isAuthenticated, user } = useUserAuthContext();
-  const { closeSidebarOnMobile } = useSidebar();
-  const router = useRouter();
-  const pathname = usePathname();
-  
-  const sidebarItems = (user as Employee).roleId === "hod" ? HODSidebarItems : DoctorSidebarItems;
-
-  const handleItemClick = (route: string) => {
-    if (route === "/logout") {
-      logout();
-    } else {
-      router.push(route);
-    }
-    closeSidebarOnMobile();
-  };
-
+export default function DoctorSidebar() {
+  const { openSidebar } = useSidebar();
+  const sidebarContent = useSidebarByRole();
   return (
-    <div className={styles["admin-sidebar-body"]}>
-      <nav className={styles["admin-sidebar-content"]}>
-        {sidebarItems.map((item, index) => {
-          const Icon = item.icon;
-          return (
-            <motion.button
-              key={index}
-              custom={index}
-              variants={patientSidebarVariants}
-              initial="hidden"
-              animate="visible"
-              whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                handleItemClick(item.route);
-              }}
-              className={styles["admin-sidebar-items"] + `${item.route === pathname ? ` ${styles["active"]}` : ""}`}
-            >
-              <div className={styles["admin-sidebar-item"]}>
-                <Icon
-                  size={20}
-                  className={styles["admin-sidebar-item-icon"]}
-                />
-              </div>
-              <span className={styles["admin-sidebar-item-title"]}>{item.title}</span>
-            </motion.button>
-          );
-        })}
-      </nav>
-      <div className={styles["admin-sidebar-footer"]}>
-        {!isAuthenticated ? (
-          <motion.button
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              handleItemClick("/login");
-            }}
-            className={styles["admin-sidebar-items"]}
-          >
-            <div className={styles["admin-sidebar-item"]}>
-              <LogIn
-                size={20}
-                className={styles["admin-sidebar-item-icon"]}
-              />
-            </div>
-            <span className={styles["admin-sidebar-item-title"]}>Đăng Nhập</span>
-          </motion.button>
-        ) : (
-          <motion.button
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              handleItemClick("/logout");
-            }}
-            className={styles["logout-btn"]}
-          >
-            <div className={styles["logout-btn-wrap"]}>
-              <LogOut
-                size={20}
-                className={styles["admin-sidebar-item-icon"]}
-              />
-            </div>
-            <span className={styles["admin-sidebar-item-title"]}>
-              Đăng Xuất
-            </span>
-          </motion.button>
-        )}
-      </div>
-    </div>
+    <>
+      <SidebarCustomContent content={sidebarContent} />
+
+      <button
+        onClick={openSidebar}
+        className={styles["admin-button-sidebar"]}
+        aria-label="Open menu"
+      >
+        <Icon name="Menu" className="w-6 h-6" />
+      </button>
+    </>
   );
 }
