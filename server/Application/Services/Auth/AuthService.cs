@@ -9,11 +9,11 @@ public class AuthService : IAuthService
     private readonly IOTPService _otpSenderService;
     private readonly ITokenService _tokenService;
 
-    public AuthService(IUserAccountRepository userAccountRepository, IRedisService redisService, IOTPService optSenderService, ITokenService tokenService)
+    public AuthService(IUserAccountRepository userAccountRepository, IRedisService redisService, IOTPService otpSenderService, ITokenService tokenService)
     {
         _userAccountRepository = userAccountRepository;
         _redisService = redisService;
-        _otpSenderService = optSenderService;
+        _otpSenderService = otpSenderService;
         _tokenService = tokenService;
     }
 

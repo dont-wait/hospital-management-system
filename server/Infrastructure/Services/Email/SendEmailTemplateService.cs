@@ -13,12 +13,24 @@ public class SendEmailTemplateService : IEmailTemplateService
     {
         _emailProvider = emailProvider;
         _env = env;
+        var emailTemplatePath = Path.Combine(_env.ContentRootPath, "Resources", "EmailTemplates", "ConfirmedAppointmentTemplate.html");
+        if (File.Exists(emailTemplatePath))
+        {
+            _emailTemplate = File.ReadAllText(emailTemplatePath);
+        }
+        else
+        {
+            throw new FileNotFoundException($"Email template file not found at path: {emailTemplatePath}");
+        }
     }
     
     public async Task SendConfirmedAppointmentEmailAsync(string to, ResponseAppointmentDTO responseAppointmentDTO)
     {
-        var emailTemplatePath = Path.Combine(_env.ContentRootPath, "Resources", "EmailTemplates", "ConfirmedAppointmentTemplate.html");
-        _emailTemplate = File.ReadAllText(emailTemplatePath);
+        // Template is loaded once in the constructor
+        if (string.IsNullOrEmpty(_emailTemplate))
+        {
+            throw new InvalidOperationException("Email template is not loaded.");
+        }
         
         var genderText = responseAppointmentDTO.Gender?.ToLower() switch
         {

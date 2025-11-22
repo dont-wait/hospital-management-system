@@ -121,7 +121,14 @@ public class AppointmentService : IAppointmentService
                 ? $"{existingDoctorWithAccount.Employee.FirstName} {existingDoctorWithAccount.Employee.LastName}"
                 : string.Empty
         };
-        await _emailTemplateService.SendConfirmedAppointmentEmailAsync(existingPatient.Email, response);
+        try
+        {
+            await _emailTemplateService.SendConfirmedAppointmentEmailAsync(existingPatient.Email, response);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Đã xảy ra lỗi khi gửi email: " + ex.Message);
+        }
 
         return ServiceResult<ResponseAppointmentDTO>.Success(response);
     }
