@@ -1,0 +1,501 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhắc nhở lịch khám</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            padding: 40px 20px;
+            color: #2c2a4a;
+            line-height: 1.6;
+        }
+
+        .email-container {
+            max-width: 680px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(144, 122, 214, 0.15);
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #907ad6 0%, #b39ddb 100%);
+            padding: 48px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #dabfff 0%, #ffffff 100%);
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* Alert Badge */
+        .alert-badge {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border: 2px solid #fbbf24;
+            margin: -28px 40px 0;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(251, 191, 36, 0.25);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .alert-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #92400e;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 12px;
+        }
+
+        .alert-message {
+            font-size: 20px;
+            font-weight: 700;
+            color: #92400e;
+            letter-spacing: -0.3px;
+        }
+
+        /* Content Section */
+        .content {
+            padding: 48px 40px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c2a4a;
+            margin-bottom: 16px;
+        }
+
+        .greeting-name {
+            color: #907ad6;
+        }
+
+        .intro-text {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        /* Appointment Details Card */
+        .details-card {
+            background: linear-gradient(135deg, #faf9fd 0%, #f5f3fb 100%);
+            border: 2px solid #dabfff;
+            border-radius: 12px;
+            padding: 32px;
+            margin: 32px 0;
+        }
+
+        .card-header {
+            text-align: center;
+            padding-bottom: 24px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #dabfff;
+        }
+
+        .appointment-id {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .appointment-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #907ad6;
+            letter-spacing: 0.5px;
+        }
+
+        .info-grid {
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .info-row {
+            display: table-row;
+        }
+
+        .info-label {
+            display: table-cell;
+            padding: 14px 20px 14px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            width: 45%;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-value {
+            display: table-cell;
+            padding: 14px 0;
+            font-size: 15px;
+            font-weight: 500;
+            color: #2c2a4a;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-row:last-child .info-label,
+        .info-row:last-child .info-value {
+            border-bottom: none;
+        }
+
+        .info-highlight {
+            color: #907ad6;
+            font-weight: 600;
+        }
+
+        /* Checklist Section */
+        .checklist-section {
+            background: linear-gradient(135deg, #e8f4fd 0%, #f0f8ff 100%);
+            border-left: 4px solid #907ad6;
+            border-radius: 8px;
+            padding: 24px 28px;
+            margin: 32px 0;
+        }
+
+        .checklist-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2c2a4a;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 16px;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            padding-left: 28px;
+            position: relative;
+            color: #2c2a4a;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .checklist li::before {
+            content: '✓';
+            position: absolute;
+            left: 8px;
+            font-weight: 700;
+            color: #907ad6;
+            font-size: 16px;
+        }
+
+        /* Tip Box */
+        .tip-box {
+            background: linear-gradient(135deg, #faf9fd 0%, #f5f3fb 100%);
+            border: 2px solid #dabfff;
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin: 32px 0;
+            text-align: center;
+            color: #2c2a4a;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .tip-box strong {
+            color: #907ad6;
+            font-weight: 600;
+        }
+
+        /* Button */
+        .button-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #907ad6 0%, #b39ddb 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 16px 48px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 16px rgba(144, 122, 214, 0.35);
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            box-shadow: 0 6px 20px rgba(144, 122, 214, 0.45);
+            transform: translateY(-1px);
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #dabfff, transparent);
+            margin: 40px 0;
+        }
+
+        /* Signature */
+        .signature {
+            text-align: center;
+            color: #64748b;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .signature-hospital {
+            font-weight: 700;
+            color: #907ad6;
+            font-size: 16px;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #faf9fd 0%, #f5f3fb 100%);
+            padding: 32px 40px;
+            text-align: center;
+            border-top: 2px solid #dabfff;
+        }
+
+        .footer-contact {
+            margin-bottom: 20px;
+        }
+
+        .footer-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c2a4a;
+            margin-bottom: 12px;
+        }
+
+        .footer-info {
+            font-size: 14px;
+            color: #64748b;
+            margin: 8px 0;
+        }
+
+        .footer-highlight {
+            color: #907ad6;
+            font-weight: 600;
+        }
+
+        .footer-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 20px 0;
+        }
+
+        .footer-legal {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media only screen and (max-width: 600px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header-title {
+                font-size: 24px;
+            }
+
+            .alert-badge {
+                margin: -24px 20px 0;
+                padding: 20px;
+            }
+
+            .content {
+                padding: 32px 24px;
+            }
+
+            .details-card {
+                padding: 24px 20px;
+            }
+
+            .appointment-number {
+                font-size: 24px;
+            }
+
+            .info-label,
+            .info-value {
+                display: block;
+                width: 100%;
+                padding: 8px 0;
+            }
+
+            .info-label {
+                font-size: 13px;
+                padding-bottom: 4px;
+            }
+
+            .info-value {
+                padding-top: 0;
+                padding-bottom: 16px;
+            }
+
+            .footer {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-title">Nhắc nhở lịch khám</div>
+        <div class="header-subtitle">Medicare Hospital</div>
+    </div>
+
+    <!-- Alert Badge -->
+    <div class="alert-badge">
+        <div class="alert-label">Thông báo quan trọng</div>
+        <div class="alert-message">{{ReminderTitle}}</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Greeting -->
+        <div class="greeting">
+            Kính chào <span class="greeting-name">{{PatientName}}</span>,
+        </div>
+
+        <p class="intro-text">
+            Đây là email nhắc nhở về lịch hẹn khám bệnh của quý khách tại Medicare Hospital.
+            Xin vui lòng xem lại thông tin chi tiết bên dưới và chuẩn bị đầy đủ hồ sơ trước khi đến khám.
+        </p>
+
+        <!-- Appointment Details -->
+        <div class="details-card">
+            <div class="card-header">
+                <div class="appointment-id">Mã phiếu khám</div>
+                <div class="appointment-number">#{{AppointmentId}}</div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-row">
+                    <div class="info-label">Bác sĩ điều trị</div>
+                    <div class="info-value info-highlight">{{DoctorName}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Chuyên khoa</div>
+                    <div class="info-value">{{DepartmentName}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Phòng khám</div>
+                    <div class="info-value">{{RoomName}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Ngày khám</div>
+                    <div class="info-value info-highlight">{{AppointmentDate}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Giờ khám</div>
+                    <div class="info-value info-highlight">{{StartTime}} - {{EndTime}}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checklist -->
+        <div class="checklist-section">
+            <div class="checklist-title">Danh sách chuẩn bị</div>
+            <ul class="checklist">
+                <li>CMND/CCCD hoặc Hộ chiếu</li>
+                <li>Thẻ bảo hiểm y tế (nếu có)</li>
+                <li>Hồ sơ bệnh án và kết quả xét nghiệm trước đó</li>
+                <li>Danh sách thuốc đang sử dụng (nếu có)</li>
+                <li>Đến sớm 15 phút để hoàn tất thủ tục</li>
+            </ul>
+        </div>
+
+        <!-- Tip -->
+        <div class="tip-box">
+            <strong>Lưu ý:</strong> Để tiết kiệm thời gian, quý khách nên đến trước giờ hẹn 15 phút
+            để hoàn tất các thủ tục hành chính và tránh chờ đợi lâu.
+        </div>
+
+        <!-- CTA Button -->
+        <div class="button-container">
+            <a href="{{AppointmentUrl}}" class="cta-button">Xem chi tiết lịch hẹn</a>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Signature -->
+        <div class="signature">
+            Trân trọng,<br>
+            <span class="signature-hospital">MEDICARE HOSPITAL</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-contact">
+            <div class="footer-title">Cần thay đổi lịch hẹn?</div>
+            <div class="footer-info">
+                Hotline: <span class="footer-highlight">1900-xxxx</span> (24/7)
+            </div>
+            <div class="footer-info">
+                Email: <span class="footer-highlight">support@medicare.com.vn</span>
+            </div>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <div class="footer-legal">
+            Email này được gửi tự động từ hệ thống. Vui lòng không trả lời email này.<br>
+            © 2025 Medicare Hospital. All rights reserved.
+        </div>
+    </div>
+</div>
+</body>
+</html>
