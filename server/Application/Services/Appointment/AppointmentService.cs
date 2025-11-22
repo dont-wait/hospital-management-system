@@ -1,4 +1,5 @@
 ﻿using Application.Common.Utils;
+using Domain.Enums;
 public class AppointmentService : IAppointmentService
 {
 
@@ -9,6 +10,7 @@ public class AppointmentService : IAppointmentService
     private readonly ISlotTimeRepository _slotTimeRepository;
     private readonly ITaskItemRepository _taskItemRepository;
     private readonly IBillingRepository _billingRepository;
+    private readonly IEmailTemplateService _emailTemplateService;
     
     public AppointmentService(
                             IUserAccountRepository userAccountRepository,
@@ -17,7 +19,8 @@ public class AppointmentService : IAppointmentService
                             ITaskItemRepository taskItemRepository,
                             IBillingRepository billingRepository,
                             IAppointmentRepository appointmentRepository,
-                            ISlotTimeRepository slotTimeRepository
+                            ISlotTimeRepository slotTimeRepository,
+                            IEmailTemplateService emailTemplateService
                             )
     {
         _userAccountRepository = userAccountRepository;
@@ -27,6 +30,7 @@ public class AppointmentService : IAppointmentService
         _billingRepository = billingRepository;
         _appointmentRepository = appointmentRepository;
         _slotTimeRepository = slotTimeRepository;
+        _emailTemplateService = emailTemplateService;
         
     }
     
@@ -88,6 +92,9 @@ public class AppointmentService : IAppointmentService
         };
 
         slotTime.CurrentAppointments += 1;
+        if(slotTime.CurrentAppointments >= slotTime.MaxAppointments)
+            slotTime.SlotStatus = SlotStatusEnum.Full.ToString();
+        
         _slotTimeRepository.UpdateAsync(slotTime);
         
         await _appointmentRepository.CreateAppointmentAsync(newAppointment);
@@ -95,6 +102,7 @@ public class AppointmentService : IAppointmentService
         // Lấy thông tin Doctor
         var doctorRegistration = taskInfoAppointment.TaskRegistrations
             .FirstOrDefault(tr => tr.Employee.Doctor.Id == request.DoctorId);
+
         
         var response = new ResponseAppointmentDTO
         {
@@ -113,6 +121,7 @@ public class AppointmentService : IAppointmentService
                 ? $"{existingDoctorWithAccount.Employee.FirstName} {existingDoctorWithAccount.Employee.LastName}"
                 : string.Empty
         };
+        await _emailTemplateService.SendConfirmedAppointmentEmailAsync(existingPatient.Email, response);
 
         return ServiceResult<ResponseAppointmentDTO>.Success(response);
     }

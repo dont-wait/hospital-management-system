@@ -57,6 +57,7 @@ public static class DependencyInjection
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IOTPService, SendOTPService>();
+        services.AddScoped<IEmailTemplateService, SendEmailTemplateService>();
 
         return services;
     }
