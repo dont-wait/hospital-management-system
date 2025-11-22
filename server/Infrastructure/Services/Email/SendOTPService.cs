@@ -19,6 +19,7 @@ public class SendOTPService : IOTPService
 
     public async Task SendOtpEmailAsync(string to, string otp)
     {
+        // Template is loaded in constructor, use cached value
         string body = _otpTemplate.Replace("{{OTP}}", otp);
         await _emailProvider.SendEmailAsync(to, "Mã OTP xác thực", body, true);
     }

@@ -62,7 +62,6 @@ public class TaskItemService : ITaskItemService
                     RoomName = t.Room!.Name,
 
                     Slots = t.SlotTimes
-                        .Where(s => s.SlotStatus == SlotStatusEnum.Opened.ToString())
                         .Select(s => new ResponseSlotTimeDTO
                         {
                             SlotId = s.Id,
