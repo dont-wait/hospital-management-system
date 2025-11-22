@@ -61,8 +61,6 @@ public class AppointmentService : IAppointmentService
         if(availableSlot == false)
             return ServiceResult<ResponseAppointmentDTO>.Fail("Khung giờ không khả dụng để đặt lịch hẹn"); //full rui
         
-        
-        
 
         Billing newBilling = new Billing()
         {

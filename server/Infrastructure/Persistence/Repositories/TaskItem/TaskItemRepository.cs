@@ -18,8 +18,7 @@ public class TaskItemRepository : ITaskItemRepository
                                                         Guid? doctorId)
     {
         var query = _context.tasks
-            .Include(t => t.SlotTimes
-                .Where(s => s.SlotStatus == SlotStatusEnum.Opened.ToString()))
+            .Include(t => t.SlotTimes)
             .Include(t => t.TaskRegistrations)
                 .ThenInclude(tr => tr.Employee)
                 .ThenInclude(tr => tr.Doctor)
@@ -52,7 +51,6 @@ public class TaskItemRepository : ITaskItemRepository
             .Where(t => t.SlotTimes
                 .Any(s => 
                     s.Id == slotTimeId && 
-                    s.SlotStatus == SlotStatusEnum.Opened.ToString() && 
                     t.TaskStatus == TaskStatusEnum.Opened.ToString() && 
                     t.Date >= _today &&
                     t.DeletedAt == null &&
