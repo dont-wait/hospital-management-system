@@ -18,7 +18,7 @@ public class AccountController : ControllerBase
         _employeeAccountService = employeeAccountService;
     }
 
-    [HttpGet("{patientId}")]
+    [HttpGet("{patientId}", Name = "pt-id")]
     [Authorize(Roles = "admin, doctor")]
     public async Task<IActionResult> GetUserById(Guid patientId)
     {
@@ -89,7 +89,7 @@ public class AccountController : ControllerBase
             return new JsonResult(new ApiResponse<ResponsePatientDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
         }
     }
-    [HttpDelete("{patientId}")]
+    [HttpDelete("{patientId}", Name = "pt-id")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeletePatientById(Guid patientId)
     {

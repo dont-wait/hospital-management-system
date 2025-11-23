@@ -17,7 +17,7 @@ public class EmployeeController : ControllerBase
         _userAccountService = userAccountService;
     }
 
-    [HttpGet("{employeeId}")]
+    [HttpGet("{employeeId}", Name = "emp-id")]
     [Authorize(Roles = "admin, manager")]
     public async Task<IActionResult> GetEmployeeById(Guid employeeId)
     {
@@ -73,7 +73,7 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [HttpDelete("{employeeId}")]
+    [HttpDelete("{employeeId}", Name = "emp-id")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteEmployeeById(Guid employeeId)
     {

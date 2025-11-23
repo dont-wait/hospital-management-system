@@ -36,9 +36,9 @@ public class AppointmentController : ControllerBase
 
     [HttpGet("available-slots")]
     [Authorize(Roles = "admin, doctor, patient, nurse")]
-    public async Task<IActionResult> GetAvailableAppointments([FromQuery] DateOnly? date,
-                                                            [FromQuery] int? departmentId,
-                                                            [FromQuery] Guid? doctorId)
+    public async Task<IActionResult> GetAvailableAppointments([FromQuery (Name = "d")] DateOnly? date,
+                                                            [FromQuery (Name = "dp-id")] int? departmentId,
+                                                            [FromQuery (Name = "doc-id")] Guid? doctorId)
     {
         try
         {
