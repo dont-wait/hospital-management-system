@@ -1,4 +1,4 @@
-namespace Infrastructure.Services.SlotTime;
+namespace Application.Config.SlotTime;
 public class SlotTimeConfig
 {
     public int DefaultMaxAppointments { get; set; }

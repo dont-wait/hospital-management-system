@@ -1,4 +1,4 @@
-using Infrastructure.Services.SlotTime;
+using Application.Config.SlotTime;
 using Microsoft.Extensions.Options;
 
 public class SlotTimeService : ISlotTimeService

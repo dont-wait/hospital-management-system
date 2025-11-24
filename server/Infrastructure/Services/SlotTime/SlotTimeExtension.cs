@@ -1,3 +1,4 @@
+using Application.Config.SlotTime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
