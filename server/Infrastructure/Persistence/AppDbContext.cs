@@ -14,7 +14,6 @@ public class AppDbContext : DbContext
     public DbSet<Billing> billings { get; set; } = null!;
     public DbSet<TaskItem> tasks { get; set; } = null!;
     public DbSet<TaskRegistration> task_registrations { get; set; } = null!;
-    public DbSet<TaskRequirement> task_requirements { get; set; } = null!;
     public DbSet<SlotTime> slot_times { get; set; } = null!;
     public DbSet<Appointment> appointments { get; set; } = null!;
     public DbSet<Service> services { get; set; } = null!;

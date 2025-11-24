@@ -27,7 +27,6 @@ public class TaskItem : BaseEntity
     public string TaskStatus { get; set; } = TaskStatusEnum.Opened.ToString();
     
     public ICollection<TaskRegistration> TaskRegistrations { get; set; } = new List<TaskRegistration>();
-    public ICollection<TaskRequirement> TaskRequirements { get; set; } = new List<TaskRequirement>();
     public ICollection<SlotTime> SlotTimes { get; set; } = new List<SlotTime>();
 
     public int? DepartmentId { get; set; } = null;
