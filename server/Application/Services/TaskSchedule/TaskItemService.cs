@@ -1,12 +1,16 @@
 ﻿using Application.Common.Utils;
+using Application.Config.SlotTime;
+using Domain.Entities.ScheduleTask;
 using Domain.Enums;
 public class TaskItemService : ITaskItemService
 {
     private readonly ITaskItemRepository _taskItemRepository;
+    private readonly ISlotTimeService _slotTimeService;
     
-    public TaskItemService(ITaskItemRepository taskItemRepository)
+    public TaskItemService(ITaskItemRepository taskItemRepository, ISlotTimeService slotTimeService)
     {
         _taskItemRepository = taskItemRepository;
+        _slotTimeService = slotTimeService;
     }
 
     public Task<ServiceResult<ResponseAvailableAppointment>> GetAvailableAppointments(DateOnly? date,
@@ -40,7 +44,6 @@ public class TaskItemService : ITaskItemService
 
             PriceOfService = 200000,
 
-            // SelectMany để mỗi TaskRegistration (bác sĩ) thành 1 schedule riêng
             Schedules = availableTaskItems
                 .SelectMany(t => t.TaskRegistrations
                     .Where(tr => tr.Employee?.Doctor != null)
@@ -58,7 +61,6 @@ public class TaskItemService : ITaskItemService
                         Specialization = tr.Employee.Doctor.Specialization,
                         RoomName = t.Room!.Name,
 
-                        // Chỉ lấy slots của bác sĩ này
                         Slots = tr.SlotTimes
                             .Select(s => new ResponseSlotTimeDTO
                             {
@@ -72,5 +74,65 @@ public class TaskItemService : ITaskItemService
                 .ToList()
         };
         return Task.FromResult(ServiceResult<ResponseAvailableAppointment>.Success(response));
+    }
+
+    public async Task<ServiceResult<ResponseTaskItemDTO>> CreateTaskItemAsync(
+        RequestTaskItemDTO requestTaskItemDTO,
+        List<RequestTaskRegistrationDTO> taskRegistrations
+    )
+    {
+        List<SlotTime> slotTimes = GenerateSlotTimes(requestTaskItemDTO);
+        TaskItem createdTaskItem = await _taskItemRepository.CreateTaskItem(
+            requestTaskItemDTO,
+            taskRegistrations,
+            slotTimes
+        );
+
+        var response = new ResponseTaskItemDTO
+        {
+            ScheduleId = createdTaskItem.Id,
+            StartTime = createdTaskItem.Date.ToDateTime(createdTaskItem.StartTime),
+            EndTime = createdTaskItem.Date.ToDateTime(createdTaskItem.EndTime),
+            ScheduleStatus = createdTaskItem.TaskStatus,
+            DepartmentId = createdTaskItem.DepartmentId ?? 0,
+            RoomName = createdTaskItem.Room?.Name ?? string.Empty,
+            TaskRegistrations = createdTaskItem.TaskRegistrations
+                .Select(tr => new ResponseTaskRegistrationDTO
+                {
+                    EmployeeId = tr.EmployeeId,
+                })
+                .ToList()
+        };
+
+        return ServiceResult<ResponseTaskItemDTO>.Success(response);
+    } 
+
+    private List<SlotTime> GenerateSlotTimes(RequestTaskItemDTO task)
+    {
+        SlotTimeConfig slotTimeConfig = _slotTimeService.GetSlotTimeConfig<SlotTimeConfig>();
+    
+        List<SlotTime>? slots = new List<SlotTime>();
+        TimeOnly current = task.StartTime;
+        TimeSpan slotDuration = TimeSpan.FromHours(1);
+
+        while (current < task.EndTime)
+        {
+            var next = current.Add(slotDuration);
+            if (next > task.EndTime)
+                next = task.EndTime;
+
+            slots.Add(new SlotTime
+            {
+                SlotStartTime = current,
+                SlotEndTime = next,
+                MaxAppointments = slotTimeConfig.DefaultMaxAppointments,
+                CurrentAppointments = 0,
+                SlotStatus = SlotStatusEnum.Opened.ToString(),
+            });
+
+            current = next;
+        }
+
+        return slots;
     }
 }
