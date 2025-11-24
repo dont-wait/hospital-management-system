@@ -64,4 +64,41 @@ public class TaskItemRepository : ITaskItemRepository
                         && t.DeletedAt == null);
         return query.FirstOrDefaultAsync();
     }
+
+    public async Task<TaskItem> CreateTaskItem(
+        RequestTaskItemDTO requestTaskItemDTO,
+        List<RequestTaskRegistrationDTO> taskRegistrations,
+        List<SlotTime> slotTimes
+    )
+    {
+        var taskItem = new TaskItem
+        {
+            Name = requestTaskItemDTO.TaskName,
+            Date = requestTaskItemDTO.Date,
+            StartTime = requestTaskItemDTO.StartTime,
+            EndTime = requestTaskItemDTO.EndTime,
+            Description = requestTaskItemDTO.Description,
+            TaskStatus = TaskStatusEnum.Opened.ToString(),
+            DepartmentId = requestTaskItemDTO.DepartmentId,
+            RoomId = requestTaskItemDTO.RoomId,
+            TaskRegistrations = taskRegistrations.Select(tr => new TaskRegistration
+            {
+                EmployeeId = tr.EmployeeId,
+                SlotTimes = slotTimes.Select(s => new SlotTime
+                {
+                    SlotStartTime = s.SlotStartTime,
+                    SlotEndTime = s.SlotEndTime,
+                    MaxAppointments = s.MaxAppointments,
+                    CurrentAppointments = s.CurrentAppointments,
+                    SlotStatus = s.SlotStatus
+                }).ToList()
+            }).ToList()
+        };
+
+        _context.tasks.Add(taskItem);
+        await _context.SaveChangesAsync();
+
+        return taskItem;
+    }
+
 }
