@@ -9,5 +9,6 @@
     public string RoomName { get; set; } = string.Empty;
     public string? FullName { get; set;}
     public string Specialization { get; set;} = string.Empty;
+    public List<ResponseTaskRegistrationDTO> TaskRegistrations { get; set; } = new List<ResponseTaskRegistrationDTO>();
     public List<ResponseSlotTimeDTO> Slots { get; set;} = new List<ResponseSlotTimeDTO>();
 }
