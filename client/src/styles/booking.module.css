@@ -45,7 +45,7 @@
 }
 
 .booking-title {
-  @apply mt-2 text-center h-10 text-xs md:text-base;
+  @apply mt-2 text-center h-10 text-[10px] md:text-base;
 }
 
 .text-disable {
