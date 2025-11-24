@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251124135652_refatorColumnFkTaskRegstrationInSlotTime")]
+    partial class refatorColumnFkTaskRegstrationInSlotTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -819,6 +822,9 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("TaskItemId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("TaskRegistrationId")
                         .HasColumnType("bigint");
 
@@ -829,6 +835,8 @@ namespace server.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TaskItemId");
 
                     b.HasIndex("TaskRegistrationId");
 
@@ -1083,6 +1091,10 @@ namespace server.Migrations
 
             modelBuilder.Entity("SlotTime", b =>
                 {
+                    b.HasOne("Domain.Entities.ScheduleTask.TaskItem", null)
+                        .WithMany("SlotTimes")
+                        .HasForeignKey("TaskItemId");
+
                     b.HasOne("Domain.Entities.ScheduleTask.TaskRegistration", "TaskRegistration")
                         .WithMany()
                         .HasForeignKey("TaskRegistrationId")
@@ -1133,6 +1145,8 @@ namespace server.Migrations
 
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskItem", b =>
                 {
+                    b.Navigation("SlotTimes");
+
                     b.Navigation("TaskRegistrations");
                 });
 

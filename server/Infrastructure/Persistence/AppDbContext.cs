@@ -32,6 +32,12 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
+        modelBuilder.Entity<TaskRegistration>()
+            .HasMany(tr => tr.SlotTimes)
+            .WithOne(st => st.TaskRegistration)
+            .HasForeignKey(st => st.TaskRegistrationId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         modelBuilder.Entity<Billing>()
             .HasOne(b => b.Appointment)
             .WithMany()

@@ -15,5 +15,7 @@ public class TaskRegistration : BaseEntity
     public Guid EmployeeId { get; set; }
     public virtual Employee Employee { get; set; } = null!;
     
+    public ICollection<SlotTime> SlotTimes { get; set; } = new List<SlotTime>();
+    
     //Cot createAt se la thoi gian employee dang ky tham gia task
 }

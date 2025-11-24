@@ -8,16 +8,16 @@ public class TaskItemService : ITaskItemService
     {
         _taskItemRepository = taskItemRepository;
     }
-    
+
     public Task<ServiceResult<ResponseAvailableAppointment>> GetAvailableAppointments(DateOnly? date,
-                                                                                    int? departmentId,
-                                                                                    Guid? doctorId)
+        int? departmentId,
+        Guid? doctorId)
     {
         var today = DateOnly.FromDateTime(DateTime.Now);
         if (date.HasValue && date.Value < today)
             return Task.FromResult(
                 ServiceResult<ResponseAvailableAppointment>.Fail("Ngày chọn phải lớn hơn hoặc bằng hôm nay"));
-    
+
         var availableTaskItems = _taskItemRepository
             .GetAvailableTaskItemsForBooking(date, departmentId, doctorId);
 
@@ -40,40 +40,37 @@ public class TaskItemService : ITaskItemService
 
             PriceOfService = 200000,
 
-            Schedules = availableTaskItems.Select(t =>
-            {
-                var doctorReg = t.TaskRegistrations
-                    .FirstOrDefault(tr => tr.Employee?.Doctor != null);
+            // SelectMany để mỗi TaskRegistration (bác sĩ) thành 1 schedule riêng
+            Schedules = availableTaskItems
+                .SelectMany(t => t.TaskRegistrations
+                    .Where(tr => tr.Employee?.Doctor != null)
+                    .Select(tr => new ResponseTaskItemDTO
+                    {
+                        ScheduleId = t.Id,
+                        StartTime = t.Date.ToDateTime(t.StartTime),
+                        EndTime = t.Date.ToDateTime(t.EndTime),
+                        ScheduleStatus = t.TaskStatus,
+                        DepartmentId = t.Department!.Id,
 
-                return new ResponseTaskItemDTO
-                {
-                    ScheduleId = t.Id,
-                    StartTime = t.Date.ToDateTime(t.StartTime),
-                    EndTime = t.Date.ToDateTime(t.EndTime),
-                    ScheduleStatus = t.TaskStatus,
-                    DepartmentId = t.Department!.Id,
+                        DoctorId = tr.Employee.Doctor.Id,
 
-                    DoctorId = doctorReg?.Employee.Doctor.Id ?? Guid.Empty,
+                        FullName = $"{tr.Employee.FirstName} {tr.Employee.LastName}",
+                        Specialization = tr.Employee.Doctor.Specialization,
+                        RoomName = t.Room!.Name,
 
-                    FullName = doctorReg != null
-                        ? $"{doctorReg.Employee.FirstName} {doctorReg.Employee.LastName}"
-                        : string.Empty,
-                    Specialization = doctorReg!.Employee.Doctor.Specialization,
-                    RoomName = t.Room!.Name,
-
-                    Slots = t.SlotTimes
-                        .Select(s => new ResponseSlotTimeDTO
-                        {
-                            SlotId = s.Id,
-                            SlotStatus = s.SlotStatus,
-                            SlotStartTime = s.SlotStartTime,
-                            SlotEndTime = s.SlotEndTime
-                        })
-                        .ToList()
-                };
-            }).ToList()
+                        // Chỉ lấy slots của bác sĩ này
+                        Slots = tr.SlotTimes
+                            .Select(s => new ResponseSlotTimeDTO
+                            {
+                                SlotId = s.Id,
+                                SlotStatus = s.SlotStatus,
+                                SlotStartTime = s.SlotStartTime,
+                                SlotEndTime = s.SlotEndTime
+                            })
+                            .ToList()
+                    }))
+                .ToList()
         };
-
         return Task.FromResult(ServiceResult<ResponseAvailableAppointment>.Success(response));
     }
 }

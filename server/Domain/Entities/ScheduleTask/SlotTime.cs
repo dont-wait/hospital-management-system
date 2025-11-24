@@ -13,6 +13,8 @@ public class SlotTime : BaseEntity
     public int CurrentAppointments { get; set; } = 0;
     
     public string SlotStatus { get; set; } = SlotStatusEnum.Opened.ToString();
-    public long TaskItemId { get; set; }
-    public TaskItem TaskItem { get; set; } = null!;
+    
+    [Required]
+    public long TaskRegistrationId { get; set; }
+    public virtual TaskRegistration TaskRegistration { get; set; } = null!;
 }

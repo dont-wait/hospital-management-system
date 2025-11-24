@@ -52,7 +52,8 @@ public class AppointmentService : IAppointmentService
         if(taskInfoAppointment == null)
             return ServiceResult<ResponseAppointmentDTO>.Fail("Không tìm thấy thông tin lịch hẹn");
 
-        var slotTime = taskInfoAppointment.SlotTimes
+        var slotTime = taskInfoAppointment.TaskRegistrations
+            .SelectMany(tr => tr.SlotTimes)
             .FirstOrDefault(st => st.Id == request.SlotTimeId);
         
         if(slotTime == null)
