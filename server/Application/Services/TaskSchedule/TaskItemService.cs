@@ -84,7 +84,11 @@ public class TaskItemService : ITaskItemService
         RequestTaskItemDTO requestTaskItemDTO,
         List<RequestTaskRegistrationDTO> taskRegistrations
     )
-    {
+    {  
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        if (requestTaskItemDTO.Date < today)
+            return ServiceResult<ResponseTaskItemDTO>.Fail("Ngày chọn phải lớn hơn hoặc bằng hôm nay");
+
         bool hasDuplicateEmployeeIds = IsEmployeeIdDuplicate(taskRegistrations);
         if (hasDuplicateEmployeeIds)
         {
