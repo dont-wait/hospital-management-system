@@ -71,12 +71,15 @@ public class TaskItemRepository : ITaskItemRepository
         List<SlotTime> slotTimes
     )
     {
+        var startTime = slotTimes.First().SlotStartTime;
+        var endTime = slotTimes.Last().SlotEndTime;
+
         var taskItem = new TaskItem
         {
             Name = requestTaskItemDTO.TaskName,
             Date = requestTaskItemDTO.Date,
-            StartTime = requestTaskItemDTO.StartTime,
-            EndTime = requestTaskItemDTO.EndTime,
+            StartTime = startTime,
+            EndTime = endTime,
             Description = requestTaskItemDTO.Description,
             TaskStatus = TaskStatusEnum.Opened.ToString(),
             DepartmentId = requestTaskItemDTO.DepartmentId,

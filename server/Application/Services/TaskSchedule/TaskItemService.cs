@@ -86,7 +86,7 @@ public class TaskItemService : ITaskItemService
         {
             return ServiceResult<ResponseTaskItemDTO>.Fail("Danh sách nhân viên đăng ký không được chứa ID trùng lặp.");
         }
-        
+
         List<SlotTime> slotTimes = GenerateSlotTimes(requestTaskItemDTO);
         TaskItem createdTaskItem = await _taskItemRepository.CreateTaskItem(
             requestTaskItemDTO,
@@ -165,15 +165,21 @@ public class TaskItemService : ITaskItemService
     {
         SlotTimeConfig slotTimeConfig = _slotTimeService.GetSlotTimeConfig<SlotTimeConfig>();
     
+        // Lấy thông tin ca làm việc từ config
+        var shiftConfig = task.WorkShift == WorkShiftEnum.Morning 
+            ? slotTimeConfig.MorningShift 
+            : slotTimeConfig.AfternoonShift;
+
         List<SlotTime>? slots = new List<SlotTime>();
-        TimeOnly current = task.StartTime;
+        TimeOnly current = shiftConfig.StartTime;
+        TimeOnly endTime = shiftConfig.EndTime;
         TimeSpan slotDuration = TimeSpan.FromHours(1);
 
-        while (current < task.EndTime)
+        while (current < endTime)
         {
             var next = current.Add(slotDuration);
-            if (next > task.EndTime)
-                next = task.EndTime;
+            if (next > endTime)
+                next = endTime;
 
             slots.Add(new SlotTime
             {

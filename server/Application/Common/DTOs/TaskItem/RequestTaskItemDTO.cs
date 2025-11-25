@@ -10,10 +10,7 @@ public class RequestTaskItemDTO
     public DateOnly Date { get; set; }
 
     [Required]
-    public TimeOnly StartTime { get; set; }
-
-    [Required]
-    public TimeOnly EndTime { get; set; }
+    public WorkShiftEnum WorkShift { get; set; }
 
     [MaxLength(300)]
     public string Description { get; set; } = string.Empty;
