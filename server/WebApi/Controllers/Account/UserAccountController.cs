@@ -49,7 +49,7 @@ public class AccountController : ControllerBase
 
             ServiceResult<ResponseUserDTO?> result = _userAccountService.RoleId switch
             {
-                nameof(RoleEnum.doctor) => await _employeeAccountService.GetEmployeeByIdAsync(currentUserId.Value),
+                nameof(RoleEnum.doctor) or nameof(RoleEnum.hod) => await _employeeAccountService.GetEmployeeByIdAsync(currentUserId.Value),
                 _ => await _userAccountService.GetUserAccountByIdAsync(currentUserId.Value),
             };
 

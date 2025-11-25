@@ -36,7 +36,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin, hod")]
     public async Task<IActionResult> GetAllEmployeesAsync(string? role, int? departmentId)
     {
         var result = await _employeeAccountService.GetAllEmployeesAsync(role, departmentId);
