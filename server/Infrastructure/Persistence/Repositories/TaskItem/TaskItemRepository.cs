@@ -149,4 +149,28 @@ public class TaskItemRepository : ITaskItemRepository
 
         return taskItem;
     }
+
+    public async Task<bool> CheckEmployeeScheduleExists(Guid employeeId, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+    {
+        return await _context.tasks
+            .AnyAsync(t => t.Date == date
+                        && t.StartTime == startTime
+                        && t.EndTime == endTime
+                        && t.DeletedAt == null
+                        && t.TaskRegistrations.Any(tr => tr.EmployeeId == employeeId));
+    }
+
+    public async Task<List<Guid>> CheckEmployeesScheduleExists(List<Guid> employeeIds, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+    {
+        return await _context.tasks
+            .Where(t => t.Date == date
+                        && t.StartTime == startTime
+                        && t.EndTime == endTime
+                        && t.DeletedAt == null)
+            .SelectMany(t => t.TaskRegistrations
+                .Where(tr => employeeIds.Contains(tr.EmployeeId))
+                .Select(tr => tr.EmployeeId))
+            .Distinct()
+            .ToListAsync();
+    }
 }

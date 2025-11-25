@@ -89,6 +89,12 @@ public class TaskItemService : ITaskItemService
         if (requestTaskItemDTO.Date < today)
             return ServiceResult<ResponseTaskItemDTO>.Fail("Ngày chọn phải lớn hơn hoặc bằng hôm nay");
 
+        // Lấy thông tin ca làm việc từ config
+        SlotTimeConfig slotTimeConfig = _slotTimeService.GetSlotTimeConfig<SlotTimeConfig>();
+        var shiftConfig = requestTaskItemDTO.WorkShift == WorkShiftEnum.Morning 
+            ? slotTimeConfig.MorningShift 
+            : slotTimeConfig.AfternoonShift;
+
         var employeeIds = taskRegistrations.Select(tr => tr.EmployeeId).ToList();
         var employees = await _employeeAccountService.GetEmployeeByIdsAsync(employeeIds);
 
@@ -99,8 +105,22 @@ public class TaskItemService : ITaskItemService
         foreach (var taskReg in taskRegistrations) {
             if (!employeeDepartmentMap!.TryGetValue(taskReg.EmployeeId, out var empDepartmentId) || empDepartmentId != requestTaskItemDTO.DepartmentId)
             {
-                return ServiceResult<ResponseTaskItemDTO>.Fail($"Nhân viên ${taskReg.EmployeeId} không thuộc khoa đã chọn.");
+                return ServiceResult<ResponseTaskItemDTO>.Fail($"Nhân viên {taskReg.EmployeeId} không thuộc khoa đã chọn.");
             }
+        }
+
+        var employeesWithSchedule = await _taskItemRepository.CheckEmployeesScheduleExists(
+            employeeIds,
+            requestTaskItemDTO.Date,
+            shiftConfig.StartTime,
+            shiftConfig.EndTime
+        );
+
+        if (employeesWithSchedule.Any())
+        {
+            string shiftName = requestTaskItemDTO.WorkShift == WorkShiftEnum.Morning ? "sáng" : "chiều";
+            var conflictEmployees = string.Join(", ", employeesWithSchedule);
+            return ServiceResult<ResponseTaskItemDTO>.Fail($"Các nhân viên sau đã có lịch làm việc ca {shiftName} ngày {requestTaskItemDTO.Date:dd/MM/yyyy}: {conflictEmployees}");
         }
 
         List<SlotTime> slotTimes = GenerateSlotTimes(requestTaskItemDTO);
