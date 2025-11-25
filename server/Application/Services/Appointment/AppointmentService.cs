@@ -10,8 +10,6 @@ public class AppointmentService : IAppointmentService
     private readonly ISlotTimeRepository _slotTimeRepository;
     private readonly ITaskItemRepository _taskItemRepository;
     private readonly IBillingRepository _billingRepository;
-    private readonly IEmailTemplateService _emailTemplateService;
-    
     public AppointmentService(
                             IUserAccountRepository userAccountRepository,
                             IEmployeeRepository employeeRepository,
@@ -19,8 +17,7 @@ public class AppointmentService : IAppointmentService
                             ITaskItemRepository taskItemRepository,
                             IBillingRepository billingRepository,
                             IAppointmentRepository appointmentRepository,
-                            ISlotTimeRepository slotTimeRepository,
-                            IEmailTemplateService emailTemplateService
+                            ISlotTimeRepository slotTimeRepository
                             )
     {
         _userAccountRepository = userAccountRepository;
@@ -30,7 +27,6 @@ public class AppointmentService : IAppointmentService
         _billingRepository = billingRepository;
         _appointmentRepository = appointmentRepository;
         _slotTimeRepository = slotTimeRepository;
-        _emailTemplateService = emailTemplateService;
         
     }
     
@@ -136,15 +132,6 @@ public class AppointmentService : IAppointmentService
                 ? $"{existingDoctorWithAccount.Employee.FirstName} {existingDoctorWithAccount.Employee.LastName}"
                 : string.Empty
         };
-
-        try
-        {
-            await _emailTemplateService.SendConfirmedAppointmentEmailAsync(existingPatient.Email, response);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Đã xảy ra lỗi khi gửi email: " + ex.Message);
-        }
 
         successCount++;
     }
