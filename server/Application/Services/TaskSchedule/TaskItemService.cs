@@ -52,6 +52,7 @@ public class TaskItemService : ITaskItemService
                         ScheduleStatus = t.TaskStatus,
                         DepartmentId = t.Department!.Id,
                         DepartmentName = t.Department!.Name,
+                        DepartmentDescription = t.Department.Description,
 
                         DoctorId = tr.Employee.Doctor.Id,
 
