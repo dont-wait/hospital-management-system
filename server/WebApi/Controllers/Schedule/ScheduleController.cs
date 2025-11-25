@@ -1,4 +1,5 @@
 using Application.Common.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers.Schedule;
@@ -13,7 +14,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-
+    [Authorize(Roles = "admin, hod")]
     public async Task<IActionResult> CreateSchedule([FromBody] RequestTaskItemDTO request)
     {
         try
@@ -29,6 +30,8 @@ public class ScheduleController : ControllerBase
         }
     }   
 
+    [HttpGet]
+    [Authorize(Roles = "admin, doctor, hod")]
     public async Task<IActionResult> GetScheduleByEmployeeId(Guid empId)
     {
         try

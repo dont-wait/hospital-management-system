@@ -81,6 +81,12 @@ public class TaskItemService : ITaskItemService
         List<RequestTaskRegistrationDTO> taskRegistrations
     )
     {
+        bool hasDuplicateEmployeeIds = IsEmployeeIdDuplicate(taskRegistrations);
+        if (hasDuplicateEmployeeIds)
+        {
+            return ServiceResult<ResponseTaskItemDTO>.Fail("Danh sách nhân viên đăng ký không được chứa ID trùng lặp.");
+        }
+        
         List<SlotTime> slotTimes = GenerateSlotTimes(requestTaskItemDTO);
         TaskItem createdTaskItem = await _taskItemRepository.CreateTaskItem(
             requestTaskItemDTO,
@@ -182,5 +188,11 @@ public class TaskItemService : ITaskItemService
         }
 
         return slots;
+    }
+
+    private bool IsEmployeeIdDuplicate(List<RequestTaskRegistrationDTO> taskRegistrations)
+    {
+        var employeeIds = taskRegistrations.Select(tr => tr.EmployeeId);
+        return employeeIds.Count() != employeeIds.Distinct().Count();
     }
 }
