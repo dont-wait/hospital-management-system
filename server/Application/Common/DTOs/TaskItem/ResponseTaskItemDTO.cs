@@ -6,6 +6,7 @@
     public string ScheduleStatus { get; set; } = string.Empty; //TaskStatus
     public Guid DoctorId { get; set;}
     public int DepartmentId { get; set;}
+    public string DepartmentName { get; set;} = string.Empty;
     public string RoomName { get; set; } = string.Empty;
     public string? FullName { get; set;}
     public string Specialization { get; set;} = string.Empty;
