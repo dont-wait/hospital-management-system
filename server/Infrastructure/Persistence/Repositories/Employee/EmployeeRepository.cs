@@ -119,6 +119,22 @@ public class EmployeeRepository : IEmployeeRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<List<UserAccount>?> GetEmployeeByIdsAsync(List<Guid> employeeIds)
+    {
+        return await _context.user_accounts
+            .Where(ua => ua.Employee != null 
+                && employeeIds.Contains(ua.Employee.Id)
+                && ua.DeletedAt == null
+                && ua.Employee.DeletedAt == null
+            )
+            .Include(ua => ua.Employee)
+                .ThenInclude(d => d!.Department)
+            .Include(ua => ua.Employee!.Doctor)
+            .Include(ua => ua.Employee!.Admin)
+            .AsSplitQuery()
+            .ToListAsync();
+    }
+
     public async Task UpdateEmployeeAsync<T>(T employee, UserAccount userAccount) where T : Employee
     {
         _context.user_accounts.Update(userAccount);
