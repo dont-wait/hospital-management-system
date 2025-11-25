@@ -105,6 +105,36 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<ResponseUserDTO?>.Success(responseUserDto);
     }
 
+    public async Task<ServiceResult<List<ResponseUserDTO>?>> GetEmployeeByIdsAsync(List<Guid> employeeIds)
+    {
+        List<UserAccount>? userAccounts = await _employeeRepository.GetEmployeeByIdsAsync(employeeIds);
+        if (userAccounts == null || userAccounts.Count == 0)
+            return ServiceResult<List<ResponseUserDTO>?>.Fail("Không tìm thấy nhân viên nào.");
+
+        List<ResponseUserDTO> responseUserDtos = userAccounts.Select(userAccount =>
+        {
+            ResponseEmployeeDTO? employeeDto = null;
+            Employee? employee = userAccount.Employee;
+
+            if (employee != null)
+            {
+                employeeDto = _employeeMapper.MapToDto(employee);
+            }
+
+            return new ResponseUserDTO
+            {
+                UserAccountId = userAccount.Id,
+                CitizenID = userAccount.CitizenID,
+                AvatarUrl = userAccount.AvatarUrl ?? string.Empty,
+                Is_Active = userAccount.Is_Active,
+                Patient = null,
+                Employee = employeeDto
+            };
+        }).ToList();
+
+        return ServiceResult<List<ResponseUserDTO>?>.Success(responseUserDtos);
+    }
+
     public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllEmployeesByRoleIdAsync(string roleId)
     {
         var validRoles = 

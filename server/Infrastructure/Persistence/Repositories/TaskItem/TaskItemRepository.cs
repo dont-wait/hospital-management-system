@@ -64,4 +64,113 @@ public class TaskItemRepository : ITaskItemRepository
                         && t.DeletedAt == null);
         return query.FirstOrDefaultAsync();
     }
+
+    public async Task<TaskItem> CreateTaskItem(
+        RequestTaskItemDTO requestTaskItemDTO,
+        List<RequestTaskRegistrationDTO> taskRegistrations,
+        List<SlotTime> slotTimes
+    )
+    {
+        var startTime = slotTimes.First().SlotStartTime;
+        var endTime = slotTimes.Last().SlotEndTime;
+
+        var taskItem = new TaskItem
+        {
+            Name = requestTaskItemDTO.TaskName,
+            Date = requestTaskItemDTO.Date,
+            StartTime = startTime,
+            EndTime = endTime,
+            Description = requestTaskItemDTO.Description,
+            TaskStatus = TaskStatusEnum.Opened.ToString(),
+            DepartmentId = requestTaskItemDTO.DepartmentId,
+            RoomId = requestTaskItemDTO.RoomId,
+            TaskRegistrations = taskRegistrations.Select(tr => new TaskRegistration
+            {
+                EmployeeId = tr.EmployeeId,
+                SlotTimes = slotTimes.Select(s => new SlotTime
+                {
+                    Id = s.Id,
+                    SlotStartTime = s.SlotStartTime,
+                    SlotEndTime = s.SlotEndTime,
+                    MaxAppointments = s.MaxAppointments,
+                    CurrentAppointments = s.CurrentAppointments,
+                    SlotStatus = s.SlotStatus
+                }).ToList()
+            }).ToList()
+        };
+
+        Room? Room = await _context.rooms.FindAsync(requestTaskItemDTO.RoomId);
+
+        taskItem.Room = Room;
+
+        _context.tasks.Add(taskItem);
+        await _context.SaveChangesAsync();
+
+        return taskItem;
+    }
+
+    public async Task<List<TaskItem>> GetTaskItemByEmployeeId(Guid employeeId)
+    {
+        var taskItem = await _context.tasks
+            .Where(t => t.TaskRegistrations.Any(tr => tr.EmployeeId == employeeId) 
+                        && t.DeletedAt == null)
+            .Select(t => new TaskItem
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Date = t.Date,
+                StartTime = t.StartTime,
+                EndTime = t.EndTime,
+                Description = t.Description,
+                TaskStatus = t.TaskStatus,
+                DepartmentId = t.DepartmentId,
+                RoomId = t.RoomId,
+                Department = t.Department,
+                Room = t.Room,
+                TaskRegistrations = t.TaskRegistrations
+                    .Where(tr => tr.EmployeeId == employeeId)
+                    .Select(tr => new TaskRegistration
+                    {
+                        Id = tr.Id,
+                        EmployeeId = tr.EmployeeId,
+                        Employee = tr.Employee,
+                        SlotTimes = tr.SlotTimes
+                    })
+                    .ToList()
+            })
+            .OrderByDescending(t => t.Date)
+            .ThenByDescending(t => t.StartTime)
+            .ToListAsync();
+
+        if (taskItem == null)
+        {
+            throw new Exception("Không tìm thấy TaskItem cho EmployeeId đã cho.");
+        }
+
+        return taskItem;
+    }
+
+    public async Task<bool> CheckEmployeeScheduleExists(Guid employeeId, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+    {
+        return await _context.tasks
+            .AnyAsync(t => t.Date == date
+                        && t.StartTime == startTime
+                        && t.EndTime == endTime
+                        && t.DeletedAt == null
+                        && t.TaskRegistrations.Any(tr => tr.EmployeeId == employeeId));
+    }
+
+    public async Task<List<Guid>> CheckEmployeesScheduleExists(List<Guid> employeeIds, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+    {
+        return await _context.tasks
+            .Where(t => t.Date == date
+                        && t.StartTime == startTime
+                        && t.EndTime == endTime
+                        && t.DeletedAt == null)
+            .SelectMany(t => t.TaskRegistrations
+                .Where(tr => employeeIds.Contains(tr.EmployeeId))
+                .Select(tr => tr.EmployeeId))
+            .Distinct()
+            .ToListAsync();
+    }
 }
