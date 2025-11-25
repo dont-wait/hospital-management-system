@@ -89,16 +89,15 @@ public class TaskItemService : ITaskItemService
         if (requestTaskItemDTO.Date < today)
             return ServiceResult<ResponseTaskItemDTO>.Fail("Ngày chọn phải lớn hơn hoặc bằng hôm nay");
 
-        bool hasDuplicateEmployeeIds = IsEmployeeIdDuplicate(taskRegistrations);
-        if (hasDuplicateEmployeeIds)
-        {
-            return ServiceResult<ResponseTaskItemDTO>.Fail("Danh sách nhân viên đăng ký không được chứa ID trùng lặp.");
-        }
+        var employeeIds = taskRegistrations.Select(tr => tr.EmployeeId).ToList();
+        var employees = await _employeeAccountService.GetEmployeeByIdsAsync(employeeIds);
 
-        foreach (var taskReg in taskRegistrations)
-        {
-            bool isValidDepartment = await CheckEmployeeIncludeDepartment(taskReg.EmployeeId, requestTaskItemDTO.DepartmentId);
-            if (!isValidDepartment)
+        var employeeDepartmentMap = employees.Data?
+            .Where(e => e.Employee != null)
+            .ToDictionary(e => e.Employee!.EmployeeId, e => e.Employee!.DepartmentId);
+ 
+        foreach (var taskReg in taskRegistrations) {
+            if (!employeeDepartmentMap!.TryGetValue(taskReg.EmployeeId, out var empDepartmentId) || empDepartmentId != requestTaskItemDTO.DepartmentId)
             {
                 return ServiceResult<ResponseTaskItemDTO>.Fail($"Nhân viên ${taskReg.EmployeeId} không thuộc khoa đã chọn.");
             }
