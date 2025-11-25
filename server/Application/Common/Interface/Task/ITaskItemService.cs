@@ -6,4 +6,5 @@ public interface ITaskItemService
         RequestTaskItemDTO requestTaskItemDTO, 
         List<RequestTaskRegistrationDTO> taskRegistrations
     );
+    Task<ServiceResult<ResponseTaskItemDTO>> GetTaskItemByEmployeeIdAsync(Guid employeeId);
 }

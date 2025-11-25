@@ -116,6 +116,43 @@ public class TaskItemService : ITaskItemService
         return ServiceResult<ResponseTaskItemDTO>.Success(response);
     } 
 
+    public async Task<ServiceResult<ResponseTaskItemDTO>> GetTaskItemByEmployeeIdAsync(Guid employeeId)
+    {
+        TaskItem taskItem = await _taskItemRepository.GetTaskItemByEmployeeId(employeeId);
+        if (taskItem == null)
+        {
+            return ServiceResult<ResponseTaskItemDTO>.Fail("Không tìm thấy lịch làm việc cho nhân viên này");
+        }
+
+        var response = new ResponseTaskItemDTO
+        {
+            ScheduleId = taskItem.Id,
+            StartTime = taskItem.Date.ToDateTime(taskItem.StartTime),
+            EndTime = taskItem.Date.ToDateTime(taskItem.EndTime),
+            ScheduleStatus = taskItem.TaskStatus,
+            DepartmentId = taskItem.DepartmentId ?? 0,
+            RoomName = taskItem.Room?.Name ?? string.Empty,
+            TaskRegistrations = taskItem.TaskRegistrations
+                .Select(tr => new ResponseTaskRegistrationDTO
+                {
+                    EmployeeId = tr.EmployeeId,
+                })
+                .ToList(),
+            Slots = taskItem.TaskRegistrations
+                .SelectMany(tr => tr.SlotTimes)
+                .Select(s => new ResponseSlotTimeDTO
+                {
+                    SlotId = s.Id,
+                    SlotStartTime = s.SlotStartTime,
+                    SlotEndTime = s.SlotEndTime,
+                    SlotStatus = s.SlotStatus
+                })
+                .ToList()
+        };
+
+        return ServiceResult<ResponseTaskItemDTO>.Success(response);
+    }
+
     private List<SlotTime> GenerateSlotTimes(RequestTaskItemDTO task)
     {
         SlotTimeConfig slotTimeConfig = _slotTimeService.GetSlotTimeConfig<SlotTimeConfig>();
