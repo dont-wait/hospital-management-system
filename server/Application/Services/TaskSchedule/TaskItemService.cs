@@ -101,6 +101,15 @@ public class TaskItemService : ITaskItemService
                 {
                     EmployeeId = tr.EmployeeId,
                 })
+                .ToList(),
+            Slots = slotTimes
+                .Select(s => new ResponseSlotTimeDTO
+                {
+                    SlotId = s.Id,
+                    SlotStartTime = s.SlotStartTime,
+                    SlotEndTime = s.SlotEndTime,
+                    SlotStatus = s.SlotStatus
+                })
                 .ToList()
         };
 
