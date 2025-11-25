@@ -28,4 +28,19 @@ public class ScheduleController : ControllerBase
             return new JsonResult(new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
         }
     }   
+
+    public async Task<IActionResult> GetScheduleByEmployeeId(Guid empId)
+    {
+        try
+        {
+            var result = await _taskItemService.GetTaskItemByEmployeeIdAsync(empId);
+            if (result.IsSuccess)
+                return new JsonResult(new ApiResponse<ResponseTaskItemDTO>(200, "Lấy lịch khám thành công", result.Data)) { StatusCode = 200 };
+            return new JsonResult(new ApiResponse<string>(404, result.Message)) { StatusCode = 404 };
+        }
+        catch
+        {
+            return new JsonResult(new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
+        }
+    }
 }

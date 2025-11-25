@@ -86,6 +86,7 @@ public class TaskItemRepository : ITaskItemRepository
                 EmployeeId = tr.EmployeeId,
                 SlotTimes = slotTimes.Select(s => new SlotTime
                 {
+                    Id = s.Id,
                     SlotStartTime = s.SlotStartTime,
                     SlotEndTime = s.SlotEndTime,
                     MaxAppointments = s.MaxAppointments,
@@ -95,10 +96,54 @@ public class TaskItemRepository : ITaskItemRepository
             }).ToList()
         };
 
+        Room? Room = await _context.rooms.FindAsync(requestTaskItemDTO.RoomId);
+
+        taskItem.Room = Room;
+
         _context.tasks.Add(taskItem);
         await _context.SaveChangesAsync();
 
         return taskItem;
     }
 
+    public async Task<TaskItem> GetTaskItemByEmployeeId(Guid employeeId)
+    {
+        var taskItem = await _context.tasks
+            .Where(t => t.TaskRegistrations.Any(tr => tr.EmployeeId == employeeId) 
+                        && t.DeletedAt == null)
+            .Select(t => new TaskItem
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Date = t.Date,
+                StartTime = t.StartTime,
+                EndTime = t.EndTime,
+                Description = t.Description,
+                TaskStatus = t.TaskStatus,
+                DepartmentId = t.DepartmentId,
+                RoomId = t.RoomId,
+                Department = t.Department,
+                Room = t.Room,
+                TaskRegistrations = t.TaskRegistrations
+                    .Where(tr => tr.EmployeeId == employeeId)
+                    .Select(tr => new TaskRegistration
+                    {
+                        Id = tr.Id,
+                        EmployeeId = tr.EmployeeId,
+                        Employee = tr.Employee,
+                        SlotTimes = tr.SlotTimes
+                    })
+                    .ToList()
+            })
+            .OrderByDescending(t => t.Date)
+            .ThenByDescending(t => t.StartTime)
+            .FirstOrDefaultAsync();
+
+        if (taskItem == null)
+        {
+            throw new Exception("Không tìm thấy TaskItem cho EmployeeId đã cho.");
+        }
+
+        return taskItem;
+    }
 }
