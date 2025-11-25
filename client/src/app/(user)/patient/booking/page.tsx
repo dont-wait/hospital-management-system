@@ -10,20 +10,22 @@ import BookingPayment from "@/components/patient/booking/payment/BookingPayment"
 
 type BookingPageProps = {
   searchParams?: Promise<{
-    specialty?: string;
+    departmentId?: string;
+    day?: string;
   }>;
 };
 
 export default async function BookingPage(props: BookingPageProps) {
   const searchParams = await props.searchParams;
-  const specialty = searchParams?.specialty ?? "";
+  const departmentId = searchParams?.departmentId ?? "";
+  const day = searchParams?.day ?? "";
   return (
     <BookingContainer>
       <AddMedicalRecord />
       <SelectPriority />
       <AddBookingInfo>
-        <SelectDepartment />
-        <SelectDoctor specialty={specialty} />
+        <SelectDepartment day={day} departmentId={departmentId} />
+        <SelectDoctor day={day} departmentId={departmentId} />
         <SelectDay />
       </AddBookingInfo>
       <ConfirmBooking />

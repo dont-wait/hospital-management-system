@@ -11,19 +11,20 @@ export type BookingAction =
   | { type: "PREV_STEP"; step: number }
   | { type: "SET_PRIORITY"; priority: Priority }
   | { type: "SET_PATIENT"; patient: Patient }
-  | { type: "SET_SPECIALTY"; specialty: string }
+  | { type: "SET_DEPARTMENT_INFO"; id: number; name: string }
   | { type: "SET_DATE"; date: string }
   | {
       type: "SET_APPOINTMENT_INFO";
       doctor: BookingDoctor;
-      specialty: string;
+      departmentId: number;
+      departmentName: string;
       date: string;
       timeSlot: string;
       roomName: string;
     }
-  | { type: "RESET_FILTER"; specialty: string; date: string; doctor: null }
+  | { type: "RESET_FILTER" }
   | { type: "ADD_RECORD" }
-  | { type: "REMOVE_RECORD"; specialty: string };
+  | { type: "REMOVE_RECORD"; departmentName: string };
 
 function reducer(state: BookingData, action: BookingAction): BookingData {
   switch (action.type) {
@@ -35,15 +36,16 @@ function reducer(state: BookingData, action: BookingAction): BookingData {
       return { ...state, priority: action.priority };
     case "SET_PATIENT":
       return { ...state, patient: action.patient };
-    case "SET_SPECIALTY":
-      return { ...state, specialty: action.specialty };
+    case "SET_DEPARTMENT_INFO":
+      return { ...state, departmentId: action.id, departmentName: action.name };
     case "SET_DATE":
       return { ...state, date: action.date };
     case "SET_APPOINTMENT_INFO":
       return {
         ...state,
         doctor: action.doctor,
-        specialty: action.specialty,
+        departmentId: action.departmentId,
+        departmentName: action.departmentName,
         date: action.date,
         timeSlot: action.timeSlot,
         roomName: action.roomName,
@@ -55,7 +57,7 @@ function reducer(state: BookingData, action: BookingAction): BookingData {
           ...state.records,
           {
             patient: state.patient!,
-            specialty: state.specialty,
+            departmentName: state.departmentName!,
             doctor: state.doctor!,
             date: state.date,
             timeSlot: state.timeSlot,
@@ -68,15 +70,16 @@ function reducer(state: BookingData, action: BookingAction): BookingData {
       return {
         ...state,
         records: state.records.filter(
-          (record) => record.specialty !== action.specialty,
+          (record) => record.departmentName !== action.departmentName,
         ),
       };
     case "RESET_FILTER":
       return {
         ...state,
-        specialty: action.specialty,
-        date: action.date,
-        doctor: action.doctor,
+        departmentId: null,
+        departmentName: "",
+        date: "",
+        doctor: null,
       };
     default:
       return state;
@@ -91,15 +94,16 @@ interface BookingContextValue {
   state: BookingData;
   nextStep: () => void;
   prevStep: () => void;
-  setSpecialty: (specialty: string) => void;
+  setDepartment: (id: number, name: string) => void;
   setDate: (date: string) => void;
   addBookingRecord: () => void;
-  removeBookingRecord: (specialty: string) => void;
+  removeBookingRecord: (departmentName: string) => void;
   changeToStepOne: (patient: Patient) => void;
   changeToStepTwo: (priority: Priority) => void;
   changeToStepThree: (
     doctor: BookingDoctor,
-    specialty: string,
+    departmentId: number,
+    departmentName: string,
     date: string,
     timeSlot: string,
     roomName: string,
@@ -121,7 +125,7 @@ export function BookingProvider({ children }: BookingProviderProps) {
 
   const prevStep = () => {
     const isEmpty: boolean =
-      state.specialty === "" && state.date === "" && state.doctor === null;
+      state.departmentName === "" && state.date === "" && state.doctor === null;
     if (state.step !== 2 || isEmpty) {
       dispatch({
         type: "PREV_STEP",
@@ -129,20 +133,20 @@ export function BookingProvider({ children }: BookingProviderProps) {
       });
     }
 
-    const hasSpecialtyOnly: boolean =
-      !!state.specialty && !state.date && !state.doctor;
+    const hasDepartmentOnly: boolean =
+      !!state.departmentName && !state.date && !state.doctor;
     const hasDateOnly: boolean =
-      !state.specialty && !!state.date && !state.doctor;
+      !state.departmentName && !!state.date && !state.doctor;
     const hasDoctorOnly: boolean =
-      !state.specialty && !state.date && !!state.doctor;
+      !state.departmentName && !state.date && !!state.doctor;
     let priority: Priority = "date";
 
-    if (hasSpecialtyOnly) priority = "specialty";
+    if (hasDepartmentOnly) priority = "department";
     else if (hasDateOnly) priority = "date";
     else if (hasDoctorOnly) priority = "doctor";
 
     dispatch({ type: "SET_PRIORITY", priority });
-    dispatch({ type: "RESET_FILTER", specialty: "", date: "", doctor: null });
+    dispatch({ type: "RESET_FILTER" });
   };
 
   const changeToStepOne = (patient: Patient) => {
@@ -155,17 +159,19 @@ export function BookingProvider({ children }: BookingProviderProps) {
     nextStep();
   };
 
-  const setSpecialty = (specialty: string) => {
-    dispatch({ type: "SET_SPECIALTY", specialty });
+  const setDepartment = (id: number, name: string) => {
+    dispatch({ type: "SET_DEPARTMENT_INFO", id, name });
     const priority: Priority =
-      state.priority === "specialty" && !state.date ? "date" : "doctor";
+      state.priority === "department" && !state.date ? "date" : "doctor";
     dispatch({ type: "SET_PRIORITY", priority });
   };
 
   const setDate = (date: string) => {
     dispatch({ type: "SET_DATE", date });
     const priority: Priority =
-      state.priority === "date" && !state.specialty ? "specialty" : "doctor";
+      state.priority === "date" && !state.departmentName
+        ? "department"
+        : "doctor";
     dispatch({ type: "SET_PRIORITY", priority });
   };
 
@@ -175,16 +181,17 @@ export function BookingProvider({ children }: BookingProviderProps) {
       step: 1,
     });
 
-    dispatch({ type: "RESET_FILTER", specialty: "", date: "", doctor: null });
+    dispatch({ type: "RESET_FILTER" });
   };
 
-  const removeBookingRecord = (specialty: string) => {
-    dispatch({ type: "REMOVE_RECORD", specialty });
+  const removeBookingRecord = (departmentName: string) => {
+    dispatch({ type: "REMOVE_RECORD", departmentName });
   };
 
   const changeToStepThree = (
     doctor: BookingDoctor,
-    specialty: string,
+    departmentId: number,
+    departmentName: string,
     date: string,
     timeSlot: string,
     roomName: string,
@@ -192,14 +199,15 @@ export function BookingProvider({ children }: BookingProviderProps) {
     dispatch({
       type: "SET_APPOINTMENT_INFO",
       doctor,
-      specialty,
+      departmentId,
+      departmentName,
       date,
       timeSlot,
       roomName,
     });
 
     const isValid: boolean = state.records.every(
-      (record) => record.specialty !== specialty,
+      (record) => record.departmentName !== departmentName,
     );
     if (!isValid) {
       showToast("Chuyên khoa này đã được chọn!", "info");
@@ -215,7 +223,7 @@ export function BookingProvider({ children }: BookingProviderProps) {
         state,
         nextStep,
         prevStep,
-        setSpecialty,
+        setDepartment,
         setDate,
         addBookingRecord,
         removeBookingRecord,

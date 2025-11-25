@@ -44,7 +44,7 @@ export default function ConfirmContent() {
           >
             <button
               onClick={() => {
-                removeBookingRecord(record.specialty);
+                removeBookingRecord(record.departmentName);
               }}
               className="absolute top-3 right-3 p-2 rounded-full hover:bg-red-100 transition"
             >
@@ -65,7 +65,7 @@ export default function ConfirmContent() {
                 icon="Stethoscope"
                 iconColor="text-white"
                 label="Chuyên khoa"
-                value={record.specialty}
+                value={record.departmentName}
               />
 
               <BookingItem

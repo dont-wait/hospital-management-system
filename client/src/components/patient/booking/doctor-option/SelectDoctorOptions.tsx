@@ -19,12 +19,12 @@ export default function SelectDoctorOptions({
         const end: unknown = formatDateTime(schedule.endTime);
         return (
           <div
-            key={schedule.doctor.doctorId}
+            key={schedule.doctorId}
             className="w-full rounded-xl border bg-white p-4 text-left shadow-sm"
           >
             <div className="mb-2">
               <h3 className="text-lg font-semibold text-martinique">
-                {schedule.doctor.fullName}
+                {schedule.fullName}
               </h3>
             </div>
 
@@ -35,8 +35,13 @@ export default function SelectDoctorOptions({
                     key={slot.slotId}
                     onClick={() => {
                       changeToStepThree(
-                        schedule.doctor,
-                        schedule.doctor.specialization,
+                        {
+                          doctorId: schedule.doctorId,
+                          specialization: schedule.specialization,
+                          fullName: schedule.fullName,
+                        },
+                        schedule.departmentId,
+                        schedule.departmentName,
                         typeof start !== "string"
                           ? (start as DateTime).date
                           : start,
@@ -62,7 +67,7 @@ export default function SelectDoctorOptions({
             <div className="space-y-1">
               <p className="text-east-bay py-2">
                 <span className="font-medium">
-                  {schedule.doctor.specialization} -{" "}
+                  {schedule.specialization} -{" "}
                 </span>
                 <span>{schedule.roomName}</span>
               </p>
