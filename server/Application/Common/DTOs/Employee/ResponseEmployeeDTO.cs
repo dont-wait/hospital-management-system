@@ -16,5 +16,6 @@ public class ResponseEmployeeDTO
     public string CertificateNumber { get; set; } = string.Empty;
     public string RoleId { get; set; } = string.Empty;
     public int ExperienceYears { get; set; }
+    public int? DepartmentId { get; set; }
     public string DepartmentName { get; set; } = string.Empty;
 }

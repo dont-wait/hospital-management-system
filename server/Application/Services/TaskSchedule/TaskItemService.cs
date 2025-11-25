@@ -6,11 +6,15 @@ public class TaskItemService : ITaskItemService
 {
     private readonly ITaskItemRepository _taskItemRepository;
     private readonly ISlotTimeService _slotTimeService;
-    
-    public TaskItemService(ITaskItemRepository taskItemRepository, ISlotTimeService slotTimeService)
+    private readonly IEmployeeAccountService _employeeAccountService;
+    private readonly IDepartmentRepository _departmentRepository;
+
+    public TaskItemService(ITaskItemRepository taskItemRepository, ISlotTimeService slotTimeService, IEmployeeAccountService employeeAccountService, IDepartmentRepository departmentRepository)
     {
         _taskItemRepository = taskItemRepository;
         _slotTimeService = slotTimeService;
+        _employeeAccountService = employeeAccountService;
+        _departmentRepository = departmentRepository;
     }
 
     public Task<ServiceResult<ResponseAvailableAppointment>> GetAvailableAppointments(DateOnly? date,
@@ -85,6 +89,15 @@ public class TaskItemService : ITaskItemService
         if (hasDuplicateEmployeeIds)
         {
             return ServiceResult<ResponseTaskItemDTO>.Fail("Danh sách nhân viên đăng ký không được chứa ID trùng lặp.");
+        }
+
+        foreach (var taskReg in taskRegistrations)
+        {
+            bool isValidDepartment = await CheckEmployeeIncludeDepartment(taskReg.EmployeeId, requestTaskItemDTO.DepartmentId);
+            if (!isValidDepartment)
+            {
+                return ServiceResult<ResponseTaskItemDTO>.Fail($"Nhân viên ${taskReg.EmployeeId} không thuộc khoa đã chọn.");
+            }
         }
 
         List<SlotTime> slotTimes = GenerateSlotTimes(requestTaskItemDTO);
@@ -200,5 +213,20 @@ public class TaskItemService : ITaskItemService
     {
         var employeeIds = taskRegistrations.Select(tr => tr.EmployeeId);
         return employeeIds.Count() != employeeIds.Distinct().Count();
+    }
+
+    private async Task<bool> CheckEmployeeIncludeDepartment(Guid employeeId, int? departmentId)
+    {
+        if (!departmentId.HasValue)
+            return true;
+
+        ServiceResult<ResponseUserDTO?>? employee = await _employeeAccountService.GetEmployeeByIdAsync(employeeId);
+        if (employee == null || employee.Data == null || employee.Data.Employee == null)
+            return false;
+
+        if (employee.Data.Employee.DepartmentId != departmentId)
+            return false;
+
+        return true;
     }
 }
