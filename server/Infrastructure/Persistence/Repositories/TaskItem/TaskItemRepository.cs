@@ -13,13 +13,13 @@ public class TaskItemRepository : ITaskItemRepository
         _employeeRepository = employeeRepository;
     }
     
-    public List<TaskItem> GetAvailableTaskItemsForBooking(DateOnly? date,
+    public async Task<List<TaskItem>> GetAvailableTaskItemsForBooking(DateOnly? date,
         int? departmentId,
         Guid? doctorId)
     {
         var query = _context.tasks
             .Include(t => t.TaskRegistrations)
-            .ThenInclude(tr => tr.SlotTimes)  // Đúng - truy cập trực tiếp navigation property
+            .ThenInclude(tr => tr.SlotTimes) 
             .Include(t => t.TaskRegistrations)
             .ThenInclude(tr => tr.Employee)
             .ThenInclude(e => e.Doctor)

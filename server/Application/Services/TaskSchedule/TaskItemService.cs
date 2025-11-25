@@ -9,22 +9,20 @@ public class TaskItemService : ITaskItemService
         _taskItemRepository = taskItemRepository;
     }
 
-    public Task<ServiceResult<ResponseAvailableAppointment>> GetAvailableAppointments(DateOnly? date,
+    public async Task<ServiceResult<ResponseAvailableAppointment>> GetAvailableAppointments(DateOnly? date,
         int? departmentId,
         Guid? doctorId)
     {
         var today = DateOnly.FromDateTime(DateTime.Now);
         if (date.HasValue && date.Value < today)
-            return Task.FromResult(
-                ServiceResult<ResponseAvailableAppointment>.Fail("Ngày chọn phải lớn hơn hoặc bằng hôm nay"));
+            return ServiceResult<ResponseAvailableAppointment>.Fail("Ngày chọn phải lớn hơn hoặc bằng hôm nay");
 
-        var availableTaskItems = _taskItemRepository
+        var availableTaskItems = await _taskItemRepository
             .GetAvailableTaskItemsForBooking(date, departmentId, doctorId);
 
         if (!availableTaskItems.Any())
         {
-            return Task.FromResult(
-                ServiceResult<ResponseAvailableAppointment>.Fail("Không có lịch khả dụng"));
+            return ServiceResult<ResponseAvailableAppointment>.Fail("Không có lịch khả dụng");
         }
 
         var first = availableTaskItems.First();
@@ -73,6 +71,6 @@ public class TaskItemService : ITaskItemService
                     }))
                 .ToList()
         };
-        return Task.FromResult(ServiceResult<ResponseAvailableAppointment>.Success(response));
+        return ServiceResult<ResponseAvailableAppointment>.Success(response);
     }
 }
