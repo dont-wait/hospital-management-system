@@ -8,5 +8,5 @@ public interface ITaskItemRepository
         List<RequestTaskRegistrationDTO> taskRegistrations,
         List<SlotTime> slotTimes
     );
-    Task<TaskItem> GetTaskItemByEmployeeId(Guid employeeId);
+    Task<List<TaskItem>> GetTaskItemByEmployeeId(Guid employeeId);
 }

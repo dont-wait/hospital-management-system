@@ -106,7 +106,7 @@ public class TaskItemRepository : ITaskItemRepository
         return taskItem;
     }
 
-    public async Task<TaskItem> GetTaskItemByEmployeeId(Guid employeeId)
+    public async Task<List<TaskItem>> GetTaskItemByEmployeeId(Guid employeeId)
     {
         var taskItem = await _context.tasks
             .Where(t => t.TaskRegistrations.Any(tr => tr.EmployeeId == employeeId) 
@@ -137,7 +137,7 @@ public class TaskItemRepository : ITaskItemRepository
             })
             .OrderByDescending(t => t.Date)
             .ThenByDescending(t => t.StartTime)
-            .FirstOrDefaultAsync();
+            .ToListAsync();
 
         if (taskItem == null)
         {

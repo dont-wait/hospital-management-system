@@ -116,29 +116,31 @@ public class TaskItemService : ITaskItemService
         return ServiceResult<ResponseTaskItemDTO>.Success(response);
     } 
 
-    public async Task<ServiceResult<ResponseTaskItemDTO>> GetTaskItemByEmployeeIdAsync(Guid employeeId)
+    public async Task<ServiceResult<List<ResponseTaskItemDTO>>> GetTaskItemByEmployeeIdAsync(Guid employeeId)
     {
-        TaskItem taskItem = await _taskItemRepository.GetTaskItemByEmployeeId(employeeId);
-        if (taskItem == null)
+        List<TaskItem> taskItem = await _taskItemRepository.GetTaskItemByEmployeeId(employeeId);
+        if (taskItem == null || !taskItem.Any() || taskItem.Count == 0)
         {
-            return ServiceResult<ResponseTaskItemDTO>.Fail("Không tìm thấy lịch làm việc cho nhân viên này");
+            return ServiceResult<List<ResponseTaskItemDTO>>.Fail("Không tìm thấy lịch làm việc cho nhân viên này");
         }
 
-        var response = new ResponseTaskItemDTO
+        List<ResponseTaskItemDTO> response = taskItem.Select(t => new ResponseTaskItemDTO
         {
-            ScheduleId = taskItem.Id,
-            StartTime = taskItem.Date.ToDateTime(taskItem.StartTime),
-            EndTime = taskItem.Date.ToDateTime(taskItem.EndTime),
-            ScheduleStatus = taskItem.TaskStatus,
-            DepartmentId = taskItem.DepartmentId ?? 0,
-            RoomName = taskItem.Room?.Name ?? string.Empty,
-            TaskRegistrations = taskItem.TaskRegistrations
+            ScheduleId = t.Id,
+            StartTime = t.Date.ToDateTime(t.StartTime),
+            EndTime = t.Date.ToDateTime(t.EndTime),
+            ScheduleStatus = t.TaskStatus,
+            DepartmentId = t.DepartmentId ?? 0,
+            RoomName = t.Room?.Name ?? string.Empty,
+            TaskRegistrations = t.TaskRegistrations
+                .Where(tr => tr.EmployeeId == employeeId)
                 .Select(tr => new ResponseTaskRegistrationDTO
                 {
                     EmployeeId = tr.EmployeeId,
                 })
                 .ToList(),
-            Slots = taskItem.TaskRegistrations
+            Slots = t.TaskRegistrations
+                .Where(tr => tr.EmployeeId == employeeId)
                 .SelectMany(tr => tr.SlotTimes)
                 .Select(s => new ResponseSlotTimeDTO
                 {
@@ -148,9 +150,9 @@ public class TaskItemService : ITaskItemService
                     SlotStatus = s.SlotStatus
                 })
                 .ToList()
-        };
+        }).ToList();
 
-        return ServiceResult<ResponseTaskItemDTO>.Success(response);
+        return ServiceResult<List<ResponseTaskItemDTO>>.Success(response);
     }
 
     private List<SlotTime> GenerateSlotTimes(RequestTaskItemDTO task)

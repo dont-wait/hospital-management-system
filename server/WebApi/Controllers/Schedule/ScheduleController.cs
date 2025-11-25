@@ -33,9 +33,9 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var result = await _taskItemService.GetTaskItemByEmployeeIdAsync(empId);
+            ServiceResult<List<ResponseTaskItemDTO>>? result = await _taskItemService.GetTaskItemByEmployeeIdAsync(empId);
             if (result.IsSuccess)
-                return new JsonResult(new ApiResponse<ResponseTaskItemDTO>(200, "Lấy lịch khám thành công", result.Data)) { StatusCode = 200 };
+                return new JsonResult(new ApiResponse<List<ResponseTaskItemDTO>>(200, "Lấy lịch khám thành công", result.Data)) { StatusCode = 200 };
             return new JsonResult(new ApiResponse<string>(404, result.Message)) { StatusCode = 404 };
         }
         catch
