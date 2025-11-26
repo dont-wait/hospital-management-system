@@ -41,7 +41,10 @@ export default async function SelectDoctor({
     <div className={styles["booking-box"]}>
       <h2 className={styles["booking-card-heading"]}>Chọn bác sĩ</h2>
       <div className={styles["doctor-options"]}>
-        <SelectDoctorOptions schedules={scheduleData?.schedules ?? []} />
+        <SelectDoctorOptions
+          schedules={scheduleData?.schedules ?? []}
+          price={scheduleData.priceOfService}
+        />
       </div>
       <PrevButton />
     </div>

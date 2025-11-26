@@ -161,10 +161,12 @@ export interface BaseBookingInfo {
 
 export interface BookingRecord {
   patient: Patient;
+  departmentId: number;
   departmentName: string;
   doctor: BookingDoctor;
   date: string;
-  timeSlot: string;
+  slotTime: string;
+  slotTimeId: number;
   roomName: string;
   price: number;
 }
@@ -177,7 +179,8 @@ export interface BookingData {
   departmentName: string;
   doctor: BookingDoctor | null;
   date: string;
-  timeSlot: string;
+  slotTimeId: number | null;
+  slotTime: string;
   roomName: string;
   records: BookingRecord[];
   price: number;
@@ -269,4 +272,22 @@ export interface UserListState {
   searchTerm: string;
   selectedUser: AuthUserWithoutTokens | null;
   activeModal: ModalType;
+}
+
+export type AppointmentInfo = Pick<
+  BookingRecord,
+  "departmentId" | "slotTimeId"
+> & {
+  appointmentDate: string;
+  doctorId: string;
+};
+
+export interface AppointmentDto {
+  patientId: string;
+  appointmentSlots: AppointmentInfo[];
+}
+
+export interface ApiError {
+  status: number;
+  message: string;
 }

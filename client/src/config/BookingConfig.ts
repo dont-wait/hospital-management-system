@@ -34,7 +34,7 @@ export const priorityOptions: PriorityOption[] = [
   },
 ];
 
-export const defaultBookingData: BookingData= {
+export const defaultBookingData: BookingData = {
   step: 0,
   patient: null,
   priority: null,
@@ -42,9 +42,10 @@ export const defaultBookingData: BookingData= {
   departmentName: "",
   doctor: null,
   date: "",
-  timeSlot: "",
+  slotTimeId: null,
+  slotTime: "",
   roomName: "",
-  price: 200000,
+  price: 0,
   records: [],
   insurance: "",
 };

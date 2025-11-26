@@ -10,7 +10,7 @@ import {
   useMemo,
 } from "react";
 import Cookie from "js-cookie";
-import { useRouter } from "next/navigation";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Loading } from "@/components";
 import { AuthService, IpGeoService } from "@/services";
 import { TokenUtils } from "@/lib/client";
@@ -28,6 +28,8 @@ const UserAuthContext = createContext<UserAuthContextType<
 > | null>(null);
 
 export function UserAuthProvider({ children }: { children: ReactNode }) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<Patient | Employee | null>(null);
   const router = useRouter();
@@ -61,7 +63,13 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const params = new URLSearchParams(searchParams);
     const hasToken = Cookie.get("hasToken") === "true";
+
+    params.delete("departmentId");
+    params.delete("day");
+    router.replace(`${pathname}?${params.toString()}`);
+
     if (!hasToken) {
       TokenUtils.clearStoredUser();
       setIsLoading(false);

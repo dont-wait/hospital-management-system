@@ -6,10 +6,12 @@ import { Schedule, DateTime } from "@/types";
 
 interface SelectDoctorOptionsProps {
   schedules: Schedule[];
+  price: number;
 }
 
 export default function SelectDoctorOptions({
   schedules,
+  price,
 }: SelectDoctorOptionsProps) {
   const { changeToStepThree } = useBookingExamContext();
   return (
@@ -19,7 +21,7 @@ export default function SelectDoctorOptions({
         const end: unknown = formatDateTime(schedule.endTime);
         return (
           <div
-            key={schedule.doctorId}
+            key={schedule.scheduleId}
             className="w-full rounded-xl border bg-white p-4 text-left shadow-sm"
           >
             <div className="mb-2">
@@ -45,8 +47,10 @@ export default function SelectDoctorOptions({
                         typeof start !== "string"
                           ? (start as DateTime).date
                           : start,
+                        slot.slotId,
                         `${slot.slotStartTime} - ${slot.slotEndTime}`,
                         schedule.roomName,
+                        price,
                       );
                     }}
                     className="px-3 py-1.5 rounded-sm text-sm font-medium border bg-green-50 border-green-300 text-green-700"

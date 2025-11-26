@@ -73,7 +73,7 @@ export default function ConfirmContent() {
                 icon="Calendar"
                 iconColor="text-white"
                 label="Ngày & Giờ khám"
-                value={`${record.date} - ${record.timeSlot}`}
+                value={`${record.date} - ${record.slotTime}`}
               />
 
               <BookingItem

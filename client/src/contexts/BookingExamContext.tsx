@@ -3,7 +3,14 @@
 import { createContext, useContext, useReducer, ReactNode } from "react";
 import { defaultBookingData, bookingSteps } from "@/config";
 import { useToast } from "@/contexts";
-import { BookingDoctor, BookingData, Priority, Patient } from "@/types";
+import { AppointmentService } from "@/services";
+import {
+  BookingDoctor,
+  BookingData,
+  Priority,
+  Patient,
+  AppointmentDto,
+} from "@/types";
 
 export type BookingAction =
   | { type: "SET_STEP"; step: number }
@@ -19,8 +26,10 @@ export type BookingAction =
       departmentId: number;
       departmentName: string;
       date: string;
-      timeSlot: string;
+      slotTimeId: number;
+      slotTime: string;
       roomName: string;
+      price: number;
     }
   | { type: "RESET_FILTER" }
   | { type: "ADD_RECORD" }
@@ -47,8 +56,10 @@ function reducer(state: BookingData, action: BookingAction): BookingData {
         departmentId: action.departmentId,
         departmentName: action.departmentName,
         date: action.date,
-        timeSlot: action.timeSlot,
+        slotTimeId: action.slotTimeId,
+        slotTime: action.slotTime,
         roomName: action.roomName,
+        price: action.price,
       };
     case "ADD_RECORD":
       return {
@@ -57,10 +68,12 @@ function reducer(state: BookingData, action: BookingAction): BookingData {
           ...state.records,
           {
             patient: state.patient!,
+            departmentId: state.departmentId!,
             departmentName: state.departmentName!,
             doctor: state.doctor!,
             date: state.date,
-            timeSlot: state.timeSlot,
+            slotTimeId: state.slotTimeId!,
+            slotTime: state.slotTime,
             roomName: state.roomName,
             price: state.price,
           },
@@ -98,6 +111,7 @@ interface BookingContextValue {
   setDate: (date: string) => void;
   addBookingRecord: () => void;
   removeBookingRecord: (departmentName: string) => void;
+  confirmBooking: () => void;
   changeToStepOne: (patient: Patient) => void;
   changeToStepTwo: (priority: Priority) => void;
   changeToStepThree: (
@@ -105,8 +119,10 @@ interface BookingContextValue {
     departmentId: number,
     departmentName: string,
     date: string,
-    timeSlot: string,
+    slotTimeId: number,
+    slotTime: string,
     roomName: string,
+    price: number,
   ) => void;
 }
 
@@ -193,8 +209,10 @@ export function BookingProvider({ children }: BookingProviderProps) {
     departmentId: number,
     departmentName: string,
     date: string,
-    timeSlot: string,
+    slotTimeId: number,
+    slotTime: string,
     roomName: string,
+    price: number,
   ) => {
     dispatch({
       type: "SET_APPOINTMENT_INFO",
@@ -202,8 +220,10 @@ export function BookingProvider({ children }: BookingProviderProps) {
       departmentId,
       departmentName,
       date,
-      timeSlot,
+      slotTimeId,
+      slotTime,
       roomName,
+      price,
     });
 
     const isValid: boolean = state.records.every(
@@ -217,6 +237,21 @@ export function BookingProvider({ children }: BookingProviderProps) {
     nextStep();
   };
 
+  const confirmBooking = async () => {
+    const appointmentDto: AppointmentDto = {
+      patientId: state.patient!.patientId,
+      appointmentSlots: state.records.map((record) => ({
+        appointmentDate: record.date.split("/").reverse().join("-"),
+        doctorId: record.doctor.doctorId,
+        departmentId: record.departmentId,
+        slotTimeId: record.slotTimeId,
+      })),
+    };
+    const response = await AppointmentService.createAppointment(appointmentDto);
+    showToast(response.message, "success");
+    nextStep();
+  };
+
   return (
     <BookingContext.Provider
       value={{
@@ -227,6 +262,7 @@ export function BookingProvider({ children }: BookingProviderProps) {
         setDate,
         addBookingRecord,
         removeBookingRecord,
+        confirmBooking,
         changeToStepOne,
         changeToStepTwo,
         changeToStepThree,
