@@ -67,7 +67,6 @@ export function UserManagementProvider({ children }: { children: ReactNode }) {
   };
 
   const closeModal = () => {
-    console.log("hi");
     dispatch({ type: "CLOSE_MODAL" });
   };
 

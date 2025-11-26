@@ -17,8 +17,8 @@ export default function SelectDoctorOptions({
   return (
     <>
       {schedules.map((schedule) => {
-        const start: unknown = formatDateTime(schedule.startTime);
-        const end: unknown = formatDateTime(schedule.endTime);
+        const start: DateTime | string = formatDateTime(schedule.startTime);
+        const end: DateTime | string = formatDateTime(schedule.endTime);
         return (
           <div
             key={schedule.scheduleId}

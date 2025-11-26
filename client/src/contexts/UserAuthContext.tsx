@@ -62,9 +62,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams);
     const hasToken = Cookie.get("hasToken") === "true";
-
     router.replace(pathname);
 
     if (!hasToken) {
