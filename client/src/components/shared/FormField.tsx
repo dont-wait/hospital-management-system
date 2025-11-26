@@ -23,7 +23,7 @@ import {
   Textarea,
 } from "@/components";
 import { PatientUpdateDto } from "@/schemas";
-import { parseDateString, formatDateString, validateDay } from "@/lib/client";
+import { DateUtils } from "@/lib/client";
 import authStyles from "@/styles/auth.module.css";
 import inputStyles from "@/styles/input.module.css";
 
@@ -106,10 +106,18 @@ export function FormField<T extends FieldValues>({
     <div className={authStyles["form-group"]}>
       {label && (
         <Label htmlFor={id}>
-          {icon && <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-            {icon}
-            {label}
-          </span>}
+          {icon && (
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              {icon}
+              {label}
+            </span>
+          )}
           {!icon && label}
         </Label>
       )}
@@ -304,7 +312,7 @@ export function DateField<T extends FieldValues>({
   const [dayError, setDayError] = useState<string | null>(null);
   const [dateState, setDateState] = useState(() => {
     return (
-      (defaultValue && parseDateString(defaultValue)) || {
+      (defaultValue && DateUtils.parseDateString(defaultValue)) || {
         day: "",
         month: "",
         year: "",
@@ -313,14 +321,18 @@ export function DateField<T extends FieldValues>({
   });
 
   useEffect(() => {
-    const error = validateDay(dateState.day, dateState.month, dateState.year);
+    const error = DateUtils.validate(
+      dateState.day,
+      dateState.month,
+      dateState.year,
+    );
     setDayError(error);
   }, [dateState.day, dateState.month, dateState.year]);
 
   useEffect(() => {
     const { day, month, year } = dateState;
     if (day && month && year && !dayError) {
-      const dateString = formatDateString(day, month, year);
+      const dateString = DateUtils.formatDate(day, month, year);
       setValue(name, dateString as PathValue<T, Path<T>>, {
         shouldValidate: true,
       });

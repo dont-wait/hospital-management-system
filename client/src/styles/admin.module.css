@@ -2,62 +2,70 @@
 
 /* Admin Layout */
 .admin-container {
-  @apply bg-gray-50;
-}
-
-.admin-content {
-  @apply transition-all duration-300 p-4 md:p-8;
+  @apply bg-white;
 }
 
 .admin-button-sidebar {
-  @apply lg:hidden fixed top-4 left-4 z-30 p-2 rounded-lg bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors;
+  @apply lg:hidden fixed top-4 left-4 z-30 p-2 rounded-lg bg-mauve text-white shadow-lg hover:bg-mauve transition-colors;
 }
 
 .admin-main {
-  @apply flex-1 w-full transition-all duration-300 ease-in-out lg:ml-64 p-4 md:p-6 pt-16 lg:pt-6
+  @apply overflow-x-hidden relative flex-1 w-full lg:ml-64 p-4 md:p-6 pt-16 lg:pt-6;
 }
 
 .admin-layout {
-  @apply flex min-h-screen bg-gray-50;
+  @apply flex min-h-screen;
 }
 
 /* Dashboard Header */
 .dashboard-header {
-  @apply mb-8;
+  @apply mb-4;
 }
 
 .dashboard-title {
-  @apply text-3xl font-bold text-gray-800 mb-2;
+  @apply text-3xl font-bold text-martinique mb-2;
 }
 
 .dashboard-subtitle {
-  @apply text-gray-600;
+  @apply text-east-bay opacity-50;
 }
 
 /* Admin Sidebar active */
 .active {
-  @apply bg-blue-50 text-blue-600 font-semibold border-l-4 border-blue-500;
+  @apply bg-east-bay text-white font-semibold;
 }
 
 /* Admin Sidebar */
 .admin-sidebar-body {
-  @apply flex flex-col h-full bg-white text-gray-700 border-r border-gray-200;
+  @apply flex flex-col h-full bg-white text-martinique shadow-sm;
 }
 
 .admin-sidebar-content {
-  @apply flex-1 space-y-1 px-3 py-4 overflow-y-auto;
+  @apply flex-1 space-y-1 overflow-y-auto;
 }
 
 .admin-sidebar-items {
-  @apply w-full flex items-center gap-4 p-3 rounded-lg transition-all duration-200 hover:bg-blue-50 hover:text-blue-600;
+  @apply w-full flex items-center gap-4 p-3 transition-all duration-200 hover:bg-east-bay hover:text-white;
 }
 
 .admin-sidebar-item {
-  @apply p-2 rounded-lg bg-white transition-colors duration-200;
+  @apply transition-colors duration-200;
+}
+
+.admin-sidebar-items.active > .admin-sidebar-item > div {
+  @apply bg-white rounded-full text-martinique;
+}
+
+.admin-sidebar-item > div {
+  @apply rounded-full w-8 h-8 flex justify-center items-center bg-east-bay text-white;
+}
+
+.admin-sidebar-item:hover > div {
+  @apply bg-white rounded-full text-martinique;
 }
 
 .admin-sidebar-item-icon {
-  @apply text-gray-500 group-hover:text-blue-600 transition-colors duration-200;
+  @apply group-hover:text-mauve transition-colors duration-200;
 }
 
 .admin-sidebar-item-title {
@@ -66,24 +74,20 @@
 
 /* Footer (Đăng xuất / Đăng nhập) */
 .admin-sidebar-footer {
-  @apply mt-auto border-t border-gray-200 p-3;
+  @apply mt-auto border-t border-silver;
 }
 
 /* Nút đăng xuất */
 .logout-btn {
-  @apply w-full flex items-center gap-4 p-3 rounded-lg text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all duration-200;
-}
-
-.logout-btn-wrap {
-  @apply p-2 rounded-lg bg-white;
+  @apply w-full flex items-center gap-4 p-3 text-martinique hover:bg-red-50 hover:text-red-400 transition-all duration-200;
 }
 
 .logout-btn {
-  @apply w-full flex items-center gap-4 p-4 rounded-lg text-gray-700 hover:bg-red-100 transition-colors duration-200;
+  @apply w-full flex items-center gap-4 p-4 text-martinique hover:bg-red-100 transition-colors duration-200;
 }
 
 .logout-btn-wrap {
-  @apply p-2 rounded-lg bg-gray-100 transition-colors duration-200;
+  @apply p-2 bg-east-bay text-white rounded-full transition-colors duration-200;
 }
 
 .logout-btn:hover .logout-btn-wrap {
@@ -97,23 +101,7 @@
 
 /* Stat Card */
 .stat-card {
-  @apply bg-white rounded-lg shadow-md p-6 transition-all duration-300 hover:shadow-lg border-l-4;
-}
-
-.stat-card-blue {
-  @apply border-blue-500;
-}
-
-.stat-card-green {
-  @apply border-green-500;
-}
-
-.stat-card-purple {
-  @apply border-purple-500;
-}
-
-.stat-card-orange {
-  @apply border-orange-500;
+  @apply bg-white text-east-bay rounded-sm shadow-md p-6 transition-all duration-300 hover:shadow-sm border;
 }
 
 .stat-card-content {
@@ -121,31 +109,15 @@
 }
 
 .stat-card-header {
-  @apply flex items-start justify-between;
+  @apply flex items-center justify-between;
 }
 
 .stat-card-title {
-  @apply text-sm font-medium text-gray-600;
+  @apply text-sm font-medium text-east-bay font-bold text-lg;
 }
 
 .stat-card-icon {
-  @apply p-3 rounded-lg;
-}
-
-.stat-card-icon-blue {
-  @apply bg-blue-100 text-blue-600;
-}
-
-.stat-card-icon-green {
-  @apply bg-green-100 text-green-600;
-}
-
-.stat-card-icon-purple {
-  @apply bg-purple-100 text-purple-600;
-}
-
-.stat-card-icon-orange {
-  @apply bg-orange-100 text-orange-600;
+  @apply text-east-bay p-3 rounded-lg;
 }
 
 .stat-card-body {
@@ -153,19 +125,7 @@
 }
 
 .stat-card-value {
-  @apply text-3xl font-bold text-gray-800;
-}
-
-.stat-card-trend {
-  @apply text-sm font-semibold;
-}
-
-.trend-positive {
-  @apply text-green-600;
-}
-
-.trend-negative {
-  @apply text-red-600;
+  @apply text-3xl font-bold text-martinique;
 }
 
 /* Charts Section */
@@ -174,11 +134,11 @@
 }
 
 .chart-card {
-  @apply bg-white rounded-lg shadow-md p-6;
+  @apply bg-white rounded-sm shadow-sm p-6 border;
 }
 
 .chart-title {
-  @apply text-lg font-semibold text-gray-800 mb-4;
+  @apply text-lg font-semibold text-martinique mb-4;
 }
 
 .chart-placeholder {
@@ -187,11 +147,11 @@
 
 /* Recent Activity */
 .recent-activity {
-  @apply bg-white rounded-lg shadow-md p-6;
+  @apply bg-white rounded-sm shadow-sm border p-6;
 }
 
 .activity-title {
-  @apply text-lg font-semibold text-gray-800 mb-4;
+  @apply text-lg font-semibold text-martinique mb-4;
 }
 
 .activity-list {
@@ -203,7 +163,7 @@
 }
 
 .activity-icon {
-  @apply p-2 rounded-full bg-blue-100 text-blue-600;
+  @apply p-2 rounded-full bg-east-bay text-mauve;
 }
 
 .activity-content {
@@ -211,11 +171,9 @@
 }
 
 .activity-text {
-  @apply text-sm text-gray-800;
+  @apply text-sm text-martinique;
 }
 
 .activity-time {
-  @apply text-xs text-gray-500;
+  @apply text-xs text-east-bay opacity-50;
 }
-
-

@@ -42,6 +42,16 @@ builder.Services.AddScoped<IEmployeeAccountService, EmployeeAccountService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
+builder.Services.AddScoped<ITaskItemService, TaskItemService>();
+builder.Services.AddScoped<ISlotTimeRepository, SlotTimeRepository>();
+builder.Services.AddScoped<IBillingRepository, BillingRepository>();
+builder.Services.AddScoped<ISlotTimeService, SlotTimeService>();
+
 
 builder.Services.AddScoped<IUserAccountMapper, UserAccountMapper>();
 builder.Services.AddScoped<IPatientMapper, PatientMapper>();
@@ -56,8 +66,11 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await DataSeeder.SeedDepartmentsAndRoomAsync(db);
     await DataSeeder.SeedAsync(db);
-   await DataSeeder.SeedAdminAsync(db);
+    await DataSeeder.SeedAdminAsync(db);
+    await DataSeeder.SeedDoctorsAsync(db);
+    await DataSeeder.SeedServicesAsync(db);
 }
 
 app.UseCors("CorsPolicy");

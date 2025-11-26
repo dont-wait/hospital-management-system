@@ -19,16 +19,16 @@ public class Patient : BaseEntity
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
 
-    public DateTime? DateOfBirth { get; set; } = null;
+    public DateOnly? DateOfBirth { get; set; } = null;
 
     [MaxLength(150)]
     public string? Nationality { get; set; } = null;
 
-    public char? Gender { get; set; } = null;
+    [Column(TypeName = "char(1)")]
+    public string? Gender { get; set; }
 
     [MaxLength(150)]
     public string? PlaceOfResidence { get; set; } = null;
-
 
     public int Is_Insurance { get; set; } = 0; //0: Dont have insurance, 1:Have Insurance
 
@@ -46,4 +46,9 @@ public class Patient : BaseEntity
     [StringLength(20)]
     public string RoleId { get; set; } = "patient";
     public Roles Role { get; set; } = null!; 
+
+    public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+    public string DiagnosisSummary { get; set; } = string.Empty;
+    public string TreatmentSummary { get; set; } = string.Empty;
+    public string Note { get; set; } = string.Empty;
 }

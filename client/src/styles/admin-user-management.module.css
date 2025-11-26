@@ -9,11 +9,11 @@
 }
 
 .table-title {
-  @apply text-xl font-semibold text-gray-800;
+  @apply text-xl font-semibold text-martinique;
 }
 
 .add-user-btn {
-  @apply flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm min-w-[160px];
+  @apply flex items-center justify-center gap-2 px-5 py-2.5 bg-east-bay text-white rounded-sm hover:bg-martinique transition-colors duration-200 font-medium text-sm min-w-[160px];
 }
 
 .add-user-btn span {
@@ -22,19 +22,19 @@
 
 /* Search Box */
 .search-container {
-  @apply relative flex-1 max-w-md;
+  @apply relative flex flex-1 max-w-md px-2 items-center justify-between border border-silver rounded-sm overflow-hidden;
 }
 
 .search-icon {
-  @apply absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400;
+  @apply w-100 h-100 text-silver;
 }
 
 .search-input {
-  @apply w-full pl-10 pr-4 py-2.5 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+  @apply w-full px-2 py-2.5 text-sm text-east-bay bg-white focus:outline-none transition-all duration-200;
 }
 
 .search-input::placeholder {
-  @apply text-gray-400;
+  @apply text-silver;
 }
 
 /* Dropdown Button */
@@ -43,11 +43,11 @@
 }
 
 .dropdown-btn {
-  @apply text-white bg-blue-600 hover:bg-blue-700 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center transition-colors duration-200 h-full min-w-[160px];
+  @apply text-white bg-east-bay hover:bg-martinique font-medium rounded-sm text-sm gap-1 px-5 py-2.5 text-center inline-flex items-center justify-center transition-colors duration-200 h-full min-w-[160px];
 }
 
 .dropdown-icon {
-  @apply w-4 h-4 ms-2 transition-transform duration-200;
+  @apply w-100 h-100 transition-transform duration-200;
 }
 
 .dropdown-icon-open {
@@ -71,27 +71,27 @@
 }
 
 .users-table {
-  @apply w-full;
+  @apply w-full table-fixed;
 }
 
 .users-table thead {
-  @apply bg-gray-50 border-b border-gray-200;
+  @apply bg-martinique border-b border-mauve;
 }
 
-.users-table thead tr th {
-  @apply px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider;
+.users-table thead th {
+  @apply px-6 py-4 text-sm text-white;
 }
 
 .users-table tbody tr {
-  @apply border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150;
+  @apply border-b border-silver;
 }
 
-.users-table tbody tr:last-child {
-  @apply border-b-0;
+.users-table tbody td {
+  @apply py-2 text-center text-xs align-middle break-words whitespace-normal overflow-hidden;
 }
 
-.users-table tbody tr td {
-  @apply px-6 py-4 text-sm text-gray-800;
+.users-table tbody td > img, .users-table tbody td > div {
+  @apply mx-auto flex justify-center items-center gap-2;
 }
 
 .avatar {
@@ -107,15 +107,15 @@
 }
 
 .role-employee {
-  @apply bg-blue-100 text-blue-700;
+  @apply bg-east-bay text-mauve;
 }
 
 .role-patient {
-  @apply bg-green-100 text-green-700;
+  @apply bg-martinique text-white;
 }
 
 .role-guest {
-  @apply bg-gray-100 text-gray-700;
+  @apply bg-silver text-martinique;
 }
 
 .status {
@@ -142,53 +142,18 @@
   @apply opacity-50 cursor-not-allowed;
 }
 
-.action-buttons button svg {
-  @apply w-5 h-5;
-}
-
 .btn-view {
-  @apply text-blue-600 hover:bg-blue-50;
+  @apply text-martinique;
 }
 
 .btn-edit {
-  @apply text-orange-600 hover:bg-orange-50;
+  @apply text-east-bay;
 }
 
 .btn-delete {
-  @apply text-red-600 hover:bg-red-50;
+  @apply text-red-600;
 }
 
-.empty-state {
-  @apply py-12 text-center;
-}
-
-.empty-state p {
-  @apply text-gray-500 text-lg;
-}
-
-@media (max-width: 768px) {
-  .table-header {
-    @apply flex-col items-start gap-4;
-  }
-
-  .search-container {
-    @apply max-w-full;
-  }
-
-  .users-table {
-    @apply text-xs;
-  }
-
-  .users-table thead tr th,
-  .users-table tbody tr td {
-    @apply px-3 py-2;
-  }
-
-  .avatar {
-    @apply w-8 h-8;
-  }
-
-  .action-buttons button svg {
-    @apply w-4 h-4;
-  }
+.empty-state td {
+  @apply py-12 text-center text-east-bay opacity-50 font-bold;
 }

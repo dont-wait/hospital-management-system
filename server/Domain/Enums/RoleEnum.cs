@@ -4,5 +4,8 @@ public enum RoleEnum
     admin,
     doctor,
     patient,
-    hod,
+    manager,
+    nurse,
+    pharmacist,
+    hod
 }

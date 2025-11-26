@@ -44,7 +44,9 @@ public class UserAccountMapper : IUserAccountMapper
                 DateOfBirth = employee.DateOfBirth,
                 Gender = employee.Gender,
                 HireDate = employee.HireDate,
-                RoleId = employee.RoleId
+                RoleId = employee.RoleId,
+                ExperienceYears = employee.ExperienceYears,
+                DepartmentName = employee.Department.Name
             } : null
         };
     }

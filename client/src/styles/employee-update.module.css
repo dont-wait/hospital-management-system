@@ -17,7 +17,7 @@
 }
 
 .active-status-container {
-  @apply flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200;
+  @apply flex items-center gap-3 p-4 bg-silver rounded-lg border border-silver;
 }
 
 .checkbox-label {
@@ -25,17 +25,17 @@
 }
 
 .checkbox-input {
-  @apply w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer;
+  @apply w-5 h-5 text-east-bay border-silver rounded cursor-pointer;
 }
 
 .checkbox-text {
-  @apply text-sm font-medium text-gray-700;
+  @apply text-sm font-medium text-east-bay;
 }
 
 .form-actions {
-  @apply flex gap-3 justify-end mt-6 pt-6 border-t border-gray-200;
+  @apply flex gap-3 justify-end mt-2 pt-2;
 }
 
 .cancel-button {
-  @apply px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-200 font-medium;
+  @apply px-6 py-2.5 bg-east-bay opacity-50 text-white rounded-lg font-medium;
 }

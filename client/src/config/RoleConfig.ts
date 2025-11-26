@@ -1,10 +1,10 @@
-import { Role, roles } from "@/types";
+import { Roles, RolesList } from "@/types";
 
-export const ROUTE_ROLE_MAP: Record<string, readonly Role[]> = {
-  "/": roles,
+export const ROUTE_ROLE_MAP: Record<string, readonly Roles[]> = {
+  "/": RolesList,
   "/login": ["guest"],
   "/register": ["guest"],
-  "/forgot-password": roles,
+  "/forgot-password": RolesList,
   "/patient": ["patient"],
   "/patient/update": ["patient"],
   "/doctor/dashboard": ["doctor", "hod"],
@@ -15,7 +15,7 @@ export const ROUTE_ROLE_MAP: Record<string, readonly Role[]> = {
 } as const;
 
 // này mặc định khi đăng nhập sẽ chuyển đến trang nào theo role
-export const DEFAULT_ROLE_ROUTES: Record<Role, string> = {
+export const DEFAULT_ROLE_ROUTES: Record<Roles, string> = {
   admin: "/admin/dashboard",
   doctor: "/doctor/dashboard",
   hod: "/doctor/dashboard",

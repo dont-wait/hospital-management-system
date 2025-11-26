@@ -1,0 +1,138 @@
+@reference "./globals.css";
+
+.booking-section {
+  min-height: calc(100vh - 64px);
+}
+
+.booking-content {
+  @apply max-w-6xl mx-auto px-0 md:px-4 lg:px-8 py-8;
+}
+
+.booking-steps-box {
+  @apply mx-8 mb-4;
+}
+
+.booking-steps-content {
+  @apply flex items-center justify-between mb-4;
+}
+
+.booking-step {
+  @apply flex items-center flex-1;
+}
+
+.booking-step-content {
+  @apply flex flex-col items-center flex-1;
+}
+
+.booking-round {
+  @apply w-10 h-10 rounded-full flex items-center justify-center;
+}
+
+.booking-round.active {
+  @apply bg-truev text-white;
+}
+
+.booking-round.disable {
+  @apply bg-silver text-white;
+}
+
+.booking-round.done {
+  @apply bg-anakiwa text-martinique;
+}
+
+.booking-icon {
+  @apply w-5 h-5;
+}
+
+.booking-title {
+  @apply mt-2 text-center h-10 text-[10px] md:text-base;
+}
+
+.text-disable {
+  @apply text-silver;
+}
+
+.text-active {
+  @apply text-martinique;
+}
+
+.booking-line {
+  @apply h-1 flex-1;
+}
+
+.line-active {
+  @apply bg-anakiwa;
+}
+
+.line-disable {
+  @apply bg-silver;
+}
+
+.booking-box {
+  @apply bg-white rounded-lg md:shadow-lg md:border py-4 px-8;
+}
+
+.booking-card-heading {
+  @apply text-center text-2xl md:text-3xl text-martinique font-medium mb-8;
+}
+
+.priority-options {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6 mt-4;
+}
+
+.priority-card {
+  @apply border-2 border-truev rounded-lg p-6;
+}
+
+.priority-icon-bg {
+  @apply bg-truev w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4;
+}
+
+.priority-icon {
+  @apply w-8 h-8 text-white;
+}
+
+.priority-card-heading {
+  @apply text-martinique mb-2;
+}
+
+.priority-card-desc {
+  @apply text-east-bay;
+}
+
+.department-options {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.medical-record-buttons,
+.medical-record-content {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.medical-record-section {
+  @apply space-y-4;
+}
+
+.medical-record-heading {
+  @apply font-medium block text-martinique mb-2;
+}
+
+.medical-record-text {
+  @apply w-full px-4 py-3 border-2 border-silver rounded-lg;
+}
+
+.medical-record-button {
+  @apply w-full bg-truev text-white text-center py-3 rounded-lg;
+}
+
+.prev-button {
+  @apply mt-4 w-full py-2 px-4 text-center bg-martinique rounded text-white;
+}
+
+.department-item {
+  @apply border-2 border-mauve rounded-lg p-4 cursor-pointer;
+}
+
+.doctor-options {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-4;
+}

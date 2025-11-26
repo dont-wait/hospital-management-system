@@ -35,7 +35,7 @@ function SidebarCustomContent({ content } : { content: React.ReactNode }) {
         setCloseButtonMode("mobile-only");
         setContent(content);
         setPosition("left");
-        setColorBackground("#2563EB");
+        setColorBackground("#2c2a4a");
         setTitle(title);
     }, [content, title, setShowCloseButton, setContent, setPosition, setColorBackground, setTitle, setCloseButtonMode]);
 

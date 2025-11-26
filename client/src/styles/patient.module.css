@@ -9,7 +9,7 @@
 }
 
 .patient-page {
-  @apply container mx-auto px-4 py-8;
+  @apply overflow-x-hidden mx-auto px-4 py-4;
 }
 
 .patient-content {
@@ -17,7 +17,11 @@
 }
 
 .patient-helper-btn {
-  @apply w-full h-10 justify-start;
+  @apply w-full h-10;
+}
+
+.patient-re-btn {
+  @apply mt-4 w-50 h-10 bg-martinique text-mauve;
 }
 
 .patient-link {
@@ -25,7 +29,7 @@
 }
 
 .patient-helper-icon {
-  @apply mr-2 h-4 w-4;
+  @apply flex items-center justify-center mr-2 h-4 w-4;
 }
 
 .info-section {
@@ -45,11 +49,11 @@
 }
 
 .patient-modal-list-item {
-  @apply flex items-center rounded border border-gray-300 px-4 py-2 gap-2;
+  @apply flex items-center rounded border border-silver px-4 py-2 gap-2;
 }
 
 .modal-label {
-  @apply text-gray-600;
+  @apply text-east-bay;
 }
 
 .modal-content {

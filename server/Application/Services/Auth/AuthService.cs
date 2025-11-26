@@ -6,14 +6,14 @@ public class AuthService : IAuthService
 {
     private readonly IUserAccountRepository _userAccountRepository;
     private readonly IRedisService _redisService;
-    private readonly IOTPService _emailSenderService;
+    private readonly IOTPService _otpSenderService;
     private readonly ITokenService _tokenService;
 
-    public AuthService(IUserAccountRepository userAccountRepository, IRedisService redisService, IOTPService emailSenderService, ITokenService tokenService)
+    public AuthService(IUserAccountRepository userAccountRepository, IRedisService redisService, IOTPService otpSenderService, ITokenService tokenService)
     {
         _userAccountRepository = userAccountRepository;
         _redisService = redisService;
-        _emailSenderService = emailSenderService;
+        _otpSenderService = otpSenderService;
         _tokenService = tokenService;
     }
 
@@ -45,7 +45,9 @@ public class AuthService : IAuthService
                         Gender = user.Employee.Gender,
                         HireDate = user.Employee.HireDate,
                         Specialization = user.Employee.Doctor!.Specialization,
-                        RoleId = user.Employee.RoleId
+                        RoleId = user.Employee.RoleId,
+                        ExperienceYears = user.Employee.ExperienceYears,
+                        DepartmentName = user.Employee.Department.Name
                     };
                     break;
 
@@ -60,7 +62,10 @@ public class AuthService : IAuthService
                         CertificateNumber = user.Employee.CertificateNumber,
                         Gender = user.Employee.Gender,
                         DateOfBirth = user.Employee.DateOfBirth,
-                        RoleId = user.Employee.RoleId
+                        RoleId = user.Employee.RoleId,
+                        HireDate = user.Employee.HireDate,
+                        ExperienceYears = user.Employee.ExperienceYears,
+                        DepartmentName = user.Employee.Department.Name
                     };
                     break;
 
@@ -141,7 +146,7 @@ public class AuthService : IAuthService
             if (existingUserAccount != null)
                 await _redisService.SetAsync($"OTP:{request.Email}", otpData, TimeSpan.FromMinutes(3));
 
-            await _emailSenderService.SendOtpEmailAsync(request.Email, otp);
+            await _otpSenderService.SendOtpEmailAsync(request.Email, otp);
 
         }
         catch (Exception ex)

@@ -1,6 +1,6 @@
-import { Role } from "@/types";
+import { Roles } from "@/types";
 
-export function ForbiddenResponse(userRole: Role) {
+export function ForbiddenResponse(userRole: Roles) {
   const isAdmin = userRole === "admin";
   const redirectUrl = isAdmin ? "/admin/dashboard" : "/";
   const redirectLabel = isAdmin ? "Dashboard" : "Home";

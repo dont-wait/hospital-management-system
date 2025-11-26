@@ -11,13 +11,20 @@ public class EmployeeAccountService : IEmployeeAccountService
     private readonly IDoctorMapper _doctorMapper;
     private readonly IUserAccountMapper _userAccountMapper;
     private readonly IEmployeeMapper _employeeMapper;
+    private readonly IDepartmentRepository _departmentRepository;
 
-    public EmployeeAccountService(IEmployeeRepository employeeRepository, IUserAccountRepository userAccountRepository, IDoctorMapper doctorMapper, IUserAccountMapper userAccountMapper, IEmployeeMapper employeeMapper)
+    public EmployeeAccountService(IEmployeeRepository employeeRepository, 
+        IUserAccountRepository userAccountRepository, 
+        IDoctorMapper doctorMapper, IUserAccountMapper 
+            userAccountMapper, 
+        IEmployeeMapper employeeMapper, 
+        IDepartmentRepository departmentRepository)
     {
         _employeeRepository = employeeRepository;
         _userAccountRepository = userAccountRepository;
         _doctorMapper = doctorMapper;
         _userAccountMapper = userAccountMapper;
+        _departmentRepository = departmentRepository;
         _employeeMapper = employeeMapper;
     }
 
@@ -38,8 +45,13 @@ public class EmployeeAccountService : IEmployeeAccountService
             .IsPhoneNumberExistsAsync(doctorDto.PhoneNumber))
             return ServiceResult<ResponseDoctorDTO>.Fail("Số điện thoại đã tồn tại.");
 
+        if (await _departmentRepository.GetDepartmentByIdAsync(doctorDto.DepartmentId) == null)
+            return ServiceResult<ResponseDoctorDTO>.Fail("Phòng ban không tồn tại.");
+
         string hashedPassword = HashPasswordUtil.HashPassword(doctorDto.Password);
         doctorDto.Password = hashedPassword;
+
+
 
         Doctor newDoctor = await _employeeRepository.CreateDoctorAsync(doctorDto, isHeadOfDepartment);
         if (newDoctor == null)
@@ -91,6 +103,36 @@ public class EmployeeAccountService : IEmployeeAccountService
         };
 
         return ServiceResult<ResponseUserDTO?>.Success(responseUserDto);
+    }
+
+    public async Task<ServiceResult<List<ResponseUserDTO>?>> GetEmployeeByIdsAsync(List<Guid> employeeIds)
+    {
+        List<UserAccount>? userAccounts = await _employeeRepository.GetEmployeeByIdsAsync(employeeIds);
+        if (userAccounts == null || userAccounts.Count == 0)
+            return ServiceResult<List<ResponseUserDTO>?>.Fail("Không tìm thấy nhân viên nào.");
+
+        List<ResponseUserDTO> responseUserDtos = userAccounts.Select(userAccount =>
+        {
+            ResponseEmployeeDTO? employeeDto = null;
+            Employee? employee = userAccount.Employee;
+
+            if (employee != null)
+            {
+                employeeDto = _employeeMapper.MapToDto(employee);
+            }
+
+            return new ResponseUserDTO
+            {
+                UserAccountId = userAccount.Id,
+                CitizenID = userAccount.CitizenID,
+                AvatarUrl = userAccount.AvatarUrl ?? string.Empty,
+                Is_Active = userAccount.Is_Active,
+                Patient = null,
+                Employee = employeeDto
+            };
+        }).ToList();
+
+        return ServiceResult<List<ResponseUserDTO>?>.Success(responseUserDtos);
     }
 
     public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllEmployeesByRoleIdAsync(string roleId)

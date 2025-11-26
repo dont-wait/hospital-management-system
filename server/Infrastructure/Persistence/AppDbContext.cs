@@ -1,3 +1,4 @@
+using Domain.Entities.ScheduleTask;
 using Microsoft.EntityFrameworkCore;
 using Namotion.Reflection;
 
@@ -8,7 +9,16 @@ public class AppDbContext : DbContext
     {
         _currentUserService = currentUserService;
     }
-
+    
+    public DbSet<MedicalVisit> medical_visits { get; set; } = null!;
+    public DbSet<Billing> billings { get; set; } = null!;
+    public DbSet<TaskItem> tasks { get; set; } = null!;
+    public DbSet<TaskRegistration> task_registrations { get; set; } = null!;
+    public DbSet<SlotTime> slot_times { get; set; } = null!;
+    public DbSet<Appointment> appointments { get; set; } = null!;
+    public DbSet<Service> services { get; set; } = null!;
+    public DbSet<Department> departments { get; set; } = null!;
+    public DbSet<Room> rooms { get; set; } = null!;
     public DbSet<Admin> admins { get; set; } = null!;
 
     public DbSet<UserAccount> user_accounts { get; set; } = null!;
@@ -21,6 +31,59 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        modelBuilder.Entity<TaskRegistration>()
+            .HasMany(tr => tr.SlotTimes)
+            .WithOne(st => st.TaskRegistration)
+            .HasForeignKey(st => st.TaskRegistrationId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Billing>()
+            .HasOne(b => b.Appointment)
+            .WithMany()
+            .IsRequired(false);
+
+        modelBuilder.Entity<MedicalVisit>()
+            .HasOne(mv => mv.Appointment)
+            .WithMany()
+            .IsRequired(false);
+
+        
+        
+        modelBuilder.Entity<Appointment>(e =>
+            {
+                e.HasOne(a => a.Room)
+                    .WithMany(d => d.Appointments)
+                    .HasForeignKey(a => a.RoomId)
+                    .OnDelete(DeleteBehavior.NoAction);
+                e.HasOne(a => a.MedicalVisit)
+                    .WithOne(mv => mv.Appointment)
+                    .HasForeignKey<MedicalVisit>(mv => mv.AppointmentId);
+                e.HasOne(a => a.Billing)
+                    .WithOne(b => b.Appointment)
+                    .HasForeignKey<Appointment>(a => a.BillingId);
+            });
+         
+        modelBuilder.Entity<TaskItem>()
+        .HasOne(t => t.Department)
+        .WithMany(d => d.TaskItems)
+        .HasForeignKey(t => t.DepartmentId)
+        .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Appointment>(entity =>
+        {
+            entity.HasOne(a => a.Patient)
+                .WithMany(p => p.Appointments)     
+                .HasForeignKey(a => a.PatientId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(a => a.Doctor)
+                .WithMany(d => d.Appointments)     
+                .HasForeignKey(a => a.DoctorId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasQueryFilter(a => a.DeletedAt == null);
+        });
 
         modelBuilder.Entity<Admin>()
             .HasOne(ua => ua.Employee)

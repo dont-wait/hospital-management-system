@@ -6,7 +6,7 @@
 }
 
 .date-input {
-  @apply grid grid-cols-3 gap-2 sm:gap-3;
+  @apply grid grid-cols-3 gap-1;
 }
 
 .gender-input-wrap {

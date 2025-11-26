@@ -18,15 +18,21 @@ const nextConfig: NextConfig = {
 
   experimental: {
     optimizePackageImports: [
+      "motion/react",
       "lucide-react",
+      "@/app",
+      "@/axios",
       "@/components",
       "@/config",
       "@/contexts",
       "@/font",
       "@/hooks",
       "@/lib",
+      "@/public",
       "@/schemas",
       "@/services",
+      "@/styles",
+      "@/types"
     ],
     esmExternals: true,
   },
@@ -51,7 +57,6 @@ const nextConfig: NextConfig = {
 
   compress: true,
   poweredByHeader: false,
-  output: "standalone",
 };
 
 export default bundleAnalyzer(nextConfig);

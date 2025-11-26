@@ -17,6 +17,9 @@ public class DoctorMapper : IDoctorMapper
             DateOfBirth = doctor.Employee.DateOfBirth,
             Gender = doctor.Employee.Gender,
             HireDate = doctor.Employee.HireDate,
+            ExperienceYears = doctor.Employee.ExperienceYears,
+            DepartmentId = doctor.Employee.DepartmentId,
+            DepartmentName = doctor.Employee.Department.Name,
             RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower(),
         };
     }

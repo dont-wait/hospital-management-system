@@ -7,7 +7,7 @@ import patientStyles from "@/styles/patient.module.css";
 function UpdatePatientPage() {
   return (
     <LazySection
-      importFunc={() => import("@/components/patient/UpdateCard")}
+      importFunc={() => import("@/components/patient/update/UpdateCard")}
       skeleton={<PatientUpdateSkeleton />}
       className={patientStyles["patient-update-form-skeleton"]}
     />

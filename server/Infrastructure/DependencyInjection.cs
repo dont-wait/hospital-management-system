@@ -7,6 +7,7 @@ using Infrastructure.Services.Email.Smtp;
 using Infrastructure.Services.Email.SendGrid;
 using Infrastructure.Services.Redis;
 using Infrastructure.Services.Email;
+using Infrastructure.Services.SlotTime;
 
 namespace Infrastructure;
 
@@ -45,6 +46,7 @@ public static class DependencyInjection
         services.AddTokenService(configuration);
         services.AddSwaggerDocumentation();
         services.AddRedisService(configuration);
+        services.AddSlotTimeService(configuration);
 
         if (configuration.GetValue<string>("EmailSettings:Provider") == "Smtp")
         {
@@ -57,6 +59,7 @@ public static class DependencyInjection
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IOTPService, SendOTPService>();
+        services.AddScoped<IEmailTemplateService, SendEmailTemplateService>();
 
         return services;
     }
