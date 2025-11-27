@@ -161,3 +161,41 @@
 .btn-submit {
   @apply bg-blue-600 text-white hover:bg-blue-700;
 }
+
+/* Form Select */
+.form-select {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all bg-white;
+}
+
+.form-select:focus {
+  @apply outline-none border-blue-600 ring-4 ring-blue-100;
+}
+
+/* Doctors Grid */
+.doctors-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2;
+}
+
+.doctor-card {
+  @apply flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer transition-all hover:border-blue-400 hover:bg-blue-50;
+}
+
+.doctor-card:has(input:checked) {
+  @apply border-blue-600 bg-blue-50;
+}
+
+.doctor-checkbox {
+  @apply mt-1 w-5 h-5 cursor-pointer accent-blue-600;
+}
+
+.doctor-info {
+  @apply flex flex-col gap-1;
+}
+
+.doctor-name {
+  @apply font-semibold text-gray-800 text-sm;
+}
+
+.doctor-specialization {
+  @apply text-xs text-gray-600;
+}
