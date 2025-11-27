@@ -119,7 +119,13 @@ public class TaskItemService : ITaskItemService
         if (employeesWithSchedule.Any())
         {
             string shiftName = requestTaskItemDTO.WorkShift == WorkShiftEnum.Morning ? "sáng" : "chiều";
-            var conflictEmployees = string.Join(", ", employeesWithSchedule);
+            var conflictEmployeeNames = employeesWithSchedule
+                .Select(id => {
+                    var emp = employees.Data?.FirstOrDefault(e => e.Employee?.EmployeeId == id)?.Employee;
+                    return emp != null ? $"{emp.FirstName} {emp.LastName}" : id.ToString();
+                })
+                .ToList();
+            var conflictEmployees = string.Join(", ", conflictEmployeeNames);
             return ServiceResult<ResponseTaskItemDTO>.Fail($"Các nhân viên sau đã có lịch làm việc ca {shiftName} ngày {requestTaskItemDTO.Date:dd/MM/yyyy}: {conflictEmployees}");
         }
 
