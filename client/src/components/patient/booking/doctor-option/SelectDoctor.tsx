@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import PrevButton from "../PrevButton";
 import Icon from "@/components/shared/Icon";
 import SelectDoctorOptions from "./SelectDoctorOptions";
@@ -6,21 +7,31 @@ import { ApiResponse, ScheduleData } from "@/types";
 import styles from "@/styles/booking.module.css";
 
 interface SelectDoctorProps {
-  specialty: string;
+  departmentId: string;
+  day: string;
 }
 
-export default async function SelectDoctor({ specialty }: SelectDoctorProps) {
-  void specialty;
-  const response: ApiResponse<ScheduleData> =
-    await AppointmentService.getSchedules();
-  const scheduleData: ScheduleData = response.data;
+export default async function SelectDoctor({
+  departmentId,
+  day,
+}: SelectDoctorProps) {
+  let scheduleData: ScheduleData | null;
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("accessToken")?.value;
+    const response: ApiResponse<ScheduleData> =
+      await AppointmentService.getSchedules(token, day, departmentId);
+    scheduleData = response.data;
+  } catch {
+    scheduleData = null;
+  }
 
-  return !scheduleData.schedules.length ? (
+  return !scheduleData?.schedules.length ? (
     <div className={styles["booking-box"]}>
       <div className="p-4 w-full h-full flex flex-col justify-center items-center">
         <Icon name="BadgeAlert" className="w-40 h-40 text-east-bay" />
         <h3 className="mt-2 text-lg text center font-medium text-martinique">
-          Không có bác sĩ ứng với chuyên khoa được chọn
+          Không tìm thấy bác sĩ phù hợp
         </h3>
       </div>
 
@@ -30,7 +41,10 @@ export default async function SelectDoctor({ specialty }: SelectDoctorProps) {
     <div className={styles["booking-box"]}>
       <h2 className={styles["booking-card-heading"]}>Chọn bác sĩ</h2>
       <div className={styles["doctor-options"]}>
-        <SelectDoctorOptions schedules={scheduleData.schedules} />
+        <SelectDoctorOptions
+          schedules={scheduleData?.schedules ?? []}
+          price={scheduleData.priceOfService}
+        />
       </div>
       <PrevButton />
     </div>

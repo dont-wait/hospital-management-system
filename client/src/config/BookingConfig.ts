@@ -1,4 +1,4 @@
-import { BookingSteps, PriorityOption } from "@/types";
+import { BookingData, BookingSteps, PriorityOption } from "@/types";
 import momoPng from "@/public/images/momo.png";
 import vnPayPng from "@/public/images/vnpay.png";
 import vietQrPng from "@/public/images/vietqr.png";
@@ -15,7 +15,7 @@ export const bookingSteps: BookingSteps[] = [
 
 export const priorityOptions: PriorityOption[] = [
   {
-    id: "specialty" as const,
+    id: "department" as const,
     label: "Chọn theo Chuyên khoa",
     description: "Tìm bác sĩ theo chuyên môn",
     iconName: "Stethoscope",
@@ -34,16 +34,18 @@ export const priorityOptions: PriorityOption[] = [
   },
 ];
 
-export const defaultBookingData = {
+export const defaultBookingData: BookingData = {
   step: 0,
   patient: null,
   priority: null,
-  specialty: "",
+  departmentId: null,
+  departmentName: "",
   doctor: null,
   date: "",
-  timeSlot: "",
+  slotTimeId: null,
+  slotTime: "",
   roomName: "",
-  price: 200000,
+  price: 0,
   records: [],
   insurance: "",
 };

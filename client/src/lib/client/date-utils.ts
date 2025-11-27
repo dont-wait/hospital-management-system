@@ -31,11 +31,12 @@ export class DateUtils {
     if (monthValue !== 2 && !isValidDay) {
       return `Tháng này chỉ có ${maxDays} ngày`;
     }
-    if (isLeapYear && !isValidDay) {
-      return "Tháng 2 năm nhuận chỉ có 29 ngày";
-    }
-    if (!isLeapYear && !isValidDay) {
-      return "Tháng 2 chỉ có 28 ngày";
+    if (monthValue === 2 && !isValidDay) {
+      if (isLeapYear) {
+        return "Tháng 2 năm nhuận chỉ có 29 ngày";
+      } else {
+        return "Tháng 2 chỉ có 28 ngày";
+      }
     }
     return null;
   }

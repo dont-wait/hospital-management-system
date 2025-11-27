@@ -12,7 +12,8 @@ export default function PrevButton() {
 
   const handlePrevStep = () => {
     const params = new URLSearchParams(searchParams);
-    params.delete("specialty");
+    params.delete("departmentId");
+    params.delete("day");
     replace(`${pathname}?${params.toString()}`);
     prevStep();
   };

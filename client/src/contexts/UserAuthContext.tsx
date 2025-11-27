@@ -10,7 +10,7 @@ import {
   useMemo,
 } from "react";
 import Cookie from "js-cookie";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Loading } from "@/components";
 import { AuthService, IpGeoService } from "@/services";
 import { TokenUtils } from "@/lib/client";
@@ -28,6 +28,7 @@ const UserAuthContext = createContext<UserAuthContextType<
 > | null>(null);
 
 export function UserAuthProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<Patient | Employee | null>(null);
   const router = useRouter();
@@ -62,6 +63,8 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const hasToken = Cookie.get("hasToken") === "true";
+    router.replace(pathname);
+
     if (!hasToken) {
       TokenUtils.clearStoredUser();
       setIsLoading(false);

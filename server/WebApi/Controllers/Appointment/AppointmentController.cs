@@ -24,7 +24,7 @@ public class AppointmentController : ControllerBase
         {
             var result = await _appointmentService.CreateAppointment(request);
             if (result.IsSuccess)
-                return new JsonResult(new ApiResponse<ResponseAppointmentDTO>(201, "Đăng ký khám thành công", result.Data)) { StatusCode = 201 };
+                return new JsonResult(new ApiResponse<string>(201, "Đăng ký khám thành công", result.Data)) { StatusCode = 201 };
             return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
         }
         catch (Exception ex)

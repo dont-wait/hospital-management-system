@@ -1,18 +1,36 @@
 "use client";
 
 import { useMemo } from "react";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { createDays } from "@/lib/client";
 import { months } from "@/config/DateConfig";
 import { useBookingExamContext } from "@/contexts";
 import { CalendarDay } from "@/types";
 
-export default function SelectDayOptions() {
+interface SelectDayOptionsProps {
+  scheduleDays: string[];
+}
+
+export default function SelectDayOptions({
+  scheduleDays,
+}: SelectDayOptionsProps) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
   const { setDate } = useBookingExamContext();
   const currentMonth = useMemo(() => new Date(), []);
   const days: (CalendarDay | null)[] = useMemo(
     () => createDays(currentMonth),
     [currentMonth],
   );
+
+  const handleSelect = (day: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("day", day);
+    replace(`${pathname}?${params.toString()}`);
+    setDate(day);
+  };
+
   return (
     <div className="grid grid-cols-1">
       <div
@@ -33,7 +51,7 @@ export default function SelectDayOptions() {
 
       <div className="grid grid-cols-7 gap-0.5 lg:gap-1">
         {days.map((day, index) =>
-          !day || day.isDisabled ? (
+          !day || day.isDisabled || !scheduleDays.includes(day.day) ? (
             <div
               key={index}
               className="border-1 md:border-2 border-color-martinique text-east-bay shadow-lg aspect-square flex items-center justify-center rounded-sm bg-silver opacity-50 text-martinique"
@@ -44,7 +62,7 @@ export default function SelectDayOptions() {
             <button
               key={index}
               onClick={() => {
-                setDate(day.dateString);
+                handleSelect(day.dateString);
               }}
               className="border-1 md:border-2 border-color-martinique text-east-bay shadow-lg aspect-square flex items-center justify-center rounded-sm cursor-pointer bg-white  hover:bg-anakiwa"
             >

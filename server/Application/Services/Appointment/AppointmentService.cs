@@ -10,8 +10,6 @@ public class AppointmentService : IAppointmentService
     private readonly ISlotTimeRepository _slotTimeRepository;
     private readonly ITaskItemRepository _taskItemRepository;
     private readonly IBillingRepository _billingRepository;
-    private readonly IEmailTemplateService _emailTemplateService;
-    
     public AppointmentService(
                             IUserAccountRepository userAccountRepository,
                             IEmployeeRepository employeeRepository,
@@ -19,8 +17,7 @@ public class AppointmentService : IAppointmentService
                             ITaskItemRepository taskItemRepository,
                             IBillingRepository billingRepository,
                             IAppointmentRepository appointmentRepository,
-                            ISlotTimeRepository slotTimeRepository,
-                            IEmailTemplateService emailTemplateService
+                            ISlotTimeRepository slotTimeRepository
                             )
     {
         _userAccountRepository = userAccountRepository;
@@ -30,81 +27,94 @@ public class AppointmentService : IAppointmentService
         _billingRepository = billingRepository;
         _appointmentRepository = appointmentRepository;
         _slotTimeRepository = slotTimeRepository;
-        _emailTemplateService = emailTemplateService;
         
     }
     
-    public async Task<ServiceResult<ResponseAppointmentDTO>> CreateAppointment(RequestAppointmentDTO request)
+    public async Task<ServiceResult<string>> CreateAppointment(RequestAppointmentDTO request)
+{
+    Patient? existingPatient = await _userAccountRepository.FindPatientWithAccountByIdAsync(request.PatientId);
+    if(existingPatient == null)
+        return ServiceResult<string>.Fail("Mã Bệnh nhân không tồn tại");
+
+    int successCount = 0;
+    var errors = new List<string>();
+
+    foreach(var slot in request.AppointmentSlots)
     {
-        Patient? existingPatient = await _userAccountRepository.FindPatientWithAccountByIdAsync(request.PatientId);
-        if(existingPatient == null)
-            return ServiceResult<ResponseAppointmentDTO>.Fail("Mã Bệnh nhân không tồn tại");
-        
-        UserAccount? existingDoctorWithAccount = await _employeeRepository.GetDoctorByDoctorIdAsync(request.DoctorId);
+        UserAccount? existingDoctorWithAccount = await _employeeRepository.GetDoctorByDoctorIdAsync(slot.DoctorId);
         if(existingDoctorWithAccount == null)
-            return ServiceResult<ResponseAppointmentDTO>.Fail("Mã bác sĩ không tồn tại");
-        
-        Department? existingDepartment = await _departmentRepository.GetDepartmentByIdAsync(request.DepartmentId);
+        {
+            errors.Add($"Mã bác sĩ {slot.DoctorId} không tồn tại");
+            continue;
+        }
+
+        Department? existingDepartment = await _departmentRepository.GetDepartmentByIdAsync(slot.DepartmentId);
         if(existingDepartment == null)
-            return ServiceResult<ResponseAppointmentDTO>.Fail("Mã chuyên khoa không tồn tại");
-        
-        var taskInfoAppointment = await _taskItemRepository.GetTaskItemBySlotTimeIdAsync(request.SlotTimeId);
+        {
+            errors.Add($"Mã chuyên khoa {slot.DepartmentId} không tồn tại");
+            continue;
+        }
+
+        var taskInfoAppointment = await _taskItemRepository.GetTaskItemBySlotTimeIdAsync(slot.SlotTimeId);
         if(taskInfoAppointment == null)
-            return ServiceResult<ResponseAppointmentDTO>.Fail("Không tìm thấy thông tin lịch hẹn");
+        {
+            errors.Add($"Không tìm thấy thông tin lịch hẹn cho khung giờ {slot.SlotTimeId}");
+            continue;
+        }
 
         var slotTime = taskInfoAppointment.TaskRegistrations
             .SelectMany(tr => tr.SlotTimes)
-            .FirstOrDefault(st => st.Id == request.SlotTimeId);
-        
+            .FirstOrDefault(st => st.Id == slot.SlotTimeId);
+
         if(slotTime == null)
-            return ServiceResult<ResponseAppointmentDTO>.Fail("Không tìm thấy thông tin khung giờ hẹn");
-        
-        if(await _appointmentRepository.IsExistingAppointmentAsync(request.AppointmentDate, slotTime.SlotStartTime, slotTime.SlotEndTime))
-            return ServiceResult<ResponseAppointmentDTO>.Fail("Trùng ngày hẹn với lịch đã đặt trước đó");
-        
-        var availableSlot = await _slotTimeRepository.IsAvailableSlotTimeForBookAsync(request.SlotTimeId);
+        {
+            errors.Add($"Không tìm thấy thông tin khung giờ hẹn {slot.SlotTimeId}");
+            continue;
+        }
+
+        if(await _appointmentRepository.IsExistingAppointmentAsync(slot.AppointmentDate, slotTime.SlotStartTime, slotTime.SlotEndTime))
+        {
+            errors.Add($"Trùng ngày hẹn {slot.AppointmentDate} với lịch đã đặt trước đó");
+            continue;
+        }
+
+        var availableSlot = await _slotTimeRepository.IsAvailableSlotTimeForBookAsync(slot.SlotTimeId);
         if(availableSlot == false)
-            return ServiceResult<ResponseAppointmentDTO>.Fail("Khung giờ không khả dụng để đặt lịch hẹn"); //full rui
-        
+        {
+            errors.Add($"Khung giờ {slot.SlotTimeId} không khả dụng để đặt lịch hẹn");
+            continue;
+        }
 
         Billing newBilling = new Billing()
         {
             BillingStatus = BillingStatusEnum.UnPaid.ToString(),
-            DiscountAmount = existingPatient.Is_Insurance == 1 ? 0.8 : 0, //Giam 80% neu co BHYT
+            DiscountAmount = existingPatient.Is_Insurance == 1 ? 0.8 : 0,
             PaymentMethod = PaymentMethodEnum.EWallet.ToString(),
-            PaymentAmount = 200000 , //Gia mac dinh
+            PaymentAmount = 200000,
         };
-        
+
         await _billingRepository.CreateBillingAsync(newBilling);
-        
-        
 
         Appointment newAppointment = new Appointment
         {
             PatientId = request.PatientId,
-            DoctorId = request.DoctorId,
+            DoctorId = slot.DoctorId,
             RoomId = taskInfoAppointment.RoomId,
-            AppointmentDate = request.AppointmentDate,
+            AppointmentDate = slot.AppointmentDate,
             AppointmentStartTime = slotTime.SlotStartTime,
             AppointmentEndTime = slotTime.SlotEndTime,
             AppointmentStatus = AppointmentStatusEnum.Pending.ToString(),
-            ServiceId = 5, //Dang ky kham mac dinh la 5
+            ServiceId = 5,
             BillingId = newBilling.Id
         };
 
         slotTime.CurrentAppointments += 1;
         if(slotTime.CurrentAppointments >= slotTime.MaxAppointments)
             slotTime.SlotStatus = SlotStatusEnum.Full.ToString();
-        
-        _slotTimeRepository.UpdateAsync(slotTime);
-        
-        await _appointmentRepository.CreateAppointmentAsync(newAppointment);
-        
-        // Lấy thông tin Doctor
-        var doctorRegistration = taskInfoAppointment.TaskRegistrations
-            .FirstOrDefault(tr => tr.Employee.Doctor.Id == request.DoctorId);
 
-        
+        _slotTimeRepository.UpdateAsync(slotTime);
+        await _appointmentRepository.CreateAppointmentAsync(newAppointment);
+
         var response = new ResponseAppointmentDTO
         {
             AppointmentId = newAppointment.Id,
@@ -114,7 +124,7 @@ public class AppointmentService : IAppointmentService
             FullName = $"{existingPatient.FirstName} {existingPatient.LastName}",
             DateOfBirth = existingPatient.DateOfBirth,
             Gender = existingPatient.Gender,
-            AppointmentDate = request.AppointmentDate,
+            AppointmentDate = slot.AppointmentDate,
             AppointmentStartTime = slotTime.SlotStartTime,
             AppointmentEndTime = slotTime.SlotEndTime,
             PriceOfService = 200000,
@@ -122,15 +132,18 @@ public class AppointmentService : IAppointmentService
                 ? $"{existingDoctorWithAccount.Employee.FirstName} {existingDoctorWithAccount.Employee.LastName}"
                 : string.Empty
         };
-        try
-        {
-            await _emailTemplateService.SendConfirmedAppointmentEmailAsync(existingPatient.Email, response);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Đã xảy ra lỗi khi gửi email: " + ex.Message);
-        }
 
-        return ServiceResult<ResponseAppointmentDTO>.Success(response);
+        successCount++;
     }
+
+    if(successCount == 0)
+        return ServiceResult<string>.Fail(string.Join("; ", errors));
+
+    string message = successCount == request.AppointmentSlots.Count
+        ? "Bạn đã đăng ký thành công"
+        : $"Đã đăng ký thành công {successCount}/{request.AppointmentSlots.Count} cuộc hẹn. Lỗi: {string.Join("; ", errors)}";
+
+    return ServiceResult<string>.Success(message);
+}
+
 }

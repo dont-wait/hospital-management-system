@@ -6,25 +6,27 @@ import { Schedule, DateTime } from "@/types";
 
 interface SelectDoctorOptionsProps {
   schedules: Schedule[];
+  price: number;
 }
 
 export default function SelectDoctorOptions({
   schedules,
+  price,
 }: SelectDoctorOptionsProps) {
   const { changeToStepThree } = useBookingExamContext();
   return (
     <>
       {schedules.map((schedule) => {
-        const start: unknown = formatDateTime(schedule.startTime);
-        const end: unknown = formatDateTime(schedule.endTime);
+        const start: DateTime | string = formatDateTime(schedule.startTime);
+        const end: DateTime | string = formatDateTime(schedule.endTime);
         return (
           <div
-            key={schedule.doctor.doctorId}
+            key={schedule.scheduleId}
             className="w-full rounded-xl border bg-white p-4 text-left shadow-sm"
           >
             <div className="mb-2">
               <h3 className="text-lg font-semibold text-martinique">
-                {schedule.doctor.fullName}
+                {schedule.fullName}
               </h3>
             </div>
 
@@ -35,13 +37,20 @@ export default function SelectDoctorOptions({
                     key={slot.slotId}
                     onClick={() => {
                       changeToStepThree(
-                        schedule.doctor,
-                        schedule.doctor.specialization,
+                        {
+                          doctorId: schedule.doctorId,
+                          specialization: schedule.specialization,
+                          fullName: schedule.fullName,
+                        },
+                        schedule.departmentId,
+                        schedule.departmentName,
                         typeof start !== "string"
                           ? (start as DateTime).date
                           : start,
+                        slot.slotId,
                         `${slot.slotStartTime} - ${slot.slotEndTime}`,
                         schedule.roomName,
+                        price,
                       );
                     }}
                     className="px-3 py-1.5 rounded-sm text-sm font-medium border bg-green-50 border-green-300 text-green-700"
@@ -62,7 +71,7 @@ export default function SelectDoctorOptions({
             <div className="space-y-1">
               <p className="text-east-bay py-2">
                 <span className="font-medium">
-                  {schedule.doctor.specialization} -{" "}
+                  {schedule.specialization} -{" "}
                 </span>
                 <span>{schedule.roomName}</span>
               </p>

@@ -145,7 +145,7 @@ export interface BookingSteps {
   label: string;
 }
 
-export type Priority = "specialty" | "doctor" | "date";
+export type Priority = "department" | "doctor" | "date";
 
 export type BookingDoctor = Pick<Doctor, "doctorId" | "specialization"> & {
   fullName: string;
@@ -163,10 +163,12 @@ export interface BaseBookingInfo {
 
 export interface BookingRecord {
   patient: Patient;
-  specialty: string;
+  departmentId: number;
+  departmentName: string;
   doctor: BookingDoctor;
   date: string;
-  timeSlot: string;
+  slotTime: string;
+  slotTimeId: number;
   roomName: string;
   price: number;
 }
@@ -175,10 +177,12 @@ export interface BookingData {
   step: number;
   patient: Patient | null;
   priority: Priority | null;
-  specialty: string;
+  departmentId: number | null;
+  departmentName: string;
   doctor: BookingDoctor | null;
   date: string;
-  timeSlot: string;
+  slotTimeId: number | null;
+  slotTime: string;
   roomName: string;
   records: BookingRecord[];
   price: number;
@@ -199,34 +203,42 @@ export interface Department {
   departmentDescription: string;
 }
 
-export type ScheduleStatus = "Opened" | "Closed" | "Fulled";
+export type DepartmentInfo = Pick<
+  Department,
+  "departmentId" | "departmentName" | "departmentDescription"
+>;
+
+export type ScheduleStatus = "Opened" | "Closed" | "Full";
 
 export interface Slot {
-  slotId: string;
+  slotId: number;
   slotStatus: ScheduleStatus;
   slotStartTime: string;
   slotEndTime: string;
 }
 
 export interface Schedule {
-  scheduleId: string;
-  roomName: string;
+  scheduleId: number;
   startTime: string;
   endTime: string;
   scheduleStatus: ScheduleStatus;
-  priceOfSchedule: string;
-  doctor: Pick<Doctor, "doctorId" | "specialization"> & {
-    fullName: string;
-  };
+  doctorId: string;
+  departmentId: number;
+  departmentName: string;
+  departmentDescription: string;
+  roomName: string;
+  fullName: string;
+  specialization: string;
   slots: Slot[];
 }
 
 export interface ScheduleData {
   date: string;
-  departmentId: number;
+  departmentId: number | null;
   departmentName: string;
-  departmentLocation: string;
   departmentDescription: string;
+  priceOfService: number;
+  doctorId: number | null;
   schedules: Schedule[];
 }
 
@@ -265,3 +277,20 @@ export interface UserListState {
 }
 
 export * from "./shift";
+export type AppointmentInfo = Pick<
+  BookingRecord,
+  "departmentId" | "slotTimeId"
+> & {
+  appointmentDate: string;
+  doctorId: string;
+};
+
+export interface AppointmentDto {
+  patientId: string;
+  appointmentSlots: AppointmentInfo[];
+}
+
+export interface ApiError {
+  status: number;
+  message: string;
+}

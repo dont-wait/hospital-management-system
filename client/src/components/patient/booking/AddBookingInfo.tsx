@@ -14,7 +14,7 @@ export default function AddBookingInfo({ children }: AddBookingInfoProps) {
 
   return (
     <>
-      {state.priority === "specialty" && specialty}
+      {state.priority === "department" && specialty}
       {state.priority === "doctor" && doctor}
       {state.priority === "date" && date}
     </>
