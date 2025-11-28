@@ -39,10 +39,54 @@ public class EmployeeRepository : IEmployeeRepository
         return employees;
     }
 
-    public async Task<List<UserAccount>?> GetAllEmployeeByRoleIdAsync(string roleId)
+    public async Task<List<UserAccount>?> GetAllEmployeesAsync(string? roleId, int? departmentId)
     {
-        var employees = GetEmployeeQueryByRoleId(roleId);
-        return await employees.ToListAsync();
+        if (roleId == null && departmentId == null)
+        {
+            return await _context.user_accounts
+                .Where(ua => ua.Employee != null && ua.DeletedAt == null && ua.Employee.DeletedAt == null)
+                .Include(ua => ua.Employee)
+                    .ThenInclude(d => d!.Department)
+                .Include(ua => ua.Employee!.Doctor)
+                .Include(ua => ua.Employee!.Admin)
+                .AsSplitQuery()
+                .ToListAsync();
+        }
+
+        if (departmentId.HasValue)
+        {
+            var query = _context.user_accounts
+                .Where(ua => ua.Employee != null 
+                             && ua.DeletedAt == null 
+                             && ua.Employee.DeletedAt == null
+                             && ua.Employee.DepartmentId == departmentId.Value)
+                .Include(ua => ua.Employee)
+                    .ThenInclude(d => d!.Department)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(roleId))
+            {
+                query = GetEmployeeQueryByRoleId(roleId)
+                    .Where(ua => ua.Employee != null 
+                                 && ua.DeletedAt == null 
+                                 && ua.Employee.DeletedAt == null
+                                 && ua.Employee.DepartmentId == departmentId.Value);
+            }
+
+            return await query
+                .Include(ua => ua.Employee!.Doctor)
+                .Include(ua => ua.Employee!.Admin)
+                .AsSplitQuery()
+                .ToListAsync();
+        }
+
+        if (!string.IsNullOrWhiteSpace(roleId))
+        {
+            var employees = GetEmployeeQueryByRoleId(roleId);
+            return await employees.ToListAsync();
+        }
+
+        return null;
     }
 
     public async Task<Doctor> CreateDoctorAsync(RequestDoctorDTO doctorDto, bool isHeadOfDepartment = false)

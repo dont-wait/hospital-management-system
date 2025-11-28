@@ -5,7 +5,7 @@ import UserRoleButton from "@/components/admin/UserRoleButton";
 import UserAddButton from "@/components/admin/UserAddButton";
 import UserTableHeader from "@/components/admin/UserTableHeader";
 import UserTableBody from "@/components/admin/UserTableBody";
-import { EmployeeService } from "@/services/server/employee.service";
+import { EmployeeService } from "@/services/employee.service";
 import userStyles from "@/styles/admin-user-management.module.css";
 import styles from "@/styles/admin.module.css";
 
@@ -13,7 +13,7 @@ async function UsersManagementPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
   const users =
-    (await EmployeeService.getAllEmployeesByRole("doctor", token)) ?? [];
+    (await EmployeeService.getAllEmployees("doctor", undefined, token)) ?? [];
   return (
     <div className={styles["admin-container"]}>
       <AdminContentHeader

@@ -61,6 +61,8 @@ export interface Employee {
   hireDate: string;
   certificateNumber: string;
   specialization: string;
+  departmentId: number;
+  departmentName: string;
   avatarUrl: string;
   roleId: Roles;
 }
@@ -274,6 +276,7 @@ export interface UserListState {
   activeModal: ModalType;
 }
 
+export * from "./shift";
 export type AppointmentInfo = Pick<
   BookingRecord,
   "departmentId" | "slotTimeId"

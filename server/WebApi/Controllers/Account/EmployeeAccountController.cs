@@ -36,10 +36,10 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "admin")]
-    public async Task<IActionResult> GetAllEmployeesByRoleIdAsync(string role)
+    [Authorize(Roles = "admin, hod")]
+    public async Task<IActionResult> GetAllEmployeesAsync(string? role, int? departmentId)
     {
-        var result = await _employeeAccountService.GetAllEmployeesByRoleIdAsync(role);
+        var result = await _employeeAccountService.GetAllEmployeesAsync(role, departmentId);
         if (!result.IsSuccess)
             return new JsonResult(new ApiResponse<List<ResponseUserDTO>>(400, result.Message)) { StatusCode = 400 };
         return new JsonResult(new ApiResponse<List<ResponseUserDTO>>(200, "Lấy danh sách nhân viên thành công", result.Data)) { StatusCode = 200 };

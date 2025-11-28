@@ -6,10 +6,12 @@ namespace WebApi.Controllers.Department;
 public class DepartmentController : ControllerBase
 {
     private readonly IDepartmentService _departmentService;
+    private readonly IRoomService _roomService;
 
-    public DepartmentController(IDepartmentService departmentService)
+    public DepartmentController(IDepartmentService departmentService, IRoomService roomService)
     {
         _departmentService = departmentService;
+        _roomService = roomService;
     }
 
     [HttpGet]
@@ -19,5 +21,15 @@ public class DepartmentController : ControllerBase
         if (!result.IsSuccess)
             return new ApiResponse<List<ResponseDepartmentDTO>>(400, result.Message);
         return new ApiResponse<List<ResponseDepartmentDTO>>(200, "Lấy danh sách phòng ban thành công", result.Data!);
+    }
+
+    [HttpGet("rooms")]
+    public async Task<IActionResult> GetRoomsByDepartmentId(int departmentId)
+    {
+        var rooms = await _roomService.GetRoomByDepartmentIdAsync(departmentId);
+        if (!rooms.IsSuccess)
+            return new JsonResult(new ApiResponse<List<ResponseRoom>>(400,rooms.Message, null)) { StatusCode = 400 };
+        
+        return new JsonResult(new ApiResponse<List<ResponseRoom>>(200, rooms.Message, rooms.Data)) { StatusCode = 200 };
     }
 }

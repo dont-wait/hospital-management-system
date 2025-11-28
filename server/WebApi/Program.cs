@@ -51,7 +51,8 @@ builder.Services.AddScoped<ITaskItemService, TaskItemService>();
 builder.Services.AddScoped<ISlotTimeRepository, SlotTimeRepository>();
 builder.Services.AddScoped<IBillingRepository, BillingRepository>();
 builder.Services.AddScoped<ISlotTimeService, SlotTimeService>();
-
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<IRoomService, RoomService>();
 
 builder.Services.AddScoped<IUserAccountMapper, UserAccountMapper>();
 builder.Services.AddScoped<IPatientMapper, PatientMapper>();

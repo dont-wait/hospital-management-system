@@ -47,6 +47,7 @@ public class AuthService : IAuthService
                         Specialization = user.Employee.Doctor!.Specialization,
                         RoleId = user.Employee.RoleId,
                         ExperienceYears = user.Employee.ExperienceYears,
+                        DepartmentId = user.Employee.DepartmentId,
                         DepartmentName = user.Employee.Department.Name
                     };
                     break;

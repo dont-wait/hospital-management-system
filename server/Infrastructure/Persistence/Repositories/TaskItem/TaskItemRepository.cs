@@ -40,13 +40,13 @@ public class TaskItemRepository : ITaskItemRepository
             query = query.Where(t => t.TaskRegistrations
                 .Any(tr => tr.Employee.Doctor.Id == doctorId.Value));
 
-        return query
+        return await query
             .Where(t => t.TaskRegistrations
                 .Any(tr => tr.SlotTimes
                     .Any(s => s.CurrentAppointments < s.MaxAppointments)))
             .OrderBy(t => t.Date)
             .ThenBy(t => t.StartTime)
-            .ToList();
+            .ToListAsync();
     }
 
     public Task<TaskItem?> GetTaskItemBySlotTimeIdAsync(long slotTimeId)

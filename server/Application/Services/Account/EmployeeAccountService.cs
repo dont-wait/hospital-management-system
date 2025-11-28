@@ -135,16 +135,12 @@ public class EmployeeAccountService : IEmployeeAccountService
         return ServiceResult<List<ResponseUserDTO>?>.Success(responseUserDtos);
     }
 
-    public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllEmployeesByRoleIdAsync(string roleId)
+    public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllEmployeesAsync(string? roleId, int? departmentId)
     {
         var validRoles = 
             new[] { RoleEnum.doctor.ToString(), RoleEnum.admin.ToString(), RoleEnum.hod.ToString() };
-        
-        if (string.IsNullOrWhiteSpace(roleId) || 
-            !validRoles.Any(r => r.Equals(roleId, StringComparison.CurrentCultureIgnoreCase)))
-            return ServiceResult<List<ResponseUserDTO>>.Fail("Vai trò không hợp lệ.");
 
-        List<UserAccount>? employees = await _employeeRepository.GetAllEmployeeByRoleIdAsync(roleId);
+        List<UserAccount>? employees = await _employeeRepository.GetAllEmployeesAsync(roleId, departmentId);
 
         if (employees == null || employees.Count == 0)
             return ServiceResult<List<ResponseUserDTO>>.Fail("Không tìm thấy nhân viên nào");
