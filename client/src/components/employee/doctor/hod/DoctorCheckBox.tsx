@@ -31,12 +31,12 @@ export function DoctorCheckBox({
                 </span>
             </Label>
             <div className={scheduleStyles["doctors-grid"]}>
-                {doctors.map(doc => (
+                {doctors.filter(doc => doc.employee?.employeeId).map(doc => (
                     <DoctorCard
-                        key={doc.employee?.employeeId}
+                        key={doc.employee!.employeeId}
                         doctor={doc}
-                        isSelected={selectedDoctors.includes(doc.employee?.employeeId || "")}
-                        onToggle={() => onDoctorToggle(doc.employee?.employeeId || "")}
+                        isSelected={selectedDoctors.includes(doc.employee!.employeeId)}
+                        onToggle={() => onDoctorToggle(doc.employee!.employeeId)}
                     />
                 ))}
             </div>
