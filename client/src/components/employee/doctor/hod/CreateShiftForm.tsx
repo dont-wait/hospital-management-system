@@ -6,22 +6,13 @@ import scheduleStyles from "@/styles/doctor.module.css";
 import { CreateShiftFormData } from "@/schemas/create-shift";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { SelectField } from "./SelectField";
-
-interface Room {
-    id: number;
-    name: string;
-}
+import { Room, WORK_SHIFTS } from "@/types";
 
 interface CreateShiftFormProps {
     register: UseFormRegister<CreateShiftFormData>;
     errors: FieldErrors<CreateShiftFormData>;
     rooms: Room[];
 }
-
-const WORK_SHIFTS = [
-    { value: "0", label: "Ca sáng (7h - 12h)" },
-    { value: "1", label: "Ca chiều (13h - 17h)" },
-] as const;
 
 export function CreateShiftForm({ register, errors, rooms }: CreateShiftFormProps) {
     return (
