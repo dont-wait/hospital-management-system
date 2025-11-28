@@ -14,8 +14,8 @@ public class RoomService : IRoomService
         {
             return ServiceResult<List<ResponseRoom>>.Fail("DepartmentId không hợp lệ");
         }
-        List<Room>? rooms = await _roomRepository.GetRoomByDepartmentIdAsync(departmentId);
-        List<ResponseRoom>? responseRooms = rooms.Select(r => new ResponseRoom
+        List<Room> rooms = await _roomRepository.GetRoomByDepartmentIdAsync(departmentId);
+        List<ResponseRoom> responseRooms = rooms.Select(r => new ResponseRoom
         {
             Id = r.Id,
             Name = r.Name,
