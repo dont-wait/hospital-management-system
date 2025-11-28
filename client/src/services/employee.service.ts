@@ -13,7 +13,7 @@ export class EmployeeService {
     const apiInstance = getApiInstance();
     const config = getConfig(token);
 
-    const roleQuery = roleId ? `roleId=${roleId}` : "";
+    const roleQuery = roleId ? `role=${roleId}` : "";
     const departmentQuery = departmentId ? `departmentId=${departmentId}` : "";
     const queryParams = [roleQuery, departmentQuery].filter(param => param).join("&");
 
