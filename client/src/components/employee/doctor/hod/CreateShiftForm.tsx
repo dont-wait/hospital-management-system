@@ -33,7 +33,9 @@ export function CreateShiftForm({ register, errors, rooms }: CreateShiftFormProp
                 register={register}
                 errors={errors}
                 icon={<Calendar size={16} />}
-                onClick={(e) => e.currentTarget.showPicker()}
+                onClick={(e) => {
+                    if ("showPicker" in  HTMLInputElement.prototype) e.currentTarget.showPicker();
+                }}
             />
 
             <SelectField
