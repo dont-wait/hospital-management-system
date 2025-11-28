@@ -1,6 +1,7 @@
 export interface Room {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
+  capacity: number;
 }
 
 export interface SelectOption {

@@ -12,6 +12,7 @@ import { useState, useEffect, useCallback } from "react";
 import { ScheduleService, EmployeeService } from "@/services";
 import { DoctorCheckBox } from "./DoctorCheckBox";
 import { CreateShiftForm } from "./CreateShiftForm";
+import { DepartmentService } from "@/services/department.service";
 
 interface CreateShiftFormContainerProps {
     hod: Employee;
@@ -49,12 +50,8 @@ export function CreateShiftFormContainer({ hod }: CreateShiftFormContainerProps)
                 );
                 setDoctors(employeesData);
 
-                // TODO: Fetch rooms theo departmentId
-                setRooms([
-                    { id: 1, name: "Phòng 1" },
-                    { id: 2, name: "Phòng 2" },
-                    { id: 3, name: "Phòng 3" },
-                ]);
+                const roomsData = await DepartmentService.getRoomsByDepartmentId(hod.departmentId);
+                setRooms(roomsData);
             } catch (error) {
                 toast.error("Không thể tải dữ liệu");
             }
