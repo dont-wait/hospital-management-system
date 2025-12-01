@@ -1,3 +1,5 @@
+"use client";
+
 import { motion, AnimatePresence } from "motion/react";
 import { CircleX } from "@/lib/client";
 import { ModalProps } from "@/types";

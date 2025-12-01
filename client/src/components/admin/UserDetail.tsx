@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "motion/react";
 import { Label, Modal } from "@/components";
 import PatientDetail from "@/components/patient/dashboard/PatientDetail";

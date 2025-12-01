@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "motion/react";
 import { Card, CardContent } from "@/components";
 import { LoginHeader, LoginForm, LoginFooterLink } from "@/components/login";

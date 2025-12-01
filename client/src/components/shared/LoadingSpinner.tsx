@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "motion/react";
 import styles from "@/styles/loading.module.css";
 

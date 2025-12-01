@@ -1,3 +1,5 @@
+"use client";
+
 import { memo, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Card, CardContent, CardHeader } from "@/components";
