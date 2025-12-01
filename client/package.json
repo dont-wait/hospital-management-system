@@ -29,7 +29,7 @@
     "lucide-react": "0.544.0",
     "motion": "12.23.22",
     "mui-one-time-password-input": "^5.0.0",
-    "next": "15.5.2",
+    "next": "16.1.0-canary.9",
     "react": "19.1.0",
     "react-country-region-selector": "4.0.2",
     "react-dom": "19.1.0",
