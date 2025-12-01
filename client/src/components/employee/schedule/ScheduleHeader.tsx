@@ -21,7 +21,7 @@ interface ScheduleHeaderProps {
   selectedDate: Date;
 }
 
-export function ScheduleHeader({
+export default function ScheduleHeader({
   changeWeek,
   isCheckedIn,
   checkInTime,

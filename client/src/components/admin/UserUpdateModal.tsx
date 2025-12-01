@@ -1,6 +1,6 @@
 "use client";
 
-import { EmployeeUpdateModal } from "@/components/employee";
+import { EmployeeUpdateModal } from "@/components/employee/EmployeeUpdateModal";
 import { useUserManagementContext } from "@/contexts";
 
 export default function UserUpdateModal() {

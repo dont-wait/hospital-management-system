@@ -5,13 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, memo } from "react";
 import { useRouter } from "next/navigation";
 import {
-  SubmitButton,
   FormField,
   AddressField,
   RadioGroupField,
   DateField,
   AvatarField,
-} from "@/components";
+} from "@/components/shared/FormField";
+import { SubmitButton } from "@/components/shared/Button";
 import { PatientUpdateDto, patientUpdateSchema } from "@/schemas";
 import { Patient } from "@/types";
 import { GENDER_OPTIONS } from "@/config";

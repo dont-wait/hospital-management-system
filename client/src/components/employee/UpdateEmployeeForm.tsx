@@ -3,13 +3,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
+import { SubmitButton } from "@/components/shared/Button";
 import {
-  SubmitButton,
   FormField,
   RadioGroupField,
   DateField,
   AvatarField,
-} from "@/components";
+} from "@/components/shared/FormField";
 import { GENDER_OPTIONS } from "@/config";
 import { EmployeeUpdateDto, employeeUpdateSchema } from "@/schemas/employee";
 import { AuthUserWithoutTokens } from "@/types";

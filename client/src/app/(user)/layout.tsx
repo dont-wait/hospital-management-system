@@ -1,5 +1,6 @@
 import { SidebarProvider, ModalProvider, BookingProvider } from "@/contexts";
-import { Sidebar, Navbar } from "@/components";
+import { Sidebar } from "@/components/shared/Sidebar";
+import { Navbar } from "@/components/shared/Navbar";
 import "react-loading-skeleton/dist/skeleton.css";
 import "@/styles/globals.css";
 

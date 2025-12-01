@@ -1,6 +1,6 @@
 'use client'
 
-import { Label } from "@/components";
+import { Label } from "@/components/shared/Label";
 import { Clock, Home } from "@/lib/client/icon-utils";
 import scheduleStyles from "@/styles/doctor.module.css";
 import authStyles from "@/styles/auth.module.css";

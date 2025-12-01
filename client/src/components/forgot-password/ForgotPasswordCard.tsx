@@ -2,13 +2,11 @@
 
 import { memo, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Card, CardContent, CardHeader } from "@/components";
-import {
-  StepHeader,
-  EmailStep,
-  OtpStep,
-  PasswordStep,
-} from "@/components/forgot-password";
+import { Card, CardContent, CardHeader } from "@/components/shared/Card";
+import { StepHeader } from "./StepHeader";
+import { EmailStep } from "./EmailStep";
+import { OtpStep } from "./OtpStep";
+import { PasswordStep } from "./PasswordStep";
 import { useForgotPassword } from "@/hooks";
 import styles from "@/styles/auth.module.css";
 

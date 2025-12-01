@@ -6,7 +6,7 @@ import styles from "@/styles/admin.module.css";
 import dynamic from "next/dynamic";
 
 const CreateShiftFormContainer = dynamic(
-    () => import("@/components/employee/doctor/hod").then(mod => ({ default: mod.CreateShiftFormContainer })),
+    () => import("@/components/employee/doctor/hod/CreateShiftFormContainer"),
     { 
         ssr: false,
         loading: () => (

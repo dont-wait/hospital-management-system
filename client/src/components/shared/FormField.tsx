@@ -17,13 +17,13 @@ import { MuiOtpInput } from "mui-one-time-password-input";
 import {
   Input,
   PasswordInput,
-  Label,
   DayInput,
   MonthSelect,
   YearInput,
-  AvatarUpload,
   Textarea,
-} from "@/components";
+} from "@/components/shared/Input";
+import { Label } from "@/components/shared/Label";
+import { AvatarUpload } from "@/components/shared/AvatarUpload";
 import { PatientUpdateDto } from "@/schemas";
 import { DateUtils } from "@/lib/client";
 import authStyles from "@/styles/auth.module.css";

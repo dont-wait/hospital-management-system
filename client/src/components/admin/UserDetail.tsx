@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Label, Modal } from "@/components";
+import { Label } from "@/components/shared/Label";
+import Modal from "@/components/shared/Modal";
 import PatientDetail from "@/components/patient/dashboard/PatientDetail";
 import { PatientUtils, DateUtils, UserManagementUtils } from "@/lib/client";
 import { AuthUserWithoutTokens } from "@/types";
@@ -13,7 +14,11 @@ type UserDetailProps = {
   user: AuthUserWithoutTokens;
 };
 
-export function UserDetail({ user, isOpen, setIsOpen }: UserDetailProps) {
+export default function UserDetail({
+  user,
+  isOpen,
+  setIsOpen,
+}: UserDetailProps) {
   const employeeInfo = [
     {
       label: `Tên ${UserManagementUtils.getUserRole(user)}`,

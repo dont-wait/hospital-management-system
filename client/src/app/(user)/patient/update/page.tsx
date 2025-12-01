@@ -1,7 +1,7 @@
 "use client";
 
 import LazySection from "@/components/shared/LazySection";
-import { PatientUpdateSkeleton } from "@/components/skeletons";
+import { PatientUpdateSkeleton } from "@/components/skeletons/patient/PatientUpdateSkeleton";
 import patientStyles from "@/styles/patient.module.css";
 
 function UpdatePatientPage() {

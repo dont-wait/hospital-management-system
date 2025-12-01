@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Card, CardContent } from "@/components";
+import { Card, CardContent } from "@/components/shared/Card";
 import { UpdateForm } from "@/components/patient/update/UpdateForm";
 import styles from "@/styles/patient.module.css";
 

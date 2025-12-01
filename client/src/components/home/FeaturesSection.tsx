@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components";
+} from "@/components/shared/Card";
 import { features } from "@/config";
 import styles from "@/styles/home.module.css";
 

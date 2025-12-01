@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Button } from "@/components";
+import { Button } from "@/components/shared/Button";
 import { ArrowRight } from "@/lib/client";
 import styles from "@/styles/home.module.css";
 

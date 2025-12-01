@@ -1,7 +1,7 @@
 "use client";
 
 import LazySection from "@/components/shared/LazySection";
-import { LoginSkeleton } from "@/components/skeletons";
+import { LoginSkeleton } from "@/components/skeletons/auth/LoginSkeleton";
 import authStyles from "@/styles/auth.module.css";
 
 export default function LoginPage() {
