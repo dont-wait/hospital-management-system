@@ -30,6 +30,8 @@ public class AppointmentService : IAppointmentService
         
     }
     
+    
+    
     public async Task<ServiceResult<string>> CreateAppointment(RequestAppointmentDTO request)
 {
     Patient? existingPatient = await _userAccountRepository.FindPatientWithAccountByIdAsync(request.PatientId);
@@ -145,5 +147,21 @@ public class AppointmentService : IAppointmentService
 
     return ServiceResult<string>.Success(message);
 }
+    public Task<ServiceResult<List<ResponseAppointmentDTO>>> GetAppointments(string? status, Guid? patientId)
+    {
+        throw new NotImplementedException();
+    }
+    public Task<ServiceResult<string>> UpdateAppointment(RequestAppointmentDTO updateAppointmentDto)
+    {
+        throw new NotImplementedException();
+    }
+    public Task<ServiceResult<string>> DeleteAppointment(long appointmentId)
+    {
+        throw new NotImplementedException();
+    }
+    public Task<ServiceResult<ResponseAppointmentDTO>> GetAppointmentByIdAsync(long appointmentId)
+    {
+        throw new NotImplementedException();
+    }
 
 }
