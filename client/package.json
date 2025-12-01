@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "set NODE_NO_WARNINGS=1 && next dev",
-    "build": "set NODE_NO_WARNINGS=1 && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "analyze": "cross-env ANALYZE=true next build"

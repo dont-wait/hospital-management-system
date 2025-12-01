@@ -1,7 +1,7 @@
 "use client";
 
 import LazySection from "@/components/shared/LazySection";
-import { ForgotPasswordSkeleton } from "@/components/skeletons";
+import { ForgotPasswordSkeleton } from "@/components/skeletons/auth/ForgotPasswordSkeleton";
 import authStyles from "@/styles/auth.module.css";
 
 function ForgotPasswordPage() {

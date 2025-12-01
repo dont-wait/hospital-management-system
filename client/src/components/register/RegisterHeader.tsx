@@ -1,4 +1,8 @@
-import { CardDescription, CardHeader, CardTitle } from "@/components";
+import {
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/shared/Card";
 import { Heart } from "@/lib/client";
 import styles from "@/styles/auth.module.css";
 

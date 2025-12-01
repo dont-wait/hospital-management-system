@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components";
+import { Button } from "@/components/shared/Button";
 import { PatientSidebar } from "@/components/patient/sidebar/PatientSidebar";
 import { useUserAuthContext, useSidebar } from "@/contexts";
 import { Bell } from "@/lib/client";

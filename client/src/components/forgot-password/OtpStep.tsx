@@ -1,5 +1,8 @@
 import { useForm } from "react-hook-form";
-import { Button, LoadingSpinner, OtpInput } from "@/components";
+import { Button } from "@/components/shared/Button";
+import { OtpInput } from "@/components/shared/FormField";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+
 import styles from "@/styles/auth.module.css";
 
 type OtpStepProps = {

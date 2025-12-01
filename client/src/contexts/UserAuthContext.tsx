@@ -11,7 +11,7 @@ import {
 } from "react";
 import Cookie from "js-cookie";
 import { usePathname, useRouter } from "next/navigation";
-import { Loading } from "@/components";
+import { Loading } from "@/components/shared/Loading";
 import { AuthService, IpGeoService } from "@/services";
 import { TokenUtils } from "@/lib/client";
 import { Employee, Patient } from "@/types";

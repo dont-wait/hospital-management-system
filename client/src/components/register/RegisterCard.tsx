@@ -1,10 +1,10 @@
+"use client";
+
 import { motion } from "motion/react";
-import { Card, CardContent } from "@/components";
-import {
-  RegisterHeader,
-  RegisterForm,
-  RegisterFooterLink,
-} from "@/components/register";
+import { Card, CardContent } from "@/components/shared/Card";
+import { RegisterHeader } from "./RegisterHeader";
+import { RegisterForm } from "./RegisterForm";
+import { RegisterFooterLink } from "./RegisterFooterLink";
 import styles from "@/styles/auth.module.css";
 
 const CardMotion = motion(Card);

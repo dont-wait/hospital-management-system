@@ -1,12 +1,10 @@
 "use client";
 
 import LazySection from "@/components/shared/LazySection";
-import {
-  BannerSkeleton,
-  FeaturesSkeleton,
-  ServicesSkeleton,
-  CTASkeleton,
-} from "@/components/skeletons";
+import { BannerSkeleton } from "@/components/skeletons/home/BannerSkeleton";
+import { FeaturesSkeleton } from "@/components/skeletons/home/FeaturesSkeleton";
+import { ServicesSkeleton } from "@/components/skeletons/home/ServicesSkeleton";
+import { CTASkeleton } from "@/components/skeletons/home/CTASkeleton";
 
 function HomePage() {
   return (

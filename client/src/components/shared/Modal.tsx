@@ -1,3 +1,5 @@
+"use client";
+
 import { motion, AnimatePresence } from "motion/react";
 import { CircleX } from "@/lib/client";
 import { ModalProps } from "@/types";
@@ -11,7 +13,7 @@ const maxWidthClasses = {
   "2xl": styles.maxWidth2xl,
 };
 
-export function Modal({
+export default function Modal({
   isOpen,
   onClose,
   title,

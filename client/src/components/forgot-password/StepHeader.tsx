@@ -1,6 +1,7 @@
 "use client";
 
-import { Progress, CardTitle, CardDescription } from "@/components";
+import { Progress } from "@/components/shared/Progress";
+import { CardTitle, CardDescription } from "@/components/shared/Card";
 import {
   getStepIcon,
   getStepTitle,

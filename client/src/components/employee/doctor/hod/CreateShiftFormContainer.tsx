@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createShiftSchema, CreateShiftFormData, CreateShiftPayload } from "@/schemas/create-shift";
 import { toast } from "react-toastify";
-import { Button } from "@/components";
+import { Button } from "@/components/shared/Button";
 import { useState, useEffect, useCallback } from "react";
 import { ScheduleService, EmployeeService } from "@/services";
 import { DoctorCheckBox } from "./DoctorCheckBox";
@@ -18,7 +18,7 @@ interface CreateShiftFormContainerProps {
     hod: Employee;
 }
 
-export function CreateShiftFormContainer({ hod }: CreateShiftFormContainerProps) {
+export default function CreateShiftFormContainer({ hod }: CreateShiftFormContainerProps) {
     const [doctors, setDoctors] = useState<AuthUserWithoutTokens[]>([]);
     const [rooms, setRooms] = useState<Room[]>([]);
     const [selectedDoctors, setSelectedDoctors] = useState<string[]>([]);

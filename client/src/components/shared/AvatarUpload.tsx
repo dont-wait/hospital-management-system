@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useRef, useCallback, ChangeEvent } from "react";
 import Image from "next/image";
-import { Button } from "@/components";
+import { Button } from "./Button";
 import authStyles from "@/styles/auth.module.css";
 import avatarStyles from "@/styles/avatar.module.css";
 
