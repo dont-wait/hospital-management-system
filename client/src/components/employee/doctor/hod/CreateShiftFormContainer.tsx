@@ -53,6 +53,7 @@ export function CreateShiftFormContainer({ hod }: CreateShiftFormContainerProps)
                 const roomsData = await DepartmentService.getRoomsByDepartmentId(hod.departmentId);
                 setRooms(roomsData);
             } catch (error) {
+                void error;
                 toast.error("Không thể tải dữ liệu");
             }
         };
@@ -87,6 +88,7 @@ export function CreateShiftFormContainer({ hod }: CreateShiftFormContainerProps)
             reset();
             setSelectedDoctors([]);
         } catch (error) {
+            void error;
             toast.error("Tạo ca làm việc thất bại. Vui lòng thử lại.");
         }
     };
