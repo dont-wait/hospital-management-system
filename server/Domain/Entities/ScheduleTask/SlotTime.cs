@@ -17,4 +17,6 @@ public class SlotTime : BaseEntity
     [Required]
     public long TaskRegistrationId { get; set; }
     public virtual TaskRegistration TaskRegistration { get; set; } = null!;
+    
+    public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 }
