@@ -105,7 +105,8 @@ public class AppointmentService : IAppointmentService
             AppointmentDate = slot.AppointmentDate,
             AppointmentStartTime = slotTime.SlotStartTime,
             AppointmentEndTime = slotTime.SlotEndTime,
-            AppointmentStatus = AppointmentStatusEnum.Pending.ToString(),
+            AppointmentStatus = AppointmentStatusEnum.Unpaid.ToString(),
+            SlotTimeId = slot.SlotTimeId,
             ServiceId = 5,
             BillingId = newBilling.Id
         };
@@ -116,25 +117,6 @@ public class AppointmentService : IAppointmentService
 
         _slotTimeRepository.UpdateAsync(slotTime);
         await _appointmentRepository.CreateAppointmentAsync(newAppointment);
-
-        var response = new ResponseAppointmentDTO
-        {
-            AppointmentId = newAppointment.Id,
-            BillingId = newBilling.Id,
-            DepartmentName = existingDepartment.Name,
-            RoomName = taskInfoAppointment.Room?.Name ?? string.Empty,
-            FullName = $"{existingPatient.FirstName} {existingPatient.LastName}",
-            DateOfBirth = existingPatient.DateOfBirth,
-            Gender = existingPatient.Gender,
-            AppointmentDate = slot.AppointmentDate,
-            AppointmentStartTime = slotTime.SlotStartTime,
-            AppointmentEndTime = slotTime.SlotEndTime,
-            PriceOfService = 200000,
-            DoctorName = existingDoctorWithAccount.Employee != null
-                ? $"{existingDoctorWithAccount.Employee.FirstName} {existingDoctorWithAccount.Employee.LastName}"
-                : string.Empty
-        };
-
         successCount++;
     }
 
@@ -147,21 +129,81 @@ public class AppointmentService : IAppointmentService
 
     return ServiceResult<string>.Success(message);
 }
-    public Task<ServiceResult<List<ResponseAppointmentDTO>>> GetAppointments(string? status, Guid? patientId)
+    public async Task<ServiceResult<List<ResponseAppointmentDTO>>> GetAppointments(string? status, Guid? patientId, int page, int size)
     {
-        throw new NotImplementedException();
+        if (patientId != null)
+        {
+            Patient existingPatient = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId.Value);
+            if (existingPatient == null)
+                return ServiceResult<List<ResponseAppointmentDTO>>.Fail("Bệnh nhân không tồn tại");
+        }
+        
+        List<Appointment> appointments = await _appointmentRepository.GetAllAppointmentsAsync(status, patientId, page, size);
+        
+        List<ResponseAppointmentDTO > appointmentDtos = new List<ResponseAppointmentDTO>();
+        foreach (var appointment in appointments)
+        {
+            appointmentDtos.Add(new ResponseAppointmentDTO
+                {
+                    AppointmentId = appointment.Id,
+                    BillingId = appointment.Billing.Id,
+                    DepartmentName = appointment.Room.Department.Name,
+                    RoomName = appointment.Room.Name,
+                    FullName = $"{appointment.Patient!.FirstName} {appointment.Patient.LastName}",
+                    DateOfBirth = appointment.Patient.DateOfBirth,
+                    Gender = appointment.Patient.Gender,
+                    AppointmentStatus = appointment.AppointmentStatus,
+                    AppointmentDate = appointment.AppointmentDate,
+                    AppointmentStartTime = appointment.AppointmentStartTime,
+                    AppointmentEndTime = appointment.AppointmentEndTime,
+                    PriceOfService = appointment.Billing.PaymentAmount,
+                    DoctorName = appointment.Doctor != null
+                        ? $"{appointment.Doctor.Employee.FirstName} {appointment.Doctor.Employee.LastName}"
+                    : string.Empty
+                }
+            );
+        }
+        
+        return ServiceResult<List<ResponseAppointmentDTO>>.Success(appointmentDtos);
     }
     public Task<ServiceResult<string>> UpdateAppointment(RequestAppointmentDTO updateAppointmentDto)
     {
         throw new NotImplementedException();
     }
-    public Task<ServiceResult<string>> DeleteAppointment(long appointmentId)
+    public async Task<ServiceResult<bool>> DeleteAppointment(long appointmentId)
     {
-        throw new NotImplementedException();
+        Appointment? existingAppointment = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+        if(existingAppointment == null)
+            return ServiceResult<bool>.Fail("Đăng ký khám không tồn tại");
+        bool isDeleted = await _appointmentRepository.DeleteAppointmentAsync(appointmentId);
+        if(!isDeleted)
+            return ServiceResult<bool>.Fail("Xóa đăng ký khám thất bại");
+        return ServiceResult<bool>.Success(true);
     }
-    public Task<ServiceResult<ResponseAppointmentDTO>> GetAppointmentByIdAsync(long appointmentId)
+    public async Task<ServiceResult<ResponseAppointmentDTO>> GetAppointmentByIdAsync(long appointmentId)
     {
-        throw new NotImplementedException();
+        Appointment? existingAppointment = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+        if(existingAppointment == null)
+            return ServiceResult<ResponseAppointmentDTO>.Fail("Đăng ký khám không tồn tại");
+        ResponseAppointmentDTO appointmentDto = new ResponseAppointmentDTO
+        {
+            AppointmentId = existingAppointment.Id,
+            BillingId = existingAppointment.Billing.Id,
+            DepartmentName = existingAppointment.Room.Department.Name,
+            RoomName = existingAppointment.Room.Name,
+            FullName = $"{existingAppointment.Patient!.FirstName} {existingAppointment.Patient.LastName}",
+            DateOfBirth = existingAppointment.Patient.DateOfBirth,
+            Gender = existingAppointment.Patient.Gender,
+            AppointmentStatus = existingAppointment.AppointmentStatus,
+            AppointmentDate = existingAppointment.AppointmentDate,
+            AppointmentStartTime = existingAppointment.AppointmentStartTime,
+            AppointmentEndTime = existingAppointment.AppointmentEndTime,
+            PriceOfService = existingAppointment.Billing.PaymentAmount,
+            DoctorName = existingAppointment.Doctor != null
+                ? $"{existingAppointment.Doctor.Employee.FirstName} {existingAppointment.Doctor.Employee.LastName}"
+                : string.Empty
+        };
+        return ServiceResult<ResponseAppointmentDTO>.Success(appointmentDto);
     }
 
 }

@@ -14,6 +14,8 @@ public class ResponseAppointmentDTO
     public TimeOnly AppointmentEndTime { get; set; }
     public Double PriceOfService { get; set; }
     
+    public string AppointmentStatus { get; set; } = string.Empty;
+    
     //Phan duoi la thong tin chi tiet ve bac si
     public string DoctorName { get; set; } = string.Empty;
     //....

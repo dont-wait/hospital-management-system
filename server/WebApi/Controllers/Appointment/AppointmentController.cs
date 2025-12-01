@@ -24,7 +24,7 @@ public class AppointmentController : ControllerBase
         {
             var result = await _appointmentService.DeleteAppointment(appointmentId);
             if (result.IsSuccess)
-                return new JsonResult(new ApiResponse<string>(200, "Xóa đăng ký khám thành công", result.Data)) { StatusCode = 200 };
+                return new JsonResult(new ApiResponse<string>(200, "Xóa đăng ký khám thành công", null)) { StatusCode = 200 };
             return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
         }
         catch (Exception e)
@@ -52,11 +52,15 @@ public class AppointmentController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAppointments(string? status, Guid? patientId)
+    public async Task<IActionResult> GetAppointments([FromQuery] string? status, 
+                                                    [FromQuery] Guid? patientId,
+                                                    [FromQuery] int page = 1,
+                                                    [FromQuery] int size = 20
+        )
     {
         try
         {
-            var result = await _appointmentService.GetAppointments(status, patientId);
+            var result = await _appointmentService.GetAppointments(status, patientId, page, size);
             if (result.IsSuccess)
                 return new JsonResult(new ApiResponse<List<ResponseAppointmentDTO>>(200, "Lấy danh sách đăng ký khám thành công", result.Data)) { StatusCode = 200 };
             return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
