@@ -18,6 +18,7 @@ public class AppointmentController : ControllerBase
 
 
     [HttpDelete("{appointmentId:long}")]
+    [Authorize(Roles = "admin, patient")]
     public async Task<IActionResult> DeleteAppointment(long appointmentId)
     {
         try

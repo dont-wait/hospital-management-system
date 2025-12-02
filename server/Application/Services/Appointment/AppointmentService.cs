@@ -175,6 +175,14 @@ public class AppointmentService : IAppointmentService
         Appointment? existingAppointment = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
         if(existingAppointment == null)
             return ServiceResult<bool>.Fail("Đăng ký khám không tồn tại");
+        
+        if(existingAppointment.AppointmentStatus == AppointmentStatusEnum.Paid.ToString())
+            return ServiceResult<bool>.Fail("Không thể xóa đăng ký khám đã thanh toán");
+    
+        // Sát 2 ngày khám hoặc ít hơn thì không cho xóa
+        if (existingAppointment.AppointmentDate <= DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
+            return ServiceResult<bool>.Fail("Chỉ được xóa khi lịch khám còn hơn 2 ngày nữa");
+        
         bool isDeleted = await _appointmentRepository.DeleteAppointmentAsync(appointmentId);
         if(!isDeleted)
             return ServiceResult<bool>.Fail("Xóa đăng ký khám thất bại");
