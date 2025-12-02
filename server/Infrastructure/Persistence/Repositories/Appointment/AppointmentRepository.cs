@@ -67,15 +67,18 @@ public class AppointmentRepository : IAppointmentRepository
         if (existingAppointment == null)
             return false;
 
-        _context.appointments.Remove(existingAppointment);
-        if (existingAppointment?.Billing != null)
-            _context.billings.Remove(existingAppointment.Billing);
 
         var slot = await _context.slot_times
             .FirstOrDefaultAsync(s => s.Id == existingAppointment!.SlotTimeId); // Replace SlotTimeId with your property
 
         if (slot != null && slot.CurrentAppointments > 0)
-            slot.CurrentAppointments--;        
+        {
+            slot.CurrentAppointments--;   
+        }
+        
+        _context.appointments.Remove(existingAppointment);
+        _context.billings.Remove(existingAppointment.Billing);
+        
         await _context.SaveChangesAsync();
         
         return true;
