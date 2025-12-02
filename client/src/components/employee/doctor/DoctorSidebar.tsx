@@ -2,16 +2,17 @@
 
 import SidebarCustomContent from "@/components/shared/SidebarCustomContent";
 import Icon from "@/components/shared/Icon";
-import { useSidebar } from "@/contexts";
+import { useSidebar, useUserAuthContext } from "@/contexts";
 import { useSidebarByRole } from "@/hooks";
 import styles from "@/styles/admin.module.css";
 
 export default function DoctorSidebar() {
   const { openSidebar } = useSidebar();
+  const { user } = useUserAuthContext();
   const sidebarContent = useSidebarByRole();
   return (
     <>
-      <SidebarCustomContent content={sidebarContent} />
+      {user && <SidebarCustomContent content={sidebarContent} /> }
 
       <button
         onClick={openSidebar}
