@@ -30,7 +30,7 @@ export function LoginForm() {
         await AuthService.login(loginAccountDto);
       if (user) {
         setUser(user);
-        router.push("/");
+        router.refresh();
       }
     },
     [router, setUser],
