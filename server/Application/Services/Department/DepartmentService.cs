@@ -3,10 +3,12 @@ using Application.Common.Utils;
 public class DepartmentService : IDepartmentService
 {
     private readonly IDepartmentRepository _departmentRepository;
+    private readonly IBillingRepository _billingRepository;
 
-    public DepartmentService(IDepartmentRepository departmentRepository)
+    public DepartmentService(IDepartmentRepository departmentRepository, IBillingRepository billingRepository)
     {
         _departmentRepository = departmentRepository;
+        _billingRepository = billingRepository;
     }
 
     public async Task<ServiceResult<List<ResponseDepartmentDTO>>> GetAllDepartmentsAsync()
@@ -27,5 +29,22 @@ public class DepartmentService : IDepartmentService
         }).ToList();
 
         return ServiceResult<List<ResponseDepartmentDTO>>.Success(departmentDTOs);
+    }
+
+    public async Task<ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>> GetDepartmentRevenueStatisticsAsync(string type, DateTime? date)
+    {
+        if (string.IsNullOrEmpty(type))
+        {
+            return ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>.Fail("Tham số loại là bắt buộc.");
+        }
+
+        if (type != "day" && type != "month" && type != "year" && type != "week")
+        {
+            return ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>.Fail("Loại không hợp lệ. Các giá trị hợp lệ là: 'day', 'month', 'year', 'week'.");
+        }
+
+        var stats = await _billingRepository.GetDepartmentRevenueStatisticsAsync(type, date);
+
+        return ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>.Success(stats);
     }
 }
