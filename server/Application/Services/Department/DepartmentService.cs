@@ -31,19 +31,19 @@ public class DepartmentService : IDepartmentService
         return ServiceResult<List<ResponseDepartmentDTO>>.Success(departmentDTOs);
     }
 
-    public async Task<ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>> GetDepartmentRevenueStatisticsAsync(string type, DateTime? date)
+    public async Task<ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>> GetDepartmentRevenueStatisticsAsync(string type, DateTime? fromDate, DateTime? toDate)
     {
         if (string.IsNullOrEmpty(type))
         {
             return ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>.Fail("Tham số loại là bắt buộc.");
         }
 
-        if (type != "day" && type != "month" && type != "year" && type != "week")
+        if (type != "day" && type != "month" && type != "year" && type != "week" && type != "range")
         {
-            return ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>.Fail("Loại không hợp lệ. Các giá trị hợp lệ là: 'day', 'month', 'year', 'week'.");
+            return ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>.Fail("Loại không hợp lệ. Các giá trị hợp lệ là: 'day', 'week', 'month', 'year', 'range'.");
         }
 
-        var stats = await _billingRepository.GetDepartmentRevenueStatisticsAsync(type, date);
+        var stats = await _billingRepository.GetDepartmentRevenueStatisticsAsync(type, fromDate, toDate);
 
         return ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>.Success(stats);
     }

@@ -34,9 +34,12 @@ public class DepartmentController : ControllerBase
     }
 
     [HttpGet("revenue-statistics")]
-    public async Task<IActionResult> GetDepartmentRevenueStatistics([FromQuery] string type,[FromQuery] DateTime? date)
+    public async Task<IActionResult> GetDepartmentRevenueStatistics(
+        [FromQuery] string type,
+        [FromQuery] DateTime? fromDate = null,
+        [FromQuery] DateTime? toDate = null)
     {
-        var result = await _departmentService.GetDepartmentRevenueStatisticsAsync(type, date);
+        var result = await _departmentService.GetDepartmentRevenueStatisticsAsync(type, fromDate, toDate);
         if (!result.IsSuccess)
             return new JsonResult(new ApiResponse<List<ResponseDeparmentRevenueStatisticsDTO>>(400, result.Message)) { StatusCode = 400 };
 
