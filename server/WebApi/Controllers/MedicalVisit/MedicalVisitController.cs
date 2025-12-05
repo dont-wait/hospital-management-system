@@ -4,5 +4,5 @@
 [Route("api/medical-visits")]
 public class MedicalVisitController : ControllerBase
 {
-        
+    
 }

@@ -10,6 +10,8 @@ public class AppDbContext : DbContext
         _currentUserService = currentUserService;
     }
     
+    public DbSet<Prescription> prescriptions { get; set; } = null!;
+    public DbSet<PrescriptionDetail> prescription_details { get; set; } = null!;
     public DbSet<MedicalVisit> medical_visits { get; set; } = null!;
     public DbSet<Billing> billings { get; set; } = null!;
     public DbSet<TaskItem> tasks { get; set; } = null!;
