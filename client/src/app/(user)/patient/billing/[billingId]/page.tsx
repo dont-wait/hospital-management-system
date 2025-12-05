@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import Icon from "@/components/shared/Icon";
 import { BillingService } from "@/services/server";
@@ -13,9 +14,15 @@ async function BillingDetail({
   const cookieStore = await cookies();
   const { billingId } = await params;
   const token = cookieStore.get("accessToken")?.value;
-  const response: ApiResponse<BillingDetailType> =
+  let billingDetail: BillingDetailType;
+  try {
+    const response: ApiResponse<BillingDetailType> =
     await BillingService.getBillingDetail(parseInt(billingId), token);
-  const billingDetail = response.data;
+    billingDetail = response.data;
+  }
+  catch {
+    notFound();
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 mt-2 md:mt-4 lg:mt-12">
