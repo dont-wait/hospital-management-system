@@ -6,4 +6,6 @@ public class ResponseBillingDTO
     public float PaymentAmount { get; set; }
     public string PaymentMethod { get; set; } = string.Empty;
     public string BillingStatus { get; set; } = string.Empty;
+    public DateTimeOffset CreatedAt { get; set; }
+    public string ServiceName { get; set; } = string.Empty;
 }

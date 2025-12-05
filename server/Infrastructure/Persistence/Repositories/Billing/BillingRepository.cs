@@ -20,6 +20,7 @@ public class BillingRepository : IBillingRepository
     public async Task<Billing?> GetBillingByIdAsync(long billingId)
     {
         return await _context.billings
+            .Include(b => b.Appointment!.Service)
             .FirstOrDefaultAsync(b => b.Id == billingId && b.DeletedAt == null);
     }
     public async Task<PaginatedResult<Billing>> GetBillingsAsync(string? status, 
