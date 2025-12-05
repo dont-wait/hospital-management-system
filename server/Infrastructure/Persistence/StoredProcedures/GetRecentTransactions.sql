@@ -38,11 +38,11 @@ BEGIN
         -- Tên dịch vụ
         s.Name AS ServiceName,
         
-        -- Số tiền thanh toán
-        b.PaymentAmount AS Amount,
+        -- Số tiền thanh toán (cast sang decimal)
+        CAST(b.PaymentAmount AS DECIMAL(18, 2)) AS Amount,
         
-        -- Thời gian tạo billing
-        b.CreatedAt AS TransactionTime,
+        -- Thời gian giao dịch (cast sang datetime)
+        CAST(b.CreatedAt AS DATETIME) AS TransactionDate,
         
         -- Trạng thái billing
         b.BillingStatus AS Status,
@@ -69,4 +69,4 @@ BEGIN
 END
 GO
 
-EXEC GetRecentTransactions
+EXEC PC_GetRecentTransactions
