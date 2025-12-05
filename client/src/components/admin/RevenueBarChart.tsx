@@ -14,7 +14,7 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 interface RevenueBarChartProps {
-  timeRange: "day" | "week" | "month" | "year";
+  timeRange: "day" | "week" | "month" | "year" | "range";
 }
 
 export default function RevenueBarChart({ timeRange }: RevenueBarChartProps) {

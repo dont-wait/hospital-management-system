@@ -25,7 +25,7 @@ ChartJS.register(
 );
 
 interface RevenueLineChartProps {
-  timeRange: "day" | "week" | "month" | "year";
+  timeRange: "day" | "week" | "month" | "year" | "range";
 }
 
 export default function RevenueLineChart({ timeRange }: RevenueLineChartProps) {

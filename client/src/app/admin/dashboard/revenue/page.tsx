@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminContentHeader from "@/components/admin/AdminContentHeader";
 import Icon from "@/components/shared/Icon";
 import RevenueLineChart from "@/components/admin/RevenueLineChart";
 import RevenueBarChart from "@/components/admin/RevenueBarChart";
 import RevenuePieChart from "@/components/admin/RevenuePieChart";
 import styles from "@/styles/revenue.module.css";
+import { RevenueByDepartment } from "@/types";
+import { DepartmentService } from "@/services/department.service";
 
 interface RevenueData {
   totalRevenue: number;
@@ -14,14 +16,6 @@ interface RevenueData {
   serviceRevenue: number;
   medicineRevenue: number;
   growthRate: number;
-}
-
-interface RevenueByDepartment {
-  id: number;
-  name: string;
-  revenue: number;
-  appointments: number;
-  growth: number;
 }
 
 interface RevenueTransaction {
@@ -34,8 +28,13 @@ interface RevenueTransaction {
 }
 
 export default function RevenuePage() {
-  const [timeRange, setTimeRange] = useState<"day" | "week" | "month" | "year">("month");
+  const [timeRange, setTimeRange] = useState<"day" | "week" | "month" | "year" | "range">("month");
   const [chartType, setChartType] = useState<"bar" | "line" | "pie">("line");
+  const [fromDateDept, setFromDateDept] = useState<string>("");
+  const [toDateDept, setToDateDept] = useState<string>("");
+  const [fromDateTrans, setFromDateTrans] = useState<string>("");
+  const [toDateTrans, setToDateTrans] = useState<string>("");
+  const [departmentRevenue, setDepartmentRevenue] = useState<RevenueByDepartment[]>([]);
 
   const revenueData: RevenueData = {
     totalRevenue: 2450000000, // 2.45 tỷ VNĐ
@@ -45,14 +44,14 @@ export default function RevenuePage() {
     growthRate: 12.5,
   };
 
-  const departmentRevenue: RevenueByDepartment[] = [
-    { id: 1, name: "Khoa Nội", revenue: 650000000, appointments: 342, growth: 8.5 },
-    { id: 2, name: "Khoa Ngoại", revenue: 580000000, appointments: 289, growth: 15.2 },
-    { id: 3, name: "Khoa Sản", revenue: 420000000, appointments: 198, growth: 6.8 },
-    { id: 4, name: "Khoa Nhi", revenue: 380000000, appointments: 456, growth: 10.3 },
-    { id: 5, name: "Khoa Mắt", revenue: 220000000, appointments: 167, growth: -2.1 },
-    { id: 6, name: "Khoa Răng Hàm Mặt", revenue: 200000000, appointments: 234, growth: 18.9 },
-  ];
+  useEffect(() => {
+    const fetchRevenueStatistics = async () => {
+      const response = await DepartmentService.getRevenueStatistics(timeRange, fromDateDept, toDateDept);
+      setDepartmentRevenue(response);
+    };
+
+    fetchRevenueStatistics();
+  }, [timeRange, fromDateDept, toDateDept]);
 
   const recentTransactions: RevenueTransaction[] = [
     {
@@ -216,10 +215,51 @@ export default function RevenuePage() {
       <div className={styles["section-card"]}>
         <div className={styles["section-header"]}>
           <h2 className={styles["section-title"]}>Doanh Thu Theo Khoa</h2>
-          <button className={styles["export-btn"]}>
-            <Icon name="Download" />
-            Xuất báo cáo
-          </button>
+          <div className={styles["header-actions"]}>
+            <div className={styles["date-range-picker"]}>
+              <div className={styles["date-input-group"]}>
+                <label className={styles["date-label"]}>Từ ngày:</label>
+                <input
+                  type="date"
+                  className={styles["date-input"]}
+                  value={fromDateDept}
+                  onChange={(e) => {
+                    setFromDateDept(e.target.value);
+                    setTimeRange("range");
+                  }}
+                />
+              </div>
+              <div className={styles["date-input-group"]}>
+                <label className={styles["date-label"]}>Đến ngày:</label>
+                <input
+                  type="date"
+                  className={styles["date-input"]}
+                  value={toDateDept}
+                  onChange={(e) => {
+                    setToDateDept(e.target.value);
+                    setTimeRange("range");
+                  }}
+                />
+              </div>
+              {(fromDateDept || toDateDept) && (
+                <button
+                  className={styles["clear-dates-btn"]}
+                  onClick={() => {
+                    setFromDateDept("");
+                    setToDateDept("");
+                    setTimeRange("month");
+                  }}
+                  title="Xóa bộ lọc ngày"
+                >
+                  <Icon name="X" />
+                </button>
+              )}
+            </div>
+            <button className={styles["export-btn"]}>
+              <Icon name="Download" />
+              Xuất báo cáo
+            </button>
+          </div>
         </div>
         <div className={styles["table-wrapper"]}>
           <table className={styles["revenue-table"]}>
@@ -247,7 +287,7 @@ export default function RevenuePage() {
                       ) : (
                         <>
                           <Icon name="TrendingDown" />
-                          <span className={styles["growth-negative"]}>{dept.growth}%</span>
+                          <span className={styles["growth-negative"]}>{dept.growth ?? 0}%</span>
                         </>
                       )}
                     </div>
@@ -261,7 +301,48 @@ export default function RevenuePage() {
       <div className={styles["section-card"]}>
         <div className={styles["section-header"]}>
           <h2 className={styles["section-title"]}>Giao Dịch Gần Đây</h2>
-          <button className={styles["view-all-btn"]}>Xem tất cả</button>
+          <div className={styles["header-actions"]}>
+            <div className={styles["date-range-picker"]}>
+              <div className={styles["date-input-group"]}>
+                <label className={styles["date-label"]}>Từ ngày:</label>
+                <input
+                  type="date"
+                  className={styles["date-input"]}
+                  value={fromDateTrans}
+                  onChange={(e) => {
+                    setFromDateTrans(e.target.value);
+                    setTimeRange("range");
+                  }}
+                />
+              </div>
+              <div className={styles["date-input-group"]}>
+                <label className={styles["date-label"]}>Đến ngày:</label>
+                <input
+                  type="date"
+                  className={styles["date-input"]}
+                  value={toDateTrans}
+                  onChange={(e) => {
+                    setToDateTrans(e.target.value);
+                    setTimeRange("range");
+                  }}
+                />
+              </div>
+              {(fromDateTrans || toDateTrans) && (
+                <button
+                  className={styles["clear-dates-btn"]}
+                  onClick={() => {
+                    setFromDateTrans("");
+                    setToDateTrans("");
+                    setTimeRange("month");
+                  }}
+                  title="Xóa bộ lọc ngày"
+                >
+                  <Icon name="X" />
+                </button>
+              )}
+            </div>
+            <button className={styles["view-all-btn"]}>Xem tất cả</button>
+          </div>
         </div>
         <div className={styles["table-wrapper"]}>
           <table className={styles["transaction-table"]}>

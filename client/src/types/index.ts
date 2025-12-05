@@ -309,3 +309,11 @@ export interface ApiError {
   status: number;
   message: string;
 }
+
+export interface RevenueByDepartment {
+  id: number;
+  name: string;
+  revenue: number;
+  appointments: number;
+  growth: number;
+}
