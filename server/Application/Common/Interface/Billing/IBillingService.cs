@@ -1,7 +1,6 @@
 ﻿using Application.Common.DTOs.Billing;
 using Application.Common.Utils;
 
-namespace Application.Services.Billing;
 public interface IBillingService
 {
     Task<ServiceResult<ResponseBillingDTO>> GetBillingByIdAsync(long billingId);
