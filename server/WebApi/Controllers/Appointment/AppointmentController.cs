@@ -34,7 +34,6 @@ public class AppointmentController : ControllerBase
             return new JsonResult(new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
         }
     }
-    
 
     [HttpDelete("{appointmentId:long}")]
     [Authorize(Roles = "admin, patient")]
@@ -57,7 +56,7 @@ public class AppointmentController : ControllerBase
     
     
     [HttpPut]
-    public async Task<IActionResult> UpdateAppointment(long appointmentId, RequestUpdateAppointmentDTO request)
+    public async Task<IActionResult> UpdateAppointment(RequestAppointmentDTO request)
     {
         try
         {
