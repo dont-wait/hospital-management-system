@@ -1,4 +1,6 @@
 ﻿using Application.Common.DTOs;
+using Application.Common.DTOs.Billing;
+
 public interface IBillingRepository
 {
     Task<Billing> CreateBillingAsync(Billing billing);
@@ -6,4 +8,5 @@ public interface IBillingRepository
     Task<PaginatedResult<Billing>> GetBillingsAsync(string? status, Guid? patientId, Guid? doctorId, int page, int size);
     Task<List<ResponseDeparmentRevenueStatisticsDTO>> GetDepartmentRevenueStatisticsAsync(string type, DateTime? fromDate, DateTime? toDate); 
     Task<List<ResponseLatestTransactionDTO>> GetLatestTransactionsAsync(int page, int count, DateTime? fromDate, DateTime? toDate);
+    Task<List<ResponseRevenueDTO>> GetAllRevenueAsync(string timeRange, DateTime? referenceDate);
 }

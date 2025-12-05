@@ -86,4 +86,25 @@ public class BillingService : IBillingService
             return ServiceResult<List<ResponseLatestTransactionDTO>>.Fail("Lỗi khi lấy giao dịch mới nhất");
         }
     }
+
+    public async Task<ServiceResult<List<ResponseRevenueDTO>>> GetAllRevenueAsync(string timeRange, DateTime? referenceDate)
+    {
+        try
+        {
+            // Validate timeRange
+            var validTimeRanges = new[] { "day", "week", "month", "year" };
+            if (!validTimeRanges.Contains(timeRange.ToLower()))
+            {
+                return ServiceResult<List<ResponseRevenueDTO>>.Fail("Khoảng thời gian không hợp lệ. Giá trị hợp lệ: day, week, month, year");
+            }
+
+            var revenues = await _billingRepository.GetAllRevenueAsync(timeRange, referenceDate);
+            return ServiceResult<List<ResponseRevenueDTO>>.Success(revenues);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error fetching revenues: " + ex.Message);
+            return ServiceResult<List<ResponseRevenueDTO>>.Fail("Lỗi khi lấy dữ liệu doanh thu");
+        }
+    }
 }

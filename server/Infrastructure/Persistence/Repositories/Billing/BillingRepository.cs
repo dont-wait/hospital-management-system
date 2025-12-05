@@ -1,6 +1,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Application.Common.DTOs;
+using Application.Common.DTOs.Billing;
 using Microsoft.EntityFrameworkCore;
 public class BillingRepository : IBillingRepository
 {
@@ -125,6 +126,33 @@ public class BillingRepository : IBillingRepository
                 Amount = reader.GetDecimal(reader.GetOrdinal("Amount")),
                 TransactionDate = reader.GetDateTime(reader.GetOrdinal("TransactionDate")),
                 Status = reader.GetString(reader.GetOrdinal("Status"))
+            });
+        }
+
+        return result;
+    }
+
+    public async Task<List<ResponseRevenueDTO>> GetAllRevenueAsync(string timeRange, DateTime? referenceDate)
+    {
+        var connection = _context.Database.GetDbConnection();
+        await connection.OpenAsync();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = "PC_GetAllRevenue";
+        command.CommandType = CommandType.StoredProcedure;
+
+        command.Parameters.Add(new SqlParameter("@TimeRange", SqlDbType.NVarChar, 20) { Value = timeRange });
+        command.Parameters.Add(new SqlParameter("@ReferenceDate", SqlDbType.DateTime) { Value = referenceDate ?? (object)DBNull.Value });
+
+        var result = new List<ResponseRevenueDTO>();
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            result.Add(new ResponseRevenueDTO
+            {
+                Label = reader.GetString(reader.GetOrdinal("Label")),
+                Revenue = Convert.ToDecimal(reader.GetDouble(reader.GetOrdinal("Revenue")))
             });
         }
 

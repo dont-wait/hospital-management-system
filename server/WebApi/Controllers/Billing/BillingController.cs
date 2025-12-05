@@ -88,4 +88,22 @@ public class BillingController : ControllerBase
             data = result.Data
         });
     }
+
+    [HttpGet("revenues")]
+    public async Task<IActionResult> GetAllRevenue(
+        [FromQuery] string type = "day",
+        [FromQuery] DateTime? date = null)
+    {
+        var result = await _billingService.GetAllRevenueAsync(type, date);
+
+        if (!result.IsSuccess)
+            return BadRequest(new { message = result.Message });
+
+        return Ok(new
+        {
+            status = 200,
+            message = "Lấy dữ liệu doanh thu thành công",
+            data = result.Data
+        });
+    }
 }
