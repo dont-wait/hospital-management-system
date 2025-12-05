@@ -32,7 +32,8 @@ public class BillingController : ControllerBase
             message = "Lấy danh sách hóa đơn thành công",
             data = result.Data,
             page,
-            size
+            size,
+            totalPages = (int)Math.Ceiling((double)result.Data.Count / size)
         });
     }
     
