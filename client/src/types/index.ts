@@ -317,3 +317,11 @@ export interface RevenueByDepartment {
   appointments: number;
   growth: number;
 }
+
+export interface RevenueTransaction {
+  patientName: string;
+  serviceName: string;
+  amount: number;
+  transactionDate: string;
+  status: "paid" | "unpaid" | "pending" | "failed";
+}

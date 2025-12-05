@@ -227,6 +227,10 @@
   @apply bg-red-100 text-red-700;
 }
 
+.status-unpaid {
+  @apply bg-gray-100 text-gray-700;
+}
+
 /* Chart Section */
 .chart-controls {
   @apply flex gap-2;

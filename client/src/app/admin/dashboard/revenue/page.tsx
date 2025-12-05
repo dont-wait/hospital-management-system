@@ -7,8 +7,10 @@ import RevenueLineChart from "@/components/admin/RevenueLineChart";
 import RevenueBarChart from "@/components/admin/RevenueBarChart";
 import RevenuePieChart from "@/components/admin/RevenuePieChart";
 import styles from "@/styles/revenue.module.css";
-import { RevenueByDepartment } from "@/types";
+import { RevenueByDepartment, RevenueTransaction } from "@/types";
 import { DepartmentService } from "@/services/department.service";
+import { BillingService } from "@/services/billing.service";
+import { formatDateTime } from "@/lib/client/date-utils";
 
 interface RevenueData {
   totalRevenue: number;
@@ -16,15 +18,6 @@ interface RevenueData {
   serviceRevenue: number;
   medicineRevenue: number;
   growthRate: number;
-}
-
-interface RevenueTransaction {
-  id: number;
-  patientName: string;
-  service: string;
-  amount: number;
-  date: string;
-  status: "completed" | "pending" | "cancelled";
 }
 
 export default function RevenuePage() {
@@ -35,6 +28,7 @@ export default function RevenuePage() {
   const [fromDateTrans, setFromDateTrans] = useState<string>("");
   const [toDateTrans, setToDateTrans] = useState<string>("");
   const [departmentRevenue, setDepartmentRevenue] = useState<RevenueByDepartment[]>([]);
+  const [recentTransactions, setRecentTransactions] = useState<RevenueTransaction[]>([]);
 
   const revenueData: RevenueData = {
     totalRevenue: 2450000000, // 2.45 tỷ VNĐ
@@ -53,49 +47,14 @@ export default function RevenuePage() {
     fetchRevenueStatistics();
   }, [timeRange, fromDateDept, toDateDept]);
 
-  const recentTransactions: RevenueTransaction[] = [
-    {
-      id: 1,
-      patientName: "Nguyễn Văn A",
-      service: "Khám tổng quát + Xét nghiệm máu",
-      amount: 1500000,
-      date: "2025-12-03 09:30",
-      status: "completed",
-    },
-    {
-      id: 2,
-      patientName: "Trần Thị B",
-      service: "Phẫu thuật nội soi",
-      amount: 25000000,
-      date: "2025-12-03 08:15",
-      status: "completed",
-    },
-    {
-      id: 3,
-      patientName: "Lê Văn C",
-      service: "Siêu âm thai + Khám sản",
-      amount: 800000,
-      date: "2025-12-02 15:45",
-      status: "completed",
-    },
-    {
-      id: 4,
-      patientName: "Phạm Thị D",
-      service: "Điều trị răng sứ",
-      amount: 12000000,
-      date: "2025-12-02 14:20",
-      status: "pending",
-    },
-    {
-      id: 5,
-      patientName: "Hoàng Văn E",
-      service: "Khám mắt + Đo thị lực",
-      amount: 500000,
-      date: "2025-12-02 11:00",
-      status: "completed",
-    },
-  ];
-
+  useEffect(() => {
+    const fetchRecentTransactions = async () => {
+      const response = await BillingService.getRecentTransactions(1, 5, fromDateTrans, toDateTrans);
+      setRecentTransactions(response);
+    };
+    fetchRecentTransactions();
+  }, [fromDateTrans, toDateTrans]);
+  
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -105,12 +64,14 @@ export default function RevenuePage() {
 
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case "completed":
+      case "paid":
         return styles["status-completed"];
       case "pending":
         return styles["status-pending"];
-      case "cancelled":
+      case "failed":
         return styles["status-cancelled"];
+      case "unpaid":
+        return styles["status-unpaid"];
       default:
         return "";
     }
@@ -118,12 +79,14 @@ export default function RevenuePage() {
 
   const getStatusText = (status: string): string => {
     switch (status) {
-      case "completed":
+      case "paid":
         return "Hoàn thành";
       case "pending":
         return "Đang xử lý";
-      case "cancelled":
+      case "failed":
         return "Đã hủy";
+      case "unpaid":
+        return "Chưa thanh toán";
       default:
         return status;
     }
@@ -356,21 +319,25 @@ export default function RevenuePage() {
               </tr>
             </thead>
             <tbody>
-              {recentTransactions.map((transaction) => (
-                <tr key={transaction.id}>
-                  <td className={styles["patient-name"]}>{transaction.patientName}</td>
-                  <td className={styles["service-name"]}>{transaction.service}</td>
-                  <td className={styles["transaction-amount"]}>
-                    {formatCurrency(transaction.amount)}
-                  </td>
-                  <td className={styles["transaction-date"]}>{transaction.date}</td>
-                  <td>
-                    <span className={`${styles["status-badge"]} ${getStatusColor(transaction.status)}`}>
-                      {getStatusText(transaction.status)}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+              {recentTransactions.map((transaction) => {
+                const time = formatDateTime(transaction.transactionDate);
+
+                return (
+                  <tr key={transaction.patientName + transaction.transactionDate}>
+                    <td className={styles["patient-name"]}>{transaction.patientName}</td>
+                    <td className={styles["service-name"]}>{transaction.serviceName}</td>
+                    <td className={styles["transaction-amount"]}>
+                      {formatCurrency(transaction.amount)}
+                    </td>
+                    <td className={styles["transaction-date"]}>{typeof time === "string" || time.date}</td>
+                    <td>
+                      <span className={`${styles["status-badge"]} ${getStatusColor(transaction.status)}`}>
+                        {getStatusText(transaction.status)}
+                      </span>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
