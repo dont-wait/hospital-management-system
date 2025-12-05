@@ -56,7 +56,7 @@ public class AppointmentController : ControllerBase
     
     
     [HttpPut]
-    public async Task<IActionResult> UpdateAppointment(RequestAppointmentDTO request)
+    public async Task<IActionResult> UpdateAppointment(long appointmentId, RequestUpdateAppointmentDTO request)
     {
         try
         {
