@@ -107,8 +107,8 @@ public class BillingRepository : IBillingRepository
         command.CommandText = "PC_GetRecentTransactions";
         command.CommandType = CommandType.StoredProcedure;
 
-        command.Parameters.Add(new SqlParameter("@PageNumber", page));
-        command.Parameters.Add(new SqlParameter("@PageSize", count));
+        command.Parameters.Add(new SqlParameter("@PageNumber", SqlDbType.Int) { Value = page });
+        command.Parameters.Add(new SqlParameter("@PageSize", SqlDbType.Int) { Value = count });
 
         var result = new List<ResponseLatestTransactionDTO>();
 
@@ -117,7 +117,8 @@ public class BillingRepository : IBillingRepository
         {
             result.Add(new ResponseLatestTransactionDTO
             {
-                Id = reader.GetInt64(reader.GetOrdinal("Id")),
+                PatientName = reader.GetString(reader.GetOrdinal("PatientName")),
+                ServiceName = reader.GetString(reader.GetOrdinal("ServiceName")),
                 Amount = reader.GetDecimal(reader.GetOrdinal("Amount")),
                 TransactionDate = reader.GetDateTime(reader.GetOrdinal("TransactionDate")),
                 Status = reader.GetString(reader.GetOrdinal("Status"))

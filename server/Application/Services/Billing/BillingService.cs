@@ -80,8 +80,9 @@ public class BillingService : IBillingService
         {
             var transactions = await _billingRepository.GetLatestTransactionsAsync(page, count);
             return ServiceResult<List<ResponseLatestTransactionDTO>>.Success(transactions);   
-        } catch
+        } catch(Exception ex)
         {
+            Console.WriteLine("Error fetching latest transactions: " + ex.Message);
             return ServiceResult<List<ResponseLatestTransactionDTO>>.Fail("Lỗi khi lấy giao dịch mới nhất");
         }
     }
