@@ -16,7 +16,6 @@ interface RevenueData {
   totalRevenue: number;
   appointmentRevenue: number;
   serviceRevenue: number;
-  medicineRevenue: number;
   growthRate: number;
 }
 
@@ -34,7 +33,6 @@ export default function RevenuePage() {
     totalRevenue: 2450000000, // 2.45 tỷ VNĐ
     appointmentRevenue: 980000000,
     serviceRevenue: 1120000000,
-    medicineRevenue: 350000000,
     growthRate: 12.5,
   };
 
@@ -160,16 +158,6 @@ export default function RevenuePage() {
           <div className={styles["stat-content"]}>
             <h3 className={styles["stat-label"]}>Doanh Thu Dịch Vụ</h3>
             <p className={styles["stat-value"]}>{formatCurrency(revenueData.serviceRevenue)}</p>
-          </div>
-        </div>
-
-        <div className={styles["stat-card"]}>
-          <div className={styles["stat-icon-wrap-secondary"]}>
-            <Icon name="Package" />
-          </div>
-          <div className={styles["stat-content"]}>
-            <h3 className={styles["stat-label"]}>Doanh Thu Thuốc</h3>
-            <p className={styles["stat-value"]}>{formatCurrency(revenueData.medicineRevenue)}</p>
           </div>
         </div>
       </div>
@@ -377,7 +365,6 @@ export default function RevenuePage() {
             <RevenuePieChart
               appointmentRevenue={revenueData.appointmentRevenue}
               serviceRevenue={revenueData.serviceRevenue}
-              medicineRevenue={revenueData.medicineRevenue}
             />
           )}
         </div>

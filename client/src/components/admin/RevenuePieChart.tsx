@@ -8,20 +8,18 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 interface RevenuePieChartProps {
   appointmentRevenue: number;
   serviceRevenue: number;
-  medicineRevenue: number;
 }
 
 export default function RevenuePieChart({
   appointmentRevenue,
   serviceRevenue,
-  medicineRevenue,
 }: RevenuePieChartProps) {
   const data = {
-    labels: ["Khám bệnh", "Dịch vụ", "Thuốc"],
+    labels: ["Khám bệnh", "Dịch vụ"],
     datasets: [
       {
         label: "Doanh thu",
-        data: [appointmentRevenue, serviceRevenue, medicineRevenue],
+        data: [appointmentRevenue, serviceRevenue],
         backgroundColor: [
           "rgba(79, 81, 140, 0.8)",
           "rgba(218, 191, 255, 0.8)",
@@ -81,11 +79,11 @@ export default function RevenuePieChart({
             return `${label}: ${formattedValue} (${percentage}%)`;
           },
           afterLabel: function (context: { dataIndex: number }) {
-            const total = [appointmentRevenue, serviceRevenue, medicineRevenue].reduce(
+            const total = [appointmentRevenue, serviceRevenue].reduce(
               (a, b) => a + b,
               0
             );
-            const value = [appointmentRevenue, serviceRevenue, medicineRevenue][
+            const value = [appointmentRevenue, serviceRevenue][
               context.dataIndex
             ];
             const percentage = ((value / total) * 100).toFixed(1);
