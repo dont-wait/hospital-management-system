@@ -70,9 +70,13 @@ public class BillingController : ControllerBase
     }
 
     [HttpGet("transactions")]
-    public async Task<IActionResult> GetLatestTransactions([FromQuery] int page = 1, [FromQuery] int count = 5)
+    public async Task<IActionResult> GetLatestTransactions(
+        [FromQuery] int page = 1, 
+        [FromQuery] int count = 5,
+        [FromQuery] DateTime? fromDate = null,
+        [FromQuery] DateTime? toDate = null)
     {
-        var result = await _billingService.GetLatestTransactionsAsync(page, count);
+        var result = await _billingService.GetLatestTransactionsAsync(page, count, fromDate, toDate);
 
         if (!result.IsSuccess)
             return BadRequest(new { message = result.Message });

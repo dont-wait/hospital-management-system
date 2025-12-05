@@ -66,7 +66,7 @@ public class BillingRepository : IBillingRepository
         };
     }
 
-    public async Task<List<ResponseDeparmentRevenueStatisticsDTO>> GetDepartmentRevenueStatisticsAsync(string type, DateTime? date)
+    public async Task<List<ResponseDeparmentRevenueStatisticsDTO>> GetDepartmentRevenueStatisticsAsync(string type, DateTime? fromDate, DateTime? toDate)
     {
         var connection = _context.Database.GetDbConnection();
         await connection.OpenAsync();
@@ -76,7 +76,8 @@ public class BillingRepository : IBillingRepository
         command.CommandType = CommandType.StoredProcedure;
 
         command.Parameters.Add(new SqlParameter("@Type", type));
-        command.Parameters.Add(new SqlParameter("@Date", date ?? (object)DBNull.Value));
+        command.Parameters.Add(new SqlParameter("@FromDate", SqlDbType.Date) { Value = fromDate ?? (object)DBNull.Value });
+        command.Parameters.Add(new SqlParameter("@ToDate", SqlDbType.Date) { Value = toDate ?? (object)DBNull.Value });
 
         var result = new List<ResponseDeparmentRevenueStatisticsDTO>();
 
@@ -98,7 +99,7 @@ public class BillingRepository : IBillingRepository
         return result;
     }
 
-    public async Task<List<ResponseLatestTransactionDTO>> GetLatestTransactionsAsync(int page, int count)
+    public async Task<List<ResponseLatestTransactionDTO>> GetLatestTransactionsAsync(int page, int count, DateTime? fromDate, DateTime? toDate)
     {
         var connection = _context.Database.GetDbConnection();
         await connection.OpenAsync();
@@ -109,6 +110,8 @@ public class BillingRepository : IBillingRepository
 
         command.Parameters.Add(new SqlParameter("@PageNumber", SqlDbType.Int) { Value = page });
         command.Parameters.Add(new SqlParameter("@PageSize", SqlDbType.Int) { Value = count });
+        command.Parameters.Add(new SqlParameter("@FromDate", SqlDbType.Date) { Value = fromDate ?? (object)DBNull.Value });
+        command.Parameters.Add(new SqlParameter("@ToDate", SqlDbType.Date) { Value = toDate ?? (object)DBNull.Value });
 
         var result = new List<ResponseLatestTransactionDTO>();
 

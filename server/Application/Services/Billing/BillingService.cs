@@ -74,11 +74,11 @@ public class BillingService : IBillingService
         return ServiceResult<string>.Success($"Tạo hóa đơn thành công với ID: {created.Id}");
     }
 
-    public async Task<ServiceResult<List<ResponseLatestTransactionDTO>>> GetLatestTransactionsAsync(int page, int count)
+    public async Task<ServiceResult<List<ResponseLatestTransactionDTO>>> GetLatestTransactionsAsync(int page, int count, DateTime? fromDate, DateTime? toDate)
     {
         try
         {
-            var transactions = await _billingRepository.GetLatestTransactionsAsync(page, count);
+            var transactions = await _billingRepository.GetLatestTransactionsAsync(page, count, fromDate, toDate);
             return ServiceResult<List<ResponseLatestTransactionDTO>>.Success(transactions);   
         } catch(Exception ex)
         {
