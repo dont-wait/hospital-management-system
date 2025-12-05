@@ -48,7 +48,7 @@ public class BillingRepository : IBillingRepository
                 Revenue = reader.GetDecimal(reader.GetOrdinal("revenue")),
                 RevenueGrowthPercentage = reader.IsDBNull(reader.GetOrdinal("revenue_growth_percentage"))
                     ? null
-                    : reader.GetDouble(reader.GetOrdinal("revenue_growth_percentage"))
+                    : reader.GetDecimal(reader.GetOrdinal("revenue_growth_percentage"))
             });
         }
 
