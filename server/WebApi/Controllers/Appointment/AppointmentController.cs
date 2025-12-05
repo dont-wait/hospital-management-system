@@ -17,6 +17,24 @@ public class AppointmentController : ControllerBase
         _appointmentService = appointmentService;
     }
 
+    [HttpPost("check-in/{appointmentId:long}")]
+    [Authorize(Roles = "admin, doctor")]
+    public async Task<IActionResult> CheckInAppointment(long appointmentId)
+    {
+        try
+        {
+            var result = await _appointmentService.CheckInAppointment(appointmentId);
+            if (result.IsSuccess)
+                return new JsonResult(new ApiResponse<string>(200, "Điểm danh đăng ký khám thành công", null)) { StatusCode = 200 };
+            return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new JsonResult(new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
+        }
+    }
+    
 
     [HttpDelete("{appointmentId:long}")]
     [Authorize(Roles = "admin, patient")]
@@ -36,14 +54,16 @@ public class AppointmentController : ControllerBase
         }
     }
     
+    
+    
     [HttpPut]
-    public async Task<IActionResult> UpdateAppointment(RequestAppointmentDTO request)
+    public async Task<IActionResult> UpdateAppointment(long appointmentId, RequestUpdateAppointmentDTO request)
     {
         try
         {
-            var result = await _appointmentService.UpdateAppointment(request);
+            var result = await _appointmentService.UpdateAppointment(appointmentId, request);
             if (result.IsSuccess)
-                return new JsonResult(new ApiResponse<string>(200, "Cập nhật đăng ký khám thành công", result.Data)) { StatusCode = 200 };
+                return new JsonResult(new ApiResponse<ResponseAppointmentDTO>(200, "Cập nhật đăng ký khám thành công", result.Data)) { StatusCode = 200 };
             return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
         }
         catch (Exception ex)
