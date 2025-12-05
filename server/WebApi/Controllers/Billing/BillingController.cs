@@ -30,10 +30,11 @@ public class BillingController : ControllerBase
         {
             status = 200,
             message = "Lấy danh sách hóa đơn thành công",
-            data = result.Data,
-            page,
-            size,
-            totalPages = (int)Math.Ceiling((double)result.Data.Count / size)
+            data = result.Data!.Items,
+            page = result.Data.CurrentPage,
+            size = result.Data.PageSize,
+            totalPages = result.Data.TotalPages,
+            totalRecords = result.Data.TotalRecords
         });
     }
     

@@ -68,10 +68,11 @@ public class AppointmentController : ControllerBase
                 {
                     status = 200,
                     message = "Lấy danh sách đăng ký khám thành công",
-                    data = result.Data,
-                    page,
-                    size,
-                    totalPages = (int)Math.Ceiling((double)result.Data.Count / size)
+                    data = result.Data!.Items,
+                    page = result.Data.CurrentPage,
+                    size = result.Data.PageSize,
+                    totalPages = result.Data.TotalPages,
+                    totalRecords = result.Data.TotalRecords
                 });
             return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
         }

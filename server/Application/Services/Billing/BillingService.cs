@@ -1,4 +1,5 @@
-﻿using Application.Common.DTOs.Billing;
+﻿using Application.Common.DTOs;
+using Application.Common.DTOs.Billing;
 using Application.Common.Utils;
 
 
@@ -29,16 +30,16 @@ public class BillingService : IBillingService
         return ServiceResult<ResponseBillingDTO>.Success(response);
     }
     
-    public async Task<ServiceResult<List<ResponseBillingDTO>>> GetBillingsAsync(
+    public async Task<ServiceResult<PaginatedResult<ResponseBillingDTO>>> GetBillingsAsync(
         string? status, 
         Guid? patientId, 
         Guid? doctorId, 
         int page, 
         int size)
     {
-        var billings = await _billingRepository.GetBillingsAsync(status, patientId, doctorId, page, size);
+        var paginatedResult = await _billingRepository.GetBillingsAsync(status, patientId, doctorId, page, size);
         
-        var response = billings.Select(b => new ResponseBillingDTO
+        var billingDtos = paginatedResult.Items.Select(b => new ResponseBillingDTO
         {
             Id = b.Id,
             DiscountAmount = (float)b.DiscountAmount,
@@ -47,7 +48,16 @@ public class BillingService : IBillingService
             BillingStatus = b.BillingStatus
         }).ToList();
         
-        return ServiceResult<List<ResponseBillingDTO>>.Success(response);
+        var response = new PaginatedResult<ResponseBillingDTO>
+        {
+            Items = billingDtos,
+            TotalPages = paginatedResult.TotalPages,
+            CurrentPage = paginatedResult.CurrentPage,
+            PageSize = paginatedResult.PageSize,
+            TotalRecords = paginatedResult.TotalRecords
+        };
+        
+        return ServiceResult<PaginatedResult<ResponseBillingDTO>>.Success(response);
     }
     
     public async Task<ServiceResult<string>> CreateBillingAsync(RequestBillingDTO createBillingDto)

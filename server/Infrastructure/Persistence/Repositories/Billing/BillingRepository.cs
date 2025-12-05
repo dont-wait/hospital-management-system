@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Application.Common.DTOs;
+using Microsoft.EntityFrameworkCore;
 public class BillingRepository : IBillingRepository
 {
 
@@ -21,7 +22,7 @@ public class BillingRepository : IBillingRepository
         return await _context.billings
             .FirstOrDefaultAsync(b => b.Id == billingId && b.DeletedAt == null);
     }
-    public async Task<List<Billing>> GetBillingsAsync(string? status, 
+    public async Task<PaginatedResult<Billing>> GetBillingsAsync(string? status, 
         Guid? patientId, 
         Guid? doctorId, 
         int page, 
@@ -48,11 +49,18 @@ public class BillingRepository : IBillingRepository
         int totalRecords = await query.CountAsync();
         int totalPages = (int)Math.Ceiling((double)totalRecords / size);
         
-        var appointments = await query.OrderByDescending(a => a.CreatedAt)
+        var billings = await query.OrderByDescending(a => a.CreatedAt)
             .Skip((page - 1)  * size)
             .Take(size)
             .ToListAsync();
 
-        return appointments;
+        return new PaginatedResult<Billing>
+        {
+            Items = billings,
+            TotalPages = totalPages,
+            CurrentPage = page,
+            PageSize = size,
+            TotalRecords = totalRecords
+        };
     }
 }

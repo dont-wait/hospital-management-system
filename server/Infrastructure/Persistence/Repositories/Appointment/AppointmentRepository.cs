@@ -1,4 +1,5 @@
 
+using Application.Common.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 public class AppointmentRepository : IAppointmentRepository
@@ -16,7 +17,7 @@ public class AppointmentRepository : IAppointmentRepository
         await _context.SaveChangesAsync();
         return appointment;
     }
-    public async Task<List<Appointment>> GetAllAppointmentsAsync(string? status, Guid? patientId, int page , int size)
+    public async Task<PaginatedResult<Appointment>> GetAllAppointmentsAsync(string? status, Guid? patientId, int page , int size)
     {
         
         if (page < 1) page = 1;
@@ -49,7 +50,14 @@ public class AppointmentRepository : IAppointmentRepository
             .Take(size)
             .ToListAsync();
 
-        return appointments;
+        return new PaginatedResult<Appointment>
+        {
+            Items = appointments,
+            TotalPages = totalPages,
+            CurrentPage = page,
+            PageSize = size,
+            TotalRecords = totalRecords
+        };
     }
 
     public async Task<bool> DeleteAppointmentAsync(long appointmentId)
