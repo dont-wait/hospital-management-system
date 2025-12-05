@@ -12,12 +12,12 @@ export class MiddlewareUtils {
     route: string | null;
     roles: readonly Roles[];
   } {
-    const sortedRoutes = Object.entries(ROUTE_ROLE_MAP).sort(
-      ([a], [b]) => b.length - a.length,
-    );
+    const cleanPath = pathname.replace(/\/+$/, "") || "/";
 
-    for (const [route, roles] of sortedRoutes) {
-      if (pathname === route || pathname.startsWith(`${route}/`)) {
+    for (const [route, roles] of Object.entries(ROUTE_ROLE_MAP)) {
+      const cleanRoute = route.replace(/\/+$/, "") || "/";
+
+      if (cleanPath === cleanRoute) {
         return { route, roles };
       }
     }
