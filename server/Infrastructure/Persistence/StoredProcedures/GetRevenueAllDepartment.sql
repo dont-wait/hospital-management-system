@@ -1,16 +1,16 @@
 use Hospital
 
-CREATE PROCEDURE PC_GetRevenueAllDepartment
+CREATE OR ALTER PROCEDURE PC_GetRevenueAllDepartment
 (
-    @Type VARCHAR(10),     -- 'day' | 'week' | 'month' | 'year'
-    @Date DATE = NULL
+    @Type VARCHAR(10),     -- 'day' | 'week' | 'month' | 'year' | 'range'
+    @FromDate DATE = NULL,
+    @ToDate DATE = NULL
 )
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF @Date IS NULL
-        SET @Date = GETDATE();
+    DECLARE @CurrentDate DATE = GETDATE();
 
     --------------------------------------------------
     -- 1. Determine date range for current period
@@ -20,17 +20,18 @@ BEGIN
 
     IF @Type = 'day'
     BEGIN
-        SET @StartDate = @Date;
-        SET @EndDate   = @Date;
+        SET @StartDate = ISNULL(@FromDate, @CurrentDate);
+        SET @EndDate   = ISNULL(@ToDate, @CurrentDate);
 
-        SET @PrevStartDate = DATEADD(DAY, -1, @Date);
-        SET @PrevEndDate   = DATEADD(DAY, -1, @Date);
+        SET @PrevStartDate = DATEADD(DAY, -1, @StartDate);
+        SET @PrevEndDate   = DATEADD(DAY, -1, @EndDate);
     END
 
     ELSE IF @Type = 'week'
     BEGIN
-        SET @StartDate = DATEADD(DAY, 1 - DATEPART(WEEKDAY, @Date), @Date);
-        SET @EndDate   = DATEADD(DAY, 7 - DATEPART(WEEKDAY, @Date), @Date);
+        DECLARE @RefDate DATE = ISNULL(@FromDate, @CurrentDate);
+        SET @StartDate = DATEADD(DAY, 1 - DATEPART(WEEKDAY, @RefDate), @RefDate);
+        SET @EndDate   = DATEADD(DAY, 7 - DATEPART(WEEKDAY, @RefDate), @RefDate);
 
         SET @PrevStartDate = DATEADD(WEEK, -1, @StartDate);
         SET @PrevEndDate   = DATEADD(WEEK, -1, @EndDate);
@@ -38,8 +39,9 @@ BEGIN
 
     ELSE IF @Type = 'month'
     BEGIN
-        SET @StartDate = DATEFROMPARTS(YEAR(@Date), MONTH(@Date), 1);
-        SET @EndDate   = EOMONTH(@Date);
+        SET @RefDate = ISNULL(@FromDate, @CurrentDate);
+        SET @StartDate = DATEFROMPARTS(YEAR(@RefDate), MONTH(@RefDate), 1);
+        SET @EndDate   = EOMONTH(@RefDate);
 
         SET @PrevStartDate = DATEADD(MONTH, -1, @StartDate);
         SET @PrevEndDate   = EOMONTH(@PrevStartDate);
@@ -47,11 +49,24 @@ BEGIN
 
     ELSE IF @Type = 'year'
     BEGIN
-        SET @StartDate = DATEFROMPARTS(YEAR(@Date), 1, 1);
-        SET @EndDate   = DATEFROMPARTS(YEAR(@Date), 12, 31);
+        SET @RefDate = ISNULL(@FromDate, @CurrentDate);
+        SET @StartDate = DATEFROMPARTS(YEAR(@RefDate), 1, 1);
+        SET @EndDate   = DATEFROMPARTS(YEAR(@RefDate), 12, 31);
 
         SET @PrevStartDate = DATEADD(YEAR, -1, @StartDate);
         SET @PrevEndDate   = DATEADD(YEAR, -1, @EndDate);
+    END
+    
+    ELSE IF @Type = 'range'
+    BEGIN
+        -- Custom date range
+        SET @StartDate = ISNULL(@FromDate, @CurrentDate);
+        SET @EndDate   = ISNULL(@ToDate, @CurrentDate);
+
+        -- Calculate previous period with same duration
+        DECLARE @DaysDiff INT = DATEDIFF(DAY, @StartDate, @EndDate);
+        SET @PrevStartDate = DATEADD(DAY, -(@DaysDiff + 1), @StartDate);
+        SET @PrevEndDate   = DATEADD(DAY, -1, @StartDate);
     END;
 
     --------------------------------------------------
@@ -104,4 +119,12 @@ BEGIN
     LEFT JOIN PreviousData P ON P.Id = C.Id;
 END
 
-EXEC PC_GetRevenueAllDepartment 'day';
+-- Ví dụ sử dụng:
+-- Theo ngày hiện tại
+EXEC PC_GetRevenueAllDepartment @Type = 'day';
+
+-- Theo ngày cụ thể
+-- EXEC PC_GetRevenueAllDepartment @Type = 'day', @FromDate = '2025-12-03';
+
+-- Theo khoảng ngày
+-- EXEC PC_GetRevenueAllDepartment @Type = 'range', @FromDate = '2025-12-01', @ToDate = '2025-12-05';

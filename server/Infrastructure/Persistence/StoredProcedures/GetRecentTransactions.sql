@@ -1,15 +1,19 @@
 -- =============================================
 -- Stored Procedure: GetRecentTransactions
--- Description: Lấy n giao dịch (billing) gần nhất với phân trang
+-- Description: Lấy n giao dịch (billing) gần nhất với phân trang và lọc theo khoảng ngày
 -- Parameters: 
 --   @PageNumber - Số trang (mặc định 1)
 --   @PageSize - Số lượng giao dịch mỗi trang (mặc định 5)
+--   @FromDate - Ngày bắt đầu (tùy chọn, format: YYYY-MM-DD)
+--   @ToDate - Ngày kết thúc (tùy chọn, format: YYYY-MM-DD)
 -- Returns: Tên bệnh nhân, tên dịch vụ, số tiền, thời gian, trạng thái, tổng số bản ghi
 -- =============================================
 
 CREATE OR ALTER PROCEDURE PC_GetRecentTransactions
     @PageNumber INT = 1,
-    @PageSize INT = 5
+    @PageSize INT = 5,
+    @FromDate DATE = NULL,
+    @ToDate DATE = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -17,7 +21,7 @@ BEGIN
     -- Tính offset
     DECLARE @Offset INT = (@PageNumber - 1) * @PageSize;
 
-    -- Lấy tổng số bản ghi
+    -- Tổng số bản ghi
     DECLARE @TotalRecords INT;
     
     SELECT @TotalRecords = COUNT(*)
@@ -28,9 +32,11 @@ BEGIN
     WHERE b.DeletedAt IS NULL
         AND a.DeletedAt IS NULL
         AND p.DeletedAt IS NULL
-        AND s.DeletedAt IS NULL;
+        AND s.DeletedAt IS NULL
+        AND (@FromDate IS NULL OR CAST(b.CreatedAt AS DATE) >= @FromDate)
+        AND (@ToDate IS NULL OR CAST(b.CreatedAt AS DATE) <= @ToDate);
 
-    -- Lấy dữ liệu với phân trang
+    -- Lấy dữ liệu với phân trang và lọc theo khoảng ngày
     SELECT
         -- Tên bệnh nhân (FirstName + LastName)
         CONCAT(p.FirstName, ' ', p.LastName) AS PatientName,
@@ -62,6 +68,8 @@ BEGIN
         AND a.DeletedAt IS NULL
         AND p.DeletedAt IS NULL
         AND s.DeletedAt IS NULL
+        AND (@FromDate IS NULL OR CAST(b.CreatedAt AS DATE) >= @FromDate)
+        AND (@ToDate IS NULL OR CAST(b.CreatedAt AS DATE) <= @ToDate)
     
     ORDER BY b.CreatedAt DESC
     OFFSET @Offset ROWS
@@ -69,4 +77,9 @@ BEGIN
 END
 GO
 
-EXEC PC_GetRecentTransactions
+-- Ví dụ sử dụng:
+-- Lấy tất cả giao dịch gần nhất
+EXEC PC_GetRecentTransactions;
+
+-- Lọc theo khoảng ngày
+-- EXEC PC_GetRecentTransactions @FromDate = '2025-12-01', @ToDate = '2025-12-05';
