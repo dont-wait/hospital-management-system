@@ -5,5 +5,5 @@ public interface IBillingRepository
     Task<Billing?> GetBillingByIdAsync(long billingId);
     Task<PaginatedResult<Billing>> GetBillingsAsync(string? status, Guid? patientId, Guid? doctorId, int page, int size);
     Task<List<ResponseDeparmentRevenueStatisticsDTO>> GetDepartmentRevenueStatisticsAsync(string type, DateTime? date); 
-    Task<List<ResponseLatestTransactionDTO>> GetLatestTransactionsAsync(int count);
+    Task<List<ResponseLatestTransactionDTO>> GetLatestTransactionsAsync(int page, int count);
 }

@@ -98,7 +98,7 @@ public class BillingRepository : IBillingRepository
         return result;
     }
 
-    public async Task<List<ResponseLatestTransactionDTO>> GetLatestTransactionsAsync(int count)
+    public async Task<List<ResponseLatestTransactionDTO>> GetLatestTransactionsAsync(int page, int count)
     {
         var connection = _context.Database.GetDbConnection();
         await connection.OpenAsync();
@@ -107,7 +107,8 @@ public class BillingRepository : IBillingRepository
         command.CommandText = "PC_GetRecentTransactions";
         command.CommandType = CommandType.StoredProcedure;
 
-        command.Parameters.Add(new SqlParameter("@Count", count));
+        command.Parameters.Add(new SqlParameter("@PageNumber", page));
+        command.Parameters.Add(new SqlParameter("@PageSize", count));
 
         var result = new List<ResponseLatestTransactionDTO>();
 

@@ -68,4 +68,20 @@ public class BillingController : ControllerBase
             message = result.Data
         });
     }
+
+    [HttpGet("transactions")]
+    public async Task<IActionResult> GetLatestTransactions([FromQuery] int page = 1, [FromQuery] int count = 5)
+    {
+        var result = await _billingService.GetLatestTransactionsAsync(page, count);
+
+        if (!result.IsSuccess)
+            return BadRequest(new { message = result.Message });
+
+        return Ok(new
+        {
+            status = 200,
+            message = "Lấy danh sách giao dịch gần đây thành công",
+            data = result.Data
+        });
+    }
 }

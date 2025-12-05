@@ -73,4 +73,16 @@ public class BillingService : IBillingService
         var created = await _billingRepository.CreateBillingAsync(billing);
         return ServiceResult<string>.Success($"Tạo hóa đơn thành công với ID: {created.Id}");
     }
+
+    public async Task<ServiceResult<List<ResponseLatestTransactionDTO>>> GetLatestTransactionsAsync(int page, int count)
+    {
+        try
+        {
+            var transactions = await _billingRepository.GetLatestTransactionsAsync(page, count);
+            return ServiceResult<List<ResponseLatestTransactionDTO>>.Success(transactions);   
+        } catch
+        {
+            return ServiceResult<List<ResponseLatestTransactionDTO>>.Fail("Lỗi khi lấy giao dịch mới nhất");
+        }
+    }
 }
