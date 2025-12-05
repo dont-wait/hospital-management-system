@@ -52,26 +52,6 @@ public class BillingController : ControllerBase
         });
     }
     
-    [HttpGet("patient/{patientId:guid}")]
-    public async Task<IActionResult> GetBillingsByPatientId(Guid patientId,
-                                                             [FromQuery] int page = 1,
-                                                             [FromQuery] int size = 20)
-    {
-        var result = await _billingService.GetBillingsAsync(null, patientId, null, page, size);
-        
-        if (!result.IsSuccess)
-            return BadRequest(new { message = result.Message });
-
-        return Ok(new
-        {
-            status = 200,
-            message = "Lấy danh sách hóa đơn của bệnh nhân thành công",
-            data = result.Data,
-            page,
-            size
-        });
-    }
-
     [HttpPost]
     public async Task<IActionResult> CreateBilling([FromBody] RequestBillingDTO request)
     {
