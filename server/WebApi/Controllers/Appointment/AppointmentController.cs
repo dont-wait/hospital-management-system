@@ -18,7 +18,7 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpPost("check-in/{appointmentId:long}")]
-    [Authorize(Roles = "admin, doctor")]
+    [Authorize(Roles = "admin, doctor, hod")]
     public async Task<IActionResult> CheckInAppointment(long appointmentId)
     {
         try
@@ -36,7 +36,7 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpDelete("{appointmentId:long}")]
-    [Authorize(Roles = "admin, patient")]
+    [Authorize(Roles = "admin, patient, doctor, hod")]
     public async Task<IActionResult> DeleteAppointment(long appointmentId)
     {
         try
