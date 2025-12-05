@@ -1,4 +1,5 @@
-﻿using Application.Common.Utils;
+﻿using Application.Common.DTOs;
+using Application.Common.Utils;
 using Domain.Enums;
 public class AppointmentService : IAppointmentService
 {
@@ -129,19 +130,19 @@ public class AppointmentService : IAppointmentService
 
     return ServiceResult<string>.Success(message);
 }
-    public async Task<ServiceResult<List<ResponseAppointmentDTO>>> GetAppointments(string? status, Guid? patientId, int page, int size)
+    public async Task<ServiceResult<PaginatedResult<ResponseAppointmentDTO>>> GetAppointments(string? status, Guid? patientId, int page, int size)
     {
         if (patientId != null)
         {
             Patient existingPatient = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId.Value);
             if (existingPatient == null)
-                return ServiceResult<List<ResponseAppointmentDTO>>.Fail("Bệnh nhân không tồn tại");
+                return ServiceResult<PaginatedResult<ResponseAppointmentDTO>>.Fail("Bệnh nhân không tồn tại");
         }
         
-        List<Appointment> appointments = await _appointmentRepository.GetAllAppointmentsAsync(status, patientId, page, size);
+        PaginatedResult<Appointment> paginatedResult = await _appointmentRepository.GetAllAppointmentsAsync(status, patientId, page, size);
         
         List<ResponseAppointmentDTO > appointmentDtos = new List<ResponseAppointmentDTO>();
-        foreach (var appointment in appointments)
+        foreach (var appointment in paginatedResult.Items)
         {
             appointmentDtos.Add(new ResponseAppointmentDTO
                 {
@@ -164,7 +165,16 @@ public class AppointmentService : IAppointmentService
             );
         }
         
-        return ServiceResult<List<ResponseAppointmentDTO>>.Success(appointmentDtos);
+        var response = new PaginatedResult<ResponseAppointmentDTO>
+        {
+            Items = appointmentDtos,
+            TotalPages = paginatedResult.TotalPages,
+            CurrentPage = paginatedResult.CurrentPage,
+            PageSize = paginatedResult.PageSize,
+            TotalRecords = paginatedResult.TotalRecords
+        };
+        
+        return ServiceResult<PaginatedResult<ResponseAppointmentDTO>>.Success(response);
     }
     public Task<ServiceResult<string>> UpdateAppointment(RequestAppointmentDTO updateAppointmentDto)
     {

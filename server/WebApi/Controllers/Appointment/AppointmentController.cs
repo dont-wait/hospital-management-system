@@ -1,5 +1,6 @@
 using Application.Common.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers.Appointment;
@@ -56,14 +57,23 @@ public class AppointmentController : ControllerBase
     public async Task<IActionResult> GetAppointments([FromQuery] string? status, 
                                                     [FromQuery] Guid? patientId,
                                                     [FromQuery] int page = 1,
-                                                    [FromQuery] int size = 20
+                                                    [FromQuery] int size = 3
         )
     {
         try
         {
             var result = await _appointmentService.GetAppointments(status, patientId, page, size);
             if (result.IsSuccess)
-                return new JsonResult(new ApiResponse<List<ResponseAppointmentDTO>>(200, "Lấy danh sách đăng ký khám thành công", result.Data)) { StatusCode = 200 };
+                return Ok(new
+                {
+                    status = 200,
+                    message = "Lấy danh sách đăng ký khám thành công",
+                    data = result.Data!.Items,
+                    page = result.Data.CurrentPage,
+                    size = result.Data.PageSize,
+                    totalPages = result.Data.TotalPages,
+                    totalRecords = result.Data.TotalRecords
+                });
             return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
         }
         catch (Exception e)

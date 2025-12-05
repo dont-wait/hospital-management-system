@@ -1,7 +1,9 @@
-﻿public interface IBillingRepository
+﻿using Application.Common.DTOs;
+public interface IBillingRepository
 {
-    Task<Billing>  CreateBillingAsync(Billing billing);
+    Task<Billing> CreateBillingAsync(Billing billing);
     Task<Billing?> GetBillingByIdAsync(long billingId);
+    Task<PaginatedResult<Billing>> GetBillingsAsync(string? status, Guid? patientId, Guid? doctorId, int page, int size);
     Task<List<ResponseDeparmentRevenueStatisticsDTO>> GetDepartmentRevenueStatisticsAsync(string type, DateTime? date); 
     Task<List<ResponseLatestTransactionDTO>> GetLatestTransactionsAsync(int count);
 }
