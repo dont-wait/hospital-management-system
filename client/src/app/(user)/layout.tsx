@@ -3,6 +3,7 @@ import {
   ModalProvider,
   BookingProvider,
   AppointmentManagemetnProvider,
+  BillingManagemetnProvider,
 } from "@/contexts";
 import { Sidebar } from "@/components/shared/Sidebar";
 import { Navbar } from "@/components/shared/Navbar";
@@ -18,11 +19,13 @@ export default function UserLayout({
     <BookingProvider>
       <ModalProvider>
         <SidebarProvider>
-          <AppointmentManagemetnProvider>
-            <Navbar />
-            <section>{children}</section>
-            <Sidebar />
-          </AppointmentManagemetnProvider>
+          <BillingManagemetnProvider>
+            <AppointmentManagemetnProvider>
+              <Navbar />
+              <section>{children}</section>
+              <Sidebar />
+            </AppointmentManagemetnProvider>
+          </BillingManagemetnProvider>
         </SidebarProvider>
       </ModalProvider>
     </BookingProvider>

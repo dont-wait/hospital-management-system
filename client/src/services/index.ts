@@ -4,3 +4,4 @@ export * from "./patient.service";
 export * from "./employee.service";
 export * from "./schedule.service";
 export * from "./appointment.service";
+export * from "./billing.service";

@@ -17,16 +17,10 @@ function PatientListGroup() {
           patientStyles["patient-content"],
         )}
       >
-        <Link
-          href="/patient/appointment-management"
-          className={patientStyles["patient-link"]}
-        >
-          <div
-            className={cn(
-              buttonStyles["button"],
-              buttonStyles["button-outline"],
-              patientStyles["patient-helper-btn"],
-            )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Link
+            href="/patient/appointment-management"
+            className={patientStyles["patient-link"]}
           >
             <div
               className={cn(
@@ -35,13 +29,46 @@ function PatientListGroup() {
                 patientStyles["patient-helper-btn"],
               )}
             >
-              <div className={patientStyles["patient-helper-icon"]}>
-                <Icon name="Calendar" />
+              <div
+                className={cn(
+                  buttonStyles["button"],
+                  buttonStyles["button-outline"],
+                  patientStyles["patient-helper-btn"],
+                )}
+              >
+                <div className={patientStyles["patient-helper-icon"]}>
+                  <Icon name="Calendar" />
+                </div>
+                Lịch khám
               </div>
-              Lịch khám
             </div>
-          </div>
-        </Link>
+          </Link>
+          <Link
+            href="/patient/billing"
+            className={patientStyles["patient-link"]}
+          >
+            <div
+              className={cn(
+                buttonStyles["button"],
+                buttonStyles["button-outline"],
+                patientStyles["patient-helper-btn"],
+              )}
+            >
+              <div
+                className={cn(
+                  buttonStyles["button"],
+                  buttonStyles["button-outline"],
+                  patientStyles["patient-helper-btn"],
+                )}
+              >
+                <div className={patientStyles["patient-helper-icon"]}>
+                  <Icon name="Album" />
+                </div>
+                Hóa đơn
+              </div>
+            </div>
+          </Link>
+        </div>
         <Link href="/forgot-password" className={patientStyles["patient-link"]}>
           <div
             className={cn(

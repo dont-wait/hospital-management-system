@@ -2,16 +2,18 @@
 
 import { memo } from "react";
 import Icon from "@/components/shared/Icon";
-import { useAppointmentManagemnt } from "@/contexts";
 
 type PaginationProps = {
   currentPage: number;
+  setCurrentPage: (page: number) => void;
   totalPages: number;
-  baseUrl?: string;
 };
 
-function Pagination({ currentPage, totalPages }: PaginationProps) {
-  const { setCurrentPage } = useAppointmentManagemnt();
+function Pagination({
+  currentPage,
+  totalPages,
+  setCurrentPage,
+}: PaginationProps) {
   const generatePageNumbers = () => {
     const pages: (number | string)[] = [];
     const maxVisible = 3;

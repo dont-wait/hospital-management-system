@@ -347,3 +347,16 @@ export interface ApiResponseWithPaging<T> extends ApiResponse<T> {
   page: number;
   totalPages: number;
 }
+
+export interface Billing {
+  id: number;
+  discountAmount: number;
+  paymentAmount: number;
+  paymentMethod: string;
+  billingStatus: string;
+}
+
+export interface BillingDetail extends Billing {
+  createdAt: string;
+  serviceName: string;
+}

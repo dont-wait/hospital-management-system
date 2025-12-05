@@ -13,7 +13,7 @@ interface AppointmentListProps {
 }
 
 function AppointmentList({ appointments, totalPages }: AppointmentListProps) {
-  const { currentPage } = useAppointmentManagemnt();
+  const { currentPage, setCurrentPage } = useAppointmentManagemnt();
   const [data, setData] = useState<Appointment[]>(appointments);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ function AppointmentList({ appointments, totalPages }: AppointmentListProps) {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          baseUrl="/patient/appointments"
+          setCurrentPage={setCurrentPage}
         />
       )}
     </>

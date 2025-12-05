@@ -13,7 +13,7 @@ import {
 import { AppointmentService } from "@/services";
 import { AppointmentDetail as AppointmentDetailType } from "@/types";
 
-export default function AppointmentDetail({}) {
+export default function AppointmentDetail() {
   const { appointmentId, setAppointmentId, deleteAppointment } =
     useAppointmentManagemnt();
   const [appointmentDetail, setAppointmentDetail] =
@@ -117,7 +117,7 @@ export default function AppointmentDetail({}) {
                   Chi tiết hóa đơn
                 </p>
                 <Link
-                  href="#"
+                  href={`/patient/billing/${appointmentDetail.billingId}`}
                   className="text-gray-900 hover:text-truev underline transition-colors"
                 >
                   #{appointmentDetail.billingId.toString().padStart(6, "0")}
