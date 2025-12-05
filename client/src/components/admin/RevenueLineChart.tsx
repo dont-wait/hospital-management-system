@@ -12,6 +12,9 @@ import {
   Legend,
   Filler,
 } from "chart.js";
+import { useEffect, useState } from "react";
+import { BillingService } from "@/services/billing.service";
+import { ChartLineData } from "@/types";
 
 ChartJS.register(
   CategoryScale,
@@ -28,48 +31,35 @@ interface RevenueLineChartProps {
   timeRange: "day" | "week" | "month" | "year" | "range";
 }
 
-export default function RevenueLineChart({ timeRange }: RevenueLineChartProps) {
-  const getChartData = () => {
-    switch (timeRange) {
-      case "day":
-        return {
-          labels: ["0h", "4h", "8h", "12h", "16h", "20h", "24h"],
-          data: [12, 25, 35, 48, 62, 55, 45],
-        };
-      case "week":
-        return {
-          labels: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
-          data: [280, 320, 350, 390, 420, 180, 150],
-        };
-      case "month":
-        return {
-          labels: ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4"],
-          data: [650, 720, 680, 750],
-        };
-      case "year":
-        return {
-          labels: [
-            "T1",
-            "T2",
-            "T3",
-            "T4",
-            "T5",
-            "T6",
-            "T7",
-            "T8",
-            "T9",
-            "T10",
-            "T11",
-            "T12",
-          ],
-          data: [2100, 2300, 2450, 2200, 2500, 2650, 2400, 2550, 2700, 2800, 2900, 2450],
-        };
-      default:
-        return { labels: [], data: [] };
-    }
-  };
+interface ChartData {
+  labels: string[];
+  data: number[];
+}
 
-  const chartData = getChartData();
+export default function RevenueLineChart({ timeRange }: RevenueLineChartProps) {
+  const [chartData, setChartData] = useState<ChartData>({ labels: [], data: [] });
+
+  useEffect(() => {
+    const fetchRevenueData = async () => {
+      if (timeRange === "range") {
+        setChartData({ labels: [], data: [] });
+        return;
+      }
+
+      try {
+        const data = await BillingService.getTotalRevenue(timeRange);
+        setChartData({
+          labels: data.map((item: ChartLineData) => item.label),
+          data: data.map((item: ChartLineData) => item.revenue),
+        });
+      } catch {
+        setChartData({ labels: [], data: [] });
+      }
+    };
+
+    fetchRevenueData();
+    console.log(1);
+  }, [timeRange]);
 
   const data = {
     labels: chartData.labels,

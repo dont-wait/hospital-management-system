@@ -325,3 +325,8 @@ export interface RevenueTransaction {
   transactionDate: string;
   status: "paid" | "unpaid" | "pending" | "failed";
 }
+
+export interface ChartLineData {
+  label: string;
+  revenue: number;
+}

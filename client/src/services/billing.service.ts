@@ -1,5 +1,5 @@
 import { getApiInstance, getConfig } from "@/axios";
-import { RevenueTransaction } from "@/types";
+import { RevenueTransaction, ChartLineData } from "@/types";
 
 export class BillingService {
     public static async getRecentTransactions(
@@ -20,5 +20,21 @@ export class BillingService {
         );
 
         return response.data.data;
-  }
+    }
+
+    public static async getTotalRevenue(
+        type: "day" | "week" | "month" | "year",
+        date?: string,
+        token?: string,
+    ) {
+        const apiInstance = getApiInstance();
+        const config = getConfig(token);
+
+        const response = await apiInstance.get<{ data: ChartLineData[] }>(
+            `/billings/revenues?type=${type}${date ? `&date=${date}` : ""}`,
+            config,
+        );
+
+        return response.data.data;
+    }
 }
