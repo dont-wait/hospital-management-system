@@ -1,6 +1,6 @@
 'use client'
 
-import { FormField } from "@/components";
+import { FormField } from "@/components/shared/FormField";
 import { Calendar } from "@/lib/client/icon-utils";
 import scheduleStyles from "@/styles/doctor.module.css";
 import { CreateShiftFormData } from "@/schemas/create-shift";

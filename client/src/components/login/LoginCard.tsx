@@ -1,6 +1,10 @@
+"use client";
+
 import { motion } from "motion/react";
-import { Card, CardContent } from "@/components";
-import { LoginHeader, LoginForm, LoginFooterLink } from "@/components/login";
+import { Card, CardContent } from "@/components/shared/Card";
+import { LoginHeader } from "./LoginHeader";
+import { LoginForm } from "./LoginForm";
+import { LoginFooterLink } from "./LoginFooterLink";
 import styles from "@/styles/auth.module.css";
 
 const CardMotion = motion(Card);

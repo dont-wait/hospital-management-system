@@ -1,3 +1,5 @@
+"use client";
+
 import {
   useState,
   forwardRef,
@@ -12,7 +14,7 @@ import {
   UseFormRegister,
 } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-import { Button } from "@/components";
+import { Button } from "@/components/shared/Button";
 import { months } from "@/config";
 import { cn } from "@/lib/client";
 import authStyles from "@/styles/auth.module.css";

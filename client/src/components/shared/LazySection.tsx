@@ -1,3 +1,5 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import { FC, ReactNode, useRef, useEffect, useState } from "react";
 

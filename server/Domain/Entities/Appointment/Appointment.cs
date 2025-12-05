@@ -32,4 +32,7 @@ public class Appointment : BaseEntity
     [Required]
     public Guid PatientId { get; set; }
     public virtual Patient? Patient { get; set; }
+
+    public long SlotTimeId { get; set; }
+    public virtual SlotTime? SlotTime { get; set; }
 }

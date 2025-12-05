@@ -13,7 +13,7 @@ interface ScheduleContainerProps {
   todayShifts: WorkShift[];
 }
 
-export function ScheduleContainer({ todayShifts }: ScheduleContainerProps) {
+export default function ScheduleContainer({ todayShifts }: ScheduleContainerProps) {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "Scheduled":

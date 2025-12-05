@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251201213227_AddMissingSlotTimeIdInAppointment")]
+    partial class AddMissingSlotTimeIdInAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,23 +153,8 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("CreatedId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("DeletedId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<double>("DiscountAmount")
                         .HasColumnType("float");
-
-                    b.Property<Guid?>("ModifiedId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("PaymentAmount")
                         .HasColumnType("float");
@@ -175,13 +163,12 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("Version")
+                    b.Property<int?>("ServiceId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ServiceId");
 
                     b.ToTable("billings");
                 });
@@ -980,6 +967,13 @@ namespace server.Migrations
                     b.Navigation("SlotTime");
                 });
 
+            modelBuilder.Entity("Billing", b =>
+                {
+                    b.HasOne("Service", null)
+                        .WithMany("Billings")
+                        .HasForeignKey("ServiceId");
+                });
+
             modelBuilder.Entity("Doctor", b =>
                 {
                     b.HasOne("Employee", "Employee")
@@ -1207,6 +1201,8 @@ namespace server.Migrations
             modelBuilder.Entity("Service", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("Billings");
                 });
 
             modelBuilder.Entity("SlotTime", b =>

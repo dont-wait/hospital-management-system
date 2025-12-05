@@ -2,7 +2,7 @@
 
 import scheduleStyles from "@/styles/doctor.module.css";
 import authStyles from "@/styles/auth.module.css";
-import { Label } from "@/components";
+import { Label } from "@/components/shared/Label";
 import { Users } from "@/lib/client/icon-utils";
 import { AuthUserWithoutTokens } from "@/types";
 import { FieldErrors } from "react-hook-form";

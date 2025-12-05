@@ -17,18 +17,31 @@ function PatientListGroup() {
           patientStyles["patient-content"],
         )}
       >
-        <div
-          className={cn(
-            buttonStyles["button"],
-            buttonStyles["button-outline"],
-            patientStyles["patient-helper-btn"],
-          )}
+        <Link
+          href="/appointment-management"
+          className={patientStyles["patient-link"]}
         >
-          <div className={patientStyles["patient-helper-icon"]}>
-            <Icon name="Calendar" />
+          <div
+            className={cn(
+              buttonStyles["button"],
+              buttonStyles["button-outline"],
+              patientStyles["patient-helper-btn"],
+            )}
+          >
+            <div
+              className={cn(
+                buttonStyles["button"],
+                buttonStyles["button-outline"],
+                patientStyles["patient-helper-btn"],
+              )}
+            >
+              <div className={patientStyles["patient-helper-icon"]}>
+                <Icon name="Calendar" />
+              </div>
+              Lịch khám
+            </div>
           </div>
-          Lịch khám
-        </div>
+        </Link>
         <Link href="/forgot-password" className={patientStyles["patient-link"]}>
           <div
             className={cn(

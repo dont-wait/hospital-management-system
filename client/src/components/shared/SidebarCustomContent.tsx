@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo } from "react";
-import { Sidebar } from "@/components";
+import { Sidebar } from "@/components/shared/Sidebar";
 import { useSidebar } from "@/contexts/SidebarContext";
 import Image from "next/image";
 import { useUserAuthContext } from "@/contexts";
