@@ -19,7 +19,7 @@ public class BillingRepository : IBillingRepository
     public async Task<Billing?> GetBillingByIdAsync(long billingId)
     {
         return await _context.billings
-            .FirstOrDefaultAsync(b => b.Id == billingId);
+            .FirstOrDefaultAsync(b => b.Id == billingId && b.DeletedAt == null);
     }
     public async Task<List<Billing>> GetBillingsAsync(string? status, 
         Guid? patientId, 
@@ -31,7 +31,8 @@ public class BillingRepository : IBillingRepository
         if (size < 1) size = 10;
         var query = _context.billings
             .Include(b => b.Appointment)
-            .ThenInclude(a => a.Patient)
+            .ThenInclude(a => a!.Patient)
+            .Where(b => b.DeletedAt == null)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(status))

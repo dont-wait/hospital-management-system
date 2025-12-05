@@ -19,7 +19,7 @@ public class BillingController : ControllerBase
                                              [FromQuery] Guid? patientId,
                                              [FromQuery] Guid? doctorId,
                                              [FromQuery] int page = 1,
-                                             [FromQuery] int size = 20)
+                                             [FromQuery] int size = 3)
     {
         var result = await _billingService.GetBillingsAsync(status, patientId, doctorId, page, size);
         
