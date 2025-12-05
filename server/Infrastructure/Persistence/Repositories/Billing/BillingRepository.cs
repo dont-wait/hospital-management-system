@@ -54,4 +54,32 @@ public class BillingRepository : IBillingRepository
 
         return result;
     }
+
+    public async Task<List<ResponseLatestTransactionDTO>> GetLatestTransactionsAsync(int count)
+    {
+        var connection = _context.Database.GetDbConnection();
+        await connection.OpenAsync();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = "PC_GetRecentTransactions";
+        command.CommandType = CommandType.StoredProcedure;
+
+        command.Parameters.Add(new SqlParameter("@Count", count));
+
+        var result = new List<ResponseLatestTransactionDTO>();
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            result.Add(new ResponseLatestTransactionDTO
+            {
+                Id = reader.GetInt64(reader.GetOrdinal("Id")),
+                Amount = reader.GetDecimal(reader.GetOrdinal("Amount")),
+                TransactionDate = reader.GetDateTime(reader.GetOrdinal("TransactionDate")),
+                Status = reader.GetString(reader.GetOrdinal("Status"))
+            });
+        }
+
+        return result;
+    }
 }
