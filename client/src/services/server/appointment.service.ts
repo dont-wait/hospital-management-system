@@ -1,6 +1,11 @@
 import "server-only";
 import { getApiInstance, getConfig } from "@/axios";
-import { ApiResponse, ScheduleData } from "@/types";
+import {
+  ApiResponse,
+  ApiResponseWithPaging,
+  ScheduleData,
+  Appointment,
+} from "@/types";
 
 export class AppointmentService {
   public static async getSchedules(
@@ -17,6 +22,23 @@ export class AppointmentService {
         d: day,
         "dp-id": departmentId,
         "doc-id": doctorId,
+      },
+    });
+    return response.data;
+  }
+
+  public static async getAppointments(
+    token?: string,
+    page: number = 1,
+    size: number = 3,
+  ): Promise<ApiResponseWithPaging<Appointment[]>> {
+    const apiInstance = getApiInstance();
+    const config = getConfig(token);
+    const response = await apiInstance.get("/appointments", {
+      ...config,
+      params: {
+        page,
+        size,
       },
     });
     return response.data;

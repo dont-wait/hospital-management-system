@@ -5,3 +5,4 @@ export * from "./auth-utils";
 export * from "./patient-utils";
 export * from "./currency-utils";
 export * from "./user-management-utils";
+export * from "./appointment-utils";

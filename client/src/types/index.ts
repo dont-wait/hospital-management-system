@@ -283,13 +283,13 @@ export interface Room {
 }
 
 export interface SelectOption {
-    value: string;
-    label: string;
+  value: string;
+  label: string;
 }
 
 export const WORK_SHIFTS: readonly SelectOption[] = [
-    { value: "0", label: "Ca sáng (7h - 12h)" },
-    { value: "1", label: "Ca chiều (13h - 17h)" },
+  { value: "0", label: "Ca sáng (7h - 12h)" },
+  { value: "1", label: "Ca chiều (13h - 17h)" },
 ] as const;
 
 export type AppointmentInfo = Pick<
@@ -308,4 +308,42 @@ export interface AppointmentDto {
 export interface ApiError {
   status: number;
   message: string;
+}
+
+export interface Appointment {
+  appointmentId: number;
+  billingId: number;
+  departmentName: string;
+  roomName: string;
+  fullName: string;
+  dateOfBirth: string;
+  gender: string;
+  appointmentDate: string;
+  appointmentStartTime: string;
+  appointmentEndTime: string;
+  priceOfService: number;
+  appointmentStatus: string;
+  doctorName: string;
+}
+
+export interface AppointmentDetail {
+  appointmentId: number;
+  billingId: number;
+  departmentName: string;
+  roomName: string;
+  fullName: string;
+  dateOfBirth: string;
+  gender: string;
+  appointmentDate: string;
+  appointmentStartTime: string;
+  appointmentEndTime: string;
+  priceOfService: number;
+  appointmentStatus: string;
+  doctorName: string;
+}
+
+export interface ApiResponseWithPaging<T> extends ApiResponse<T> {
+  size: number;
+  page: number;
+  totalPages: number;
 }
