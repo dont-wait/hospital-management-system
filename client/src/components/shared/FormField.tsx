@@ -316,7 +316,7 @@ export function DateField<T extends FieldValues>({
     return (
       (defaultValue && DateUtils.parseDateString(defaultValue)) || {
         day: "",
-        month: "",
+        month: "1",
         year: "",
       }
     );

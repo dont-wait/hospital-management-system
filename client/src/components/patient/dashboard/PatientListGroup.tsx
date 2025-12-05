@@ -18,7 +18,7 @@ function PatientListGroup() {
         )}
       >
         <Link
-          href="/appointment-management"
+          href="/patient/appointment-management"
           className={patientStyles["patient-link"]}
         >
           <div

@@ -1,11 +1,11 @@
 @reference "./globals.css";
 
 .backdrop {
-  @apply fixed inset-0 m-0 bg-martinique backdrop-blur-sm z-40;
+  @apply fixed inset-0 m-0 bg-martinique backdrop-blur-sm z-100;
 }
 
 .modalContainer {
-  @apply absolute inset-0 flex items-center justify-center z-50 p-4;
+  @apply fixed inset-0 flex items-center justify-center z-102 p-4;
   height: 100vh;
 }
 
