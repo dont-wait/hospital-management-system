@@ -44,17 +44,20 @@ public class AppointmentRepository : IAppointmentRepository
         
         if (doctorId.HasValue)
         {
+            Console.WriteLine($"DoctorId filter: {doctorId.Value}");
             query = query.Where(a => a.DoctorId == doctorId.Value);
         }
-        
+
         if(date.HasValue)
         {
-            query = query.Where(a => a.AppointmentDate == date.Value);
+            var target = date.Value;
+            // So sánh theo ngày/tháng/năm thay vì ==
+            query = query.Where(a => 
+                a.AppointmentDate.Year == target.Year &&
+                a.AppointmentDate.Month == target.Month &&
+                a.AppointmentDate.Day == target.Day);
         }
-        else 
-        {
-            query = query.Where(a => a.AppointmentDate >= DateOnly.FromDateTime(DateTime.Now));
-        }
+
         
         int totalRecords = await query.CountAsync();
         int totalPages = (int)Math.Ceiling((double)totalRecords / size);
