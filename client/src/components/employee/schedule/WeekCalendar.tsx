@@ -10,7 +10,7 @@ interface WeekCalendarProps {
   selectDate: (date: Date) => void;
 }
 
-export function WeekCalendar({
+export default function WeekCalendar({
   weekDays,
   weekShifts,
   selectedDate,

@@ -86,7 +86,7 @@ export default async function PatientInfo() {
                     patientStyles["patient-info-label"],
                   )}
                 >
-                  {`Số điện thoại: ${patient.phoneNumber}}`}
+                  {`Số điện thoại: ${patient.phoneNumber}`}
                 </div>
               </button>
             </div>

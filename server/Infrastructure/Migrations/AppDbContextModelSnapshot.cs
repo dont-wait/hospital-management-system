@@ -110,6 +110,9 @@ namespace server.Migrations
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
+                    b.Property<long>("SlotTimeId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -130,6 +133,8 @@ namespace server.Migrations
 
                     b.HasIndex("ServiceId");
 
+                    b.HasIndex("SlotTimeId");
+
                     b.ToTable("appointments");
                 });
 
@@ -145,8 +150,23 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CreatedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("DeletedId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<double>("DiscountAmount")
                         .HasColumnType("float");
+
+                    b.Property<Guid?>("ModifiedId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("PaymentAmount")
                         .HasColumnType("float");
@@ -155,12 +175,13 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ServiceId")
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Version")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
 
                     b.ToTable("billings");
                 });
@@ -467,9 +488,6 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("PhysicalExamination")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -492,8 +510,6 @@ namespace server.Migrations
 
                     b.HasIndex("AppointmentId")
                         .IsUnique();
-
-                    b.HasIndex("PatientId");
 
                     b.ToTable("medical_visits");
                 });
@@ -624,6 +640,108 @@ namespace server.Migrations
                     b.HasKey("PermissionId");
 
                     b.ToTable("permissions");
+                });
+
+            modelBuilder.Entity("Prescription", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CreatedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("DeletedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Instructions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("MedicalVisitId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("ModifiedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicalVisitId");
+
+                    b.ToTable("prescriptions");
+                });
+
+            modelBuilder.Entity("PrescriptionDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CreatedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("DeletedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("Dosage")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Frequency")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ModifiedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("PrescriptionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Route")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.ToTable("prescription_details");
                 });
 
             modelBuilder.Entity("RolePermission", b =>
@@ -940,6 +1058,12 @@ namespace server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SlotTime", "SlotTime")
+                        .WithMany("Appointments")
+                        .HasForeignKey("SlotTimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Billing");
 
                     b.Navigation("Doctor");
@@ -949,13 +1073,8 @@ namespace server.Migrations
                     b.Navigation("Room");
 
                     b.Navigation("Service");
-                });
 
-            modelBuilder.Entity("Billing", b =>
-                {
-                    b.HasOne("Service", null)
-                        .WithMany("Billings")
-                        .HasForeignKey("ServiceId");
+                    b.Navigation("SlotTime");
                 });
 
             modelBuilder.Entity("Doctor", b =>
@@ -1029,15 +1148,7 @@ namespace server.Migrations
                         .WithOne("MedicalVisit")
                         .HasForeignKey("MedicalVisit", "AppointmentId");
 
-                    b.HasOne("Patient", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Appointment");
-
-                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("Patient", b =>
@@ -1049,6 +1160,28 @@ namespace server.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Prescription", b =>
+                {
+                    b.HasOne("MedicalVisit", "MedicalVisit")
+                        .WithMany()
+                        .HasForeignKey("MedicalVisitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicalVisit");
+                });
+
+            modelBuilder.Entity("PrescriptionDetail", b =>
+                {
+                    b.HasOne("Prescription", "Prescription")
+                        .WithMany("PrescriptionDetails")
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Prescription");
                 });
 
             modelBuilder.Entity("RolePermission", b =>
@@ -1084,7 +1217,7 @@ namespace server.Migrations
             modelBuilder.Entity("SlotTime", b =>
                 {
                     b.HasOne("Domain.Entities.ScheduleTask.TaskRegistration", "TaskRegistration")
-                        .WithMany()
+                        .WithMany("SlotTimes")
                         .HasForeignKey("TaskRegistrationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1136,6 +1269,11 @@ namespace server.Migrations
                     b.Navigation("TaskRegistrations");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskRegistration", b =>
+                {
+                    b.Navigation("SlotTimes");
+                });
+
             modelBuilder.Entity("Employee", b =>
                 {
                     b.Navigation("Admin")
@@ -1163,6 +1301,11 @@ namespace server.Migrations
                     b.Navigation("RolePermissions");
                 });
 
+            modelBuilder.Entity("Prescription", b =>
+                {
+                    b.Navigation("PrescriptionDetails");
+                });
+
             modelBuilder.Entity("Roles", b =>
                 {
                     b.Navigation("Employees");
@@ -1180,8 +1323,11 @@ namespace server.Migrations
             modelBuilder.Entity("Service", b =>
                 {
                     b.Navigation("Appointments");
+                });
 
-                    b.Navigation("Billings");
+            modelBuilder.Entity("SlotTime", b =>
+                {
+                    b.Navigation("Appointments");
                 });
 #pragma warning restore 612, 618
         }

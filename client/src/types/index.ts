@@ -276,7 +276,22 @@ export interface UserListState {
   activeModal: ModalType;
 }
 
-export * from "./shift";
+export interface Room {
+  id: number;
+  name: string;
+  capacity: number;
+}
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+export const WORK_SHIFTS: readonly SelectOption[] = [
+  { value: "0", label: "Ca sáng (7h - 12h)" },
+  { value: "1", label: "Ca chiều (13h - 17h)" },
+] as const;
+
 export type AppointmentInfo = Pick<
   BookingRecord,
   "departmentId" | "slotTimeId"
@@ -293,4 +308,55 @@ export interface AppointmentDto {
 export interface ApiError {
   status: number;
   message: string;
+}
+
+export interface Appointment {
+  appointmentId: number;
+  billingId: number;
+  departmentName: string;
+  roomName: string;
+  fullName: string;
+  dateOfBirth: string;
+  gender: string;
+  appointmentDate: string;
+  appointmentStartTime: string;
+  appointmentEndTime: string;
+  priceOfService: number;
+  appointmentStatus: string;
+  doctorName: string;
+}
+
+export interface AppointmentDetail {
+  appointmentId: number;
+  billingId: number;
+  departmentName: string;
+  roomName: string;
+  fullName: string;
+  dateOfBirth: string;
+  gender: string;
+  appointmentDate: string;
+  appointmentStartTime: string;
+  appointmentEndTime: string;
+  priceOfService: number;
+  appointmentStatus: string;
+  doctorName: string;
+}
+
+export interface ApiResponseWithPaging<T> extends ApiResponse<T> {
+  size: number;
+  page: number;
+  totalPages: number;
+}
+
+export interface Billing {
+  id: number;
+  discountAmount: number;
+  paymentAmount: number;
+  paymentMethod: string;
+  billingStatus: string;
+}
+
+export interface BillingDetail extends Billing {
+  createdAt: string;
+  serviceName: string;
 }

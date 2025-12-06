@@ -17,23 +17,7 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    optimizePackageImports: [
-      "motion/react",
-      "lucide-react",
-      "@/app",
-      "@/axios",
-      "@/components",
-      "@/config",
-      "@/contexts",
-      "@/font",
-      "@/hooks",
-      "@/lib",
-      "@/public",
-      "@/schemas",
-      "@/services",
-      "@/styles",
-      "@/types"
-    ],
+    optimizePackageImports: ["motion/react", "lucide-react"],
     esmExternals: true,
   },
 
@@ -50,7 +34,7 @@ const nextConfig: NextConfig = {
         hostname: "i.pinimg.com",
         port: "",
         pathname: "/**",
-      }
+      },
     ],
     minimumCacheTTL: 60,
   },

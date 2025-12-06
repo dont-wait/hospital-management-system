@@ -1,3 +1,5 @@
+"use client";
+
 import { forwardRef, ElementRef, ComponentPropsWithoutRef } from "react";
 import { motion } from "motion/react";
 import { Root, Indicator } from "@radix-ui/react-progress";

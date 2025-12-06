@@ -17,5 +17,4 @@ public class Service : BaseEntity
     [Required]
     public string ServiceType { get; set; } = string.Empty; //ServiceTypeEnum      
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-    public ICollection<Billing> Billings { get; set; } = new List<Billing>();
 }

@@ -3,7 +3,7 @@ import { TokenUtils } from "@/lib/client";
 import { MiddlewareUtils } from "@/lib/server";
 import { type Roles } from "@/types";
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (MiddlewareUtils.shouldSkipMiddleware(pathname)) {
@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
     MiddlewareUtils.findMatchedRoute(pathname);
 
   if (!matchedRoute) {
-    return NextResponse.next();
+    return new NextResponse(null, { status: 400 });
   }
 
   if (!token) {
@@ -51,5 +51,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|not-found).*)"],
 };

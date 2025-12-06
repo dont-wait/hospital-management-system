@@ -1,6 +1,6 @@
 "use client";
 
-import { UserDetail } from "./UserDetail";
+import UserDetail from "./UserDetail";
 import { useUserManagementContext } from "@/contexts";
 
 export default function UserDetailModal() {

@@ -1,5 +1,6 @@
 using Application.Common.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers.Appointment;
@@ -16,6 +17,108 @@ public class AppointmentController : ControllerBase
         _appointmentService = appointmentService;
     }
 
+    [HttpPost("check-in/{appointmentId:long}")]
+    [Authorize(Roles = "admin, doctor, hod")]
+    public async Task<IActionResult> CheckInAppointment(long appointmentId)
+    {
+        try
+        {
+            var result = await _appointmentService.CheckInAppointment(appointmentId);
+            if (result.IsSuccess)
+                return new JsonResult(new ApiResponse<string>(200, "Điểm danh đăng ký khám thành công", null)) { StatusCode = 200 };
+            return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new JsonResult(new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
+        }
+    }
+
+    [HttpDelete("{appointmentId:long}")]
+    [Authorize(Roles = "admin, patient, doctor, hod")]
+    public async Task<IActionResult> DeleteAppointment(long appointmentId)
+    {
+        try
+        {
+            var result = await _appointmentService.DeleteAppointment(appointmentId);
+            if (result.IsSuccess)
+                return new JsonResult(new ApiResponse<string>(200, "Xóa đăng ký khám thành công", null)) { StatusCode = 200 };
+            return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new JsonResult(new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
+        }
+    }
+    
+    
+    
+    [HttpPut]
+    public async Task<IActionResult> UpdateAppointment(long appointmentId, RequestUpdateAppointmentDTO request)
+    {
+        try
+        {
+            var result = await _appointmentService.UpdateAppointment(appointmentId, request);
+            if (result.IsSuccess)
+                return new JsonResult(new ApiResponse<ResponseAppointmentDTO>(200, "Cập nhật đăng ký khám thành công", result.Data)) { StatusCode = 200 };
+            return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return new JsonResult(new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
+        }
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAppointments([FromQuery] string? status, 
+                                                    [FromQuery] Guid? patientId,
+                                                    [FromQuery] int page = 1,
+                                                    [FromQuery] int size = 3
+        )
+    {
+        try
+        {
+            var result = await _appointmentService.GetAppointments(status, patientId, page, size);
+            if (result.IsSuccess)
+                return Ok(new
+                {
+                    status = 200,
+                    message = "Lấy danh sách đăng ký khám thành công",
+                    data = result.Data!.Items,
+                    page = result.Data.CurrentPage,
+                    size = result.Data.PageSize,
+                    totalPages = result.Data.TotalPages,
+                    totalRecords = result.Data.TotalRecords
+                });
+            return new JsonResult(new ApiResponse<string>(400, result.Message)) { StatusCode = 400 };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new JsonResult(new ApiResponse<List<ResponseAppointmentDTO>>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
+        }
+    }
+
+    [HttpGet("{appointmentId:long}")]
+    public async Task<IActionResult> GetAppointmentByIdAsync(long appointmentId)
+    {
+        try
+        {
+            var result = await _appointmentService.GetAppointmentByIdAsync(appointmentId);
+            if (result.IsSuccess)
+                return new JsonResult(new ApiResponse<ResponseAppointmentDTO>(200, "Lấy thông tin đăng ký khám thành công", result.Data)) { StatusCode = 200 };
+            return new JsonResult(new ApiResponse<ResponseAppointmentDTO>(400, result.Message)) { StatusCode = 400 };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new JsonResult(new ApiResponse<ResponseAppointmentDTO>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
+        }
+    }
+    
     [HttpPost]
     [Authorize(Roles = "admin, doctor, patient, nurse")]
     public async Task<IActionResult> CreateAppointment(RequestAppointmentDTO request)

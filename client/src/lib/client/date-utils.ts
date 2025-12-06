@@ -16,6 +16,10 @@ export class DateUtils {
     month: string,
     year: string,
   ): string | null {
+    if (day === "" || month === "" || year === "") {
+      return "Vui lòng điền đủ ngày tháng năm";
+    }
+
     const dayValue = parseInt(day);
     const monthValue = parseInt(month);
     const yearValue = parseInt(year);

@@ -17,6 +17,6 @@ public class RequestUpdateAppointmentDTO
     [Required(ErrorMessage = "Mã dịch vụ không được để trống")]
     public int ServiceId { get; set; }
 
-    public string? AppointmentStatus { get; set; }
+    public string? AppointmentStatus { get; set; } = AppointmentStatusEnum.CheckIn.ToString();
 
 }

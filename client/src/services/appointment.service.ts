@@ -1,5 +1,10 @@
 import { api } from "@/axios";
-import { ApiResponse, AppointmentDto } from "@/types";
+import {
+  ApiResponse,
+  AppointmentDto,
+  AppointmentDetail,
+  Appointment,
+} from "@/types";
 
 export class AppointmentService {
   public static async createAppointment(
@@ -7,5 +12,29 @@ export class AppointmentService {
   ): Promise<ApiResponse<string>> {
     const { data: response } = await api.post(`/appointments`, appointmentDto);
     return response.data;
+  }
+
+  public static async getAppointment(
+    patientId: string,
+    page: number,
+  ): Promise<ApiResponse<Appointment[]>> {
+    const response = await api.get("/appointments", {
+      params: {
+        page,
+        patientId,
+      },
+    });
+    return response.data;
+  }
+
+  public static async getAppointmentDetail(
+    id: number,
+  ): Promise<ApiResponse<AppointmentDetail>> {
+    const response = await api.get(`/appointments/${id}`);
+    return response.data;
+  }
+
+  public static async deleteAppointment(id: number) {
+    await api.delete(`/appointments/${id}`);
   }
 }

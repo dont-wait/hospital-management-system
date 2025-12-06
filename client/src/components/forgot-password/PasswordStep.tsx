@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, LoadingSpinner, FormField } from "@/components";
+import { Button } from "@/components/shared/Button";
+import { FormField } from "@/components/shared/FormField";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { resetPasswordSchema, ResetPasswordDto } from "@/schemas";
 import styles from "@/styles/auth.module.css";
 
