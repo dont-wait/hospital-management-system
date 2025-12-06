@@ -81,14 +81,14 @@ BEGIN
     END
 
     SELECT
-        -- Tổng doanh thu từ appointments (tất cả các service)
-        ISNULL(SUM(b.PaymentAmount), 0) AS 'Khám bệnh',
+        -- Tổng doanh thu từ appointments (tất cả các service) - đơn vị triệu đồng
+        ISNULL(SUM(b.PaymentAmount), 0) / 1000000.0 AS 'Khám bệnh',
         
-        -- Tổng doanh thu từ services (chỉ các appointment có ServiceType cụ thể, không phải khám bệnh thông thường)
+        -- Tổng doanh thu từ services (chỉ các appointment có ServiceType cụ thể, không phải khám bệnh thông thường) - đơn vị triệu đồng
         ISNULL(SUM(CASE 
             WHEN s.Id != '5' THEN b.PaymentAmount 
             ELSE 0 
-        END), 0) AS 'Dịch vụ'
+        END), 0) / 1000000.0 AS 'Dịch vụ'
     FROM appointments a
     INNER JOIN billings b ON a.BillingId = b.Id
     INNER JOIN services s ON a.ServiceId = s.Id
