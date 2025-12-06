@@ -31,7 +31,7 @@ public class MedicalVisitController : ControllerBase
     }
     
     [HttpGet("{medicalVisitId}")]
-    [Authorize(Roles = "admin, doctor, hod")]
+    [Authorize(Roles = "admin, doctor, hod, patient")]
     public async Task<IActionResult> GetMedicalVisitById(long medicalVisitId)
     {
         try
@@ -49,7 +49,7 @@ public class MedicalVisitController : ControllerBase
     }
 
     [HttpGet("patient/{patientId}")]
-    [Authorize(Roles = "admin, doctor, hod, nurse")]
+    [Authorize(Roles = "admin, doctor, hod, patient")]
     public async Task<IActionResult> GetMedicalVisitsByPatientId(Guid patientId)
     {
         try

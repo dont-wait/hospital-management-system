@@ -31,6 +31,8 @@ public class PrescriptionController : ControllerBase
     }
     
     [HttpGet("{prescriptionId}")]
+    [Authorize(Roles = "admin, doctor, hod, patient")]
+    
     public async Task<IActionResult> GetPrescriptionById(long prescriptionId)
     {
         try
@@ -48,6 +50,7 @@ public class PrescriptionController : ControllerBase
     }
     
     [HttpGet("medical-visit/{medicalVisitId}")]
+    [Authorize(Roles = "admin, doctor, hod, patient")]
     public async Task<IActionResult> GetPrescriptionsByMedicalVisitId(long medicalVisitId)
     {
         try
