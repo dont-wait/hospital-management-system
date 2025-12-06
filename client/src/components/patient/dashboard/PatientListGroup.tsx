@@ -107,26 +107,50 @@ function PatientListGroup() {
               )}
             >
               <div className={patientStyles["patient-helper-icon"]}>
-                <Icon name="FileText" />
+                <Icon name="PillBottle" />
               </div>
               Đơn thuốc
             </div>
           </Link>
         </div>
-        <Link href="/patient/update" className={patientStyles["patient-link"]}>
-          <div
-            className={cn(
-              buttonStyles["button"],
-              buttonStyles["button-outline"],
-              patientStyles["patient-helper-btn"],
-            )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Link
+            href="/patient/patient-diagnosis-list"
+            className={patientStyles["patient-link"]}
           >
-            <div className={patientStyles["patient-helper-icon"]}>
-              <Icon name="Pencil" />
+            <div
+              className={cn(
+                buttonStyles["button"],
+                buttonStyles["button-outline"],
+                patientStyles["patient-helper-btn"],
+              )}
+            >
+              <div className={patientStyles["patient-helper-icon"]}>
+                <Icon name="Book" />
+              </div>
+              Hồ sơ chuẩn đoán
             </div>
-            Cập nhật hồ sơ
-          </div>
-        </Link>
+          </Link>
+
+          <Link
+            href="/patient/update"
+            className={patientStyles["patient-link"]}
+          >
+            <div
+              className={cn(
+                buttonStyles["button"],
+                buttonStyles["button-outline"],
+                patientStyles["patient-helper-btn"],
+              )}
+            >
+              <div className={patientStyles["patient-helper-icon"]}>
+                <Icon name="Pencil" />
+              </div>
+              Cập nhật hồ sơ
+            </div>
+          </Link>
+        </div>
       </div>
     </section>
   );

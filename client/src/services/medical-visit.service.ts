@@ -12,4 +12,15 @@ export class MedicalVisitService {
       return null;
     }
   }
+
+  public static async getPatientDiagnosisList(
+    patientId: string,
+  ): Promise<ApiResponse<MedicalVisitResult[]> | null> {
+    try {
+      const response = await api.get(`/medical-visits/patient/${patientId}`);
+      return response.data;
+    } catch {
+      return null;
+    }
+  }
 }
