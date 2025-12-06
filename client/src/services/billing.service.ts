@@ -1,5 +1,5 @@
-import { getApiInstance, getConfig } from "@/axios";
-import { RevenueTransaction, ChartLineData, ChartDataCategory } from "@/types";
+import { getApiInstance, getConfig, api } from "@/axios";
+import { RevenueTransaction, ChartLineData, ChartDataCategory, ApiResponse, Billing, BillingDetail } from "@/types";
 
 export class BillingService {
     public static async getRecentTransactions(
@@ -82,4 +82,24 @@ export class BillingService {
 
         return response.data;
     }
+
+    public static async getBillings(
+    patientId: string,
+    page: number,
+  ): Promise<ApiResponse<Billing[]>> {
+    const response = await api.get("/billings", {
+      params: {
+        patientId,
+        page,
+      },
+    });
+    return response.data;
+  }
+
+  public static async getBillingDetail(
+    id: number,
+  ): Promise<ApiResponse<BillingDetail>> {
+    const response = await api.get(`/billings/${id}`);
+    return response.data;
+  }
 }

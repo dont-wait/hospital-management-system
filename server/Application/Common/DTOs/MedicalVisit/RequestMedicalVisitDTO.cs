@@ -1,16 +1,20 @@
-public class MedicalVisit : BaseEntity
+﻿using System.ComponentModel.DataAnnotations;
+public class RequestMedicalVisitDTO
 {
-    public long Id { get; set; }
+    [Required]
     public string Symptoms { get; set; } = string.Empty;
+    
+    [Required]
     public string PhysicalExamination { get; set; } = string.Empty;
+    
+    [Required]
     public string Diagnosis { get; set; } = string.Empty;
+    
+    [Required]
     public string Treatment { get; set; } = string.Empty;
     public string Note { get; set; } = string.Empty;
     public string ImageResult { get; set; } = string.Empty;
 
+    [Required]
     public long AppointmentId { get; set; }
-    public virtual Appointment? Appointment { get; set; }
-    
-    public Guid PatientId { get; set; }
-    public virtual Patient? Patient { get; set; }
 }

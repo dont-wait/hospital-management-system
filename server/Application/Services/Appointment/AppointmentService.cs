@@ -176,9 +176,31 @@ public class AppointmentService : IAppointmentService
         
         return ServiceResult<PaginatedResult<ResponseAppointmentDTO>>.Success(response);
     }
-    public Task<ServiceResult<string>> UpdateAppointment(RequestAppointmentDTO updateAppointmentDto)
+    public async Task<ServiceResult<bool>> CheckInAppointment(long appointmentId)
     {
-        throw new NotImplementedException();
+        var exisingAppointment = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+        if(exisingAppointment == null)
+            return ServiceResult<bool>.Fail("Đăng ký khám không tồn tại");
+        exisingAppointment.AppointmentStatus = AppointmentStatusEnum.Confirmed.ToString();
+        await _appointmentRepository.UpdateAppointmentAsync(exisingAppointment);
+        return ServiceResult<bool>.Success(true);
+    }
+    public async Task<ServiceResult<ResponseAppointmentDTO>> UpdateAppointment(long appointmentId, RequestUpdateAppointmentDTO updateAppointmentDto)
+    {
+        var existingAppointment = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+        if(existingAppointment == null)
+            return ServiceResult<ResponseAppointmentDTO>.Fail("Đăng ký khám không tồn tại");
+        
+        await _appointmentRepository.UpdateAppointmentAsync(existingAppointment);
+        return ServiceResult<ResponseAppointmentDTO>.Success(new ResponseAppointmentDTO
+        {
+            AppointmentId = existingAppointment.Id,
+            BillingId = existingAppointment.Billing.Id,
+            DepartmentName = existingAppointment.Room.Department.Name,
+            RoomName = existingAppointment.Room.Name,
+            FullName = $"{existingAppointment.Patient!.FirstName} {existingAppointment.Patient.LastName}",
+            DateOfBirth = existingAppointment.Patient.DateOfBirth
+        });
     }
     public async Task<ServiceResult<bool>> DeleteAppointment(long appointmentId)
     {

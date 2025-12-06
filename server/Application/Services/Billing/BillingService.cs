@@ -24,7 +24,9 @@ public class BillingService : IBillingService
             DiscountAmount = (float)billing.DiscountAmount,
             PaymentAmount = (float)billing.PaymentAmount,
             PaymentMethod = billing.PaymentMethod,
-            BillingStatus = billing.BillingStatus
+            BillingStatus = billing.BillingStatus,
+            CreatedAt = billing.CreatedAt,
+            ServiceName = billing.Appointment!.Service!.Name
         };
         
         return ServiceResult<ResponseBillingDTO>.Success(response);
@@ -46,6 +48,7 @@ public class BillingService : IBillingService
             PaymentAmount = (float)b.PaymentAmount,
             PaymentMethod = b.PaymentMethod,
             BillingStatus = b.BillingStatus
+            
         }).ToList();
         
         var response = new PaginatedResult<ResponseBillingDTO>
@@ -67,7 +70,8 @@ public class BillingService : IBillingService
             DiscountAmount = createBillingDto.DiscountAmount,
             PaymentAmount = createBillingDto.PaymentAmount,
             PaymentMethod = createBillingDto.PaymentMethod,
-            BillingStatus = createBillingDto.BillingStatus
+            BillingStatus = createBillingDto.BillingStatus,
+            
         };
 
         var created = await _billingRepository.CreateBillingAsync(billing);

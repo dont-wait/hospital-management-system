@@ -1,7 +1,7 @@
 "use client";
 
 import LazySection from "@/components/shared/LazySection";
-import { BannerSkeleton } from "@/components/skeletons/home/BannerSkeleton";
+import Banner from "@/components/home/Banner";
 import { FeaturesSkeleton } from "@/components/skeletons/home/FeaturesSkeleton";
 import { ServicesSkeleton } from "@/components/skeletons/home/ServicesSkeleton";
 import { CTASkeleton } from "@/components/skeletons/home/CTASkeleton";
@@ -9,10 +9,7 @@ import { CTASkeleton } from "@/components/skeletons/home/CTASkeleton";
 function HomePage() {
   return (
     <div>
-      <LazySection
-        importFunc={() => import("@/components/home/Banner")}
-        skeleton={<BannerSkeleton />}
-      />
+      <Banner/>
 
       <LazySection
         importFunc={() => import("@/components/home/FeaturesSection")}

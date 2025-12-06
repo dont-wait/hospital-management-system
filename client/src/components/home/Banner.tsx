@@ -1,70 +1,45 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "motion/react";
-import { useUserAuthContext } from "@/contexts";
-import { Button } from "@/components/shared/Button";
-import { ArrowRight } from "@/lib/client";
-import styles from "@/styles/home.module.css";
+import bannerImage from "@/public/images/banner-mask.svg";
 
 function Banner() {
-  const { isAuthenticated, user } = useUserAuthContext();
   return (
-    <motion.section
-      initial={{ opacity: 0.5 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1, ease: "easeOut" }}
-      className={styles["banner-card"]}
+    <div
+      className="bg-cover bg-center flex h-100 md:h-screen"
+      style={{
+        backgroundImage: `url(${bannerImage.src})`,
+      }}
     >
-      <div className={styles["banner-content"]}>
-        <h1 className={styles["banner-header"]}>
-          Chào mừng đến với bệnh viện MediCare
+      <div className="m-auto flex flex-col items-center justify-center gap-3 md:gap-6">
+        <h1
+          className="text-white font-bold text-2xl md:text-4xl lg:text-5xl"
+          style={{
+            filter: "drop-shadow(0 0 3px rgba(255, 255, 255, 0.5)",
+          }}
+        >
+          Chào mừng đến với Bệnh viện MediCare
         </h1>
-        <p className={styles["banner-description"]}>
-          Sức khỏe của bạn là ưu tiên hàng đầu của chúng tôi.
-          <br /> Trải nghiệm dịch vụ chăm sóc y tế đẳng cấp thế giới với đội ngũ
-          chuyên gia tận tâm, cơ sở vật chất hiện đại và các dịch vụ chăm sóc
-          sức khỏe toàn diện.
+        <p
+          className="text-white text-center font-normal text-sm md:text-xl w-100 md:w-2xl"
+          style={{
+            filter: "drop-shadow(0 0 3px rgba(255, 255, 255, 0.5)",
+          }}
+        >
+          Sức khỏe của bạn là ưu tiên hàng đầu của chúng tôi. Trải nghiệm dịch
+          vụ chăm sóc y tế đẳng cấp thế giới với đội ngũ chuyên gia tận tâm, cơ
+          sở vật chất hiện đại và các dịch vụ chăm sóc sức khỏe toàn diện.
         </p>
+        <div className="flex items-center justify-center gap-4">
+          <button className="bg-martinique font-medium text-sm md:text-md text-mauve rounded-md px-4 md:px-10 py-2">
+            Bắt đầu ngay
+          </button>
 
-        {!isAuthenticated ? (
-          <div className={styles["banner-buttons"]}>
-            <Link href="/register">
-              <Button size="lg">
-                Bắt đầu ngay
-                <ArrowRight className={styles["icon"]} />
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button variant="outline" size="lg">
-                Đăng nhập
-              </Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div className={styles["banner-buttons-wrap"]}>
-              {user && "employeeId" in user && (
-                <Link href="/doctor">
-                  <Button size="lg">
-                    Đi tới Bảng điều khiển Bác sĩ
-                    <ArrowRight className={styles["icon"]} />
-                  </Button>
-                </Link>
-              )}
-              {user && "patientId" in user && (
-                <Link href="/patient">
-                  <Button size="lg">
-                    Đi tới Cổng thông tin Bệnh nhân
-                    <ArrowRight className={styles["icon"]} />
-                  </Button>
-                </Link>
-              )}
-            </div>
-          </div>
-        )}
+          <button className="bg-white font-medium text-sm md:text-md text-martinique rounded-md px-4 md:px-10 py-2">
+            Đăng nhập
+          </button>
+        </div>
       </div>
-    </motion.section>
+    </div>
   );
 }
 

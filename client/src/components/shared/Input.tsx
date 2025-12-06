@@ -144,7 +144,6 @@ export const MonthSelect = ({ value, onChange }: MonthSelectProps) => (
     onChange={(e) => onChange(e.target.value)}
     className={inputStyles["input"]}
   >
-    <option value="">Tháng</option>
     {months.map((m) => (
       <option key={m.value} value={m.value}>
         {m.label}
