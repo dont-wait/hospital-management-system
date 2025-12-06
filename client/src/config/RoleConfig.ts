@@ -15,6 +15,7 @@ export const ROUTE_ROLE_MAP: Record<string, readonly Roles[]> = {
   "/doctor/create-shift": ["hod"],
   "/admin/dashboard": ["admin"],
   "/admin/dashboard/users": ["admin"],
+  "/admin/dashboard/revenue": ["admin"],
 } as const;
 
 // này mặc định khi đăng nhập sẽ chuyển đến trang nào theo role

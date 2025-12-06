@@ -8,6 +8,7 @@ using Infrastructure.Services.Email.SendGrid;
 using Infrastructure.Services.Redis;
 using Infrastructure.Services.Email;
 using Infrastructure.Services.SlotTime;
+using Infrastructure.Services.Excel;
 
 namespace Infrastructure;
 
@@ -47,6 +48,7 @@ public static class DependencyInjection
         services.AddSwaggerDocumentation();
         services.AddRedisService(configuration);
         services.AddSlotTimeService(configuration);
+        services.AddExcelExporter();
 
         if (configuration.GetValue<string>("EmailSettings:Provider") == "Smtp")
         {
