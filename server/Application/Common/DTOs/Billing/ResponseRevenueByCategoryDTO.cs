@@ -1,5 +1,5 @@
 public class ResponseRevenueByCategoryDTO
 {
-    public decimal Appointment { get; set; }
-    public decimal Service { get; set; }
+    public decimal Appointments { get; set; }
+    public decimal Services { get; set; }
 }

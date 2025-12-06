@@ -180,8 +180,8 @@ public class BillingRepository : IBillingRepository
         {
             result = new ResponseRevenueByCategoryDTO
             {
-                Appointment = Convert.ToDecimal(reader.GetDouble(reader.GetOrdinal("Khám bệnh"))),
-                Service = Convert.ToDecimal(reader.GetDouble(reader.GetOrdinal("Dịch vụ")))
+                Appointments = Convert.ToDecimal(reader.GetDouble(reader.GetOrdinal("Khám bệnh"))),
+                Services = Convert.ToDecimal(reader.GetDouble(reader.GetOrdinal("Dịch vụ")))
             };
         }
 
