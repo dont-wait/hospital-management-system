@@ -247,6 +247,85 @@ public static class DataSeeder
         public string CertificateNumber { get; set; } = string.Empty;
     }
 
+    public static async Task SeedPatientsAsync(AppDbContext context)
+    {
+        var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "patients.json");
+
+        if (!File.Exists(seedPath))
+        {
+            Console.WriteLine("❌ Không tìm thấy patients.json");
+            return;
+        }
+
+        var json = File.ReadAllText(seedPath);
+        var patientsData = JsonSerializer.Deserialize<List<PatientSeedData>>(json);
+
+        if (patientsData == null)
+        {
+            Console.WriteLine("❌ Không thể đọc dữ liệu patient từ JSON");
+            return;
+        }
+
+        foreach (var pat in patientsData)
+        {
+            // Kiểm tra bệnh nhân đã tồn tại chưa
+            bool exists = await context.user_accounts.AnyAsync(u => u.CitizenID == pat.CitizenID);
+            if (exists)
+            {
+                continue;
+            }
+
+            // 1. Tạo Patient
+            var patient = new Patient
+            {
+                Id = Guid.NewGuid(),
+                FirstName = pat.FirstName,
+                LastName = pat.LastName,
+                Email = pat.Email,
+                DateOfBirth = pat.DateOfBirth,
+                Nationality = pat.Nationality,
+                Gender = pat.Gender,
+                PlaceOfResidence = pat.PlaceOfResidence,
+                Is_Insurance = pat.Is_Insurance,
+                Address = pat.Address,
+                PhoneNumber = pat.PhoneNumber,
+                RoleId = RoleEnum.patient.ToString().ToLower(),
+                RegistrationDate = DateTimeOffset.UtcNow
+            };
+            context.patients.Add(patient);
+
+            // 2. Tạo UserAccount
+            var user = new UserAccount
+            {
+                Id = Guid.NewGuid(),
+                CitizenID = pat.CitizenID,
+                Password = HashPasswordUtil.HashPassword(pat.Password),
+                PatientId = patient.Id,
+                Is_Active = 1
+            };
+            context.user_accounts.Add(user);
+
+            await context.SaveChangesAsync();
+            Console.WriteLine($"✅ Seed patient {pat.FirstName} {pat.LastName} thành công!");
+        }
+    }
+
+    private class PatientSeedData
+    {
+        public string CitizenID { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public DateOnly? DateOfBirth { get; set; }
+        public string? Nationality { get; set; }
+        public string? Gender { get; set; }
+        public string? PlaceOfResidence { get; set; }
+        public int Is_Insurance { get; set; } = 0;
+        public string? Address { get; set; }
+        public string PhoneNumber { get; set; } = string.Empty;
+    }
+
     public static async Task SeedAsync(AppDbContext context)
     {
         if (!context.roles.Any())

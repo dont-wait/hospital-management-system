@@ -1,0 +1,302 @@
+@reference "./globals.css";
+
+/* Revenue Container */
+.revenue-container {
+  @apply bg-white min-h-screen;
+}
+
+/* Time Filter */
+.time-filter {
+  @apply flex gap-3 mb-6 flex-wrap;
+}
+
+.time-btn {
+  @apply px-6 py-2 rounded-lg border border-gray-300 text-martinique font-medium transition-all duration-200 hover:border-east-bay hover:bg-east-bay hover:text-white;
+}
+
+.time-btn.active {
+  @apply bg-east-bay text-white border-east-bay shadow-md;
+}
+
+/* Revenue Stats */
+.revenue-stats {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8;
+}
+
+.stat-card-large {
+  @apply col-span-1 md:col-span-2 lg:col-span-1 bg-gradient-to-br from-east-bay to-mauve text-white rounded-lg shadow-lg p-6 flex items-center gap-4;
+}
+
+.stat-card {
+  @apply bg-white border border-gray-200 rounded-lg shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition-shadow duration-200;
+}
+
+.stat-icon-wrap {
+  @apply bg-white/20 p-4 rounded-full;
+}
+
+.stat-icon-wrap svg {
+  @apply w-8 h-8 text-white;
+}
+
+.stat-icon-wrap-secondary {
+  @apply bg-east-bay/10 p-4 rounded-full;
+}
+
+.stat-icon-wrap-secondary svg {
+  @apply w-8 h-8 text-east-bay;
+}
+
+.stat-content {
+  @apply flex-1;
+}
+
+.stat-label {
+  @apply text-sm font-medium opacity-90 mb-1;
+}
+
+.stat-card-large .stat-label {
+  @apply text-white/90;
+}
+
+.stat-card .stat-label {
+  @apply text-gray-600;
+}
+
+.stat-value-large {
+  @apply text-3xl font-bold mb-2;
+}
+
+.stat-value {
+  @apply text-2xl font-bold text-martinique;
+}
+
+.stat-growth {
+  @apply flex items-center gap-2 text-sm;
+}
+
+.stat-growth svg {
+  @apply w-4 h-4;
+}
+
+.growth-positive {
+  @apply text-green-400 font-semibold;
+}
+
+.growth-negative {
+  @apply text-red-400 font-semibold;
+}
+
+.growth-text {
+  @apply text-white/70 text-xs;
+}
+
+/* Section Card */
+.section-card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6;
+}
+
+.section-header {
+  @apply flex items-center justify-between mb-4 flex-wrap gap-3;
+}
+
+.header-actions {
+  @apply flex items-center gap-3 flex-wrap;
+}
+
+.section-title {
+  @apply text-xl font-bold text-martinique;
+}
+
+.date-range-picker {
+  @apply flex items-center gap-3 flex-wrap;
+}
+
+.date-input-group {
+  @apply flex items-center gap-2;
+}
+
+.date-label {
+  @apply text-sm font-medium text-martinique whitespace-nowrap;
+}
+
+.date-input {
+  @apply px-3 py-2 rounded-lg border border-gray-300 text-martinique text-sm font-medium transition-all duration-200 hover:border-east-bay focus:border-east-bay focus:ring-2 focus:ring-east-bay/20 outline-none;
+}
+
+.clear-dates-btn {
+  @apply p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 text-gray-500 hover:text-red-500;
+}
+
+.clear-dates-btn svg {
+  @apply w-4 h-4;
+}
+
+.export-btn {
+  @apply flex items-center gap-2 px-4 py-2 bg-east-bay text-white rounded-lg hover:bg-mauve transition-colors duration-200 font-medium;
+}
+
+.export-btn svg {
+  @apply w-5 h-5;
+}
+
+.view-all-btn {
+  @apply px-4 py-2 text-east-bay border border-east-bay rounded-lg hover:bg-east-bay hover:text-white transition-colors duration-200 font-medium;
+}
+
+/* Table Styles */
+.table-wrapper {
+  @apply overflow-x-auto;
+}
+
+.revenue-table,
+.transaction-table {
+  @apply w-full border-collapse;
+}
+
+.revenue-table thead tr,
+.transaction-table thead tr {
+  @apply border-b-2 border-gray-200;
+}
+
+.revenue-table th,
+.transaction-table th {
+  @apply text-left py-4 px-4 text-sm font-semibold text-martinique uppercase tracking-wider;
+}
+
+.revenue-table tbody tr,
+.transaction-table tbody tr {
+  @apply border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150;
+}
+
+.revenue-table td,
+.transaction-table td {
+  @apply py-4 px-4 text-sm;
+}
+
+.dept-name {
+  @apply font-semibold text-martinique;
+}
+
+.revenue-amount {
+  @apply font-bold text-east-bay text-base;
+}
+
+.appointment-count {
+  @apply text-gray-600;
+}
+
+.growth-badge {
+  @apply flex items-center gap-2;
+}
+
+.growth-badge svg {
+  @apply w-4 h-4;
+}
+
+.patient-name {
+  @apply font-medium text-martinique;
+}
+
+.service-name {
+  @apply text-gray-600;
+}
+
+.transaction-amount {
+  @apply font-semibold text-east-bay;
+}
+
+.transaction-date {
+  @apply text-gray-500 text-xs;
+}
+
+/* Status Badge */
+.status-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.status-completed {
+  @apply bg-green-100 text-green-700;
+}
+
+.status-pending {
+  @apply bg-yellow-100 text-yellow-700;
+}
+
+.status-cancelled {
+  @apply bg-red-100 text-red-700;
+}
+
+.status-unpaid {
+  @apply bg-gray-100 text-gray-700;
+}
+
+/* Chart Section */
+.chart-controls {
+  @apply flex gap-2;
+}
+
+.chart-btn {
+  @apply flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200;
+}
+
+.chart-btn-active {
+  @apply bg-east-bay text-white border-east-bay hover:bg-mauve;
+}
+
+.chart-btn svg {
+  @apply w-4 h-4;
+}
+
+.chart-container {
+  @apply w-full h-96 p-4;
+}
+
+.chart-placeholder {
+  @apply h-96 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-gray-300;
+}
+
+.chart-placeholder svg {
+  @apply w-16 h-16 mb-4;
+}
+
+.chart-placeholder p {
+  @apply text-lg font-medium mb-2;
+}
+
+.chart-note {
+  @apply text-sm text-gray-400 italic;
+}
+
+/* No Data State */
+.no-data {
+  @apply text-center py-8 text-gray-500 italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stat-card-large {
+    @apply col-span-1;
+  }
+
+  .revenue-stats {
+    @apply grid-cols-1;
+  }
+
+  .section-header {
+    @apply flex-col items-start;
+  }
+
+  .export-btn,
+  .view-all-btn {
+    @apply w-full justify-center;
+  }
+
+  .chart-controls {
+    @apply flex-wrap w-full;
+  }
+
+  .chart-btn {
+    @apply flex-1;
+  }
+}

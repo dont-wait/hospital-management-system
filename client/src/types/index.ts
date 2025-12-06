@@ -310,6 +310,31 @@ export interface ApiError {
   message: string;
 }
 
+export interface RevenueByDepartment {
+  id: number;
+  name: string;
+  revenue: number;
+  totalAppointments: number;
+  revenueGrowthPercentage: number | null;
+}
+
+export interface RevenueTransaction {
+  patientName: string;
+  serviceName: string;
+  amount: number;
+  transactionDate: string;
+  status: "paid" | "unpaid" | "pending" | "failed";
+}
+
+export interface ChartLineData {
+  label: string;
+  revenue: number;
+}
+
+export interface ChartDataCategory {
+  appointments: number;
+  services: number;
+}
 export interface Appointment {
   appointmentId: number;
   billingId: number;

@@ -32,4 +32,17 @@ public class DepartmentController : ControllerBase
         
         return new JsonResult(new ApiResponse<List<ResponseRoom>>(200, rooms.Message, rooms.Data)) { StatusCode = 200 };
     }
+
+    [HttpGet("revenue-statistics")]
+    public async Task<IActionResult> GetDepartmentRevenueStatistics(
+        [FromQuery] string type,
+        [FromQuery] DateTime? fromDate = null,
+        [FromQuery] DateTime? toDate = null)
+    {
+        var result = await _departmentService.GetDepartmentRevenueStatisticsAsync(type, fromDate, toDate);
+        if (!result.IsSuccess)
+            return new JsonResult(new ApiResponse<List<ResponseDeparmentRevenueStatisticsDTO>>(400, result.Message)) { StatusCode = 400 };
+
+        return new JsonResult(new ApiResponse<List<ResponseDeparmentRevenueStatisticsDTO>>(200, "Lấy thống kê doanh thu phòng ban thành công", result.Data!)) { StatusCode = 200 };
+    }
 }

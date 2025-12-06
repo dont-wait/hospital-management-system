@@ -73,6 +73,7 @@ using (var scope = app.Services.CreateScope())
     await DataSeeder.SeedAdminAsync(db);
     await DataSeeder.SeedDoctorsAsync(db);
     await DataSeeder.SeedServicesAsync(db);
+    await DataSeeder.SeedPatientsAsync(db);
 }
 
 app.UseCors("CorsPolicy");
