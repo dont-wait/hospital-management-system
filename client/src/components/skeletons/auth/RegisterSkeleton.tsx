@@ -13,9 +13,12 @@ export function RegisterSkeleton() {
         className={cn(cardStyles["card-header"], authStyles["register-header"])}
       >
         <div className={authStyles["register-header-icon-wrap"]}>
-          <div className={authStyles["register-header-icon"]}>
-            <Skeleton width="100%" height="100%" />
-          </div>
+          <Skeleton
+            width="100%"
+            height="100%"
+            circle={true}
+            containerClassName={authStyles["icon-skeleton"]}
+          />
         </div>
         <div
           className={cn(cardStyles["card-title"], authStyles["register-title"])}
@@ -61,13 +64,11 @@ export function RegisterSkeleton() {
         </div>
 
         {/* Card Footer */}
-        <div className={authStyles["footer-link-section"]}>
-          <div className={authStyles["footer-link-content"]}>
-            <div className={authStyles["footer-link"]}>
-              <Skeleton width="60%" height="100%" />
-            </div>
-          </div>
-        </div>
+        <Skeleton
+          width="100%"
+          height="100%"
+          containerClassName={authStyles["footer-link-section"]}
+        />
       </div>
     </div>
   );

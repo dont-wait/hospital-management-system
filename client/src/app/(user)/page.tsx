@@ -1,30 +1,17 @@
 "use client";
 
-import LazySection from "@/components/shared/LazySection";
 import Banner from "@/components/home/Banner";
-import { FeaturesSkeleton } from "@/components/skeletons/home/FeaturesSkeleton";
-import { ServicesSkeleton } from "@/components/skeletons/home/ServicesSkeleton";
-import { CTASkeleton } from "@/components/skeletons/home/CTASkeleton";
+import FeaturesSection from "@/components/home/FeaturesSection";
+import ServiceSection from "@/components/home/ServicesSection";
+import CTASection from "@/components/home/CTASection";
 
 function HomePage() {
   return (
     <div>
-      <Banner/>
-
-      <LazySection
-        importFunc={() => import("@/components/home/FeaturesSection")}
-        skeleton={<FeaturesSkeleton />}
-      />
-
-      <LazySection
-        importFunc={() => import("@/components/home/ServicesSection")}
-        skeleton={<ServicesSkeleton />}
-      />
-
-      <LazySection
-        importFunc={() => import("@/components/home/CTASection")}
-        skeleton={<CTASkeleton />}
-      />
+      <Banner />
+      <FeaturesSection />
+      <ServiceSection />
+      <CTASection />
     </div>
   );
 }

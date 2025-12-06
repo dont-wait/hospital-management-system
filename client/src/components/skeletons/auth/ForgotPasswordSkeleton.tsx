@@ -26,7 +26,12 @@ export function ForgotPasswordSkeleton() {
         <div className={authStyles["fp-header"]}>
           <div className={authStyles["fp-header-wrap"]}>
             <div className={authStyles["fp-header-icon-wrap"]}>
-              <Skeleton width="100%" height="100%" />
+              <Skeleton
+                width="100%"
+                height="100%"
+                circle={true}
+                containerClassName={authStyles["icon-skeleton"]}
+              />
             </div>
           </div>
           <div>

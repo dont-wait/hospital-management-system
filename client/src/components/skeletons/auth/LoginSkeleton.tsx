@@ -13,9 +13,12 @@ export function LoginSkeleton() {
         className={cn(cardStyles["card-header"], authStyles["login-header"])}
       >
         <div className={authStyles["login-header-icon-wrap"]}>
-          <div className={authStyles["login-header-icon"]}>
-            <Skeleton width="100%" height="100%" />
-          </div>
+          <Skeleton
+            width="100%"
+            height="100%"
+            circle={true}
+            containerClassName={authStyles["icon-skeleton"]}
+          />
         </div>
         <div
           className={cn(cardStyles["card-title"], authStyles["login-title"])}
@@ -45,24 +48,24 @@ export function LoginSkeleton() {
           ))}
 
           {/* forgot password section */}
-          <div className={authStyles["forgot-password-btn"]}>
-            <Skeleton width="30%" height="100%" />
-          </div>
+          <Skeleton
+            width="30%"
+            height="100%"
+            containerClassName={authStyles["forgot-password-btn"]}
+          />
 
           {/* submit button */}
-          <div className={authStyles["submit-btn"]}>
+          <div className={cn(authStyles["submit-btn"])}>
             <Skeleton width="100%" height="100%" />
           </div>
         </div>
 
         {/* Footer Link */}
-        <div className={authStyles["footer-link-section"]}>
-          <div className={authStyles["footer-link-content"]}>
-            <div className={authStyles["footer-link"]}>
-              <Skeleton width="60%" height="100%" />
-            </div>
-          </div>
-        </div>
+        <Skeleton
+          width="100%"
+          height="100%"
+          containerClassName={authStyles["footer-link-section"]}
+        />
       </div>
     </div>
   );

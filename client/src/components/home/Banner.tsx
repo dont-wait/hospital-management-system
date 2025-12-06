@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import bannerImage from "@/public/images/banner-mask.svg";
 
 function Banner() {
+  const router = useRouter();
   return (
     <div
       className="bg-cover bg-center flex h-100 md:h-screen"
@@ -30,11 +32,21 @@ function Banner() {
           sở vật chất hiện đại và các dịch vụ chăm sóc sức khỏe toàn diện.
         </p>
         <div className="flex items-center justify-center gap-4">
-          <button className="bg-martinique font-medium text-sm md:text-md text-mauve rounded-md px-4 md:px-10 py-2">
+          <button
+            onClick={() => {
+              router.push("/register");
+            }}
+            className="bg-martinique font-medium text-sm md:text-md text-mauve rounded-md px-4 md:px-10 py-2"
+          >
             Bắt đầu ngay
           </button>
 
-          <button className="bg-white font-medium text-sm md:text-md text-martinique rounded-md px-4 md:px-10 py-2">
+          <button
+            onClick={() => {
+              router.push("/login");
+            }}
+            className="bg-white font-medium text-sm md:text-md text-martinique rounded-md px-4 md:px-10 py-2"
+          >
             Đăng nhập
           </button>
         </div>
