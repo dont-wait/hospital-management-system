@@ -53,6 +53,18 @@ export default function RevenuePage() {
     fetchRecentTransactions();
   }, [fromDateTrans, toDateTrans]);
   
+  const exportToExcelFile = async () => {
+    const fileData = await BillingService.exportRevenueReport(timeRange, fromDateDept, toDateDept);
+    const blob = new Blob([fileData], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Revenue_${new Date().toISOString()}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -61,7 +73,7 @@ export default function RevenuePage() {
   };
 
   const getStatusColor = (status: string): string => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case "paid":
         return styles["status-completed"];
       case "pending":
@@ -76,7 +88,7 @@ export default function RevenuePage() {
   };
 
   const getStatusText = (status: string): string => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case "paid":
         return "Hoàn thành";
       case "pending":
@@ -206,7 +218,7 @@ export default function RevenuePage() {
                 </button>
               )}
             </div>
-            <button className={styles["export-btn"]}>
+            <button className={styles["export-btn"]} onClick={exportToExcelFile}>
               <Icon name="Download" />
               Xuất báo cáo
             </button>
@@ -223,28 +235,42 @@ export default function RevenuePage() {
               </tr>
             </thead>
             <tbody>
-              {departmentRevenue.map((dept) => (
-                <tr key={dept.id}>
-                  <td className={styles["dept-name"]}>{dept.name}</td>
-                  <td className={styles["revenue-amount"]}>{formatCurrency(dept.revenue)}</td>
-                  <td className={styles["appointment-count"]}>{dept.appointments} lượt</td>
-                  <td>
-                    <div className={styles["growth-badge"]}>
-                      {dept.growth >= 0 ? (
-                        <>
-                          <Icon name="TrendingUp" />
-                          <span className={styles["growth-positive"]}>+{dept.growth}%</span>
-                        </>
+              {
+                departmentRevenue.length > 0 ?
+                departmentRevenue.map((dept) => (
+                  <tr key={dept.id}>
+                    <td className={styles["dept-name"]}>{dept.name}</td>
+                    <td className={styles["revenue-amount"]}>{formatCurrency(dept.revenue)}</td>
+                    <td className={styles["appointment-count"]}>{dept.totalAppointments} lượt</td>
+                    <td>
+                      {dept.revenueGrowthPercentage !== null ? (
+                        <div className={styles["growth-badge"]}>
+                          {dept.revenueGrowthPercentage >= 0 ? (
+                            <>
+                              <Icon name="TrendingUp" />
+                              <span className={styles["growth-positive"]}>+{dept.revenueGrowthPercentage}%</span>
+                            </>
+                          ) : (
+                            <>
+                              <Icon name="TrendingDown" />
+                              <span className={styles["growth-negative"]}>{dept.revenueGrowthPercentage}%</span>
+                            </>
+                          )}
+                        </div>
                       ) : (
-                        <>
-                          <Icon name="TrendingDown" />
-                          <span className={styles["growth-negative"]}>{dept.growth ?? 0}%</span>
-                        </>
+                        <span className={styles["no-data"]}>N/A</span>
                       )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                )) : 
+                <>
+                  <tr>
+                    <td colSpan={4} className={styles["no-data"]}>
+                      Không có dữ liệu doanh thu cho khoảng thời gian đã chọn.
+                    </td>
+                  </tr>
+                </>
+              }
             </tbody>
           </table>
         </div>

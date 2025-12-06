@@ -20,11 +20,27 @@ BEGIN
 
     IF @Type = 'day'
     BEGIN
-        SET @StartDate = ISNULL(@FromDate, @CurrentDate);
-        SET @EndDate   = ISNULL(@ToDate, @CurrentDate);
+        -- If fromDate is provided, calculate from fromDate to today
+        -- Otherwise, just today
+        IF @FromDate IS NOT NULL
+        BEGIN
+            SET @StartDate = @FromDate;
+            SET @EndDate   = @CurrentDate;
+            
+            -- For growth calculation: compare with equivalent period before fromDate
+            DECLARE @DaysDiff INT = DATEDIFF(DAY, @StartDate, @EndDate) + 1;
+            SET @PrevStartDate = DATEADD(DAY, -@DaysDiff, @StartDate);
+            SET @PrevEndDate   = DATEADD(DAY, -1, @StartDate);
+        END
+        ELSE
+        BEGIN
+            -- Just today
+            SET @StartDate = @CurrentDate;
+            SET @EndDate   = @CurrentDate;
 
-        SET @PrevStartDate = DATEADD(DAY, -1, @StartDate);
-        SET @PrevEndDate   = DATEADD(DAY, -1, @EndDate);
+            SET @PrevStartDate = DATEADD(DAY, -1, @StartDate);
+            SET @PrevEndDate   = DATEADD(DAY, -1, @EndDate);
+        END
     END
 
     ELSE IF @Type = 'week'
@@ -59,14 +75,13 @@ BEGIN
     
     ELSE IF @Type = 'range'
     BEGIN
-        -- Custom date range
+        -- Custom date range - no growth calculation for range
         SET @StartDate = ISNULL(@FromDate, @CurrentDate);
         SET @EndDate   = ISNULL(@ToDate, @CurrentDate);
 
-        -- Calculate previous period with same duration
-        DECLARE @DaysDiff INT = DATEDIFF(DAY, @StartDate, @EndDate);
-        SET @PrevStartDate = DATEADD(DAY, -(@DaysDiff + 1), @StartDate);
-        SET @PrevEndDate   = DATEADD(DAY, -1, @StartDate);
+        -- Set prev dates to NULL to return NULL for growth percentage
+        SET @PrevStartDate = NULL;
+        SET @PrevEndDate   = NULL;
     END;
 
     --------------------------------------------------
@@ -99,6 +114,7 @@ BEGIN
         LEFT JOIN appointments A ON A.RoomId = R.Id
         LEFT JOIN billings B ON B.Id = A.BillingId
         WHERE B.BillingStatus = 'paid'
+          AND @PrevStartDate IS NOT NULL  -- Only calculate if prev dates are set
           AND CAST(B.CreatedAt AS DATE) BETWEEN @PrevStartDate AND @PrevEndDate
         GROUP BY D.Id
     )

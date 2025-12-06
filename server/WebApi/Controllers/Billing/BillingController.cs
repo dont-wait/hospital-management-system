@@ -109,7 +109,7 @@ public class BillingController : ControllerBase
         });
     }
 
-    [HttpGet("export")]
+    [HttpGet("revenues/export")]
     public async Task<IActionResult> ExportRevenueDataToExcel(
         [FromQuery] string type = "day",
         [FromQuery] DateTime? fromDate = null,
