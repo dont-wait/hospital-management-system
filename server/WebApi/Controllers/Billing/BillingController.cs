@@ -8,10 +8,12 @@ namespace WebApi.Controllers.Billing;
 public class BillingController : ControllerBase
 {
     private readonly IBillingService _billingService;
+    private readonly IDepartmentService _departmentService;
     
-    public BillingController(IBillingService billingService)
+    public BillingController(IBillingService billingService, IDepartmentService departmentService)
     {
         _billingService = billingService;
+        _departmentService = departmentService;
     }
 
     [HttpGet]
@@ -105,5 +107,21 @@ public class BillingController : ControllerBase
             message = "Lấy dữ liệu doanh thu thành công",
             data = result.Data
         });
+    }
+
+    [HttpGet("export")]
+    public async Task<IActionResult> ExportRevenueDataToExcel(
+        [FromQuery] string type = "day",
+        [FromQuery] DateTime? fromDate = null,
+        [FromQuery] DateTime? toDate = null
+    )
+    {
+        byte[] files = await _departmentService.ExportDepartmentRevenueAsync(type, fromDate, toDate);
+
+        return File(
+            fileContents: files,
+            contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            fileDownloadName: $"Revenue_{DateTime.Now:yyyyMMddHHmmss}.xlsx"
+        );
     }
 }
