@@ -314,8 +314,8 @@ export interface RevenueByDepartment {
   id: number;
   name: string;
   revenue: number;
-  appointments: number;
-  growth: number;
+  totalAppointments: number;
+  revenueGrowthPercentage: number | null;
 }
 
 export interface RevenueTransaction {

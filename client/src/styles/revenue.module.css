@@ -268,6 +268,11 @@
   @apply text-sm text-gray-400 italic;
 }
 
+/* No Data State */
+.no-data {
+  @apply text-center py-8 text-gray-500 italic;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .stat-card-large {

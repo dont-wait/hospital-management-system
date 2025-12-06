@@ -58,7 +58,6 @@ export default function RevenueLineChart({ timeRange }: RevenueLineChartProps) {
     };
 
     fetchRevenueData();
-    console.log(1);
   }, [timeRange]);
 
   const data = {

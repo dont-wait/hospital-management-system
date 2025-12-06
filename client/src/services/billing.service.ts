@@ -37,4 +37,24 @@ export class BillingService {
 
         return response.data.data;
     }
+
+    public static async exportRevenueReport(
+        type: "day" | "week" | "month" | "year" | "range",
+        fromDate?: string,
+        toDate?: string,
+        token?: string,
+    ) {
+        const apiInstance = getApiInstance();
+        const config = getConfig(token);
+        config.responseType = "blob";
+
+        const response = await apiInstance.get<Blob>(
+            `/billings/revenues/export?type=${type}${
+                fromDate ? `&fromDate=${fromDate}` : ""
+            }${toDate ? `&toDate=${toDate}` : ""}`,
+            config,
+        );
+
+        return response.data;
+    }
 }
