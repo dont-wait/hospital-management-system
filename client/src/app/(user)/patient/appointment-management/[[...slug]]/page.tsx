@@ -28,9 +28,9 @@ export default async function AppointmentManagementPage({
   let response: ApiResponseWithPaging<Appointment[]> | null;
   try {
     response = await AppointmentService.getAppointments(
+      token,
       patientId,
       `${month}/${day}/${year}`,
-      token,
     );
   } catch {
     response = null;

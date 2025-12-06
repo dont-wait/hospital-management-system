@@ -26,55 +26,6 @@
   @apply bg-east-bay text-mauve px-3 py-1 rounded-full text-sm font-semibold;
 }
 
-/* Table */
-.table-wrapper {
-  @apply overflow-x-auto;
-}
-
-.queue-table {
-  @apply w-full border-collapse;
-}
-
-.table-header-row {
-  @apply border-b-2 border-gray-200;
-}
-
-.table-header {
-  @apply text-center px-4 py-3 font-semibold text-east-bay;
-}
-
-.table-header.text-center {
-  @apply text-center;
-}
-
-.table-row {
-  @apply border-b border-gray-100 transition-colors hover:bg-gray-50;
-}
-
-.table-cell {
-  @apply p-4 text-center;
-}
-
-.table-cell span {
-  @apply mx-auto block flex items-center justify-center;
-}
-
-.table-cell.text-center {
-  @apply text-center;
-}
-
-.stt-badge {
-  @apply inline-flex items-center justify-center w-8 h-8 bg-east-bay text-white rounded-full font-semibold;
-}
-
-.patient-name {
-  @apply font-medium text-gray-800;
-}
-
-.symptoms-text {
-  @apply text-gray-500;
-}
-
 /* Appointment Type Badges */
 .appointment-type-badge {
   @apply inline-flex items-center px-3 py-1.5 rounded-md text-sm font-semibold;
