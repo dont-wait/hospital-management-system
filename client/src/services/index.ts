@@ -5,3 +5,5 @@ export * from "./employee.service";
 export * from "./schedule.service";
 export * from "./appointment.service";
 export * from "./billing.service";
+export * from "./medical-visit.service";
+export * from "./prescription.service";

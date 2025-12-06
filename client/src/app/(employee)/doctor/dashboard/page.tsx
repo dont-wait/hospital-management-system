@@ -13,8 +13,17 @@ export default async function DoctorDashboardPage() {
   const token = cookieStore.get("accessToken")?.value;
   const authData: AuthUserWithoutTokens =
     await DoctorService.getDoctorInfo(token);
-  const appointmentList = await AppointmentService.getAppointments(token);
   const doctor = authData.employee as Employee;
+  const date = new Date();
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const appointmentList = await AppointmentService.getAppointments(
+    token,
+    "",
+    `${month}/${day}/${year}`,
+    doctor.doctorId,
+  );
   const appointments = appointmentList?.data ?? [];
 
   return (

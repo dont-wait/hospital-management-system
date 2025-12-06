@@ -1,31 +1,24 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  medicalVisitSchema,
-  type MedicalVisitForm,
-} from "@/schemas/medicalSchemas";
-
-import { FormField } from "@/components/shared/FormField";
-import { Button } from "@/components/shared/Button";
-import { Save, FileText } from "lucide-react";
+import { Save, FileText, ArrowRight } from "lucide-react";
+import { MedicalVisitService } from "@/services";
+import { MedicalVisitFormData, MedicalVisitResult } from "@/types";
 
 interface MedicalVisitFormProps {
   appointmentId: number;
-  onSubmit: (data: MedicalVisitForm) => Promise<void>;
+  onSubmitSuccess: (data: MedicalVisitResult) => void;
 }
 
-export function MedicalVisitForm({
+export default function MedicalVisitForm({
   appointmentId,
-  onSubmit,
+  onSubmitSuccess,
 }: MedicalVisitFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<MedicalVisitForm>({
-    resolver: zodResolver(medicalVisitSchema),
+  } = useForm<MedicalVisitFormData>({
     defaultValues: {
       appointmentId,
       symptoms: "",
@@ -37,78 +30,123 @@ export function MedicalVisitForm({
     },
   });
 
-  const onSubmitForm = async (data: MedicalVisitForm) => {
-    try {
-      await onSubmit(data);
-    } catch (err) {
-      console.error("Submit error:", err);
+  const onSubmit = async (data: MedicalVisitFormData) => {
+    const response = await MedicalVisitService.createMedicalVist(data);
+    if (response?.data) {
+      onSubmitSuccess(response.data);
     }
   };
 
-  const fields = [
-    {
-      id: "symptoms",
-      label: "Triệu chứng",
-      placeholder: "Mô tả các triệu chứng của bệnh nhân...",
-      rows: 4,
-    },
-    {
-      id: "physicalExamination",
-      label: "Chuẩn đoán lâm sàn",
-      placeholder: "Kết quả khám lâm sàng...",
-      rows: 4,
-    },
-    {
-      id: "diagnosis",
-      label: "Chuẩn đoán",
-      placeholder: "Chẩn đoán bệnh...",
-      rows: 3,
-    },
-    {
-      id: "treatment",
-      label: "Điều trị",
-      placeholder: "Phương pháp điều trị...",
-      rows: 3,
-    },
-    {
-      id: "note",
-      label: "Ghi chú",
-      placeholder: "Ghi chú bổ sung (nếu có)...",
-      rows: 2,
-    },
-  ] as const;
-
   return (
-    <div className="bg-white rounded-md shadow-lg p-6 border-t-8 border-east-bay">
+    <div className="bg-white rounded-lg shadow-lg p-6 border-t-4 border-east-bay">
       <div className="flex items-center gap-3 mb-6">
-        <FileText className="w-6 h-6 text-east-bay" />
-        <h2 className="text-2xl font-bold text-gray-800">
-          Ghi Nhận Chuẩn Đoán
+        <FileText className="w-8 h-8 text-east-bay" />
+        <h2 className="text-2xl font-bold text-east-bay">
+          Bước 1: Ghi Nhận Chẩn Đoán
         </h2>
       </div>
 
-      {/* Form Fields */}
       <div className="space-y-4">
-        {fields.map((field) => (
-          <FormField
-            key={field.id}
-            id={field.id}
-            type="textarea"
-            label={field.label}
-            placeholder={field.placeholder}
-            rows={field.rows}
-            errors={errors}
-            register={register}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-east-bay">
+            Triệu chứng <span className="text-martinique">*</span>
+          </label>
+          <textarea
+            {...register("symptoms", {
+              required: "Vui lòng nhập triệu chứng",
+            })}
+            rows={4}
+            className="w-full px-4 py-2 border border-silver rounded-lg focus:ring-2 focus:outline-none"
+            placeholder="Mô tả các triệu chứng của bệnh nhân..."
           />
-        ))}
-      </div>
+          {errors.symptoms && (
+            <p className="text-sm mt-1 text-red-500">
+              {errors.symptoms.message}
+            </p>
+          )}
+        </div>
 
-      {/* Submit */}
-      <div className="mt-6 flex justify-end">
-        <Button onClick={handleSubmit(onSubmitForm)} disabled={isSubmitting}>
-          <Save className="w-5 h-5" />
-          {isSubmitting ? "Đang lưu..." : "Lưu chuẩn đoán"}
-        </Button>
+        <div>
+          <label className="block text-sm text-east-bay font-medium mb-2">
+            Chuẩn đoán lâm sàng <span className="text-martinique">*</span>
+          </label>
+          <textarea
+            {...register("physicalExamination", {
+              required: "Vui lòng nhập chuẩn đoán lâm sàng",
+            })}
+            rows={4}
+            className="w-full px-4 py-2 border border-silver rounded-lg focus:ring-2 focus:outline-none"
+            placeholder="Kết quả khám lâm sàng..."
+          />
+          {errors.physicalExamination && (
+            <p className="text-sm mt-1 text-red-500">
+              {errors.physicalExamination.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm text-east-bay font-medium mb-2">
+            Chẩn đoán <span className="text-martinique">*</span>
+          </label>
+          <textarea
+            {...register("diagnosis", {
+              required: "Vui lòng nhập chẩn đoán",
+            })}
+            rows={3}
+            className="w-full px-4 py-2 border border-silver rounded-lg focus:ring-2 focus:outline-none"
+            placeholder="Chẩn đoán bệnh..."
+          />
+          {errors.diagnosis && (
+            <p className="text-sm mt-1 text-red-500">
+              {errors.diagnosis.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm text-east-bay font-medium mb-2">
+            Điều trị <span className="text-martinique">*</span>
+          </label>
+          <textarea
+            {...register("treatment", {
+              required: "Vui lòng nhập phương pháp điều trị",
+            })}
+            rows={3}
+            className="w-full px-4 py-2 border border-silver rounded-lg focus:ring-2 focus:outline-none"
+            placeholder="Phương pháp điều trị..."
+          />
+          {errors.treatment && (
+            <p className="text-sm mt-1 text-red-500">
+              {errors.treatment.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm text-east-bay font-medium mb-2">
+            Ghi chú
+          </label>
+          <textarea
+            {...register("note")}
+            rows={2}
+            className="w-full px-4 py-2 border border-silver rounded-lg focus:ring-2 focus:outline-none"
+            placeholder="Ghi chú bổ sung (nếu có)..."
+          />
+        </div>
+
+        <div className="flex justify-end pt-4">
+          <button
+            type="button"
+            onClick={handleSubmit(onSubmit)}
+            disabled={isSubmitting}
+            className="flex items-center bg-east-bay gap-2 px-6 py-3 text-white rounded-lg font-semibold disabled:opacity-50 transition-all hover:opacity-90"
+          >
+            <Save className="w-5 h-5" />
+            {isSubmitting ? "Đang lưu..." : "Lưu và tiếp tục kê đơn"}
+            <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
       </div>
     </div>
   );

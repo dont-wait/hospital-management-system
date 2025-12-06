@@ -52,6 +52,7 @@ export interface Doctor {
 
 export interface Employee {
   employeeId: string;
+  doctorId: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
@@ -376,7 +377,11 @@ export interface BillingDetail extends Billing {
   serviceName: string;
 }
 
-export type DoctorScheduleStatus = "Canceled" | "Completed" | "Scheduled" | "Opened";
+export type DoctorScheduleStatus =
+  | "Canceled"
+  | "Completed"
+  | "Scheduled"
+  | "Opened";
 
 export type DoctorSchedule = Omit<
   Schedule,
@@ -386,3 +391,33 @@ export type DoctorSchedule = Omit<
   description: string;
   scheduleStatus: DoctorScheduleStatus;
 };
+
+export interface MedicalVisitFormData {
+  appointmentId: number;
+  symptoms: string;
+  physicalExamination: string;
+  diagnosis: string;
+  treatment: string;
+  note: string;
+  imageResult?: string;
+}
+
+export interface MedicalVisitResult extends MedicalVisitFormData {
+  id: number;
+}
+
+export interface PrescriptionDetail {
+  medicationName: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  route: string;
+  quantity: string;
+}
+
+export interface PrescriptionFormData {
+  medicalVisitId: number;
+  instructions: string;
+  note: string;
+  prescriptionDetails: PrescriptionDetail[];
+}

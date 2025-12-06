@@ -66,7 +66,7 @@ export default function AppointmentList({ appointments }: AppointmentProps) {
 
             <div className="flex items-center justify-end">
               <Link
-                href="/doctor/medical-visit"
+                href="/doctor/diagnosis"
                 className="flex items-center gap-2 bg-truev text-white font-semibold px-5 py-2 rounded-lg shadow hover:bg-truev/90 transition"
               >
                 <Icon name="Stethoscope" className="w-4" />
@@ -104,7 +104,7 @@ export default function AppointmentList({ appointments }: AppointmentProps) {
             </div>
 
             <Link
-              href="/doctor/medical-visit"
+              href="/doctor/diagnosis"
               className="flex items-center justify-center gap-2 bg-truev text-white font-semibold px-5 py-2.5 rounded-lg shadow hover:bg-truev/90 transition w-full"
             >
               <Icon name="Stethoscope" className="w-4" />

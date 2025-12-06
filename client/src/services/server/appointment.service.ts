@@ -31,6 +31,7 @@ export class AppointmentService {
     token?: string,
     patientId?: string,
     date?: string,
+    doctorId?: string,
     page: number = 1,
     size: number = 3,
   ): Promise<ApiResponseWithPaging<Appointment[]> | null> {
@@ -41,6 +42,7 @@ export class AppointmentService {
         ...config,
         params: {
           patientId,
+          doctorId,
           page,
           size,
           date,
