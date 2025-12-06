@@ -23,15 +23,20 @@ export class BillingService {
     }
 
     public static async getTotalRevenue(
-        type: "day" | "week" | "month" | "year",
+        type: "day" | "week" | "month" | "year" | "range",
         date?: string,
+        toDate?: string,
         token?: string,
     ) {
         const apiInstance = getApiInstance();
         const config = getConfig(token);
 
+        const params = new URLSearchParams({ type });
+        if (date) params.append("date", date);
+        if (toDate) params.append("toDate", toDate);
+
         const response = await apiInstance.get<{ data: ChartLineData[] }>(
-            `/billings/revenues?type=${type}${date ? `&date=${date}` : ""}`,
+            `/billings/revenues?${params.toString()}`,
             config,
         );
 

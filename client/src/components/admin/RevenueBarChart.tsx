@@ -10,77 +10,61 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useEffect, useState } from "react";
+import { BillingService } from "@/services/billing.service";
+import { ChartLineData } from "@/types";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 interface RevenueBarChartProps {
   timeRange: "day" | "week" | "month" | "year" | "range";
+  fromDate?: string;
+  toDate?: string;
 }
 
-export default function RevenueBarChart({ timeRange }: RevenueBarChartProps) {
+interface ChartData {
+  labels: string[];
+  data: number[];
+}
+
+export default function RevenueBarChart({ timeRange, fromDate, toDate }: RevenueBarChartProps) {
+  const [chartData, setChartData] = useState<ChartData>({ labels: [], data: [] });
+
+  useEffect(() => {
+    const fetchRevenueData = async () => {
+      try {
+        const data = await BillingService.getTotalRevenue(timeRange, fromDate, toDate);
+        setChartData({
+          labels: data.map((item: ChartLineData) => item.label),
+          data: data.map((item: ChartLineData) => item.revenue),
+        });
+      } catch {
+        setChartData({ labels: [], data: [] });
+      }
+    };
+
+    fetchRevenueData();
+  }, [timeRange, fromDate, toDate]);
+
   const getChartData = () => {
-    switch (timeRange) {
-      case "day":
-        return {
-          labels: ["0h", "4h", "8h", "12h", "16h", "20h", "24h"],
-          appointment: [5, 12, 18, 25, 30, 28, 22],
-          service: [4, 8, 12, 15, 20, 18, 15],
-        };
-      case "week":
-        return {
-          labels: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
-          appointment: [120, 140, 150, 160, 180, 80, 60],
-          service: [100, 110, 120, 140, 150, 60, 50],
-        };
-      case "month":
-        return {
-          labels: ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4"],
-          appointment: [280, 310, 290, 320],
-          service: [240, 260, 250, 270],
-        };
-      case "year":
-        return {
-          labels: [
-            "T1",
-            "T2",
-            "T3",
-            "T4",
-            "T5",
-            "T6",
-            "T7",
-            "T8",
-            "T9",
-            "T10",
-            "T11",
-            "T12",
-          ],
-          appointment: [900, 980, 1050, 950, 1100, 1150, 1000, 1100, 1200, 1250, 1300, 980],
-          service: [800, 850, 900, 820, 950, 1000, 900, 980, 1050, 1100, 1150, 1120],
-        };
-      default:
-        return { labels: [], appointment: [], service: [] };
-    }
+    return {
+      labels: chartData.labels,
+      data: chartData.data,
+    };
   };
 
-  const chartData = getChartData();
+  const chartDataConfig = getChartData();
 
   const data = {
-    labels: chartData.labels,
+    labels: chartDataConfig.labels,
     datasets: [
       {
-        label: "Khám bệnh",
-        data: chartData.appointment,
+        label: "Doanh thu (triệu VNĐ)",
+        data: chartDataConfig.data,
         backgroundColor: "rgba(79, 81, 140, 0.8)",
         borderColor: "rgb(79, 81, 140)",
         borderWidth: 1,
       },
-      {
-        label: "Dịch vụ",
-        data: chartData.service,
-        backgroundColor: "rgba(218, 191, 255, 0.8)",
-        borderColor: "rgb(218, 191, 255)",
-        borderWidth: 1,
-      }
     ],
   };
 

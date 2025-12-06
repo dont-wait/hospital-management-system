@@ -26,6 +26,8 @@ export default function RevenuePage() {
   const [toDateDept, setToDateDept] = useState<string>("");
   const [fromDateTrans, setFromDateTrans] = useState<string>("");
   const [toDateTrans, setToDateTrans] = useState<string>("");
+  const [fromDateChart, setFromDateChart] = useState<string>("");
+  const [toDateChart, setToDateChart] = useState<string>("");
   const [departmentRevenue, setDepartmentRevenue] = useState<RevenueByDepartment[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<RevenueTransaction[]>([]);
 
@@ -360,33 +362,74 @@ export default function RevenuePage() {
       <div className={styles["section-card"]}>
         <div className={styles["section-header"]}>
           <h2 className={styles["section-title"]}>Biểu Đồ Doanh Thu</h2>
-          <div className={styles["chart-controls"]}>
-            <button
-              className={`${styles["chart-btn"]} ${chartType === "bar" ? styles["chart-btn-active"] : ""}`}
-              onClick={() => setChartType("bar")}
-            >
-              <Icon name="ChartBar" />
-              Cột
-            </button>
-            <button
-              className={`${styles["chart-btn"]} ${chartType === "line" ? styles["chart-btn-active"] : ""}`}
-              onClick={() => setChartType("line")}
-            >
-              <Icon name="ChartLine" />
-              Đường
-            </button>
-            <button
-              className={`${styles["chart-btn"]} ${chartType === "pie" ? styles["chart-btn-active"] : ""}`}
-              onClick={() => setChartType("pie")}
-            >
-              <Icon name="ChartPie" />
-              Tròn
-            </button>
+          <div className={styles["header-actions"]}>
+            <div className={styles["date-range-picker"]}>
+              <div className={styles["date-input-group"]}>
+                <label className={styles["date-label"]}>Từ ngày:</label>
+                <input
+                  type="date"
+                  className={styles["date-input"]}
+                  value={fromDateChart}
+                  onChange={(e) => {
+                    setFromDateChart(e.target.value);
+                    setTimeRange("range");
+                  }}
+                />
+              </div>
+              <div className={styles["date-input-group"]}>
+                <label className={styles["date-label"]}>Đến ngày:</label>
+                <input
+                  type="date"
+                  className={styles["date-input"]}
+                  value={toDateChart}
+                  onChange={(e) => {
+                    setToDateChart(e.target.value);
+                    setTimeRange("range");
+                  }}
+                />
+              </div>
+              {(fromDateChart || toDateChart) && (
+                <button
+                  className={styles["clear-dates-btn"]}
+                  onClick={() => {
+                    setFromDateChart("");
+                    setToDateChart("");
+                    setTimeRange("month");
+                  }}
+                  title="Xóa bộ lọc ngày"
+                >
+                  <Icon name="X" />
+                </button>
+              )}
+            </div>
+            <div className={styles["chart-controls"]}>
+              <button
+                className={`${styles["chart-btn"]} ${chartType === "bar" ? styles["chart-btn-active"] : ""}`}
+                onClick={() => setChartType("bar")}
+              >
+                <Icon name="ChartBar" />
+                Cột
+              </button>
+              <button
+                className={`${styles["chart-btn"]} ${chartType === "line" ? styles["chart-btn-active"] : ""}`}
+                onClick={() => setChartType("line")}
+              >
+                <Icon name="ChartLine" />
+                Đường
+              </button>
+              <button
+                className={`${styles["chart-btn"]} ${chartType === "pie" ? styles["chart-btn-active"] : ""}`}
+                onClick={() => setChartType("pie")}
+              >
+                <Icon name="ChartPie" />
+                Tròn
+              </button>
+            </div>
           </div>
         </div>
         <div className={styles["chart-container"]}>
-          {chartType === "bar" && <RevenueBarChart timeRange={timeRange} />}
-          {chartType === "line" && <RevenueLineChart timeRange={timeRange} />}
+          {chartType === "bar" && <RevenueBarChart timeRange={timeRange} fromDate={fromDateChart} toDate={toDateChart} />}
+          {chartType === "line" && <RevenueLineChart timeRange={timeRange} fromDate={fromDateChart} toDate={toDateChart} />}
           {chartType === "pie" && (
             <RevenuePieChart
               appointmentRevenue={revenueData.appointmentRevenue}

@@ -29,6 +29,8 @@ ChartJS.register(
 
 interface RevenueLineChartProps {
   timeRange: "day" | "week" | "month" | "year" | "range";
+  fromDate?: string;
+  toDate?: string;
 }
 
 interface ChartData {
@@ -36,18 +38,13 @@ interface ChartData {
   data: number[];
 }
 
-export default function RevenueLineChart({ timeRange }: RevenueLineChartProps) {
+export default function RevenueLineChart({ timeRange, fromDate, toDate }: RevenueLineChartProps) {
   const [chartData, setChartData] = useState<ChartData>({ labels: [], data: [] });
 
   useEffect(() => {
     const fetchRevenueData = async () => {
-      if (timeRange === "range") {
-        setChartData({ labels: [], data: [] });
-        return;
-      }
-
       try {
-        const data = await BillingService.getTotalRevenue(timeRange);
+        const data = await BillingService.getTotalRevenue(timeRange, fromDate, toDate);
         setChartData({
           labels: data.map((item: ChartLineData) => item.label),
           data: data.map((item: ChartLineData) => item.revenue),
@@ -58,7 +55,7 @@ export default function RevenueLineChart({ timeRange }: RevenueLineChartProps) {
     };
 
     fetchRevenueData();
-  }, [timeRange]);
+  }, [timeRange, fromDate, toDate]);
 
   const data = {
     labels: chartData.labels,
