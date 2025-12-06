@@ -2,6 +2,7 @@
 
 import { useSidebar } from "@/contexts";
 import { X } from "lucide-react";
+import styles from "@/styles/sidebar.module.css";
 
 export function Sidebar() {
   const {
@@ -16,25 +17,6 @@ export function Sidebar() {
     closeButtonMode,
   } = useSidebar();
 
-  const sidebarStyles = {
-    position: "fixed" as const,
-    top: 0,
-    height: "calc(100vh 64px)",
-    width: "320px",
-    backgroundColor: "white",
-    boxShadow: "0 0 20px rgba(0, 0, 0, 0.2)",
-    transition: "transform 0.3s ease",
-    zIndex: 999,
-    display: "flex",
-    flexDirection: "column" as const,
-    ...(position === "left" ? { left: 0 } : { right: 0 }),
-    transform: isOpen
-      ? "translateX(0)"
-      : position === "left"
-        ? "translateX(-100%)"
-        : "translateX(100%)",
-  };
-
   const overlayStyles = {
     position: "fixed" as const,
     top: 0,
@@ -42,73 +24,47 @@ export function Sidebar() {
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: 998,
+    zIndex: 1,
     cursor: "pointer",
   };
 
-  const headerStyles = {
-    backgroundColor: bgColor,
-    color: "white",
-    padding: "1.5rem",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
-  };
+  const sidebarClass = isOpen
+    ? position === "left"
+      ? styles["sidebar-open-left"]
+      : styles["sidebar-open-right"]
+    : position === "left"
+      ? styles["sidebar-close-left"]
+      : styles["sidebar-close-right"];
 
-  const closeButtonStyles = {
-    background: "none",
-    border: "none",
-    color: "white",
-    cursor: "pointer",
-    padding: "0",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "0.375rem",
-    transition: "background-color 0.2s",
-  };
-
-  const contentStyles = {
-    flex: 1,
-    overflowY: "auto" as const,
-    padding: "1.5rem",
-  };
-
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  const shouldShowCloseButton =
-    showCloseButton &&
-    (closeButtonMode === "always" ||
-      (closeButtonMode === "mobile-only" && isMobile));
+  const closeButtonClass =
+    closeButtonMode === "mobile-only"
+      ? `${styles["sidebar-close-btn"]} ${styles["sidebar-close-btn-mobile-only"]}`
+      : styles["sidebar-close-btn"];
 
   return (
     <>
       {isOpen && showOverlay && (
         <div style={overlayStyles} onClick={closeSidebar} />
       )}
-      <aside style={sidebarStyles}>
-        <div style={headerStyles}>
-          <h2 style={{ margin: 0, fontSize: "1.25rem", fontWeight: "600" }}>
-            {title}
-          </h2>
-          {shouldShowCloseButton && (
-            <button
-              onClick={closeSidebar}
-              style={closeButtonStyles}
-              aria-label="Close sidebar"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor =
-                  "rgba(255, 255, 255, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-              }}
-            >
-              <X size={24} />
-            </button>
-          )}
+      <aside className={sidebarClass}>
+        <div className={styles["sidebar-content"]}>
+          <div
+            className={styles["sidebar-header"]}
+            style={{ backgroundColor: bgColor }}
+          >
+            <h2 className={styles["sidebar-title"]}>{title}</h2>
+            {showCloseButton && closeButtonMode !== "never" && (
+              <button
+                onClick={closeSidebar}
+                className={closeButtonClass}
+                aria-label="Close sidebar"
+              >
+                <X className={styles["sidebar-close-icon"]} />
+              </button>
+            )}
+          </div>
+          <div className={styles["sidebar-list-items"]}>{content}</div>
         </div>
-        <div style={contentStyles}>{content}</div>
       </aside>
     </>
   );
