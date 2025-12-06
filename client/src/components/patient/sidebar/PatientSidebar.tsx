@@ -22,6 +22,7 @@ export function PatientSidebar() {
 
   return (
     <div className={styles["patient-sidebar-body"]}>
+      <div className=""></div>
       <nav className={styles["patient-sidebar-content"]}>
         {PatientSidebarItems.map((item, index) => {
           const Icon = item.icon;

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Icon from "@/components/shared/Icon";
 import doctorStyles from "@/styles/doctor.module.css";
 
@@ -51,10 +52,13 @@ export default function QueueTableBody({ patients }: QueueTableBodyProps) {
             <td
               className={`${doctorStyles["table-cell"]} ${doctorStyles["text-center"]}`}
             >
-              <button className={doctorStyles["start-btn"]}>
-                <Icon name="Stethoscope" size={16} />
+              <Link
+                className={doctorStyles["start-btn"]}
+                href="/doctor/medical-visit"
+              >
+                <Icon name="Stethoscope" className="w-4" />
                 <span>Bắt đầu khám</span>
-              </button>
+              </Link>
             </td>
           </tr>
         );

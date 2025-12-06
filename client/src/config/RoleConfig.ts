@@ -13,6 +13,8 @@ export const ROUTE_ROLE_MAP: Record<string, readonly Roles[]> = {
   "/doctor/dashboard": ["doctor", "hod"],
   "/doctor/schedule": ["doctor", "hod"],
   "/doctor/create-shift": ["hod"],
+  "/doctor/medical-visit": ["doctor"],
+  "/doctor/prescription": ["doctor"],
   "/admin/dashboard": ["admin"],
   "/admin/dashboard/users": ["admin"],
   "/admin/dashboard/revenue": ["admin"],

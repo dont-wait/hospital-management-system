@@ -35,12 +35,18 @@ export class AppointmentService {
   ): Promise<ApiResponseWithPaging<Appointment[]>> {
     const apiInstance = getApiInstance();
     const config = getConfig(token);
+    const date = new Date();
+    const day = date.getDay();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
     const response = await apiInstance.get("/appointments", {
       ...config,
       params: {
         patientId,
         page,
         size,
+        date: `${month}/${day - 1}/${year}`,
       },
     });
     return response.data;
