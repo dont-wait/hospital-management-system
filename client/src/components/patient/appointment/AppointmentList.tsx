@@ -4,8 +4,8 @@ import { memo, useEffect, useState } from "react";
 import AppointmentCard from "@/components/patient/appointment/AppointmentCard";
 import Pagination from "@/components/shared/Pagination";
 import { AppointmentService } from "@/services";
-import { useAppointmentManagemnt } from "@/contexts";
-import { Appointment } from "@/types";
+import { useAppointmentManagemnt, useUserAuthContext } from "@/contexts";
+import { Appointment, Patient } from "@/types";
 
 interface AppointmentListProps {
   appointments: Appointment[];
@@ -15,10 +15,15 @@ interface AppointmentListProps {
 function AppointmentList({ appointments, totalPages }: AppointmentListProps) {
   const { currentPage, setCurrentPage } = useAppointmentManagemnt();
   const [data, setData] = useState<Appointment[]>(appointments);
+  const { user } = useUserAuthContext();
+  const patientId = (user as Patient)?.patientId ?? "";
 
   useEffect(() => {
     async function getData() {
-      const response = await AppointmentService.getAppointment(currentPage);
+      const response = await AppointmentService.getAppointment(
+        patientId,
+        currentPage,
+      );
       setData(response.data);
     }
     getData();
@@ -35,7 +40,7 @@ function AppointmentList({ appointments, totalPages }: AppointmentListProps) {
             />
           ))
         ) : (
-          <div className="text-center py-8 text-gray-500">
+          <div className="border rounded-md text-center py-8 text-gray-500">
             Không có cuộc hẹn nào
           </div>
         )}

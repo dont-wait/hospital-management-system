@@ -6,21 +6,23 @@ import { BillingService } from "@/services/server";
 import { DateUtils, CurrencyUtils } from "@/lib/client";
 import { BillingDetail as BillingDetailType, ApiResponse } from "@/types";
 
-async function BillingDetail({
-  params,
-}: {
-  params: Promise<{ billingId: string }>;
-}) {
+interface BillingDetailContainerProps {
+  patientId: string;
+  billingId: string;
+}
+
+async function BillingDetailContainer({
+  patientId,
+  billingId,
+}: BillingDetailContainerProps) {
   const cookieStore = await cookies();
-  const { billingId } = await params;
   const token = cookieStore.get("accessToken")?.value;
   let billingDetail: BillingDetailType;
   try {
     const response: ApiResponse<BillingDetailType> =
-    await BillingService.getBillingDetail(parseInt(billingId), token);
+      await BillingService.getBillingDetail(parseInt(billingId), token);
     billingDetail = response.data;
-  }
-  catch {
+  } catch {
     notFound();
   }
 
@@ -43,7 +45,7 @@ async function BillingDetail({
                 </p>
               </div>
               <Link
-                href="/patient/appointment-management"
+                href={`/patient/appointment-management/${patientId}`}
                 style={{ display: "flex" }}
                 className="items-center gap-2 px-4 py-2  text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
@@ -184,4 +186,4 @@ async function BillingDetail({
   );
 }
 
-export default BillingDetail;
+export default BillingDetailContainer;

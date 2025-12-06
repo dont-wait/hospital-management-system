@@ -4,8 +4,8 @@ import { memo, useEffect, useState } from "react";
 import BillingCard from "@/components/patient/billing/BillingCard";
 import Pagination from "@/components/shared/Pagination";
 import { BillingService } from "@/services";
-import { useBillingManagemnt } from "@/contexts";
-import { Billing } from "@/types";
+import { useBillingManagemnt, useUserAuthContext } from "@/contexts";
+import { Billing, Patient } from "@/types";
 
 interface AppointmentListProps {
   billings: Billing[];
@@ -15,10 +15,12 @@ interface AppointmentListProps {
 function BillingList({ billings, totalPages }: AppointmentListProps) {
   const { currentPage, setCurrentPage } = useBillingManagemnt();
   const [data, setData] = useState<Billing[]>(billings);
+  const { user } = useUserAuthContext();
+  const patientId = (user as Patient)?.patientId ?? "";
 
   useEffect(() => {
     async function getData() {
-      const response = await BillingService.getBillings(currentPage);
+      const response = await BillingService.getBillings(patientId, currentPage);
       setData(response.data);
     }
     getData();
@@ -32,7 +34,7 @@ function BillingList({ billings, totalPages }: AppointmentListProps) {
             <BillingCard key={billing.id} billing={billing} />
           ))
         ) : (
-          <div className="text-center py-8 text-gray-500">
+          <div className="border rounded-md text-center py-8 text-gray-500">
             Không có hóa đơn nào
           </div>
         )}

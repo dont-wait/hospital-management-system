@@ -15,9 +15,15 @@ export class AppointmentService {
   }
 
   public static async getAppointment(
+    patientId: string,
     page: number,
   ): Promise<ApiResponse<Appointment[]>> {
-    const response = await api.get(`/appointments?page=${page}`);
+    const response = await api.get("/appointments", {
+      params: {
+        page,
+        patientId,
+      },
+    });
     return response.data;
   }
 

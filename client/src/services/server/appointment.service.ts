@@ -28,6 +28,7 @@ export class AppointmentService {
   }
 
   public static async getAppointments(
+    patientId: string,
     token?: string,
     page: number = 1,
     size: number = 3,
@@ -37,6 +38,7 @@ export class AppointmentService {
     const response = await apiInstance.get("/appointments", {
       ...config,
       params: {
+        patientId,
         page,
         size,
       },

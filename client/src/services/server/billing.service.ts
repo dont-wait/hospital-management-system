@@ -9,6 +9,7 @@ import {
 
 export class BillingService {
   public static async getBillings(
+    patientId: string,
     token?: string,
     page: number = 1,
     size: number = 3,
@@ -18,6 +19,7 @@ export class BillingService {
     const response = await apiInstance.get("/billings", {
       ...config,
       params: {
+        patientId,
         page,
         size,
       },

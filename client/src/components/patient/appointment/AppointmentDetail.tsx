@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/shared/Icon";
-import { useAppointmentManagemnt } from "@/contexts";
+import { useAppointmentManagemnt, useUserAuthContext } from "@/contexts";
 import {
   DateUtils,
   PatientUtils,
@@ -11,7 +11,7 @@ import {
   CurrencyUtils,
 } from "@/lib/client";
 import { AppointmentService } from "@/services";
-import { AppointmentDetail as AppointmentDetailType } from "@/types";
+import { AppointmentDetail as AppointmentDetailType, Patient } from "@/types";
 
 export default function AppointmentDetail() {
   const { appointmentId, setAppointmentId, deleteAppointment } =
@@ -19,6 +19,8 @@ export default function AppointmentDetail() {
   const [appointmentDetail, setAppointmentDetail] =
     useState<AppointmentDetailType | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const { user } = useUserAuthContext();
+  const patientId = (user as Patient)?.patientId ?? "";
 
   useEffect(() => {
     async function getAppointmentDetail() {
@@ -117,7 +119,7 @@ export default function AppointmentDetail() {
                   Chi tiết hóa đơn
                 </p>
                 <Link
-                  href={`/patient/billing/${appointmentDetail.billingId}`}
+                  href={`/patient/billing/${patientId}/${appointmentDetail.billingId}`}
                   className="text-gray-900 hover:text-truev underline transition-colors"
                 >
                   #{appointmentDetail.billingId.toString().padStart(6, "0")}
