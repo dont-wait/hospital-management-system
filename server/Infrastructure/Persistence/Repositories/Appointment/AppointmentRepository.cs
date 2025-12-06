@@ -17,7 +17,7 @@ public class AppointmentRepository : IAppointmentRepository
         await _context.SaveChangesAsync();
         return appointment;
     }
-    public async Task<PaginatedResult<Appointment>> GetAllAppointmentsAsync(string? status, Guid? patientId, int page , int size)
+    public async Task<PaginatedResult<Appointment>> GetAllAppointmentsAsync(string? status, Guid? patientId, Guid? doctorId, DateOnly? date, int page , int size)
     {
         
         if (page < 1) page = 1;
@@ -41,7 +41,21 @@ public class AppointmentRepository : IAppointmentRepository
         {
             query = query.Where(a => a.PatientId == patientId.Value);
         }
-
+        
+        if (doctorId.HasValue)
+        {
+            query = query.Where(a => a.DoctorId == doctorId.Value);
+        }
+        
+        if(date.HasValue)
+        {
+            query = query.Where(a => a.AppointmentDate == date.Value);
+        }
+        else 
+        {
+            query = query.Where(a => a.AppointmentDate >= DateOnly.FromDateTime(DateTime.Now));
+        }
+        
         int totalRecords = await query.CountAsync();
         int totalPages = (int)Math.Ceiling((double)totalRecords / size);
         

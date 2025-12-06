@@ -79,13 +79,15 @@ public class AppointmentController : ControllerBase
     [Authorize(Roles = "admin, doctor, patient")]
     public async Task<IActionResult> GetAppointments([FromQuery] string? status, 
                                                     [FromQuery] Guid? patientId,
+                                                    [FromQuery] Guid? doctorId,
+                                                    [FromQuery] DateOnly? date,
                                                     [FromQuery] int page = 1,
                                                     [FromQuery] int size = 3
         )
     {
         try
         {
-            var result = await _appointmentService.GetAppointments(status, patientId, page, size);
+            var result = await _appointmentService.GetAppointments(status, patientId, doctorId, date, page, size);
             if (result.IsSuccess)
                 return Ok(new
                 {

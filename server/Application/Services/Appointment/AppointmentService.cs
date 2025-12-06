@@ -130,7 +130,7 @@ public class AppointmentService : IAppointmentService
 
     return ServiceResult<string>.Success(message);
 }
-    public async Task<ServiceResult<PaginatedResult<ResponseAppointmentDTO>>> GetAppointments(string? status, Guid? patientId, int page, int size)
+    public async Task<ServiceResult<PaginatedResult<ResponseAppointmentDTO>>> GetAppointments(string? status, Guid? patientId, Guid? doctorId, DateOnly? date, int page, int size)
     {
         if (patientId != null)
         {
@@ -139,7 +139,7 @@ public class AppointmentService : IAppointmentService
                 return ServiceResult<PaginatedResult<ResponseAppointmentDTO>>.Fail("Bệnh nhân không tồn tại");
         }
         
-        PaginatedResult<Appointment> paginatedResult = await _appointmentRepository.GetAllAppointmentsAsync(status, patientId, page, size);
+        PaginatedResult<Appointment> paginatedResult = await _appointmentRepository.GetAllAppointmentsAsync(status, patientId, doctorId, date, page, size);
         
         List<ResponseAppointmentDTO > appointmentDtos = new List<ResponseAppointmentDTO>();
         foreach (var appointment in paginatedResult.Items)
