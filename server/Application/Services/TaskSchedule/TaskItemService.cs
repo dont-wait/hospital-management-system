@@ -166,6 +166,12 @@ public class TaskItemService : ITaskItemService
 
     public async Task<ServiceResult<List<ResponseTaskItemDTO>>> GetTaskItemByEmployeeIdAsync(Guid employeeId)
     {
+        
+        if(employeeId == Guid.Empty)
+        {
+            return ServiceResult<List<ResponseTaskItemDTO>>.Fail("Mã nhân viên không được để trống");
+        }
+        
         List<TaskItem> taskItem = await _taskItemRepository.GetTaskItemByEmployeeId(employeeId);
         if (taskItem == null || !taskItem.Any() || taskItem.Count == 0)
         {
@@ -179,6 +185,8 @@ public class TaskItemService : ITaskItemService
             EndTime = t.Date.ToDateTime(t.EndTime),
             ScheduleStatus = t.TaskStatus,
             DepartmentId = t.DepartmentId ?? 0,
+            DepartmentName = t.Name,
+            DepartmentDescription =  t.Description,
             RoomName = t.Room?.Name ?? string.Empty,
             TaskRegistrations = t.TaskRegistrations
                 .Where(tr => tr.EmployeeId == employeeId)
