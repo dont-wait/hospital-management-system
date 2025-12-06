@@ -159,4 +159,32 @@ public class BillingRepository : IBillingRepository
 
         return result;
     }
+
+    public async Task<List<ResponseRevenueByCategoryDTO>> GetRevenueByCategoryAsync(string timeRange, DateTime? fromDate, DateTime? toDate)
+    {
+        var connection = _context.Database.GetDbConnection();
+        await connection.OpenAsync();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = "PC_GetRevenueByCategory";
+        command.CommandType = CommandType.StoredProcedure;
+
+        command.Parameters.Add(new SqlParameter("@TimeRange", SqlDbType.NVarChar, 20) { Value = timeRange });
+        command.Parameters.Add(new SqlParameter("@FromDate", SqlDbType.DateTime) { Value = fromDate ?? (object)DBNull.Value });
+        command.Parameters.Add(new SqlParameter("@ToDate", SqlDbType.DateTime) { Value = toDate ?? (object)DBNull.Value });
+
+        var result = new List<ResponseRevenueByCategoryDTO>();
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            result.Add(new ResponseRevenueByCategoryDTO
+            {
+                Appointment = Convert.ToDecimal(reader.GetDouble(reader.GetOrdinal("Khám bệnh"))),
+                Service = Convert.ToDecimal(reader.GetDouble(reader.GetOrdinal("Dịch vụ")))
+            });
+        }
+
+        return result;
+    }
 }

@@ -110,6 +110,25 @@ public class BillingController : ControllerBase
         });
     }
 
+    [HttpGet("revenues/by-category")]
+    public async Task<IActionResult> GetRevenueByCategory(
+        [FromQuery] string type = "day",
+        [FromQuery] DateTime? fromDate = null,
+        [FromQuery] DateTime? toDate = null)
+    {
+        var result = await _billingService.GetRevenueByCategoryAsync(type, fromDate, toDate);
+
+        if (!result.IsSuccess)
+            return BadRequest(new { message = result.Message });
+
+        return Ok(new
+        {
+            status = 200,
+            message = "Lấy dữ liệu doanh thu theo danh mục thành công",
+            data = result.Data
+        });
+    }
+
     [HttpGet("revenues/export")]
     public async Task<IActionResult> ExportRevenueDataToExcel(
         [FromQuery] string type = "day",
