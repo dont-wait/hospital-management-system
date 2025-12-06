@@ -330,3 +330,8 @@ export interface ChartLineData {
   label: string;
   revenue: number;
 }
+
+export interface ChartDataCategory {
+  appointments: number;
+  services: number;
+}

@@ -33,13 +33,13 @@ interface RevenueLineChartProps {
   toDate?: string;
 }
 
-interface ChartData {
+interface ChartDataState {
   labels: string[];
   data: number[];
 }
 
 export default function RevenueLineChart({ timeRange, fromDate, toDate }: RevenueLineChartProps) {
-  const [chartData, setChartData] = useState<ChartData>({ labels: [], data: [] });
+  const [chartData, setChartData] = useState<ChartDataState>({ labels: [], data: [] });
 
   useEffect(() => {
     const fetchRevenueData = async () => {

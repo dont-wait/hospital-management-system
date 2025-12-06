@@ -2,30 +2,45 @@
 
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useEffect, useState } from "react";
+import { BillingService } from "@/services/billing.service";
+import { ChartDataCategory } from "@/types";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface RevenuePieChartProps {
-  appointmentRevenue: number;
-  serviceRevenue: number;
+  timeRange: "day" | "week" | "month" | "year" | "range";
+  fromDate?: string;
+  toDate?: string;
 }
 
-export default function RevenuePieChart({
-  appointmentRevenue,
-  serviceRevenue,
-}: RevenuePieChartProps) {
+export default function RevenuePieChart({ timeRange, fromDate, toDate }: RevenuePieChartProps) {
+  const [categoryData, setCategoryData] = useState<ChartDataCategory>({ appointments: 0, services: 0 });
+
+  useEffect(() => {
+    const fetchRevenueData = async () => {
+      try {
+        const data = await BillingService.getRevenueByCategory(timeRange, fromDate, toDate);
+        setCategoryData(data);
+      } catch {
+        setCategoryData({ appointments: 0, services: 0 });
+      }
+    };
+
+    fetchRevenueData();
+  }, [timeRange, fromDate, toDate]);
+
   const data = {
     labels: ["Khám bệnh", "Dịch vụ"],
     datasets: [
       {
-        label: "Doanh thu",
-        data: [appointmentRevenue, serviceRevenue],
+        label: "Doanh thu (triệu VNĐ)",
+        data: [categoryData.appointments, categoryData.services],
         backgroundColor: [
           "rgba(79, 81, 140, 0.8)",
           "rgba(218, 191, 255, 0.8)",
-          "rgba(144, 122, 214, 0.8)",
         ],
-        borderColor: ["rgb(79, 81, 140)", "rgb(218, 191, 255)", "rgb(144, 122, 214)"],
+        borderColor: ["rgb(79, 81, 140)", "rgb(218, 191, 255)"],
         borderWidth: 2,
       },
     ],
@@ -71,23 +86,9 @@ export default function RevenuePieChart({
             );
             const percentage = ((value / total) * 100).toFixed(1);
 
-            const formattedValue = new Intl.NumberFormat("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            }).format(value);
+            const formattedValue = new Intl.NumberFormat("vi-VN").format(value) + " triệu VNĐ";
 
             return `${label}: ${formattedValue} (${percentage}%)`;
-          },
-          afterLabel: function (context: { dataIndex: number }) {
-            const total = [appointmentRevenue, serviceRevenue].reduce(
-              (a, b) => a + b,
-              0
-            );
-            const value = [appointmentRevenue, serviceRevenue][
-              context.dataIndex
-            ];
-            const percentage = ((value / total) * 100).toFixed(1);
-            return `(${percentage}%)`;
           },
         },
       },

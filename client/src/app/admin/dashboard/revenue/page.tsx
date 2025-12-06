@@ -431,10 +431,7 @@ export default function RevenuePage() {
           {chartType === "bar" && <RevenueBarChart timeRange={timeRange} fromDate={fromDateChart} toDate={toDateChart} />}
           {chartType === "line" && <RevenueLineChart timeRange={timeRange} fromDate={fromDateChart} toDate={toDateChart} />}
           {chartType === "pie" && (
-            <RevenuePieChart
-              appointmentRevenue={revenueData.appointmentRevenue}
-              serviceRevenue={revenueData.serviceRevenue}
-            />
+            <RevenuePieChart timeRange={timeRange} fromDate={fromDateChart} toDate={toDateChart} />
           )}
         </div>
       </div>

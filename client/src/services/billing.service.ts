@@ -1,5 +1,5 @@
 import { getApiInstance, getConfig } from "@/axios";
-import { RevenueTransaction, ChartLineData } from "@/types";
+import { RevenueTransaction, ChartLineData, ChartDataCategory } from "@/types";
 
 export class BillingService {
     public static async getRecentTransactions(
@@ -37,6 +37,26 @@ export class BillingService {
 
         const response = await apiInstance.get<{ data: ChartLineData[] }>(
             `/billings/revenues?${params.toString()}`,
+            config,
+        );
+
+        return response.data.data;
+    }
+
+    public static async getRevenueByCategory(
+        type: "day" | "week" | "month" | "year" | "range",
+        fromDate?: string,
+        toDate?: string,
+        token?: string,
+    ): Promise<ChartDataCategory> {
+        const apiInstance = getApiInstance();
+        const config = getConfig(token);
+        const params = new URLSearchParams({ type });
+        if (fromDate) params.append("fromDate", fromDate);
+        if (toDate) params.append("toDate", toDate);
+
+        const response = await apiInstance.get<{ data: ChartDataCategory }>(
+            `/billings/revenues/category?${params.toString()}`,
             config,
         );
 

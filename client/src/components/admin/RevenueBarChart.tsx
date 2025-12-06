@@ -12,7 +12,7 @@ import {
 } from "chart.js";
 import { useEffect, useState } from "react";
 import { BillingService } from "@/services/billing.service";
-import { ChartLineData } from "@/types";
+import { ChartDataCategory } from "@/types";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -22,48 +22,34 @@ interface RevenueBarChartProps {
   toDate?: string;
 }
 
-interface ChartData {
-  labels: string[];
-  data: number[];
-}
-
 export default function RevenueBarChart({ timeRange, fromDate, toDate }: RevenueBarChartProps) {
-  const [chartData, setChartData] = useState<ChartData>({ labels: [], data: [] });
+  const [categoryData, setCategoryData] = useState<ChartDataCategory>({ appointments: 0, services: 0 });
 
   useEffect(() => {
     const fetchRevenueData = async () => {
       try {
-        const data = await BillingService.getTotalRevenue(timeRange, fromDate, toDate);
-        setChartData({
-          labels: data.map((item: ChartLineData) => item.label),
-          data: data.map((item: ChartLineData) => item.revenue),
-        });
+        const data = await BillingService.getRevenueByCategory(timeRange, fromDate, toDate);
+        setCategoryData(data);
       } catch {
-        setChartData({ labels: [], data: [] });
+        setCategoryData({ appointments: 0, services: 0 });
       }
     };
 
     fetchRevenueData();
   }, [timeRange, fromDate, toDate]);
 
-  const getChartData = () => {
-    return {
-      labels: chartData.labels,
-      data: chartData.data,
-    };
-  };
-
-  const chartDataConfig = getChartData();
-
   const data = {
-    labels: chartDataConfig.labels,
+    labels: ["Khám bệnh", "Dịch vụ"],
     datasets: [
       {
         label: "Doanh thu (triệu VNĐ)",
-        data: chartDataConfig.data,
-        backgroundColor: "rgba(79, 81, 140, 0.8)",
-        borderColor: "rgb(79, 81, 140)",
-        borderWidth: 1,
+        data: [categoryData.appointments, categoryData.services],
+        backgroundColor: [
+          "rgba(79, 81, 140, 0.8)",
+          "rgba(218, 191, 255, 0.8)",
+        ],
+        borderColor: ["rgb(79, 81, 140)", "rgb(218, 191, 255)"],
+        borderWidth: 2,
       },
     ],
   };
