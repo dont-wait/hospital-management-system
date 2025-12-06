@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState, useMemo } from "react";
 import AppointmentCard from "@/components/patient/appointment/AppointmentCard";
 import Pagination from "@/components/shared/Pagination";
 import { AppointmentService } from "@/services";
@@ -17,14 +17,24 @@ function AppointmentList({ appointments, totalPages }: AppointmentListProps) {
   const [data, setData] = useState<Appointment[]>(appointments);
   const { user } = useUserAuthContext();
   const patientId = (user as Patient)?.patientId ?? "";
+  const currentDate = useMemo(() => {
+    const date = new Date();
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  }, []);
 
   useEffect(() => {
     async function getData() {
       const response = await AppointmentService.getAppointment(
         patientId,
+        currentDate,
         currentPage,
       );
-      setData(response.data);
+
+      if (JSON.stringify(data) !== JSON.stringify(response.data))
+        setData(response.data);
     }
     getData();
   }, [currentPage]);
