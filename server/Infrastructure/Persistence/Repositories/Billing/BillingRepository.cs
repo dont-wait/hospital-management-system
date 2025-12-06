@@ -132,7 +132,7 @@ public class BillingRepository : IBillingRepository
         return result;
     }
 
-    public async Task<List<ResponseRevenueDTO>> GetAllRevenueAsync(string timeRange, DateTime? referenceDate)
+    public async Task<List<ResponseRevenueDTO>> GetAllRevenueAsync(string timeRange, DateTime? referenceDate, DateTime? toDate)
     {
         var connection = _context.Database.GetDbConnection();
         await connection.OpenAsync();
@@ -143,6 +143,7 @@ public class BillingRepository : IBillingRepository
 
         command.Parameters.Add(new SqlParameter("@TimeRange", SqlDbType.NVarChar, 20) { Value = timeRange });
         command.Parameters.Add(new SqlParameter("@ReferenceDate", SqlDbType.DateTime) { Value = referenceDate ?? (object)DBNull.Value });
+        command.Parameters.Add(new SqlParameter("@ToDate", SqlDbType.DateTime) { Value = toDate ?? (object)DBNull.Value });
 
         var result = new List<ResponseRevenueDTO>();
 

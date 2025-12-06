@@ -2,14 +2,16 @@
 -- Stored Procedure: GetAllRevenue
 -- Description: Trả về doanh thu theo khoảng thời gian, phù hợp với biểu đồ
 -- Parameters: 
---   @TimeRange - Khoảng thời gian: 'day', 'week', 'month', 'year'
---   @ReferenceDate - Ngày tham chiếu (mặc định là ngày hiện tại)
+--   @TimeRange - Khoảng thời gian: 'day', 'week', 'month', 'year', 'range'
+--   @ReferenceDate - Ngày tham chiếu (mặc định là ngày hiện tại) hoặc ngày bắt đầu khi type='range'
+--   @ToDate - Ngày kết thúc (chỉ dùng khi type='range')
 -- Returns: Label và Revenue tương ứng cho từng khoảng thời gian
 -- =============================================
 
 CREATE OR ALTER PROCEDURE PC_GetAllRevenue
-    @TimeRange NVARCHAR(20), -- 'day', 'week', 'month', 'year'
-    @ReferenceDate DATETIME = NULL
+    @TimeRange NVARCHAR(20), -- 'day', 'week', 'month', 'year', 'range'
+    @ReferenceDate DATETIME = NULL,
+    @ToDate DATETIME = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -134,9 +136,35 @@ BEGIN
         GROUP BY m.MonthNum, m.Label
         ORDER BY m.MonthNum;
     END
+    ELSE IF @TimeRange = 'range'
+    BEGIN
+        -- Custom date range: return daily revenue from @ReferenceDate to @ToDate
+        SET @StartDate = CAST(@ReferenceDate AS DATE);
+        SET @EndDate = ISNULL(CAST(@ToDate AS DATE), CAST(GETDATE() AS DATE));
+        
+        -- Generate date series
+        ;WITH DateRange AS (
+            SELECT CAST(@StartDate AS DATE) AS DateValue
+            UNION ALL
+            SELECT DATEADD(DAY, 1, DateValue)
+            FROM DateRange
+            WHERE DateValue < @EndDate
+        )
+        SELECT 
+            FORMAT(dr.DateValue, 'dd/MM') AS Label,
+            ISNULL(SUM(CASE WHEN b.BillingStatus = 'Paid' THEN b.PaymentAmount ELSE 0 END), 0) / 1000000.0 AS Revenue
+        FROM DateRange dr
+        LEFT JOIN appointments a ON 
+            CAST(a.CreatedAt AS DATE) = dr.DateValue
+            AND a.DeletedAt IS NULL
+        LEFT JOIN billings b ON a.BillingId = b.Id AND b.DeletedAt IS NULL
+        GROUP BY dr.DateValue
+        ORDER BY dr.DateValue
+        OPTION (MAXRECURSION 365);
+    END
     ELSE
     BEGIN
-        RAISERROR('Thời gian không hợp lệ. Giá trị hợp lệ là: day, week, month, year', 16, 1);
+        RAISERROR('Thời gian không hợp lệ. Giá trị hợp lệ là: day, week, month, year, range', 16, 1);
         RETURN;
     END
 END
@@ -146,3 +174,4 @@ EXEC PC_GetAllRevenue @TimeRange = 'day'
 EXEC PC_GetAllRevenue @TimeRange = 'week', @ReferenceDate = '2025-12-04'
 EXEC PC_GetAllRevenue @TimeRange = 'month'
 EXEC PC_GetAllRevenue @TimeRange = 'year'
+EXEC PC_GetAllRevenue @TimeRange = 'range', @ReferenceDate = '2025-12-01', @ToDate = '2025-12-06'

@@ -94,9 +94,10 @@ public class BillingController : ControllerBase
     [HttpGet("revenues")]
     public async Task<IActionResult> GetAllRevenue(
         [FromQuery] string type = "day",
-        [FromQuery] DateTime? date = null)
+        [FromQuery] DateTime? date = null,
+        [FromQuery] DateTime? toDate = null)
     {
-        var result = await _billingService.GetAllRevenueAsync(type, date);
+        var result = await _billingService.GetAllRevenueAsync(type, date, toDate);
 
         if (!result.IsSuccess)
             return BadRequest(new { message = result.Message });

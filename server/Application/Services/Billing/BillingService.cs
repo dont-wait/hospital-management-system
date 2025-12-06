@@ -87,18 +87,18 @@ public class BillingService : IBillingService
         }
     }
 
-    public async Task<ServiceResult<List<ResponseRevenueDTO>>> GetAllRevenueAsync(string timeRange, DateTime? referenceDate)
+    public async Task<ServiceResult<List<ResponseRevenueDTO>>> GetAllRevenueAsync(string timeRange, DateTime? referenceDate, DateTime? toDate)
     {
         try
         {
             // Validate timeRange
-            var validTimeRanges = new[] { "day", "week", "month", "year" };
+            var validTimeRanges = new[] { "day", "week", "month", "year", "range" };
             if (!validTimeRanges.Contains(timeRange.ToLower()))
             {
-                return ServiceResult<List<ResponseRevenueDTO>>.Fail("Khoảng thời gian không hợp lệ. Giá trị hợp lệ: day, week, month, year");
+                return ServiceResult<List<ResponseRevenueDTO>>.Fail("Khoảng thời gian không hợp lệ. Giá trị hợp lệ: day, week, month, year, range");
             }
 
-            var revenues = await _billingRepository.GetAllRevenueAsync(timeRange, referenceDate);
+            var revenues = await _billingRepository.GetAllRevenueAsync(timeRange, referenceDate, toDate);
             return ServiceResult<List<ResponseRevenueDTO>>.Success(revenues);
         }
         catch (Exception ex)
