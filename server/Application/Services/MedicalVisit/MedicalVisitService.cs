@@ -67,12 +67,7 @@ public class MedicalVisitService : IMedicalVisitService
     }
     public async Task<ServiceResult<List<ResponseMedicalVisitDTO>>> GetMedicalVisitsByPatientIdAsync(Guid patientId)
     {
-        
         var response = await _medicalVisitRepository.GetMedicalVisitsByPatientIdAsync(patientId);
-        if (response == null)
-        {
-            return ServiceResult<List<ResponseMedicalVisitDTO>>.Fail("Không tìm thấy thông tin chuẩn đoán");
-        }
         List<ResponseMedicalVisitDTO> dto = response.Select(mv => new ResponseMedicalVisitDTO
         {
             Id = mv.Id,

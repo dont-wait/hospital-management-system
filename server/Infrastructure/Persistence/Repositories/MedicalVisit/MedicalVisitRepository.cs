@@ -17,6 +17,7 @@ public class MedicalVisitRepository : IMedicalVisitRepository
     public async Task<MedicalVisit?> GetMedicalVisitByIdAsync(long medicalVisitId)
     {
         MedicalVisit? medicalVisit = await _context.medical_visits
+            .Include(mv => mv.Appointment)
             .FirstOrDefaultAsync(mv => mv.Id == medicalVisitId);
         return medicalVisit;
     }
