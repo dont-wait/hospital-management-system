@@ -110,7 +110,7 @@ public class BillingController : ControllerBase
         });
     }
 
-    [HttpGet("revenues/by-category")]
+    [HttpGet("revenues/category")]
     public async Task<IActionResult> GetRevenueByCategory(
         [FromQuery] string type = "day",
         [FromQuery] DateTime? fromDate = null,

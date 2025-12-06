@@ -107,23 +107,23 @@ public class BillingService : IBillingService
         }
     }
 
-    public async Task<ServiceResult<List<ResponseRevenueByCategoryDTO>>> GetRevenueByCategoryAsync(string timeRange, DateTime? fromDate, DateTime? toDate)
+    public async Task<ServiceResult<ResponseRevenueByCategoryDTO>> GetRevenueByCategoryAsync(string timeRange, DateTime? fromDate, DateTime? toDate)
     {
         try
         {
             var validTimeRanges = new[] { "day", "week", "month", "year", "range" };
             if (!validTimeRanges.Contains(timeRange.ToLower()))
             {
-                return ServiceResult<List<ResponseRevenueByCategoryDTO>>.Fail("Khoảng thời gian không hợp lệ. Giá trị hợp lệ: day, week, month, year, range");
+                return ServiceResult<ResponseRevenueByCategoryDTO>.Fail("Khoảng thời gian không hợp lệ. Giá trị hợp lệ: day, week, month, year, range");
             }
 
             var revenues = await _billingRepository.GetRevenueByCategoryAsync(timeRange, fromDate, toDate);
-            return ServiceResult<List<ResponseRevenueByCategoryDTO>>.Success(revenues);
+            return ServiceResult<ResponseRevenueByCategoryDTO>.Success(revenues);
         }
         catch (Exception ex)
         {
             Console.WriteLine("Error fetching revenue by category: " + ex.Message);
-            return ServiceResult<List<ResponseRevenueByCategoryDTO>>.Fail("Lỗi khi lấy dữ liệu doanh thu theo danh mục");
+            return ServiceResult<ResponseRevenueByCategoryDTO>.Fail("Lỗi khi lấy dữ liệu doanh thu theo danh mục");
         }
     }
 }

@@ -9,5 +9,5 @@ public interface IBillingService
     Task<ServiceResult<PaginatedResult<ResponseBillingDTO>>> GetBillingsAsync(string? status, Guid? patientId, Guid? doctorId, int page, int size);
     Task<ServiceResult<string>> CreateBillingAsync(RequestBillingDTO createBillingDto);
     Task<ServiceResult<List<ResponseRevenueDTO>>> GetAllRevenueAsync(string timeRange, DateTime? referenceDate, DateTime? toDate);
-    Task<ServiceResult<List<ResponseRevenueByCategoryDTO>>> GetRevenueByCategoryAsync(string timeRange, DateTime? fromDate, DateTime? toDate);
+    Task<ServiceResult<ResponseRevenueByCategoryDTO>> GetRevenueByCategoryAsync(string timeRange, DateTime? fromDate, DateTime? toDate);
 }
