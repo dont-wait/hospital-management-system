@@ -6,6 +6,7 @@ export const ROUTE_ROLE_MAP: Record<string, readonly Roles[]> = {
   "/register": ["guest"],
   "/forgot-password": RolesList,
   "/patient": ["patient"],
+  "/patient/prescription": ["patient"],
   "/patient/update": ["patient"],
   "/patient/appointment-management": ["patient"],
   "/patient/booking": ["patient"],

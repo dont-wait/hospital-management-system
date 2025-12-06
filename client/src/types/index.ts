@@ -421,3 +421,7 @@ export interface PrescriptionFormData {
   note: string;
   prescriptionDetails: PrescriptionDetail[];
 }
+
+export interface PrescriptionResult extends PrescriptionFormData {
+  id: number;
+}

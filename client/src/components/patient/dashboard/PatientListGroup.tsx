@@ -49,6 +49,7 @@ function PatientListGroup() {
               </div>
             </div>
           </Link>
+
           <Link
             href={`/patient/billing/${patientId}`}
             className={patientStyles["patient-link"]}
@@ -75,20 +76,43 @@ function PatientListGroup() {
             </div>
           </Link>
         </div>
-        <Link href="/forgot-password" className={patientStyles["patient-link"]}>
-          <div
-            className={cn(
-              buttonStyles["button"],
-              buttonStyles["button-outline"],
-              patientStyles["patient-helper-btn"],
-            )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Link
+            href="/forgot-password"
+            className={patientStyles["patient-link"]}
           >
-            <div className={patientStyles["patient-helper-icon"]}>
-              <Icon name="FileText" />
+            <div
+              className={cn(
+                buttonStyles["button"],
+                buttonStyles["button-outline"],
+                patientStyles["patient-helper-btn"],
+              )}
+            >
+              <div className={patientStyles["patient-helper-icon"]}>
+                <Icon name="FileText" />
+              </div>
+              Đổi mật khẩu
             </div>
-            Đổi mật khẩu
-          </div>
-        </Link>
+          </Link>
+          <Link
+            href="/patient/prescription"
+            className={patientStyles["patient-link"]}
+          >
+            <div
+              className={cn(
+                buttonStyles["button"],
+                buttonStyles["button-outline"],
+                patientStyles["patient-helper-btn"],
+              )}
+            >
+              <div className={patientStyles["patient-helper-icon"]}>
+                <Icon name="FileText" />
+              </div>
+              Đơn thuốc
+            </div>
+          </Link>
+        </div>
         <Link href="/patient/update" className={patientStyles["patient-link"]}>
           <div
             className={cn(
