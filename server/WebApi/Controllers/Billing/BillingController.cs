@@ -1,5 +1,10 @@
-﻿using Application.Common.DTOs.Billing;
+﻿using System.Security.Claims;
+using Application.Common.DTOs.Billing;
+using Application.Common.Utils;
+using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StackExchange.Redis;
 
 namespace WebApi.Controllers.Billing;
 
@@ -8,13 +13,13 @@ namespace WebApi.Controllers.Billing;
 public class BillingController : ControllerBase
 {
     private readonly IBillingService _billingService;
-    
     public BillingController(IBillingService billingService)
     {
         _billingService = billingService;
     }
 
     [HttpGet]
+    [Authorize(Roles = "admin, doctor, patient")]
     public async Task<IActionResult> GetBillings([FromQuery] string? status,
                                              [FromQuery] Guid? patientId,
                                              [FromQuery] Guid? doctorId,
