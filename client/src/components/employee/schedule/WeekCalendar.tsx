@@ -1,11 +1,11 @@
 "use client";
 import scheduleStyles from "@/styles/schedule.module.css";
 import { DateUtils } from "@/lib/client";
-import { WorkShift } from "@/types";
+import { DoctorSchedule } from "@/types";
 
 interface WeekCalendarProps {
   weekDays: Date[];
-  weekShifts: Map<string, WorkShift[]>;
+  weekShifts: Map<string, DoctorSchedule[]>;
   selectedDate: Date;
   selectDate: (date: Date) => void;
 }
@@ -58,4 +58,3 @@ export default function WeekCalendar({
     </div>
   );
 }
-

@@ -2,237 +2,229 @@
 
 /* Date Section */
 .date-section {
-    @apply flex items-center justify-between gap-4 mb-6 flex-wrap;
+  @apply flex items-center justify-between gap-4 mb-6 flex-wrap;
 }
 
 .date-navigation {
-    @apply flex items-center gap-4 bg-white px-6 py-4 rounded-lg shadow;
+  @apply flex items-center gap-4 bg-white px-6 py-4 rounded-lg shadow;
 }
 
 .nav-btn {
-    @apply bg-gray-100 hover:bg-gray-200 p-2 rounded transition border-none cursor-pointer flex items-center justify-center;
+  @apply bg-gray-100 hover:bg-gray-200 p-2 rounded transition border-none cursor-pointer flex items-center justify-center;
 }
 
 .date-display {
-    @apply flex items-center gap-3 text-base font-semibold text-gray-800;
+  @apply flex items-center gap-3 text-base font-semibold text-gray-800;
 }
 
 /* Check-in Section */
 .checkin-section {
-    @apply flex items-center;
-}
-
-.checkin-btn {
-    @apply bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold cursor-pointer transition border-none flex items-center gap-2 shadow-md;
-}
-
-.checkin-status {
-    @apply flex items-center gap-2 bg-green-100 text-green-700 px-6 py-3 rounded-lg font-semibold;
+  @apply flex items-center;
 }
 
 /* Week Calendar */
 .week-calendar {
-    @apply grid grid-cols-7 gap-3 mb-8;
+  @apply grid grid-cols-7 gap-3 mb-8;
 }
 
 .day-card {
-    @apply bg-white border-2 border-gray-200 rounded-lg p-4 cursor-pointer transition-all text-center;
+  @apply bg-white border-2 border-gray-200 rounded-lg p-4 cursor-pointer transition-all text-center;
 }
 
 .day-card:hover {
-    @apply border-blue-600 shadow-md;
+  @apply border-east-bay shadow-md;
 }
 
 .day-selected {
-    @apply border-blue-600 bg-blue-50;
+  @apply border-east-bay bg-mauve/25;
 }
 
 .day-today {
-    @apply border-green-500;
+  @apply border border-east-bay;
 }
 
 .day-header {
-    @apply flex flex-col gap-1 mb-3;
+  @apply flex flex-col gap-1 mb-3;
 }
 
 .day-name {
-    @apply text-sm font-semibold text-gray-600 uppercase;
+  @apply text-sm font-semibold text-gray-600 uppercase;
 }
 
 .day-date {
-    @apply text-lg font-bold text-gray-800;
+  @apply text-lg font-bold text-gray-800;
 }
 
 .day-shifts {
-    @apply pt-3 border-t border-gray-200;
+  @apply pt-3 border-t border-gray-200;
 }
 
 .shift-count {
-    @apply text-sm font-semibold text-blue-600;
+  @apply text-sm font-bold text-east-bay;
 }
 
 .no-shift {
-    @apply text-sm text-gray-400;
+  @apply text-sm text-gray-400;
 }
 
 /* Schedule Container */
 .schedule-container {
-    @apply bg-white rounded-lg shadow-md p-6;
+  @apply bg-white rounded-lg shadow-md p-6;
 }
 
 .section-title {
-    @apply text-xl font-bold text-gray-800 mb-6;
+  @apply text-xl font-bold text-gray-800 mb-6;
 }
 
 /* Schedule List */
 .schedule-list {
-    @apply grid gap-4;
+  @apply grid gap-4;
 }
 
 .empty-state {
-    @apply flex flex-col items-center justify-center py-12 text-gray-500 text-center;
+  @apply flex flex-col items-center justify-center py-12 text-gray-500 text-center;
 }
 
 .empty-state p {
-    @apply mt-4 text-base font-medium;
+  @apply mt-4 text-base font-medium;
 }
 
 .schedule-card {
-    @apply border border-gray-200 rounded-lg p-5 transition-all;
+  @apply border border-gray-200 rounded-lg p-5 transition-all;
 }
 
 .schedule-card:hover {
-    @apply shadow-md border-gray-300;
+  @apply shadow-md border-gray-300;
 }
 
 .card-header {
-    @apply flex items-center justify-between mb-4 gap-4;
+  @apply flex items-center justify-between mb-4 gap-4;
 }
 
 .task-name {
-    @apply text-lg font-semibold text-gray-800 m-0;
+  @apply text-lg font-semibold text-gray-800 m-0;
 }
 
 /* Status Badges */
 .status-badge {
-    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold;
+  @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold;
 }
 
 .status-opened {
-    @apply bg-orange-100 text-orange-700 border border-orange-300;
+  @apply bg-green-100 text-green-700 border border-green-300;
 }
 
 .status-closed {
-    @apply bg-green-100 text-green-700 border border-green-300;
+  @apply bg-orange-100 text-orange-700 border border-orange-300;
 }
 
 .status-canceled {
-    @apply bg-red-100 text-red-700 border border-red-300;
+  @apply bg-red-100 text-red-700 border border-red-300;
 }
 
 /* Card Body */
 .card-body {
-    @apply mb-4;
+  @apply mb-4;
 }
 
 .time-info {
-    @apply flex items-center gap-2 text-gray-700 font-semibold mb-3;
+  @apply flex items-center gap-2 text-gray-700 font-semibold mb-3;
 }
 
 .task-description {
-    @apply text-gray-600 text-sm leading-relaxed m-0;
+  @apply text-gray-600 text-sm leading-relaxed m-0;
 }
 
 /* Card Footer */
 .card-footer {
-    @apply flex items-center gap-3 pt-4 border-t border-gray-100;
+  @apply flex items-center gap-3 pt-4 border-t border-gray-100;
 }
 
 .attendance-info {
-    @apply w-full;
+  @apply w-full;
 }
 
 .attendance-info span {
-    @apply flex items-center gap-2 font-semibold text-sm;
+  @apply flex items-center gap-2 font-semibold text-sm;
 }
 
 .attendance-checked-in {
-    @apply text-green-600;
+  @apply text-green-600;
 }
 
 .attendance-late {
-    @apply text-orange-600;
+  @apply text-orange-600;
 }
 
 .attendance-not-checked {
-    @apply text-gray-500;
+  @apply text-gray-500;
 }
 
 .attendance-checked-out {
-    @apply text-blue-600;
+  @apply text-blue-600;
 }
 
 .action-btn-complete {
-    @apply bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-medium cursor-pointer transition border-none inline-flex items-center gap-2 text-sm;
+  @apply bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-medium cursor-pointer transition border-none inline-flex items-center gap-2 text-sm;
 }
 
 .action-btn-cancel {
-    @apply bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium cursor-pointer transition border-none inline-flex items-center gap-2 text-sm;
+  @apply bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium cursor-pointer transition border-none inline-flex items-center gap-2 text-sm;
 }
 
 .completed-text {
-    @apply text-green-600 font-semibold text-sm flex items-center gap-2;
+  @apply text-green-600 font-semibold text-sm flex items-center gap-2;
 }
 
 .canceled-text {
-    @apply text-red-600 font-semibold text-sm flex items-center gap-2;
+  @apply text-red-600 font-semibold text-sm flex items-center gap-2;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .date-section {
-        @apply flex-col items-stretch;
-    }
+  .date-section {
+    @apply flex-col items-stretch;
+  }
 
-    .date-navigation {
-        @apply justify-between;
-    }
+  .date-navigation {
+    @apply justify-between;
+  }
 
-    .checkin-section {
-        @apply justify-center;
-    }
+  .checkin-section {
+    @apply justify-center;
+  }
 
-    .week-calendar {
-        @apply grid-cols-7 gap-2;
-    }
+  .week-calendar {
+    @apply grid-cols-7 gap-2;
+  }
 
-    .day-card {
-        @apply p-2;
-    }
+  .day-card {
+    @apply p-2;
+  }
 
-    .day-name {
-        @apply text-xs;
-    }
+  .day-name {
+    @apply text-xs;
+  }
 
-    .day-date {
-        @apply text-sm;
-    }
+  .day-date {
+    @apply text-sm;
+  }
 
-    .shift-count,
-    .no-shift {
-        @apply text-xs;
-    }
+  .shift-count,
+  .no-shift {
+    @apply text-xs;
+  }
 
-    .card-header {
-        @apply flex-col items-start;
-    }
+  .card-header {
+    @apply flex-col items-start;
+  }
 
-    .card-footer {
-        @apply flex-col items-stretch;
-    }
+  .card-footer {
+    @apply flex-col items-stretch;
+  }
 
-    .action-btn-complete,
-    .action-btn-cancel {
-        @apply w-full justify-center;
-    }
+  .action-btn-complete,
+  .action-btn-cancel {
+    @apply w-full justify-center;
+  }
 }

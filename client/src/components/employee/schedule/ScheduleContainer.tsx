@@ -1,27 +1,46 @@
 "use client";
 import scheduleStyles from "@/styles/schedule.module.css";
-import { WorkShift } from "@/types";
-import {
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  DateUtils,
-} from "@/lib/client";
+import { DoctorSchedule } from "@/types";
+import { DateUtils } from "@/lib/client";
+import Icon from "@/components/shared/Icon";
 
 interface ScheduleContainerProps {
-  todayShifts: WorkShift[];
+  todayShifts: DoctorSchedule[];
 }
 
-export default function ScheduleContainer({ todayShifts }: ScheduleContainerProps) {
+export default function ScheduleContainer({
+  todayShifts,
+}: ScheduleContainerProps) {
+  const getComputedStatus = (startTime: string, endTime: string) => {
+    const now = new Date();
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+
+    if (end < now) return "Completed";
+    if (start > now) return "Scheduled";
+    return "InProgress";
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "Scheduled":
-        return <AlertCircle size={18} />;
+        return (
+          <div className="w-4 h-4">
+            <Icon name="CircleAlert" className="w-4 h-4" />
+          </div>
+        );
+      case "InProgress":
+        return (
+          <div className="w-4 h-4">
+            <Icon name="Timer" className="w-4 h-4" />
+          </div>
+        );
       case "Completed":
-        return <CheckCircle size={18} />;
-      case "Canceled":
-        return <XCircle size={18} />;
+        return (
+          <div className="w-4 h-4">
+            <Icon name="CircleCheck" className="w-4 h-4" />
+          </div>
+        );
       default:
         return null;
     }
@@ -31,50 +50,12 @@ export default function ScheduleContainer({ todayShifts }: ScheduleContainerProp
     switch (status) {
       case "Scheduled":
         return scheduleStyles["status-opened"];
+      case "InProgress":
+        return scheduleStyles["status-inprogress"];
       case "Completed":
-        return scheduleStyles["status-closed"];
-      case "Canceled":
-        return scheduleStyles["status-canceled"];
+        return scheduleStyles["status-closed"]; // màu xám
       default:
         return "";
-    }
-  };
-
-  const getAttendanceStatusInfo = (
-    attendanceStatus?: string,
-    actualCheckInTime?: string,
-  ) => {
-    switch (attendanceStatus) {
-      case "checked-in":
-        return {
-          icon: <CheckCircle size={18} />,
-          text: `Đã chấm công${actualCheckInTime ? ` lúc ${actualCheckInTime}` : ""}`,
-          className: scheduleStyles["attendance-checked-in"],
-        };
-      case "late":
-        return {
-          icon: <AlertCircle size={18} />,
-          text: `Đi trễ - Chấm công lúc ${actualCheckInTime || "N/A"}`,
-          className: scheduleStyles["attendance-late"],
-        };
-      case "not-checked-in":
-        return {
-          icon: <XCircle size={18} />,
-          text: "Chưa chấm công",
-          className: scheduleStyles["attendance-not-checked"],
-        };
-      case "checked-out":
-        return {
-          icon: <CheckCircle size={18} />,
-          text: `Đã hoàn thành ca - Chấm công lúc ${actualCheckInTime || "N/A"}`,
-          className: scheduleStyles["attendance-checked-out"],
-        };
-      default:
-        return {
-          icon: <Clock size={18} />,
-          text: "Chưa có thông tin",
-          className: scheduleStyles["attendance-not-checked"],
-        };
     }
   };
 
@@ -88,57 +69,63 @@ export default function ScheduleContainer({ todayShifts }: ScheduleContainerProp
         </div>
       ) : (
         <div className={scheduleStyles["schedule-list"]}>
-          {todayShifts.map((shift) => {
-            const attendanceStatusInfo = getAttendanceStatusInfo(
-              shift.attendanceStatus,
-              shift.actualCheckInTime,
+          {todayShifts.map((shedule) => {
+            const status = getComputedStatus(
+              shedule.startTime,
+              shedule.endTime,
             );
 
             return (
-              <div key={shift.id} className={scheduleStyles["schedule-card"]}>
+              <div
+                key={shedule.scheduleId}
+                className={scheduleStyles["schedule-card"]}
+              >
                 <div className={scheduleStyles["card-header"]}>
-                  <h3 className={scheduleStyles["task-name"]}>{shift.name}</h3>
+                  <h3 className={scheduleStyles["task-name"]}>
+                    {shedule.name}
+                  </h3>
+
                   <span
-                    className={`${scheduleStyles["status-badge"]} ${getStatusClass(shift.shiftStatus)}`}
+                    className={`${scheduleStyles["status-badge"]} ${getStatusClass(
+                      status,
+                    )}`}
                   >
-                    {getStatusIcon(shift.shiftStatus)}
-                    {shift.shiftStatus === "Scheduled"
+                    {getStatusIcon(status)}
+                    {status === "Scheduled"
                       ? "Sắp diễn ra"
-                      : shift.shiftStatus === "Completed"
-                        ? "Đã hoàn thành"
-                        : "Đã hủy"}
+                      : status === "InProgress"
+                        ? "Đang diễn ra"
+                        : "Đã kết thúc"}
                   </span>
                 </div>
 
                 <div className={scheduleStyles["card-body"]}>
                   <div className={scheduleStyles["time-info"]}>
-                    <Clock size={18} />
+                    <div className="w-4 h-4">
+                      <Icon name="Clock" className="w-4 h-4" />
+                    </div>
                     <span>
                       Thời gian:{" "}
-                      {DateUtils.getDisplayDateTime(shift.startTime, "Time")} -{" "}
-                      {DateUtils.getDisplayDateTime(shift.endTime, "Time")}
+                      {DateUtils.getDisplayDateTime(shedule.startTime, "Time")}{" "}
+                      - {DateUtils.getDisplayDateTime(shedule.endTime, "Time")}
                     </span>
                   </div>
+
                   <p className={scheduleStyles["task-description"]}>
-                    {shift.description}
+                    {shedule.description}
                   </p>
                 </div>
 
-                <div className={scheduleStyles["card-footer"]}>
-                  {shift.shiftStatus === "Canceled" ? (
+                {shedule.scheduleStatus === "Canceled" && (
+                  <div className={scheduleStyles["card-footer"]}>
                     <span className={scheduleStyles["canceled-text"]}>
-                      <XCircle size={18} />
+                      <div className="w-4 h-4">
+                        <Icon name="CircleX" className="w-4 h-4" />
+                      </div>
                       Ca làm việc đã bị hủy
                     </span>
-                  ) : (
-                    <div className={scheduleStyles["attendance-info"]}>
-                      <span className={attendanceStatusInfo.className}>
-                        {attendanceStatusInfo.icon}
-                        {attendanceStatusInfo.text}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -147,4 +134,3 @@ export default function ScheduleContainer({ todayShifts }: ScheduleContainerProp
     </div>
   );
 }
-

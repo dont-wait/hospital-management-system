@@ -1,6 +1,12 @@
 import { getApiInstance, getConfig } from "@/axios";
-import { AuthUserWithoutTokens, Roles } from "@/types";
+import {
+  ApiResponse,
+  AuthUserWithoutTokens,
+  Roles,
+  DoctorSchedule,
+} from "@/types";
 import { EmployeeUpdateDto } from "@/schemas";
+import { api } from "@/axios";
 
 type EmployeeRoleId = Exclude<Roles, "admin" | "patient" | "guest">;
 
@@ -15,7 +21,9 @@ export class EmployeeService {
 
     const roleQuery = roleId ? `role=${roleId}` : "";
     const departmentQuery = departmentId ? `departmentId=${departmentId}` : "";
-    const queryParams = [roleQuery, departmentQuery].filter(param => param).join("&");
+    const queryParams = [roleQuery, departmentQuery]
+      .filter((param) => param)
+      .join("&");
 
     const response = await apiInstance.get<{ data: AuthUserWithoutTokens[] }>(
       `/employees${queryParams ? `?${queryParams}` : ""}`,
@@ -40,5 +48,16 @@ export class EmployeeService {
     );
 
     return response.data.data;
+  }
+
+  public static async getSchedules(
+    empId: string,
+  ): Promise<ApiResponse<DoctorSchedule[]>> {
+    const response = await api.get("/schedules", {
+      params: {
+        empId,
+      },
+    });
+    return response.data;
   }
 }

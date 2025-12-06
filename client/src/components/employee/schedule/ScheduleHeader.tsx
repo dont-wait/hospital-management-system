@@ -4,28 +4,15 @@ import scheduleStyles from "@/styles/schedule.module.css";
 import styles from "@/styles/admin.module.css";
 import { useUserAuthContext } from "@/contexts";
 import { Employee } from "@/types";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  Clock,
-  CheckCircle,
-  DateUtils,
-} from "@/lib/client";
+import { ChevronLeft, ChevronRight, Calendar, DateUtils } from "@/lib/client";
 
 interface ScheduleHeaderProps {
   changeWeek: (weeks: number) => void;
-  isCheckedIn: boolean;
-  checkInTime: string | null;
-  handleCheckIn: () => void;
   selectedDate: Date;
 }
 
 export default function ScheduleHeader({
   changeWeek,
-  isCheckedIn,
-  checkInTime,
-  handleCheckIn,
   selectedDate,
 }: ScheduleHeaderProps) {
   const { user } = useUserAuthContext();
@@ -68,25 +55,7 @@ export default function ScheduleHeader({
             <ChevronRight size={20} />
           </button>
         </div>
-
-        <div className={scheduleStyles["checkin-section"]}>
-          {!isCheckedIn ? (
-            <button
-              onClick={handleCheckIn}
-              className={scheduleStyles["checkin-btn"]}
-            >
-              <Clock size={20} />
-              <span>Chấm Công</span>
-            </button>
-          ) : (
-            <div className={scheduleStyles["checkin-status"]}>
-              <CheckCircle size={20} />
-              <span>Đã chấm công lúc {checkInTime}</span>
-            </div>
-          )}
-        </div>
       </div>
     </>
   );
 }
-

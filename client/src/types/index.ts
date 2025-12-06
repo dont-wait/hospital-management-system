@@ -127,16 +127,6 @@ export type ModalProps = {
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
   showCloseButton?: boolean;
 };
-export interface WorkShift {
-  id: number;
-  name: string;
-  startTime: string;
-  endTime: string;
-  description: string;
-  shiftStatus: "Scheduled" | "Completed" | "Canceled";
-  attendanceStatus?: "checked-in" | "late" | "not-checked-in" | "checked-out";
-  actualCheckInTime?: string;
-}
 
 export type IconNames = keyof typeof Lucide.icons;
 
@@ -385,3 +375,14 @@ export interface BillingDetail extends Billing {
   createdAt: string;
   serviceName: string;
 }
+
+export type DoctorScheduleStatus = "Canceled" | "Completed" | "Scheduled" | "Opened";
+
+export type DoctorSchedule = Omit<
+  Schedule,
+  "specialization" | "slots" | "scheduleStatus"
+> & {
+  name: string;
+  description: string;
+  scheduleStatus: DoctorScheduleStatus;
+};
