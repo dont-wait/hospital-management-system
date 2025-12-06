@@ -4,11 +4,13 @@ public class DepartmentService : IDepartmentService
 {
     private readonly IDepartmentRepository _departmentRepository;
     private readonly IBillingRepository _billingRepository;
+    private readonly IExcelExporter _excelExporter;
 
-    public DepartmentService(IDepartmentRepository departmentRepository, IBillingRepository billingRepository)
+    public DepartmentService(IDepartmentRepository departmentRepository, IBillingRepository billingRepository, IExcelExporter excelExporter)
     {
         _departmentRepository = departmentRepository;
         _billingRepository = billingRepository;
+        _excelExporter = excelExporter;
     }
 
     public async Task<ServiceResult<List<ResponseDepartmentDTO>>> GetAllDepartmentsAsync()
@@ -46,5 +48,12 @@ public class DepartmentService : IDepartmentService
         var stats = await _billingRepository.GetDepartmentRevenueStatisticsAsync(type, fromDate, toDate);
 
         return ServiceResult<List<ResponseDeparmentRevenueStatisticsDTO>>.Success(stats);
+    }
+
+    public async Task<byte[]> ExportDepartmentRevenueAsync(string type, DateTime? fromDate, DateTime? toDate)
+    {
+        var stats = await _billingRepository.GetDepartmentRevenueStatisticsAsync(type, fromDate, toDate);
+
+        return _excelExporter.ExportDepartmentRevenue(stats);
     }
 }
