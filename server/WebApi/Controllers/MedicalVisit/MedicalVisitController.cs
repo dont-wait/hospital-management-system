@@ -48,7 +48,7 @@ public class MedicalVisitController : ControllerBase
         }
     }
 
-    [HttpGet("{patientId}")]
+    [HttpGet("patient/{patientId}")]
     [Authorize(Roles = "admin, doctor, hod, nurse")]
     public async Task<IActionResult> GetMedicalVisitsByPatientId(Guid patientId)
     {

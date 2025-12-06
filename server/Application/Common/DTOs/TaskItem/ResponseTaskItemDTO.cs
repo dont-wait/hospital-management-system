@@ -1,9 +1,11 @@
 ﻿public class ResponseTaskItemDTO
 {
     public long ScheduleId { get; set;} //TaskId
+    public string Name { get; set;} = string.Empty;
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public string ScheduleStatus { get; set; } = string.Empty; //TaskStatus
+    public string Description { get; set;} = string.Empty;
     public Guid DoctorId { get; set;}
     public int DepartmentId { get; set;}
     public string DepartmentName { get; set;} = string.Empty;

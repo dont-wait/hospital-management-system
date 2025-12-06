@@ -184,9 +184,11 @@ public class TaskItemService : ITaskItemService
             StartTime = t.Date.ToDateTime(t.StartTime),
             EndTime = t.Date.ToDateTime(t.EndTime),
             ScheduleStatus = t.TaskStatus,
+            Name = t.Name,
+            Description = t.Description,
             DepartmentId = t.DepartmentId ?? 0,
-            DepartmentName = t.Name,
-            DepartmentDescription =  t.Description,
+            DepartmentName = t.Department!.Name,
+            DepartmentDescription =  t.Department.Description,
             RoomName = t.Room?.Name ?? string.Empty,
             TaskRegistrations = t.TaskRegistrations
                 .Where(tr => tr.EmployeeId == employeeId)
