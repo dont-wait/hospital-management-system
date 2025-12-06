@@ -20,6 +20,10 @@ export class MiddlewareUtils {
       if (cleanPath === cleanRoute) {
         return { route, roles };
       }
+
+      if (cleanPath.startsWith(cleanRoute + "/")) {
+        return { route, roles };
+      }
     }
 
     return { route: null, roles: [] };
