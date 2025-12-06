@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 public class RequestPrescriptionDetailDTO
 {
-    [Required(ErrorMessage = "Đơn thuốc (PrescriptionId) là bắt buộc.")]
-    public long PrescriptionId { get; set; }
-    public virtual Prescription Prescription { get; set; } = null!;
-    
     [Required(ErrorMessage = "Liều dùng (Dosage) không được để trống.")]
     public long Dosage { get; set; }
 
+    [Required(ErrorMessage = "Tên thuốc là bắt buộc.")]
+    public string MedicationName { get; set; } = null!;
+    
     [Required(ErrorMessage = "Tần suất dùng thuốc (Frequency) không được để trống.")]
     public int Frequency { get; set; }
 

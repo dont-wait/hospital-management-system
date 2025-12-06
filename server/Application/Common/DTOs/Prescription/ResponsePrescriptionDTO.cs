@@ -6,7 +6,7 @@
 
     public string Note { get; set; } = string.Empty;
 
-    public virtual MedicalVisit MedicalVisit { get; set; } = null!;
+    public long MedicareVisitId { get; set; }
 
     public List<ResponsePrescriptionDetailDTO> PrescriptionDetails { get; set; } = null!;
 }

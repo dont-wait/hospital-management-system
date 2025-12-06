@@ -8,8 +8,7 @@ public class RequestPrescriptionDTO
     public string Note { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Thông tin lần khám (MedicalVisit) là bắt buộc.")]
-    public virtual MedicalVisit MedicalVisit { get; set; } = null!;
+    public long MedicalVisitId { get; set; }
 
-    public List<RequestPrescriptionDetailDTO> PrescriptionDetails { get; set; } =
-        new List<RequestPrescriptionDetailDTO>();
+    public List<RequestPrescriptionDetailDTO> PrescriptionDetails { get; set; } = new List<RequestPrescriptionDetailDTO>();
 }
