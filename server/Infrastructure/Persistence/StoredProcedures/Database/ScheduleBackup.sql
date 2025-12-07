@@ -1,6 +1,6 @@
 CREATE OR ALTER PROCEDURE sp_ScheduledBackup
     @BackupType VARCHAR(10),
-    @ActionBy NVARCHAR(50) = N'Thủ công',
+    @ActionBy NVARCHAR(50) = N'manual',
     @DatabaseName NVARCHAR(128) = 'Hospital',
     @BackupPath NVARCHAR(500) = '/var/opt/mssql/backups',
     @RetentionDays INT = 7
