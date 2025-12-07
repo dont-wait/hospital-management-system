@@ -3,6 +3,7 @@ CREATE TABLE BackupHistory (
     ID INT IDENTITY(1,1) PRIMARY KEY,
     DatabaseName NVARCHAR(128) NOT NULL,
     BackupType VARCHAR(10) NOT NULL,
+    ActionBy NVARCHAR(50) NOT NULL,
     BackupFileName NVARCHAR(500) NOT NULL,
     BackupDate DATETIME NOT NULL,
     Status VARCHAR(20) NOT NULL,

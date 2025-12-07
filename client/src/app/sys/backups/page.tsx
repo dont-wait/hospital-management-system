@@ -7,6 +7,7 @@ import BackupSchedule from "@/components/sysadmin/BackupSchedule";
 import RecentBackups from "@/components/sysadmin/RecentBackups";
 import styles from "@/styles/admin.module.css";
 import { useToast } from "@/contexts";
+import { BackupService } from "@/services/backup.service";
 
 export default function BackupsPage() {
   const { showToast } = useToast();
@@ -17,7 +18,8 @@ export default function BackupsPage() {
         `Đang tạo ${type} backup...`,
         "success",
       );
-      // TODO: Call API here
+      
+      await BackupService.createBackup(type);  
     } catch (error) {
       showToast(
         "Có lỗi xảy ra khi tạo backup",

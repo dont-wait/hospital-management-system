@@ -16,7 +16,7 @@ public class BackupController : ControllerBase
         _recurringJobManager = recurringJobManager;
     }
 
-    [HttpPost("create-backup")]
+    [HttpPost]
     public async Task<IActionResult> CreateBackup([FromBody] RequestBackupInfo backupInfo)
     {
         var result = await _backupService.CreateBackupAsync(backupInfo);

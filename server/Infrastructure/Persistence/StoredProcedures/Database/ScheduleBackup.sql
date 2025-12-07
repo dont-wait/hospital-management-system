@@ -1,5 +1,6 @@
 CREATE OR ALTER PROCEDURE sp_ScheduledBackup
     @BackupType VARCHAR(10),
+    @ActionBy NVARCHAR(50) = N'Thủ công',
     @DatabaseName NVARCHAR(128) = 'Hospital',
     @BackupPath NVARCHAR(500) = '/var/opt/mssql/backups',
     @RetentionDays INT = 7
@@ -58,8 +59,8 @@ BEGIN
     BEGIN TRY
         EXEC sp_executesql @SQL;
 
-        INSERT INTO BackupHistory (DatabaseName, BackupType, BackupFileName, BackupDate, Status)
-        VALUES (@DatabaseName, @BackupType, @BackupFileName, GETDATE(), 'SUCCESS');
+        INSERT INTO BackupHistory (DatabaseName, BackupType, ActionBy, BackupFileName, BackupDate, Status)
+        VALUES (@DatabaseName, @BackupType, @ActionBy, @BackupFileName, GETDATE(), 'SUCCESS');
 
         --EXEC sp_CleanupOldBackups @BackupPath, @RetentionDays;
     END TRY
