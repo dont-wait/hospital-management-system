@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { FileText, Pill, Eye } from "lucide-react";
 import { PrescriptionService } from "@/services";
 import { useUserAuthContext } from "@/contexts";
+import Icon from "@/components/shared/Icon";
 import { PrescriptionResult } from "@/types";
 
 export default function PrescriptionManagement() {
@@ -26,7 +27,20 @@ export default function PrescriptionManagement() {
   }, [patientId]);
 
   if (!prescriptions?.length) {
-    return <h3>không có đơn thuốc</h3>;
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-4">
+        <div className="w-20 h-20 rounded-full bg-anakiwa/20 flex items-center justify-center mb-4">
+          <Icon name="Pill" className="w-10 h-10 text-truev" />
+        </div>
+        <h3 className="text-xl font-semibold text-martinique mb-2">
+          Chưa có đơn thuốc
+        </h3>
+        <p className="text-eastbay text-center max-w-md">
+          Bạn chưa có đơn thuốc nào. Đơn thuốc sẽ được cập nhật sau mỗi lần
+          khám.
+        </p>
+      </div>
+    );
   }
 
   const handleViewDetail = (prescription: PrescriptionResult) => {

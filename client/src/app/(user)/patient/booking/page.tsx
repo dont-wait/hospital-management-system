@@ -7,6 +7,7 @@ import SelectDoctor from "@/components/patient/booking/doctor-option/SelectDocto
 import SelectDay from "@/components/patient/booking/day-option/SelectDay";
 import ConfirmBooking from "@/components/patient/booking/confirm-booking/ConfirmBooking";
 import BookingPayment from "@/components/patient/booking/payment/BookingPayment";
+import CompletedBooking from "@/components/patient/booking/completed-booking/CompletedBooking";
 
 type BookingPageProps = {
   searchParams?: Promise<{
@@ -30,6 +31,7 @@ export default async function BookingPage(props: BookingPageProps) {
       </AddBookingInfo>
       <ConfirmBooking />
       <BookingPayment />
+      <CompletedBooking />
     </BookingContainer>
   );
 }
