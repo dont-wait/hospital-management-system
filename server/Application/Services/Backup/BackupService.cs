@@ -35,4 +35,18 @@ public class BackupService : IBackupService
             return ServiceResult<string>.Fail("Lỗi khi tạo bản sao lưu");
         }
     }
+
+    public async Task<ServiceResult<List<ResponseBackupInfo>>> GetAllRecentBackupsAsync()
+    {
+        try
+        {
+            var backups = await _backupRepository.GetAllRecentBackupsAsync();
+            return ServiceResult<List<ResponseBackupInfo>>.Success(backups);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return ServiceResult<List<ResponseBackupInfo>>.Fail("Lỗi khi lấy lịch sử sao lưu");
+        }
+    }
 }

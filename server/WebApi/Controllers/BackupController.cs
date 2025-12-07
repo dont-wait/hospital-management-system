@@ -1,3 +1,4 @@
+using Application.Common.Utils;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,5 +36,17 @@ public class BackupController : ControllerBase
             status = 400,
             message = result.Message
         });
+    }
+
+    [HttpGet("history")]
+    public async Task<IActionResult> GetBackupHistory()
+    {
+        var result = await _backupService.GetAllRecentBackupsAsync();
+        if (result.IsSuccess)
+        {
+            return new JsonResult(new ApiResponse<List<ResponseBackupInfo>>(200, "Lấy lịch sử sao lưu thành công", result.Data)) { StatusCode = 200 };
+        }
+        
+        return new JsonResult(new ApiResponse<List<ResponseBackupInfo>>(400, result.Message, null)) { StatusCode = 400 };
     }
 }
