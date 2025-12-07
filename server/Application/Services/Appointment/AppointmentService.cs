@@ -134,7 +134,7 @@ public class AppointmentService : IAppointmentService
     {
         if (patientId != null)
         {
-            Patient existingPatient = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId.Value);
+            Patient? existingPatient = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId.Value);
             if (existingPatient == null)
                 return ServiceResult<PaginatedResult<ResponseAppointmentDTO>>.Fail("Bệnh nhân không tồn tại");
         }
