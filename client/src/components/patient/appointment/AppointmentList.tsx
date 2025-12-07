@@ -17,24 +17,17 @@ function AppointmentList({ appointments, totalPages }: AppointmentListProps) {
   const [data, setData] = useState<Appointment[]>(appointments);
   const { user } = useUserAuthContext();
   const patientId = (user as Patient)?.patientId ?? "";
-  const currentDate = useMemo(() => {
-    const date = new Date();
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  }, []);
 
   useEffect(() => {
     async function getData() {
       const response = await AppointmentService.getAppointment(
         patientId,
-        currentDate,
+        "",
         currentPage,
       );
 
       if (JSON.stringify(data) !== JSON.stringify(response.data))
-        setData(response.data);
+        setData(response.data.reverse());
     }
     getData();
   }, [currentPage]);
