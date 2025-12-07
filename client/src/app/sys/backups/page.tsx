@@ -5,6 +5,7 @@ import AdminContentHeader from "@/components/admin/AdminContentHeader";
 import BackupManager from "@/components/sysadmin/BackupManager";
 import BackupSchedule from "@/components/sysadmin/BackupSchedule";
 import RecentBackups from "@/components/sysadmin/RecentBackups";
+import RestoreDatabase from "@/components/sysadmin/RestoreDatabase";
 import styles from "@/styles/admin.module.css";
 import { useToast } from "@/contexts";
 import { BackupService } from "@/services/backup.service";
@@ -97,6 +98,10 @@ export default function BackupsPage() {
     }
   };
 
+  const handleRestoreComplete = () => {
+    fetchBackups();
+  };
+
   return (
     <div className={styles["admin-container"]}>
       <AdminContentHeader
@@ -109,6 +114,10 @@ export default function BackupsPage() {
           onCreateBackup={handleCreateBackup}
           onDeleteBackup={handleDeleteBackup}
         />
+      </div>
+
+      <div className="mb-6">
+        <RestoreDatabase onRestoreComplete={handleRestoreComplete} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
