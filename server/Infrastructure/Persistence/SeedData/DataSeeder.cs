@@ -237,7 +237,7 @@ public static class DataSeeder
     public static async Task SeedSysAdminAsync(AppDbContext context)
     {
         // Kiểm tra xem đã có sysadmin chưa
-        if (await context.user_accounts.AnyAsync(u => u.CitizenID == "000000000000"))
+        if (await context.user_accounts.AnyAsync(u => u.CitizenID == "000000000002"))
         {
             Console.WriteLine("✅ SysAdmin đã tồn tại trong hệ thống");
             return;
