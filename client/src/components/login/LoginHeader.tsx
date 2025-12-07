@@ -3,14 +3,14 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/shared/Card";
-import { Heart } from "@/lib/client";
+import Icon from "@/components/shared/Icon";
 import styles from "@/styles/auth.module.css";
 
 export function LoginHeader() {
   return (
     <CardHeader className={styles["login-header"]}>
       <div className={styles["login-header-icon-wrap"]}>
-        <Heart className={styles["login-header-icon"]} />
+        <Icon name="Heart" className={styles["login-header-icon"]} />
       </div>
       <CardTitle className={styles["login-title"]}>Đăng Nhập</CardTitle>
       <CardDescription className={styles["login-desc"]}>

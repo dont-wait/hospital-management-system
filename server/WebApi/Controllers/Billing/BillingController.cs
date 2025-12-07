@@ -1,4 +1,7 @@
 ﻿using Application.Common.DTOs.Billing;
+using Application.Common.Utils;
+using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers.Billing;
@@ -9,7 +12,7 @@ public class BillingController : ControllerBase
 {
     private readonly IBillingService _billingService;
     private readonly IDepartmentService _departmentService;
-    
+
     public BillingController(IBillingService billingService, IDepartmentService departmentService)
     {
         _billingService = billingService;
@@ -17,6 +20,7 @@ public class BillingController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "admin, doctor, patient")]
     public async Task<IActionResult> GetBillings([FromQuery] string? status,
                                              [FromQuery] Guid? patientId,
                                              [FromQuery] Guid? doctorId,

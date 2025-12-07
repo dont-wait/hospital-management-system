@@ -1,34 +1,30 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "motion/react";
-import { Button } from "@/components/shared/Button";
-import { ArrowRight } from "@/lib/client";
-import styles from "@/styles/home.module.css";
+import { useRouter } from "next/navigation";
+import Icon from "@/components/shared/Icon";
 
 export default function CTASection() {
+  const router = useRouter();
   return (
-    <motion.section
-      initial={{ opacity: 0.5 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1, ease: "easeOut" }}
-      className={styles["banner-card"]}
-    >
-      <div className={styles["banner-content"]}>
-        <h2 className={styles["banner-header"]}>
-          Sẵn sàng trải nghiệm dịch vụ chăm sóc sức khỏe chất lượng?
-        </h2>
-        <p className={styles["banner-description"]}>
-          Tham gia cùng hàng nghìn bệnh nhân tin tưởng Bệnh viện MediCare cho
-          nhu cầu chăm sóc sức khỏe của họ.
-        </p>
-        <Link href="/register">
-          <Button size="lg">
-            Đăng ký ngay hôm nay
-            <ArrowRight className={styles["icon"]} />
-          </Button>
-        </Link>
-      </div>
-    </motion.section>
+    <div className="py-6 md:py-14 px-4 bg-martinique flex flex-col items-center justify-center gap-4">
+      <h2 className="text-white font-bold text-xl md:text-2xl lg:text-3xl text-center">
+        Sẵn sàng trải nghiệm dịch vụ chăm sóc sức khỏe chất lượng?
+      </h2>
+      <p className="text-white text-sm lg:text-xl text-center">
+        Tham gia cùng hàng nghìn bệnh nhân tin tưởng Bệnh viện MediCare cho nhu
+        cầu chăm sóc sức khỏe của họ.
+      </p>
+      <button
+        onClick={() => {
+          router.push("/register");
+        }}
+        className="py-2 px-4 rounded-md bg-mauve text-martinique font-semibold flex justify-center items-center gap-4"
+      >
+        Đăng ký ngay hôm nay
+        <div className="w-4 h-4 flex items-center justify-center">
+          <Icon name="ArrowRight" className="w-4 h-4" />
+        </div>
+      </button>
+    </div>
   );
 }

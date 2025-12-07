@@ -17,7 +17,7 @@ public class AppointmentRepository : IAppointmentRepository
         await _context.SaveChangesAsync();
         return appointment;
     }
-    public async Task<PaginatedResult<Appointment>> GetAllAppointmentsAsync(string? status, Guid? patientId, int page , int size)
+    public async Task<PaginatedResult<Appointment>> GetAllAppointmentsAsync(string? status, Guid? patientId, Guid? doctorId, DateOnly? date, int page , int size)
     {
         
         if (page < 1) page = 1;
@@ -29,7 +29,7 @@ public class AppointmentRepository : IAppointmentRepository
             .Include(p => p.Patient)
             .Include(d => d.Doctor)
             .ThenInclude(e => e!.Employee)
-            .Where(a => a.DeletedAt == null)
+            .Where(a => a.DeletedAt == null && a.AppointmentStatus == AppointmentStatusEnum.Unpaid.ToString() || a.AppointmentStatus == AppointmentStatusEnum.Pending.ToString())
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(status))
@@ -41,7 +41,24 @@ public class AppointmentRepository : IAppointmentRepository
         {
             query = query.Where(a => a.PatientId == patientId.Value);
         }
+        
+        if (doctorId.HasValue)
+        {
+            Console.WriteLine($"DoctorId filter: {doctorId.Value}");
+            query = query.Where(a => a.DoctorId == doctorId.Value);
+        }
 
+        if(date.HasValue)
+        {
+            var target = date.Value;
+            // So sánh theo ngày/tháng/năm thay vì ==
+            query = query.Where(a => 
+                a.AppointmentDate.Year == target.Year &&
+                a.AppointmentDate.Month == target.Month &&
+                a.AppointmentDate.Day == target.Day);
+        }
+
+        
         int totalRecords = await query.CountAsync();
         int totalPages = (int)Math.Ceiling((double)totalRecords / size);
         

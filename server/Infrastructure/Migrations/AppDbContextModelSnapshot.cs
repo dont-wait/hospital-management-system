@@ -135,7 +135,10 @@ namespace server.Migrations
 
                     b.HasIndex("SlotTimeId");
 
-                    b.ToTable("appointments");
+                    b.ToTable("appointments", t =>
+                        {
+                            t.HasCheckConstraint("CK_Appointment_Status", "[AppointmentStatus] IN ('Pending','Unpaid','Paid','Confirmed','CheckIn','Completed','Cancelled','NoShow')");
+                        });
                 });
 
             modelBuilder.Entity("Billing", b =>
@@ -183,7 +186,14 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("billings");
+                    b.ToTable("billings", t =>
+                        {
+                            t.HasCheckConstraint("CK_Billing_Discount", "[DiscountAmount] >= 0");
+
+                            t.HasCheckConstraint("CK_Billing_PayAmount", "[PaymentAmount] >= 0");
+
+                            t.HasCheckConstraint("CK_Billing_PaymentStatus", "[PaymentMethod] IN ('PayAtCounter','EWallet')");
+                        });
                 });
 
             modelBuilder.Entity("Department", b =>
@@ -209,6 +219,9 @@ namespace server.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("departments");
                 });
@@ -320,7 +333,10 @@ namespace server.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("tasks");
+                    b.ToTable("tasks", t =>
+                        {
+                            t.HasCheckConstraint("CK_Task_Status", "[TaskStatus] IN ('Opened', 'Closed', 'Cancelled', 'Completed')");
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskRegistration", b =>
@@ -445,9 +461,18 @@ namespace server.Migrations
 
                     b.HasIndex("DepartmentId");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
+
                     b.HasIndex("RoleId");
 
-                    b.ToTable("employees");
+                    b.ToTable("employees", t =>
+                        {
+                            t.HasCheckConstraint("CK_Emp_Experience", "[ExperienceYears] >= 0");
+                        });
                 });
 
             modelBuilder.Entity("MedicalVisit", b =>
@@ -544,7 +569,7 @@ namespace server.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -602,9 +627,18 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
+
                     b.HasIndex("RoleId");
 
-                    b.ToTable("patients");
+                    b.ToTable("patients", t =>
+                        {
+                            t.HasCheckConstraint("CK_Patient_Gender", "[Gender] IN ('M','F','O')");
+                        });
                 });
 
             modelBuilder.Entity("Permission", b =>
@@ -718,6 +752,10 @@ namespace server.Migrations
                     b.Property<int>("Frequency")
                         .HasColumnType("int");
 
+                    b.Property<string>("MedicationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("ModifiedId")
                         .HasColumnType("uniqueidentifier");
 
@@ -741,7 +779,16 @@ namespace server.Migrations
 
                     b.HasIndex("PrescriptionId");
 
-                    b.ToTable("prescription_details");
+                    b.ToTable("prescription_details", t =>
+                        {
+                            t.HasCheckConstraint("CK_PD_Dosage", "[Dosage] >= 0");
+
+                            t.HasCheckConstraint("CK_PD_Duration", "[Duration] >= 0");
+
+                            t.HasCheckConstraint("CK_PD_Frequency", "[Frequency] >= 0");
+
+                            t.HasCheckConstraint("CK_PD_Quantity", "[Quantity] >= 0");
+                        });
                 });
 
             modelBuilder.Entity("RolePermission", b =>
@@ -838,7 +885,10 @@ namespace server.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("rooms");
+                    b.ToTable("rooms", t =>
+                        {
+                            t.HasCheckConstraint("CK_Room_Capacity", "[Capacity] >= 0");
+                        });
                 });
 
             modelBuilder.Entity("Service", b =>
@@ -950,7 +1000,16 @@ namespace server.Migrations
 
                     b.HasIndex("TaskRegistrationId");
 
-                    b.ToTable("slot_times");
+                    b.ToTable("slot_times", t =>
+                        {
+                            t.HasCheckConstraint("CK_Slot_Current", "[CurrentAppointments] >= 0");
+
+                            t.HasCheckConstraint("CK_Slot_Max", "[MaxAppointments] >= 0");
+
+                            t.HasCheckConstraint("CK_Slot_Range", "[CurrentAppointments] <= [MaxAppointments]");
+
+                            t.HasCheckConstraint("CK_Slot_Status", "[SlotStatus] IN ('Opened', 'Closed', 'Full')");
+                        });
                 });
 
             modelBuilder.Entity("UserAccount", b =>

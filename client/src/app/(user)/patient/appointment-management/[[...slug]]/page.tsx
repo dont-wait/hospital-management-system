@@ -19,15 +19,29 @@ export default async function AppointmentManagementPage({
   }
 
   const cookieStore = await cookies();
-  const [patientId, billingId] = slug;
+  const [patientId] = slug;
   const token = cookieStore.get("accessToken")?.value;
-  const response: ApiResponseWithPaging<Appointment[]> =
-    await AppointmentService.getAppointments(patientId, token);
+  const currentDate = new Date();
+  const day = currentDate.getDate();
+  const month = currentDate.getMonth() + 1;
+  const year = currentDate.getFullYear();
+  let response: ApiResponseWithPaging<Appointment[]> | null;
+  try {
+    response = await AppointmentService.getAppointments(
+      token,
+      patientId,
+      `${month}/${day}/${year}`,
+    );
+  } catch {
+    response = null;
+  }
+
+  if (!response) {
+    notFound();
+  }
+
   const totalPages = response.totalPages;
   const appointments: Appointment[] = response.data;
-
-  if (patientId && !billingId) {
-  }
 
   return (
     <div className="min-h-screen p-4 md:p-8">

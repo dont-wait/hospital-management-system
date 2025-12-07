@@ -53,6 +53,7 @@ export interface Doctor {
 
 export interface Employee {
   employeeId: string;
+  doctorId: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
@@ -128,16 +129,6 @@ export type ModalProps = {
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
   showCloseButton?: boolean;
 };
-export interface WorkShift {
-  id: number;
-  name: string;
-  startTime: string;
-  endTime: string;
-  description: string;
-  shiftStatus: "Scheduled" | "Completed" | "Canceled";
-  attendanceStatus?: "checked-in" | "late" | "not-checked-in" | "checked-out";
-  actualCheckInTime?: string;
-}
 
 export type IconNames = keyof typeof Lucide.icons;
 
@@ -387,88 +378,51 @@ export interface BillingDetail extends Billing {
   serviceName: string;
 }
 
-export interface BackupInfo {
+export type DoctorScheduleStatus =
+  | "Canceled"
+  | "Completed"
+  | "Scheduled"
+  | "Opened";
+
+export type DoctorSchedule = Omit<
+  Schedule,
+  "specialization" | "slots" | "scheduleStatus"
+> & {
+  name: string;
+  description: string;
+  scheduleStatus: DoctorScheduleStatus;
+};
+
+export interface MedicalVisitFormData {
+  appointmentId: number;
+  symptoms: string;
+  physicalExamination: string;
+  diagnosis: string;
+  treatment: string;
+  note: string;
+  imageResult?: string;
+}
+
+export interface MedicalVisitResult extends MedicalVisitFormData {
   id: number;
-  backupType: "FULL" | "DIFF" | "LOG";
-  actionBy: "manual" | "auto";
-  backupDate: string;
-  fileName: string;
-  status: "SUCCESS" | "FAILED";
-  createdDate: string;
 }
 
-export interface BackupFileMetadata {
-  databaseName: string;
-  backupType: number; // 1=FULL, 5=DIFF, 2=LOG
-  backupTypeText: "FULL" | "DIFF" | "LOG" | "UNKNOWN";
-  fileName: string;
-  firstLSN: number;
-  lastLSN: number;
-  databaseBackupLSN: number;
-  differentialBaseLSN: number | null;
-  checkpointLSN: number;
-  backupStartDate: string;
-  backupFinishDate: string;
-  backupSize: number;
-  isCompressed: boolean;
-  position: number;
-  isCopyOnly: boolean;
-  recoveryModel: string;
-  softwareVersionMajor: string;
-  orderInChain: number;
-  validationErrors: string[];
-  isValid: boolean;
+export interface PrescriptionDetail {
+  medicationName: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  route: string;
+  quantity: string;
 }
 
-export interface BackupChainValidation {
-  isValid: boolean;
-  hasFullBackup: boolean;
-  fullBackupFileName: string | null;
-  hasDifferentialBackup: boolean;
-  differentialBackupFileName: string | null;
-  differentialMatchesBase: boolean;
-  logBackupCount: number;
-  logChainContinuous: boolean;
-  errors: string[];
-  warnings: string[];
-  recommendedRestoreOrder: string[];
+export interface PrescriptionFormData {
+  medicalVisitId: number;
+  instructions: string;
+  note: string;
+  prescriptionDetails: PrescriptionDetail[];
 }
 
-export interface InspectBackupRequest {
-  backupPath: string;
-  fileNames: string[];
-}
-
-export interface InspectBackupResponse {
-  metadata: BackupFileMetadata[];
-  validation: BackupChainValidation;
-}
-
-export interface RestoreDatabaseRequest {
-  databaseName: string;
-  backupPath: string;
-  backupFiles: string[];
-  stopAt: string | null;
-  withRecovery: boolean;
-  forceReplace: boolean;
-}
-
-export interface RestoreStep {
-  stepNumber: number;
-  backupType: string;
-  fileName: string;
-  startTime: string;
-  endTime: string;
-  status: "SUCCESS" | "FAILED";
-  message: string;
-}
-
-export interface RestoreDatabaseResponse {
-  databaseName: string;
-  startTime: string;
-  endTime: string;
-  durationInSeconds: number;
-  steps: RestoreStep[];
-  status: "SUCCESS" | "FAILED" | "PARTIAL";
-  message: string;
+export interface PrescriptionResult extends PrescriptionFormData {
+  id: number;
 }

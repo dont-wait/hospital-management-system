@@ -16,12 +16,14 @@ export class AppointmentService {
 
   public static async getAppointment(
     patientId: string,
+    date: string,
     page: number,
   ): Promise<ApiResponse<Appointment[]>> {
     const response = await api.get("/appointments", {
       params: {
         page,
         patientId,
+        date
       },
     });
     return response.data;

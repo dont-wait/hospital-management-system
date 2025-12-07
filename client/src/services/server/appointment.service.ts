@@ -28,21 +28,29 @@ export class AppointmentService {
   }
 
   public static async getAppointments(
-    patientId: string,
     token?: string,
+    patientId?: string,
+    date?: string,
+    doctorId?: string,
     page: number = 1,
     size: number = 3,
-  ): Promise<ApiResponseWithPaging<Appointment[]>> {
+  ): Promise<ApiResponseWithPaging<Appointment[]> | null> {
     const apiInstance = getApiInstance();
     const config = getConfig(token);
-    const response = await apiInstance.get("/appointments", {
-      ...config,
-      params: {
-        patientId,
-        page,
-        size,
-      },
-    });
-    return response.data;
+    try {
+      const response = await apiInstance.get("/appointments", {
+        ...config,
+        params: {
+          patientId,
+          doctorId,
+          page,
+          size,
+          date,
+        },
+      });
+      return response.data;
+    } catch {
+      return null;
+    }
   }
 }

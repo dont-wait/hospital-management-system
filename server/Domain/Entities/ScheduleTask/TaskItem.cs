@@ -24,7 +24,7 @@ public class TaskItem : BaseEntity
     public string Description { get; set; } = string.Empty; 
 
     [Required]
-    public string TaskStatus { get; set; } = TaskStatusEnum.Opened.ToString();
+    public string TaskStatus { get; set; } = TaskStatusEnum.Opened.ToString(); 
     
     public ICollection<TaskRegistration> TaskRegistrations { get; set; } = new List<TaskRegistration>();
     

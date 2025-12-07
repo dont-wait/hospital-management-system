@@ -4,13 +4,14 @@
 .register-card,
 .fp-card {
   @apply w-full;
+  box-shadow: 0 0 10px var(--mauve);
 }
 
 .login-page,
 .register-page,
 .fp-page {
   min-height: calc(100vh - 64.8px);
-  @apply bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4;
+  @apply bg-white flex items-center justify-center px-4;
 }
 
 .login-card-sekeleton,
@@ -28,7 +29,7 @@
 .send-otp-form,
 .verify-otp-form,
 .reset-password-form {
-  @apply space-y-4;
+  @apply space-y-4 mb-2;
 }
 
 .login-header,
@@ -41,18 +42,22 @@
 }
 
 .fp-header-icon-wrap {
-  @apply w-12 h-12 flex justify-center items-center bg-blue-100 rounded-full text-blue-600;
+  @apply w-full h-full flex justify-center items-center text-mauve;
 }
 
 .login-header-icon-wrap,
 .register-header-icon-wrap,
 .fp-header-wrap {
-  @apply flex items-center justify-center mb-4;
+  @apply bg-martinique w-12 h-12 rounded-full flex items-center justify-center mx-auto;
 }
 
 .login-header-icon,
 .register-header-icon {
-  @apply h-10 w-10 text-blue-600;
+  @apply h-8 w-8 text-mauve;
+}
+
+.icon-skeleton {
+  @apply w-8 h-8 flex items-center justify-center;
 }
 
 .login-title,
@@ -62,19 +67,19 @@
 
 .login-desc,
 .register-desc {
-  @apply text-center;
+  @apply text-center text-east-bay;
 }
 
 .footer-link-section {
-  @apply text-center;
+  @apply text-center font-bold;
 }
 
 .footer-link-content {
-  @apply flex justify-center items-center gap-1 text-sm text-gray-600;
+  @apply flex justify-center items-center gap-1 text-sm text-east-bay;
 }
 
 .footer-link {
-  @apply font-medium text-blue-600 hover:text-blue-500;
+  @apply font-medium text-truev hover:text-martinique transition duration-100;
 }
 
 .show-password-btn {
@@ -83,11 +88,11 @@
 }
 
 .forgot-password-btn {
-  @apply w-full block text-right text-blue-600;
+  @apply w-full block text-right text-truev;
 }
 
 .submit-btn {
-  @apply bg-east-bay text-white w-full h-10;
+  @apply bg-martinique text-mauve w-full h-10;
 }
 
 .form-group {

@@ -112,6 +112,8 @@ public class TaskItemRepository : ITaskItemRepository
     public async Task<List<TaskItem>> GetTaskItemByEmployeeId(Guid employeeId)
     {
         var taskItem = await _context.tasks
+            .Include(t => t.Department)
+            .ThenInclude(t => t.Rooms)
             .Where(t => t.TaskRegistrations.Any(tr => tr.EmployeeId == employeeId) 
                         && t.DeletedAt == null)
             .Select(t => new TaskItem

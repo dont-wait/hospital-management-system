@@ -49,6 +49,7 @@ function PatientListGroup() {
               </div>
             </div>
           </Link>
+
           <Link
             href={`/patient/billing/${patientId}`}
             className={patientStyles["patient-link"]}
@@ -75,34 +76,81 @@ function PatientListGroup() {
             </div>
           </Link>
         </div>
-        <Link href="/forgot-password" className={patientStyles["patient-link"]}>
-          <div
-            className={cn(
-              buttonStyles["button"],
-              buttonStyles["button-outline"],
-              patientStyles["patient-helper-btn"],
-            )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Link
+            href="/forgot-password"
+            className={patientStyles["patient-link"]}
           >
-            <div className={patientStyles["patient-helper-icon"]}>
-              <Icon name="FileText" />
+            <div
+              className={cn(
+                buttonStyles["button"],
+                buttonStyles["button-outline"],
+                patientStyles["patient-helper-btn"],
+              )}
+            >
+              <div className={patientStyles["patient-helper-icon"]}>
+                <Icon name="FileText" />
+              </div>
+              Đổi mật khẩu
             </div>
-            Đổi mật khẩu
-          </div>
-        </Link>
-        <Link href="/patient/update" className={patientStyles["patient-link"]}>
-          <div
-            className={cn(
-              buttonStyles["button"],
-              buttonStyles["button-outline"],
-              patientStyles["patient-helper-btn"],
-            )}
+          </Link>
+          <Link
+            href="/patient/prescription"
+            className={patientStyles["patient-link"]}
           >
-            <div className={patientStyles["patient-helper-icon"]}>
-              <Icon name="Pencil" />
+            <div
+              className={cn(
+                buttonStyles["button"],
+                buttonStyles["button-outline"],
+                patientStyles["patient-helper-btn"],
+              )}
+            >
+              <div className={patientStyles["patient-helper-icon"]}>
+                <Icon name="PillBottle" />
+              </div>
+              Đơn thuốc
             </div>
-            Cập nhật hồ sơ
-          </div>
-        </Link>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Link
+            href="/patient/patient-diagnosis-list"
+            className={patientStyles["patient-link"]}
+          >
+            <div
+              className={cn(
+                buttonStyles["button"],
+                buttonStyles["button-outline"],
+                patientStyles["patient-helper-btn"],
+              )}
+            >
+              <div className={patientStyles["patient-helper-icon"]}>
+                <Icon name="Book" />
+              </div>
+              Hồ sơ chuẩn đoán
+            </div>
+          </Link>
+
+          <Link
+            href="/patient/update"
+            className={patientStyles["patient-link"]}
+          >
+            <div
+              className={cn(
+                buttonStyles["button"],
+                buttonStyles["button-outline"],
+                patientStyles["patient-helper-btn"],
+              )}
+            >
+              <div className={patientStyles["patient-helper-icon"]}>
+                <Icon name="Pencil" />
+              </div>
+              Cập nhật hồ sơ
+            </div>
+          </Link>
+        </div>
       </div>
     </section>
   );

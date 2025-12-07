@@ -4,5 +4,6 @@ public enum TaskStatusEnum
 {
     Opened,
     Closed,
-    Canceled
+    Canceled,
+    Completed
 }

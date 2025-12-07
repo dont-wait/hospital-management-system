@@ -26,6 +26,9 @@
   <ItemGroup>
     <None Include="Persistence/SeedData/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Persistence\Function\" />
+  </ItemGroup>
 
 
   <PropertyGroup>

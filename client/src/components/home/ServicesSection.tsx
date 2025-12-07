@@ -1,43 +1,32 @@
 "use client";
 
-import { motion } from "motion/react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/shared/Card";
+import ServiceCard from "@/components/shared/ServiceCard";
 import { services } from "@/config";
-import styles from "@/styles/home.module.css";
+import ServiceImage from "@/public/images/service-img.svg";
 
 export default function ServicesSection() {
   return (
-    <motion.section
-      initial={{ opacity: 0.5 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1, ease: "easeOut" }}
-      className={styles["service-section"]}
-    >
-      <div className={styles["service-content"]}>
-        <h2 className={styles["service-header"]}>Dịch vụ của chúng tôi</h2>
+    <div className="px-6 lg:px-14 py-6">
+      <h2 className="font-bold text-center text-3xl text-martinique mb-6">
+        Dịch vụ của chúng tôi
+      </h2>
 
-        <div className={styles["service-body"]}>
-          {services.map((service) => (
-            <Card key={service.vi} className={styles["service-card"]}>
-              <CardHeader>
-                <CardTitle>{service.vi}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Chăm sóc và điều trị chuyên khoa {service.vi.toLowerCase()}{" "}
-                  với thiết bị hiện đại nhất.
-                </CardDescription>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {services.map((service, idx) => (
+          <ServiceCard
+            key={idx}
+            serviceTitle={service.title}
+            serviceDescription={service.description}
+          />
+        ))}
       </div>
-    </motion.section>
+
+      <div
+        className="mt-4 grid grid-cols-1 bg-no-repeat bg-center bg-contain mx-auto h-[400px] md:h-[500px] lg:h-[700px]"
+        style={{
+          backgroundImage: `url(${ServiceImage.src})`,
+        }}
+      ></div>
+    </div>
   );
 }

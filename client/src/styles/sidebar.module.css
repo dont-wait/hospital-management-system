@@ -1,7 +1,7 @@
 @reference "./globals.css";
 
 .overlay {
-  @apply fixed inset-0 bg-black/50 z-40 transition-opacity lg:hidden;
+  @apply w-full h-full inset-0 bg-black/50 z-40 transition-opacity lg:hidden;
 }
 
 .sidebar-open-right {

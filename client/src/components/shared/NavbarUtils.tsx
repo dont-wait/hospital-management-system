@@ -12,12 +12,18 @@ import styles from "@/styles/navbar.module.css";
 export function NavbarUtils() {
   const { user, isAuthenticated } = useUserAuthContext();
   const defaultAvatarUrl = user?.avatarUrl ?? defautlAvatar;
-  const { openSidebar, setContent, setTitle, setColorBackground } =
-    useSidebar();
+  const {
+    openSidebar,
+    setContent,
+    setTitle,
+    setColorBackground,
+    setShowOverlay,
+  } = useSidebar();
 
   const handleOpenDetails = () => {
+    setShowOverlay(true);
     setTitle("Cài đặt");
-    setColorBackground("#6a7282");
+    setColorBackground("#4f518c");
     setContent(<PatientSidebar />);
     openSidebar();
   };

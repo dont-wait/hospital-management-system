@@ -59,7 +59,7 @@ export default function CreateShiftFormContainer({ hod }: CreateShiftFormContain
         };
 
         fetchData();
-    }, [hod.departmentId]);
+    }, [hod?.departmentId]);
 
     const handleDoctorToggle = useCallback((doctorId: string) => {
         setSelectedDoctors(prev => {

@@ -8,7 +8,8 @@ public class PrescriptionDetail : BaseEntity
     [Required(ErrorMessage = "Đơn thuốc (PrescriptionId) là bắt buộc.")]
     public long PrescriptionId { get; set; }
     public virtual Prescription Prescription { get; set; } = null!;
-    
+    [Required(ErrorMessage = "Tên thuốc (PrescriptionId) là bắt buộc.")]
+    public string MedicationName { get; set; } = string.Empty;
     [Required(ErrorMessage = "Liều dùng (Dosage) không được để trống.")]
     public long Dosage { get; set; }
 

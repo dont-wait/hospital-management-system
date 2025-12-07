@@ -151,6 +151,15 @@ a {
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  body::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  body::-webkit-scrollbar-thumb {
+    background: var(--east-bay);
+    border-radius: 2px;
+  }
 }
 
 button {
