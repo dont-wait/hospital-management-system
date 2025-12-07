@@ -73,6 +73,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await DataSeeder.SeedDepartmentsAndRoomAsync(db);
     await DataSeeder.SeedAsync(db);
+    await DataSeeder.SeedSysAdminAsync(db);
     await DataSeeder.SeedAdminAsync(db);
     await DataSeeder.SeedDoctorsAsync(db);
     await DataSeeder.SeedServicesAsync(db);
