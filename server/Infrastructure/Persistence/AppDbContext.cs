@@ -33,7 +33,104 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        
+        modelBuilder.Entity<Department>()
+            .HasIndex(d => d.Name)
+            .IsUnique();
+        
+        
+        modelBuilder.Entity<Room>()
+            .HasCheckConstraint("CK_Room_Capacity", "[Capacity] >= 0");
+        
+        
+        modelBuilder.Entity<TaskItem>(entity =>
+        {
+            entity.Property(e => e.TaskStatus)
+                .IsRequired();
 
+            entity.HasCheckConstraint(
+                "CK_Task_Status",
+                "[TaskStatus] IN ('Opened', 'Closed', 'Cancelled', 'Completed')"
+            );
+            
+        });
+        
+        modelBuilder.Entity<Appointment>()
+            .HasCheckConstraint(
+                "CK_Appointment_Status",
+                "[AppointmentStatus] IN ('Pending','Unpaid','Paid','Confirmed','CheckIn','Completed','Cancelled','NoShow')"
+            );
+
+        
+        modelBuilder.Entity<SlotTime>(entity =>
+        {
+            entity.Property(e => e.SlotStatus)
+                .IsRequired();
+            
+
+            entity.HasCheckConstraint("CK_Slot_Current",
+                "[CurrentAppointments] >= 0");
+
+            entity.HasCheckConstraint("CK_Slot_Max",
+                "[MaxAppointments] >= 0");
+
+            entity.HasCheckConstraint("CK_Slot_Range",
+                "[CurrentAppointments] <= [MaxAppointments]");
+
+            entity.HasCheckConstraint(
+                "CK_Slot_Status",
+                "[SlotStatus] IN ('Opened', 'Closed', 'Full')"
+            );
+        });
+        
+        modelBuilder.Entity<Patient>()
+            .HasIndex(p => p.Email)
+            .IsUnique();
+        modelBuilder.Entity<Patient>()
+            .HasIndex(p => p.PhoneNumber)
+            .IsUnique();
+
+        
+        modelBuilder.Entity<Patient>()
+            .HasCheckConstraint(
+                "CK_Patient_Gender",
+                "[Gender] IN ('M','F','O')");
+        
+        modelBuilder.Entity<Employee>()
+            .HasIndex(e => e.Email)
+            .IsUnique(); 
+
+        modelBuilder.Entity<Employee>()
+            .HasIndex(e => e.PhoneNumber)
+            .IsUnique(); 
+
+        modelBuilder.Entity<Employee>()
+            .HasCheckConstraint("CK_Emp_Experience",
+                "[ExperienceYears] >= 0");
+        
+        modelBuilder.Entity<Billing>()
+            .HasCheckConstraint("CK_Billing_Discount", "[DiscountAmount] >= 0");
+
+        modelBuilder.Entity<Billing>()
+            .HasCheckConstraint("CK_Billing_PayAmount", "[PaymentAmount] >= 0");
+
+        modelBuilder.Entity<Billing>()
+            .HasCheckConstraint("CK_Billing_PaymentStatus",
+                "[PaymentMethod] IN ('PayAtCounter','EWallet')");
+        
+        modelBuilder.Entity<PrescriptionDetail>()
+            .HasCheckConstraint("CK_PD_Dosage", "[Dosage] >= 0");
+
+        modelBuilder.Entity<PrescriptionDetail>()
+            .HasCheckConstraint("CK_PD_Frequency", "[Frequency] >= 0");
+
+        modelBuilder.Entity<PrescriptionDetail>()
+            .HasCheckConstraint("CK_PD_Duration", "[Duration] >= 0");
+
+        modelBuilder.Entity<PrescriptionDetail>()
+            .HasCheckConstraint("CK_PD_Quantity", "[Quantity] >= 0");
+
+        
         modelBuilder.Entity<TaskRegistration>()
             .HasMany(tr => tr.SlotTimes)
             .WithOne(st => st.TaskRegistration)

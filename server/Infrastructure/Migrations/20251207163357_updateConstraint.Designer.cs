@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251207163357_updateConstraint")]
+    partial class updateConstraint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,14 +189,7 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("billings", t =>
-                        {
-                            t.HasCheckConstraint("CK_Billing_Discount", "[DiscountAmount] >= 0");
-
-                            t.HasCheckConstraint("CK_Billing_PayAmount", "[PaymentAmount] >= 0");
-
-                            t.HasCheckConstraint("CK_Billing_PaymentStatus", "[PaymentMethod] IN ('PayAtCounter','EWallet')");
-                        });
+                    b.ToTable("billings");
                 });
 
             modelBuilder.Entity("Department", b =>
@@ -461,18 +457,9 @@ namespace server.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("PhoneNumber")
-                        .IsUnique();
-
                     b.HasIndex("RoleId");
 
-                    b.ToTable("employees", t =>
-                        {
-                            t.HasCheckConstraint("CK_Emp_Experience", "[ExperienceYears] >= 0");
-                        });
+                    b.ToTable("employees");
                 });
 
             modelBuilder.Entity("MedicalVisit", b =>
@@ -569,7 +556,7 @@ namespace server.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -627,18 +614,9 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("PhoneNumber")
-                        .IsUnique();
-
                     b.HasIndex("RoleId");
 
-                    b.ToTable("patients", t =>
-                        {
-                            t.HasCheckConstraint("CK_Patient_Gender", "[Gender] IN ('M','F','O')");
-                        });
+                    b.ToTable("patients");
                 });
 
             modelBuilder.Entity("Permission", b =>
@@ -779,16 +757,7 @@ namespace server.Migrations
 
                     b.HasIndex("PrescriptionId");
 
-                    b.ToTable("prescription_details", t =>
-                        {
-                            t.HasCheckConstraint("CK_PD_Dosage", "[Dosage] >= 0");
-
-                            t.HasCheckConstraint("CK_PD_Duration", "[Duration] >= 0");
-
-                            t.HasCheckConstraint("CK_PD_Frequency", "[Frequency] >= 0");
-
-                            t.HasCheckConstraint("CK_PD_Quantity", "[Quantity] >= 0");
-                        });
+                    b.ToTable("prescription_details");
                 });
 
             modelBuilder.Entity("RolePermission", b =>
@@ -885,10 +854,7 @@ namespace server.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("rooms", t =>
-                        {
-                            t.HasCheckConstraint("CK_Room_Capacity", "[Capacity] >= 0");
-                        });
+                    b.ToTable("rooms");
                 });
 
             modelBuilder.Entity("Service", b =>
@@ -1002,12 +968,6 @@ namespace server.Migrations
 
                     b.ToTable("slot_times", t =>
                         {
-                            t.HasCheckConstraint("CK_Slot_Current", "[CurrentAppointments] >= 0");
-
-                            t.HasCheckConstraint("CK_Slot_Max", "[MaxAppointments] >= 0");
-
-                            t.HasCheckConstraint("CK_Slot_Range", "[CurrentAppointments] <= [MaxAppointments]");
-
                             t.HasCheckConstraint("CK_Slot_Status", "[SlotStatus] IN ('Opened', 'Closed', 'Full')");
                         });
                 });
