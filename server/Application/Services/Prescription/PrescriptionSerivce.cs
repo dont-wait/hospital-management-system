@@ -41,6 +41,8 @@ public class PrescriptionSerivce : IPrescriptionService
             }).ToList()
         };
 
+        medicalVisit!.Appointment!.AppointmentStatus = AppointmentStatusEnum.Completed.ToString();
+
         // Save to database
         var createdPrescription = await _prescriptionRepository.CreatePrescriptionAsync(prescription);
 
