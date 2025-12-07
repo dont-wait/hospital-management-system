@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { CheckCircle } from "lucide-react";
 import MedicalVisitForm from "@/components/employee/doctor/MedicalVisitForm";
 import PrescriptionForm from "@/components/employee/doctor/PrescriptionForm";
@@ -10,6 +11,7 @@ export default function DiagnosisPage() {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [medicalVisitData, setMedicalVisitData] =
     useState<MedicalVisitResult | null>(null);
+  const router = useRouter();
   const appointmentId: number = 1;
 
   const handleMedicalVisitSuccess = (data: MedicalVisitResult) => {
@@ -20,6 +22,7 @@ export default function DiagnosisPage() {
   const handlePrescriptionComplete = () => {
     setCurrentStep(1);
     setMedicalVisitData(null);
+    router.push("/doctor/dashboard");
   };
 
   return (
