@@ -6,6 +6,7 @@ using Application.Services.Account;
 using Application.Services.Admin;
 using WebApi.Services;
 using WebApi.Middleware;
+using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,9 @@ builder.Services.AddScoped<IMedicalVisitService, MedicalVisitService>();
 builder.Services.AddScoped<IMedicalVisitRepository, MedicalVisitRepository>();
 builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionSerivce>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IBackupRepository, BackupRepository>();
+builder.Services.AddScoped<IBackupService, BackupService>();
 
 builder.Services.AddScoped<IUserAccountMapper, UserAccountMapper>();
 builder.Services.AddScoped<IPatientMapper, PatientMapper>();
@@ -74,6 +78,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await DataSeeder.SeedDepartmentsAndRoomAsync(db);
     await DataSeeder.SeedAsync(db);
+    await DataSeeder.SeedSysAdminAsync(db);
     await DataSeeder.SeedAdminAsync(db);
     await DataSeeder.SeedDoctorsAsync(db);
     await DataSeeder.SeedServicesAsync(db);
@@ -100,6 +105,12 @@ else
 }
 
 app.UseMiddleware<CookieToHeaderMiddleware>();
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new HangfireAuthorizationFilter() },
+    DashboardTitle = "Hospital Management - Backup Jobs"
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

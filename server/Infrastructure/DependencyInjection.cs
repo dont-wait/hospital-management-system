@@ -9,6 +9,7 @@ using Infrastructure.Services.Redis;
 using Infrastructure.Services.Email;
 using Infrastructure.Services.SlotTime;
 using Infrastructure.Services.Excel;
+using Hangfire;
 
 namespace Infrastructure;
 
@@ -49,7 +50,7 @@ public static class DependencyInjection
         services.AddRedisService(configuration);
         services.AddSlotTimeService(configuration);
         services.AddExcelExporter();
-
+        
         if (configuration.GetValue<string>("EmailSettings:Provider") == "Smtp")
         {
             services.AddSmtpEmailProvider(configuration);
@@ -59,6 +60,12 @@ public static class DependencyInjection
             services.AddSendGridEmailProvider(configuration);
         }
 
+        services.AddHangfire(config =>
+        {
+            config.UseSqlServerStorage(configuration.GetConnectionString("SqlServerDb"));
+        });
+        services.AddHangfireServer();
+        
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IOTPService, SendOTPService>();
         services.AddScoped<IEmailTemplateService, SendEmailTemplateService>();

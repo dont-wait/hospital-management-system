@@ -234,6 +234,74 @@ public static class DataSeeder
         Console.WriteLine($"✅ Đã tạo tài khoản admin với CitizenID: {adminData.CitizenID}");
     }
 
+    public static async Task SeedSysAdminAsync(AppDbContext context)
+    {
+        // Kiểm tra xem đã có sysadmin chưa
+        if (await context.user_accounts.AnyAsync(u => u.CitizenID == "000000000002"))
+        {
+            Console.WriteLine("✅ SysAdmin đã tồn tại trong hệ thống");
+            return;
+        }
+
+        var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "sysadmins.json");
+        
+        if (!File.Exists(seedPath))
+        {
+            Console.WriteLine("❌ Không tìm thấy sysadmins.json");
+            return;
+        }
+
+        var json = File.ReadAllText(seedPath);
+        var sysAdminData = JsonSerializer.Deserialize<AdminSeedData>(json);
+
+        if (sysAdminData == null)
+        {
+            Console.WriteLine("❌ Không thể đọc dữ liệu sysadmin từ JSON");
+            return;
+        }
+
+        // 1. Tạo Employee
+        var employee = new Employee
+        {
+            Id = Guid.NewGuid(),
+            FirstName = sysAdminData.FirstName,
+            LastName = sysAdminData.LastName,
+            DateOfBirth = sysAdminData.DateOfBirth,
+            Gender = sysAdminData.Gender,
+            PhoneNumber = sysAdminData.PhoneNumber,
+            Email = sysAdminData.Email,
+            HireDate = DateTime.UtcNow,
+            CertificateNumber = sysAdminData.CertificateNumber,
+            RoleId = RoleEnum.sys.ToString().ToLower(),
+            ExperienceYears = 10,
+            DepartmentId = 10
+        };
+        context.employees.Add(employee);
+
+        // 2. Tạo Admin (SysAdmin cũng là Admin với full permissions)
+        var admin = new Admin
+        {
+            Id = Guid.NewGuid(),
+            EmployeeId = employee.Id
+        };
+        context.admins.Add(admin);
+
+        // 3. Tạo UserAccount
+        var userAccount = new UserAccount
+        {
+            Id = Guid.NewGuid(),
+            CitizenID = sysAdminData.CitizenID,
+            Password = HashPasswordUtil.HashPassword(sysAdminData.Password),
+            EmployeeId = employee.Id,
+            Is_Active = 1
+        };
+        context.user_accounts.Add(userAccount);
+        
+        await context.SaveChangesAsync();
+
+        Console.WriteLine($"✅ Đã tạo tài khoản SysAdmin với CitizenID: {sysAdminData.CitizenID}");
+    }
+
     private class AdminSeedData
     {
         public string CitizenID { get; set; } = string.Empty;
@@ -328,14 +396,21 @@ public static class DataSeeder
 
     public static async Task SeedAsync(AppDbContext context)
     {
-        if (!context.roles.Any())
-        {
-            var seedPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "roles.json");
-            var json = File.ReadAllText(seedPath);
-            var roles = JsonSerializer.Deserialize<List<Roles>>(json);
-            if (roles != null)
-                context.roles.AddRange(roles);
-        }
+        // if (!context.roles.Any())
+        //{
+            var seedPathRole = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "roles.json");
+            var jsonRole= File.ReadAllText(seedPathRole);
+            var roles = JsonSerializer.Deserialize<List<Roles>>(jsonRole);
+            if (roles != null) {
+                foreach (var role in roles)
+                {
+                    if (context.roles.Any(r => r.RoleId == role.RoleId))
+                        continue;
+                    else
+                        context.roles.Add(role);
+                }
+            }
+        //}
 
         if (!context.permissions.Any())
         {

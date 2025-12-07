@@ -19,6 +19,7 @@ export const RolesList = [
   "doctor",
   "patient",
   "hod",
+  "sys"
 ] as const;
 
 export type Roles = (typeof RolesList)[number];

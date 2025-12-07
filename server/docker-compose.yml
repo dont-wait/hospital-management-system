@@ -10,6 +10,7 @@ services:
       ACCEPT_EULA: "Y"
     volumes:
       - sql_data:/var/opt/mssql
+      - D:/Backups:/var/opt/mssql/backups
     networks:
       - backend
 
@@ -24,6 +25,7 @@ services:
 
 volumes:
   sql_data:
+  sql_backups:
 
 networks:
   backend:

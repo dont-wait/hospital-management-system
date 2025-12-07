@@ -53,6 +53,7 @@ public class AuthService : IAuthService
                     break;
 
                 case "admin":
+                case "sys":
                     employeeDto = new ResponseAdminDto
                     {
                         EmployeeId = user.Employee.Id,

@@ -2,5 +2,6 @@
     { "RoleId": "admin", "Description": "Quyền quản trị viên" },
     { "RoleId": "doctor", "Description": "Bác sĩ với quyền truy cập hồ sơ bệnh nhân" },
     { "RoleId": "patient", "Description": "Bệnh nhân với quyền truy cập hồ sơ y tế của chính mình" },
-    { "RoleId": "HOD", "Description": "Trưởng khoa với quyền quản lý các bác sĩ trong khoa" }
+    { "RoleId": "HOD", "Description": "Trưởng khoa với quyền quản lý các bác sĩ trong khoa" },
+    { "RoleId": "sys", "Description": "Quyền hệ thống với quyền truy cập toàn bộ hệ thống" }
 ]
