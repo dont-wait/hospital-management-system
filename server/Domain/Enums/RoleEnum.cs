@@ -7,5 +7,6 @@ public enum RoleEnum
     manager,
     nurse,
     pharmacist,
-    hod
+    hod,
+    sys
 }

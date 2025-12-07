@@ -91,3 +91,11 @@ export const HODSidebarItems = [
     icon: Pencil,
   },
 ];
+
+export const SysAdminSidebarItems = [
+  {
+    route: "/sys/backups",
+    title: "Quản Lý Sao Lưu",
+    icon: Users,
+  }
+];
