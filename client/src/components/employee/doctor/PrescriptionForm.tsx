@@ -220,7 +220,7 @@ export default function PrescriptionForm({
                       {...register(`prescriptionDetails.${index}.quantity`, {
                         required: "Vui lòng nhập số lượng",
                       })}
-                      className="w-full px-4 py-2 border borders-silver rounded-lg outline-none transition-all"
+                      className="w-full px-4 py-2 border border-silver rounded-lg outline-none transition-all"
                       placeholder="VD: 14 viên"
                     />
                     {errors.prescriptionDetails?.[index]?.quantity && (

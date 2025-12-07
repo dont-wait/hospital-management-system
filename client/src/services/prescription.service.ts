@@ -5,7 +5,7 @@ export class PrescriptionService {
   public static async addPrescription(
     data: PrescriptionFormData,
   ): Promise<void> {
-    api.post("/prescriptions", data);
+    await api.post("/prescriptions", data);
   }
 
   public static async getPatientPrescription(

@@ -22,7 +22,7 @@ export default function CTASection() {
       >
         Đăng ký ngay hôm nay
         <div className="w-4 h-4 flex items-center justify-center">
-          <Icon name="ArrowRight" className="w-4 h--4" />
+          <Icon name="ArrowRight" className="w-4 h-4" />
         </div>
       </button>
     </div>
