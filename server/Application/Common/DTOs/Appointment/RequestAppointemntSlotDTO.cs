@@ -9,6 +9,7 @@ public class RequestAppointemntSlotDTO
     
     [Required(ErrorMessage = "Mã chuyên khoa không được để trống")]
     public int DepartmentId { get; set; }
+    
     [Required(ErrorMessage = "Mã khung giờ không được để trống")]
     public long SlotTimeId { get; set; }
 }

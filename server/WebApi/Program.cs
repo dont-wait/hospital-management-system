@@ -55,6 +55,7 @@ builder.Services.AddScoped<ISlotTimeService, SlotTimeService>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IBillingService, BillingService>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IBackupRepository, BackupRepository>();
 builder.Services.AddScoped<IBackupService, BackupService>();
 
