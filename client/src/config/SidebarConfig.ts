@@ -49,16 +49,16 @@ export const AdminSidebarItems = [
     title: "Quản Lý Người Dùng",
     icon: Users,
   },
-  {
-    route: "/admin/dashboard/appointments",
-    title: "Lịch Hẹn",
-    icon: Calendar,
-  },
-  {
-    route: "/admin/dashboard/settings",
-    title: "Cài Đặt",
-    icon: Settings,
-  },
+  // {
+  //   route: "/admin/dashboard/appointments",
+  //   title: "Lịch Hẹn",
+  //   icon: Calendar,
+  // },
+  // {
+  //   route: "/admin/dashboard/settings",
+  //   title: "Cài Đặt",
+  //   icon: Settings,
+  // },
 ]
 
 export const DoctorSidebarItems = [

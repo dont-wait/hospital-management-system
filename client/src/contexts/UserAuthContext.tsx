@@ -37,7 +37,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
     await AuthService.logout();
     TokenUtils.clearStoredUser();
     setUser(null);
-    router.push("/");
+    router.refresh();
   }, [router]);
 
   const getNationality = useCallback(async () => {
