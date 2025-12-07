@@ -33,7 +33,8 @@ export type BookingAction =
     }
   | { type: "RESET_FILTER" }
   | { type: "ADD_RECORD" }
-  | { type: "REMOVE_RECORD"; departmentName: string };
+  | { type: "REMOVE_RECORD"; departmentName: string }
+  | { type: "RESET_STATE" };
 
 function reducer(state: BookingData, action: BookingAction): BookingData {
   switch (action.type) {
@@ -94,6 +95,8 @@ function reducer(state: BookingData, action: BookingAction): BookingData {
         date: "",
         doctor: null,
       };
+    case "RESET_STATE":
+      return defaultBookingData;
     default:
       return state;
   }
@@ -124,6 +127,8 @@ interface BookingContextValue {
     roomName: string,
     price: number,
   ) => void;
+  handleResetState: () => void;
+  setStep: (step: number) => void;
 }
 
 const BookingContext = createContext<BookingContextValue | null>(null);
@@ -252,6 +257,14 @@ export function BookingProvider({ children }: BookingProviderProps) {
     nextStep();
   };
 
+  const handleResetState = () => {
+    dispatch({ type: "RESET_STATE" });
+  };
+
+  const setStep = (step: number) => {
+    dispatch({ type: "SET_STEP", step });
+  };
+
   return (
     <BookingContext.Provider
       value={{
@@ -266,6 +279,8 @@ export function BookingProvider({ children }: BookingProviderProps) {
         changeToStepOne,
         changeToStepTwo,
         changeToStepThree,
+        handleResetState,
+        setStep,
       }}
     >
       {children}

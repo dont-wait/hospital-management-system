@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { MedicalVisitService } from "@/services";
 import { useUserAuthContext } from "@/contexts";
-import { MedicalVisitResult } from "@/types";
 import Icon from "@/components/shared/Icon";
+import { MedicalVisitResult } from "@/types";
 
 export default function PatientDiagnosisList() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
@@ -75,10 +75,12 @@ export default function PatientDiagnosisList() {
                   <span className="px-3 py-1 rounded-lg bg-truev/10 text-truev text-sm font-medium">
                     Lần khám #{item.appointmentId}
                   </span>
-                  <Icon
-                    name={isExpanded ? "ChevronUp" : "ChevronDown"}
-                    className="w-5 h-5 text-eastbay transition-transform"
-                  />
+                  <div className="w-5 h-5">
+                    <Icon
+                      name={isExpanded ? "ChevronUp" : "ChevronDown"}
+                      className="w-5 h-5 text-eastbay transition-transform"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -90,7 +92,9 @@ export default function PatientDiagnosisList() {
                   {/* Physical Examination */}
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Icon name="Activity" className="w-4 h-4 text-truev" />
+                      <div className="w-4 h-4">
+                        <Icon name="Activity" className="w-4 h-4 text-truev" />
+                      </div>
                       <span className="font-semibold text-martinique">
                         Khám lâm sàng
                       </span>
@@ -103,7 +107,9 @@ export default function PatientDiagnosisList() {
                   {/* Diagnosis */}
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Icon name="FileText" className="w-4 h-4 text-truev" />
+                      <div className="w-4 h-4">
+                        <Icon name="FileText" className="w-4 h-4 text-truev" />
+                      </div>
                       <span className="font-semibold text-martinique">
                         Chẩn đoán
                       </span>
@@ -116,7 +122,9 @@ export default function PatientDiagnosisList() {
                   {/* Treatment */}
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Icon name="Pill" className="w-4 h-4 text-truev" />
+                      <div className="w-4 h-4">
+                        <Icon name="Pill" className="w-4 h-4 text-truev" />
+                      </div>
                       <span className="font-semibold text-martinique">
                         Phương pháp điều trị
                       </span>
@@ -130,10 +138,12 @@ export default function PatientDiagnosisList() {
                   {item.note && (
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <Icon
-                          name="StickyNote"
-                          className="w-4 h-4 text-truev"
-                        />
+                        <div className="w-4 h-4">
+                          <Icon
+                            name="StickyNote"
+                            className="w-4 h-4 text-truev"
+                          />
+                        </div>
                         <span className="font-semibold text-martinique">
                           Ghi chú
                         </span>
