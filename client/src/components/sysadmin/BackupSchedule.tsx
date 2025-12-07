@@ -112,7 +112,6 @@ export default function BackupSchedule({
             className="p-4 bg-gray-50 rounded-lg border border-gray-200"
           >
             {editingId === schedule.id ? (
-              // Edit Mode
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="font-semibold text-martinique">{schedule.name}</h4>
@@ -208,7 +207,6 @@ export default function BackupSchedule({
                 </div>
               </div>
             ) : (
-              // View Mode
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">

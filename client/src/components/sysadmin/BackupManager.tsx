@@ -82,7 +82,6 @@ export default function BackupManager({
 
   return (
     <div className="space-y-6">
-      {/* Manual Backup Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           <Hand className="w-5 h-5 text-east-bay" />
@@ -99,9 +98,9 @@ export default function BackupManager({
               onChange={(e) => setSelectedType(e.target.value as "FULL" | "DIFF" | "LOG")}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="FULL">FULL - Sao lưu toàn bộ</option>
-              <option value="DIFF">DIFF - Sao lưu sai khác</option>
-              <option value="LOG">LOG - Sao lưu nhật ký</option>
+              <option value="FULL">FULL</option>
+              <option value="DIFF">DIFF</option>
+              <option value="LOG">LOG</option>
             </select>
           </div>
 
@@ -124,7 +123,6 @@ export default function BackupManager({
         </div>
       </div>
 
-      {/* Backup List */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-martinique">
