@@ -1,3 +1,4 @@
+using Application.Common.DTOs.Backup;
 using Application.Common.Utils;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
@@ -48,5 +49,51 @@ public class BackupController : ControllerBase
         }
         
         return new JsonResult(new ApiResponse<List<ResponseBackupInfo>>(400, result.Message, null)) { StatusCode = 400 };
+    }
+
+    [HttpPost("inspect")]
+    public async Task<IActionResult> InspectBackupFiles([FromBody] InspectBackupRequestDTO request)
+    {
+        var result = await _backupService.InspectBackupFilesAsync(request);
+        
+        if (result.IsSuccess)
+        {
+            return Ok(new
+            {
+                status = 200,
+                message = "Inspect backup files thành công",
+                data = result.Data
+            });
+        }
+        
+        return BadRequest(new
+        {
+            status = 400,
+            message = result.Message,
+            data = (InspectBackupResponseDTO?)null
+        });
+    }
+
+    [HttpPost("restore")]
+    public async Task<IActionResult> RestoreDatabase([FromBody] RestoreDatabaseRequestDTO request)
+    {
+        var result = await _backupService.RestoreDatabaseAsync(request);
+        
+        if (result.IsSuccess)
+        {
+            return Ok(new
+            {
+                status = 200,
+                message = "Restore database thành công",
+                data = result.Data
+            });
+        }
+        
+        return BadRequest(new
+        {
+            status = 400,
+            message = result.Message,
+            data = (RestoreDatabaseResponseDTO?)null
+        });
     }
 }
