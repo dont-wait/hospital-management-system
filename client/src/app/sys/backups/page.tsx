@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminContentHeader from "@/components/admin/AdminContentHeader";
 import BackupManager from "@/components/sysadmin/BackupManager";
 import BackupSchedule from "@/components/sysadmin/BackupSchedule";
@@ -8,9 +8,23 @@ import RecentBackups from "@/components/sysadmin/RecentBackups";
 import styles from "@/styles/admin.module.css";
 import { useToast } from "@/contexts";
 import { BackupService } from "@/services/backup.service";
+import { BackupInfo } from "@/types";
 
 export default function BackupsPage() {
   const { showToast } = useToast();
+  const [backups, setBackups] = useState<BackupInfo[]>([]);
+
+  const fetchBackups = async () => {
+    try {
+      const data = await BackupService.getHistoryBackup();
+      setBackups(data);
+    } catch {
+      showToast(
+        "Có lỗi xảy ra khi tải danh sách backup",
+        "error",
+      );
+    }
+  };
 
   const handleCreateBackup = async (type: "FULL" | "DIFF" | "LOG") => {
     try {
@@ -19,7 +33,13 @@ export default function BackupsPage() {
         "success",
       );
       
-      await BackupService.createBackup(type);  
+      await BackupService.createBackup(type);    
+      await fetchBackups();
+      
+      showToast(
+        `Tạo ${type} backup thành công!`,
+        "success",
+      );
     } catch (error) {
       showToast(
         "Có lỗi xảy ra khi tạo backup",
@@ -27,6 +47,10 @@ export default function BackupsPage() {
       );
     }
   };
+
+  useEffect(() => {
+    fetchBackups();
+  }, []);
 
   const handleDeleteBackup = async (id: string) => {
     try {
@@ -80,7 +104,6 @@ export default function BackupsPage() {
         description="Sao lưu và quản lý dữ liệu hệ thống"
       />
 
-      {/* Backup Manager */}
       <div className="mb-6">
         <BackupManager
           onCreateBackup={handleCreateBackup}
@@ -88,12 +111,11 @@ export default function BackupsPage() {
         />
       </div>
 
-      {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Recent Backups */}
-        <RecentBackups />
+        <RecentBackups
+          backups={backups}
+        />
 
-        {/* Backup Schedule */}
         <BackupSchedule
           onToggleSchedule={handleToggleSchedule}
           onEditSchedule={handleEditSchedule}

@@ -385,3 +385,13 @@ export interface BillingDetail extends Billing {
   createdAt: string;
   serviceName: string;
 }
+
+export interface BackupInfo {
+  id: number;
+  backupType: "FULL" | "DIFF" | "LOG";
+  actionBy: "manual" | "auto";
+  backupDate: string;
+  fileName: string;
+  status: "SUCCESS" | "FAILED";
+  createdDate: string;
+}

@@ -12,4 +12,12 @@ export class BackupService {
 
     return response.data;
   }
+
+  public static async getHistoryBackup() {
+    const api = getApiInstance();
+    const config = getConfig();
+    const response = await api.get("/backup/history", config);
+
+    return response.data.data;
+  }
 }
