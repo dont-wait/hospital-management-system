@@ -7,6 +7,8 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: "standalone", // Enable standalone output for Docker
+  
   compiler: {
     removeConsole:
       process.env.NODE_ENV === "production"
