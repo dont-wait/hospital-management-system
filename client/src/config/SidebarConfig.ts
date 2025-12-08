@@ -49,6 +49,11 @@ export const AdminSidebarItems = [
     title: "Quản Lý Người Dùng",
     icon: Users,
   },
+  {
+    route: "/admin/dashboard/revenue",
+    title: "Doanh Thu",
+    icon: Pencil,
+  }
   // {
   //   route: "/admin/dashboard/appointments",
   //   title: "Lịch Hẹn",
