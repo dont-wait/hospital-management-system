@@ -1,4 +1,4 @@
-use Hospital
+use HSM_DB
 go
 
 -- Hàm tính giá dịch vụ

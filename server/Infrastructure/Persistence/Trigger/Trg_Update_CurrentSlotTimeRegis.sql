@@ -19,3 +19,7 @@ SET CurrentAppointments = st.CurrentAppointments + 1
     INNER JOIN inserted i ON st.Id = i.Id
 WHERE i.DeletedAt IS NULL;
 END;
+
+DISABLE TRIGGER Trg_Update_CurrentSlotTimeRegis ON slot_times;
+
+
