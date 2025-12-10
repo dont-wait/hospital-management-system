@@ -107,7 +107,7 @@ public class AppointmentService : IAppointmentService
             {
                 BillingStatus = BillingStatusEnum.UnPaid.ToString(),
                 DiscountAmount = 0,
-                PaymentMethod = PaymentMethodEnum.EWallet.ToString(),
+                PaymentMethod = PaymentMethodEnum..ToString(),
                 PaymentAmount = 0,
             };
 
