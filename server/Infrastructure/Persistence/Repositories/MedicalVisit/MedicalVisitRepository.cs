@@ -14,6 +14,11 @@ public class MedicalVisitRepository : IMedicalVisitRepository
         await  _context.SaveChangesAsync();
         return medicalVisit;
     }
+    
+    public async Task<bool> IsExistingMedicalVisitByAppointmentIdAsync(long appointmentId)
+    {
+        return await _context.medical_visits.AnyAsync(mv => mv.AppointmentId == appointmentId);
+    }
     public async Task<MedicalVisit?> GetMedicalVisitByIdAsync(long medicalVisitId)
     {
         MedicalVisit? medicalVisit = await _context.medical_visits
