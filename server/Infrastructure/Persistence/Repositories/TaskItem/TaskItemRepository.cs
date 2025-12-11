@@ -113,7 +113,7 @@ public class TaskItemRepository : ITaskItemRepository
     {
         var taskItem = await _context.tasks
             .Include(t => t.Department)
-            .ThenInclude(t => t.Rooms)
+            .ThenInclude(t => t!.Rooms)
             .Where(t => t.TaskRegistrations.Any(tr => tr.EmployeeId == employeeId) 
                         && t.DeletedAt == null)
             .Select(t => new TaskItem

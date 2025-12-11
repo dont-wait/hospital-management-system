@@ -18,6 +18,13 @@ public class MedicalVisitService : IMedicalVisitService
             return ServiceResult<ResponseMedicalVisitDTO>.Fail("Không tìm thấy thông tin cuộc hẹn");
         }
         
+        // Kiểm tra xem appointment đã có medical visit chưa
+        bool isExisting = await _medicalVisitRepository.IsExistingMedicalVisitByAppointmentIdAsync(request.AppointmentId);
+        if (isExisting)
+        {
+            return ServiceResult<ResponseMedicalVisitDTO>.Fail("Cuộc hẹn này đã có chuẩn đoán");
+        }
+        
         MedicalVisit medicalVisit = new MedicalVisit
         {
             Symptoms = request.Symptoms,

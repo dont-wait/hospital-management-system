@@ -29,7 +29,10 @@ public class AppointmentRepository : IAppointmentRepository
             .Include(p => p.Patient)
             .Include(d => d.Doctor)
             .ThenInclude(e => e!.Employee)
-            .Where(a => a.DeletedAt == null && a.AppointmentStatus == AppointmentStatusEnum.Unpaid.ToString() || a.AppointmentStatus == AppointmentStatusEnum.Pending.ToString())
+            .Where(a => a.DeletedAt == null && 
+                       (a.AppointmentStatus == AppointmentStatusEnum.Unpaid.ToString() || 
+                        a.AppointmentStatus == AppointmentStatusEnum.Pending.ToString()) &&
+                       !_context.medical_visits.Any(mv => mv.AppointmentId == a.Id))
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(status))

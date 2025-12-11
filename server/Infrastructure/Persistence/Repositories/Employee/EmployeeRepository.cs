@@ -57,9 +57,9 @@ public class EmployeeRepository : IEmployeeRepository
         {
             var query = _context.user_accounts
                 .Where(ua => ua.Employee != null 
-                             && ua.DeletedAt == null 
-                             && ua.Employee.DeletedAt == null
-                             && ua.Employee.DepartmentId == departmentId.Value)
+                            && ua.DeletedAt == null 
+                            && ua.Employee.DeletedAt == null
+                            && ua.Employee.DepartmentId == departmentId.Value)
                 .Include(ua => ua.Employee)
                     .ThenInclude(d => d!.Department)
                 .AsQueryable();
@@ -68,9 +68,9 @@ public class EmployeeRepository : IEmployeeRepository
             {
                 query = GetEmployeeQueryByRoleId(roleId)
                     .Where(ua => ua.Employee != null 
-                                 && ua.DeletedAt == null 
-                                 && ua.Employee.DeletedAt == null
-                                 && ua.Employee.DepartmentId == departmentId.Value);
+                                && ua.DeletedAt == null 
+                                && ua.Employee.DeletedAt == null
+                                && ua.Employee.DepartmentId == departmentId.Value);
             }
 
             return await query

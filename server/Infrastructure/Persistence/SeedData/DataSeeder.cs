@@ -163,10 +163,10 @@ public static class DataSeeder
                 // Cập nhật các phòng nếu phòng ban đã tồn tại
                 foreach (var room in department.Rooms)
                 {
-                    if (!existingDepartment.Rooms.Any(r => r.Name == room.Name))
+                    if (!existingDepartment.Rooms.Any(r => r!.Name == room!.Name))
                     {
                         existingDepartment.Rooms.Add(room);
-                        Console.WriteLine($"✅ Đã thêm phòng: {room.Name} vào phòng ban: {existingDepartment.Name}");
+                        Console.WriteLine($"✅ Đã thêm phòng: {room!.Name} vào phòng ban: {existingDepartment.Name}");
                     }
                 }
             }
