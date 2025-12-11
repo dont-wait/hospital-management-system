@@ -66,12 +66,15 @@ const attachInterceptors = (
     ) => {
       if (error.response) {
         const { status, data } = error.response;
+        const isLogoutRequest = error.config?.url?.includes('/logout');
+        
         switch (status) {
           case 400:
             if (options?.withToast) handleValidationErrors(data);
             break;
           case 401:
-            if (options?.withToast)
+            // Không hiển thị toast nếu đang logout
+            if (options?.withToast && !isLogoutRequest)
               showToast("Phiên đăng nhập hết hạn", "error");
             break;
           case 500:
