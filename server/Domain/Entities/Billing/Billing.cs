@@ -5,6 +5,6 @@
     public double DiscountAmount { get; set; }
     public double PaymentAmount { get; set; }
     public string PaymentMethod { get; set; } = string.Empty;
-    public string BillingStatus { get; set; } = BillingStatusEnum.UnPaid.ToString();
+    public string BillingStatus { get; set; } = BillingStatusEnum.Unpaid.ToString();
     
 }

@@ -170,7 +170,7 @@ export default function BillingDetail() {
                       : "bg-amber-400/20 text-amber-100 border border-amber-300/30"
                   }`}
                 >
-                  {billingDetail.billingStatus === "UnPaid"
+                  {billingDetail.billingStatus === "Unpaid"
                     ? "Chưa thanh toán"
                     : "Đã thanh toán"}
                 </span>

@@ -1,6 +1,6 @@
 ﻿public enum BillingStatusEnum
 {
-    UnPaid,
+    Unpaid,
     Paid,
     Pending,
     Failed

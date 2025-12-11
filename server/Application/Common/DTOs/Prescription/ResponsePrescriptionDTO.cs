@@ -4,7 +4,7 @@
 
     public string Instructions { get; set; } = string.Empty;
 
-    public string Note { get; set; } = string.Empty;
+    public string? Note { get; set; } = string.Empty;
 
     public long MedicareVisitId { get; set; }
 

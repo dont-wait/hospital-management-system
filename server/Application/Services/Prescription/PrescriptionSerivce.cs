@@ -51,8 +51,8 @@ public class PrescriptionSerivce : IPrescriptionService
         {
             Id = createdPrescription.Id,
             Instructions = createdPrescription.Instructions,
-            Note = createdPrescription.Note,
-            MedicareVisitId = createdPrescription.MedicalVisit.Id,
+            Note = createdPrescription?.Note,
+            MedicareVisitId = createdPrescription!.MedicalVisit.Id,
             PrescriptionDetails = createdPrescription.PrescriptionDetails.Select(d => new ResponsePrescriptionDetailDTO
             {
                 Id = d.Id,

@@ -105,10 +105,10 @@ public class AppointmentService : IAppointmentService
             // Tạo Billing tạm thời với giá 0, sẽ được cập nhật sau khi có Appointment
             Billing newBilling = new Billing()
             {
-                BillingStatus = BillingStatusEnum.UnPaid.ToString(),
+                BillingStatus = BillingStatusEnum.Unpaid.ToString(),
                 DiscountAmount = 0,
                 PaymentMethod = PaymentMethodEnum.PayAtCounter.ToString(),
-                PaymentAmount = 0,
+                PaymentAmount = service.SelfPrice,
             };
 
             await _billingRepository.CreateBillingAsync(newBilling);
@@ -130,7 +130,7 @@ public class AppointmentService : IAppointmentService
             await _appointmentRepository.CreateAppointmentAsync(newAppointment);
 
             // Gọi Stored Procedure để tính giá và cập nhật Billing
-            var result = await _serviceRepository.UpdateBillingAmountAsync(newAppointment.Id);
+            //var result = await _serviceRepository.UpdateBillingAmountAsync(newAppointment.Id);
 
             slotTime.CurrentAppointments += 1;
             if (slotTime.CurrentAppointments >= slotTime.MaxAppointments)
