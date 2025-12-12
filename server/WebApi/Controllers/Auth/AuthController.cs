@@ -149,7 +149,8 @@ public class AuthController : ControllerBase
                     HttpOnly = true,
                     Expires = DateTime.UtcNow.AddDays(7),
                     SameSite = SameSiteMode.None,
-                    Secure = true
+                    Secure = true,
+                    Domain = "hospital-management-system-mu-six.vercel.app"
                 }; 
 
                 _httpContextAccessor.HttpContext?.Response.Cookies.Append("resetToken", result.Data.ResetToken!, cookieOptions);

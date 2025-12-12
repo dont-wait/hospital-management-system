@@ -16,11 +16,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", policy =>
     {
         policy
-            .WithOrigins("http://localhost:3000")
-            .SetIsOriginAllowed(_ => true)
-            .AllowCredentials()
+            .SetIsOriginAllowed(origin =>
+                origin == "http://localhost:3000" ||
+                origin.EndsWith(".vercel.app"))
+            .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowCredentials();
     });
 });
 
