@@ -16,9 +16,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", policy =>
     {
         policy
-            .SetIsOriginAllowed(origin =>
-                origin == "http://localhost:3000" ||
-                origin.EndsWith(".vercel.app"))
+            .WithOrigins(
+                "http://localhost:3000",
+                "https://hospital-management-system-mu-six.vercel.app"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -100,6 +101,7 @@ using (var scope = app.Services.CreateScope())
 
 }
 
+app.UseMiddleware<CookieToHeaderMiddleware>();
 app.UseCors("CorsPolicy");
 if (app.Environment.IsDevelopment())
 {
@@ -119,7 +121,6 @@ else
     app.UseHsts();
 }
 
-app.UseMiddleware<CookieToHeaderMiddleware>();
 
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
