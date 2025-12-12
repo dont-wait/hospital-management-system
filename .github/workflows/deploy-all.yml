@@ -48,7 +48,6 @@ jobs:
     name: Deploy Frontend
     needs: [check-changes, deploy-backend]
     if: |
-      always() &&
       needs.check-changes.outputs.frontend == 'true' &&
       (needs.deploy-backend.result == 'success' || needs.deploy-backend.result == 'skipped')
     uses: ./.github/workflows/deploy-frontend.yml
@@ -61,7 +60,6 @@ jobs:
     needs: [check-changes, deploy-backend, deploy-frontend]
     runs-on: ubuntu-latest
     if: always()
-    
     steps:
       - name: Generate Summary
         run: |
