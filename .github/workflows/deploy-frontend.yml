@@ -66,6 +66,21 @@ jobs:
             cp -r public deploy/public
           fi
           
+          # Create a startup wrapper script
+          cat > deploy/startup.sh << 'EOF'
+          #!/bin/sh
+          echo "Starting Next.js application..."
+          echo "Node version: $(node --version)"
+          echo "Current directory: $(pwd)"
+          echo "Files in directory:"
+          ls -la
+          echo "PORT environment variable: $PORT"
+          echo "Starting server on port ${PORT:-8080}"
+          node server.js
+          EOF
+          
+          chmod +x deploy/startup.sh
+          
           cat > deploy/package.json << 'EOF'
           {
             "name": "hospital-nextjs-app",
@@ -74,7 +89,7 @@ jobs:
               "start": "node server.js"
             },
             "engines": {
-              "node": ">=18.0.0"
+              "node": "22.x"
             }
           }
           EOF
@@ -103,19 +118,36 @@ jobs:
 
       - name: Set App Settings / Runtime Secrets
         run: |
+          # Set environment variables
           az webapp config appsettings set \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group hospital-rg \
             --settings \
               NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }} \
-              WEBSITE_NODE_DEFAULT_VERSION="~22" \
-              NODE_ENV="production"
+              WEBSITE_NODE_DEFAULT_VERSION="22-lts" \
+              NODE_ENV="production" \
+              PORT="8080" \
+              WEBSITES_PORT="8080"
           
-          # Set startup command
+          # Set startup command (Azure expects app to listen on PORT env variable)
           az webapp config set \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group hospital-rg \
             --startup-file "node server.js"
+          
+          # Enable logging
+          az webapp log config \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group hospital-rg \
+            --application-logging filesystem \
+            --detailed-error-messages true \
+            --web-server-logging filesystem
+          
+          # Restart app to apply changes
+          echo "Restarting app to apply configuration..."
+          az webapp restart \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group hospital-rg
 
       - name: 🔍 Check Azure App Logs
         if: always()
