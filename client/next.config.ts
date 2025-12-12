@@ -7,7 +7,7 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: "standalone", // Already configured - Enable standalone output for Docker/Azure
+  output: "standalone", // ✅ Standalone output for Docker/Azure
   
   compiler: {
     removeConsole:
@@ -21,7 +21,6 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["motion/react", "lucide-react"],
     esmExternals: true,
-    // Server actions for Next.js 16
     serverActions: {
       bodySizeLimit: '2mb',
     },
@@ -48,7 +47,6 @@ const nextConfig: NextConfig = {
       },
     ],
     minimumCacheTTL: 60,
-    // Unoptimized images for Azure (tránh lỗi image optimization)
     unoptimized: process.env.NODE_ENV === "production",
   },
   
@@ -57,7 +55,7 @@ const nextConfig: NextConfig = {
   
   // Environment variables
   env: {
-    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api',
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5296/api',
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   },
   
@@ -96,9 +94,8 @@ const nextConfig: NextConfig = {
     ];
   },
   
-  // Rewrites for API proxy (chỉ dùng cho dev, production dùng direct API call)
+  // Rewrites for API proxy (chỉ dùng cho dev)
   async rewrites() {
-    // Tắt rewrites trên production để tránh timeout/503 errors
     if (process.env.NODE_ENV === 'production') {
       return [];
     }
@@ -112,4 +109,5 @@ const nextConfig: NextConfig = {
   },
 };
 
+// ✅ CHỈ MỘT EXPORT DUY NHẤT
 export default bundleAnalyzer(nextConfig);

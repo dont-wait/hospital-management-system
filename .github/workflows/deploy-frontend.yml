@@ -20,43 +20,10 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Check project structure
-        run: |
-          echo "Repository root structure:"
-          ls -la
-          echo ""
-          echo "Checking client directory:"
-          if [ -d "client" ]; then
-            echo "✓ client directory found"
-            ls -la client/
-          else
-            echo "✗ client directory NOT found"
-            exit 1
-          fi
-
       - name: Enable Corepack & Yarn
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
-          echo "Yarn version:"
-          yarn -v
-
-      - name: Check client files
-        working-directory: ./client
-        run: |
-          echo "Checking for package.json and yarn.lock:"
-          if [ -f "package.json" ]; then
-            echo "✓ package.json found"
-          else
-            echo "✗ package.json NOT found"
-            exit 1
-          fi
-          if [ -f "yarn.lock" ]; then
-            echo "✓ yarn.lock found"
-          else
-            echo "✗ yarn.lock NOT found"
-            exit 1
-          fi
 
       - name: Install dependencies
         working-directory: ./client
@@ -72,52 +39,27 @@ jobs:
       - name: Prepare deployment package
         working-directory: ./client
         run: |
-          echo "Creating deployment package..."
           mkdir -p deploy
           
-          # IMPORTANT: Copy everything from standalone to deploy root
-          echo "Copying standalone files..."
-          cp -r .next/standalone/. deploy/
+          # BƯỚC 1: Copy TOÀN BỘ standalone (có server.js, node_modules, etc.)
+          cp -r .next/standalone/* deploy/
+          cp -r .next/standalone/.* deploy/ 2>/dev/null || true
           
-          # Create .next directory in deploy and copy static assets
-          echo "Copying static assets..."
-          mkdir -p deploy/.next/static
-          cp -r .next/static/. deploy/.next/static/
+          # BƯỚC 2: Tạo thư mục .next trong deploy (nếu chưa có)
+          mkdir -p deploy/.next
           
-          # Copy public folder if exists
-          if [ -d "public" ]; then
-            echo "Copying public folder..."
-            cp -r public deploy/public
-          fi
+          # BƯỚC 3: Copy static assets vào đúng chỗ
+          cp -r .next/static deploy/.next/static
           
-          # Verify critical structure
-          echo ""
-          echo "Deployment package structure:"
+          # BƯỚC 4: Copy public (nếu có)
+          [ -d "public" ] && cp -r public deploy/public || true
+          
+          # BƯỚC 5: Copy BUILD_ID (quan trọng!)
+          cp .next/BUILD_ID deploy/.next/BUILD_ID
+          
+          # Quick verify
           ls -la deploy/
-          echo ""
-          echo "Checking .next directory:"
-          ls -la deploy/.next/ || echo "⚠️ .next directory missing!"
-          echo ""
-          echo "Checking server.js:"
-          if [ -f "deploy/server.js" ]; then
-            echo "✓ server.js exists"
-          else
-            echo "✗ server.js NOT found - BUILD FAILED!"
-            exit 1
-          fi
-          
-          # NO NEED to create package.json - standalone already has it!
-          # Just verify structure
-          echo ""
-          echo "Final deployment structure:"
-          echo "Files in deploy/:"
-          ls -la deploy/
-          echo ""
-          echo "Files in deploy/.next/:"
           ls -la deploy/.next/
-          echo ""
-          echo "Static assets:"
-          ls -la deploy/.next/static/ | head -5
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -137,22 +79,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-
-      - name: Verify downloaded artifact
-        run: |
-          echo "Downloaded files:"
-          ls -la
-          echo ""
-          if [ ! -f "server.js" ]; then
-            echo "✗ ERROR: server.js not found!"
-            exit 1
-          fi
-          echo "✓ server.js found"
-          if [ ! -f "package.json" ]; then
-            echo "✗ ERROR: package.json not found!"
-            exit 1
-          fi
-          echo "✓ package.json found"
       
       - name: Login to Azure
         uses: azure/login@v1
@@ -160,15 +86,16 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'hospital-nextjs-app'
-          slot-name: 'Production'
-          package: .
-
-      - name: Set App Settings & Startup
         run: |
-          echo "Configuring app settings..."
+          zip -r deploy.zip . -x "*.git*"
+          az webapp deployment source config-zip \
+            --resource-group hospital-rg \
+            --name hospital-nextjs-app \
+            --src deploy.zip \
+            --timeout 600
+
+      - name: Configure Azure Web App
+        run: |
           az webapp config appsettings set \
             --name hospital-nextjs-app \
             --resource-group hospital-rg \
@@ -176,36 +103,14 @@ jobs:
               NODE_ENV="production" \
               NEXT_PUBLIC_API_BASE_URL="${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" \
               PORT="8080" \
-              WEBSITES_PORT="8080"
+              WEBSITES_PORT="8080" \
+              SCM_DO_BUILD_DURING_DEPLOYMENT="false"
 
-          echo "Setting startup command..."
           az webapp config set \
             --name hospital-nextjs-app \
             --resource-group hospital-rg \
             --startup-file "node server.js"
 
-          echo "Restarting app..."
           az webapp restart \
             --name hospital-nextjs-app \
             --resource-group hospital-rg
-
-      - name: Wait for restart
-        run: |
-          echo "Waiting 30 seconds for app to restart..."
-          sleep 30
-
-      - name: Check deployment status
-        run: |
-          echo "Checking app state..."
-          STATE=$(az webapp show \
-            --name hospital-nextjs-app \
-            --resource-group hospital-rg \
-            --query state \
-            --output tsv)
-          echo "App state: $STATE"
-          
-          if [ "$STATE" != "Running" ]; then
-            echo "✗ WARNING: App is not in Running state!"
-          else
-            echo "✓ App is Running"
-          fi
