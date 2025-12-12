@@ -20,38 +20,78 @@ jobs:
         with:
           node-version: '20.x'
 
+      - name: Check project structure
+        run: |
+          echo "Repository root structure:"
+          ls -la
+          echo ""
+          echo "Checking client directory:"
+          if [ -d "client" ]; then
+            echo "✓ client directory found"
+            ls -la client/
+          else
+            echo "✗ client directory NOT found"
+            exit 1
+          fi
+
       - name: Enable Corepack & Yarn
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
+          echo "Yarn version:"
           yarn -v
 
+      - name: Check client files
+        working-directory: ./client
+        run: |
+          echo "Checking for package.json and yarn.lock:"
+          if [ -f "package.json" ]; then
+            echo "✓ package.json found"
+          else
+            echo "✗ package.json NOT found"
+            exit 1
+          fi
+          if [ -f "yarn.lock" ]; then
+            echo "✓ yarn.lock found"
+          else
+            echo "✗ yarn.lock NOT found"
+            exit 1
+          fi
+
       - name: Install dependencies
-        run: yarn install --immutable
+        working-directory: ./client
+        run: yarn install --frozen-lockfile
 
       - name: Build Next.js standalone
+        working-directory: ./client
         run: yarn build
         env:
           NODE_ENV: production
           NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
 
       - name: Prepare deployment package
+        working-directory: ./client
         run: |
+          echo "Creating deployment package..."
           mkdir -p deploy
           
           # Copy standalone build
+          echo "Copying standalone files..."
           cp -r .next/standalone/* deploy/
           
           # Copy static assets
+          echo "Copying static assets..."
           mkdir -p deploy/.next/static
           cp -r .next/static/* deploy/.next/static/
           
           # Copy public folder if exists
           if [ -d "public" ]; then
+            echo "Copying public folder..."
             cp -r public deploy/public
           fi
           
           # Create package.json for Azure
+          echo "Creating package.json..."
           cat > deploy/package.json << 'EOF'
           {
             "name": "hospital-nextjs-app",
@@ -66,14 +106,23 @@ jobs:
           EOF
           
           # Verify structure
+          echo ""
           echo "Deployment package structure:"
           ls -la deploy/
+          echo ""
+          echo "Checking server.js:"
+          if [ -f "deploy/server.js" ]; then
+            echo "✓ server.js exists"
+          else
+            echo "✗ server.js NOT found - BUILD FAILED!"
+            exit 1
+          fi
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: deploy/
+          path: client/deploy/
 
   deploy:
     runs-on: ubuntu-latest
@@ -92,10 +141,17 @@ jobs:
         run: |
           echo "Downloaded files:"
           ls -la
+          echo ""
           if [ ! -f "server.js" ]; then
-            echo "ERROR: server.js not found!"
+            echo "✗ ERROR: server.js not found!"
             exit 1
           fi
+          echo "✓ server.js found"
+          if [ ! -f "package.json" ]; then
+            echo "✗ ERROR: package.json not found!"
+            exit 1
+          fi
+          echo "✓ package.json found"
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -113,6 +169,7 @@ jobs:
 
       - name: Set App Settings & Startup
         run: |
+          echo "Configuring app settings..."
           az webapp config appsettings set \
             --name hospital-nextjs-app \
             --resource-group hospital-rg \
@@ -122,22 +179,34 @@ jobs:
               PORT="8080" \
               WEBSITES_PORT="8080"
 
+          echo "Setting startup command..."
           az webapp config set \
             --name hospital-nextjs-app \
             --resource-group hospital-rg \
             --startup-file "node server.js"
 
+          echo "Restarting app..."
           az webapp restart \
             --name hospital-nextjs-app \
             --resource-group hospital-rg
 
       - name: Wait for restart
-        run: sleep 30
+        run: |
+          echo "Waiting 30 seconds for app to restart..."
+          sleep 30
 
       - name: Check deployment status
         run: |
-          az webapp show \
+          echo "Checking app state..."
+          STATE=$(az webapp show \
             --name hospital-nextjs-app \
             --resource-group hospital-rg \
             --query state \
-            --output tsv
+            --output tsv)
+          echo "App state: $STATE"
+          
+          if [ "$STATE" != "Running" ]; then
+            echo "✗ WARNING: App is not in Running state!"
+          else
+            echo "✓ App is Running"
+          fi
