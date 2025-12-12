@@ -111,7 +111,7 @@ jobs:
           for i in $(seq 1 $MAX_RETRIES); do
             echo "Attempt $i/$MAX_RETRIES..."
             HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-              https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
+              https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/health)
             
             echo "Health Check: $HTTP_CODE"
             

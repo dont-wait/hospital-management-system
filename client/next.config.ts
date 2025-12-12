@@ -96,8 +96,13 @@ const nextConfig: NextConfig = {
     ];
   },
   
-  // Rewrites for API proxy (optional - nếu cần proxy API calls)
+  // Rewrites for API proxy (chỉ dùng cho dev, production dùng direct API call)
   async rewrites() {
+    // Tắt rewrites trên production để tránh timeout/503 errors
+    if (process.env.NODE_ENV === 'production') {
+      return [];
+    }
+    
     return [
       {
         source: '/api/:path*',
