@@ -2,7 +2,10 @@ name: Deploy Frontend App
 
 on:
   workflow_call:
-  workflow_dispatch:
+    inputs:
+      NEXT_PUBLIC_API_BASE_URL:
+        required: true
+        type: string
 
 env:
   AZURE_WEBAPP_NAME: hospital-nextjs-app
@@ -10,76 +13,62 @@ env:
   WORKING_DIRECTORY: ./client
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Deploy Frontend App
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Enable Corepack & Yarn 4
+      - name: Enable Corepack & Yarn
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
           yarn -v
 
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ env.WORKING_DIRECTORY }}/.yarn/cache
-            ${{ env.WORKING_DIRECTORY }}/.yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
       - name: Install dependencies
-        run: |
-          cd ${{ env.WORKING_DIRECTORY }}
-          yarn install --immutable
+        run: cd ${{ env.WORKING_DIRECTORY }} && yarn install --immutable
 
-      - name: Build Next.js app
+      - name: Build Next.js
         run: |
           cd ${{ env.WORKING_DIRECTORY }}
           yarn build
         env:
-          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ inputs.NEXT_PUBLIC_API_BASE_URL }}
           NEXT_PUBLIC_APP_URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net
           NODE_ENV: production
 
-      - name: 📦 Prepare package for deployment
+      - name: Package for Azure
         run: |
           cd ${{ env.WORKING_DIRECTORY }}
           
+          echo "📦 Preparing standalone deployment..."
           mkdir -p deploy
-          cp -r .next/standalone/* deploy/
-          mkdir -p deploy/.next/static
-          cp -r .next/static/* deploy/.next/static/
           
+          # Copy standalone build (includes server.js and .next)
+          cp -r .next/standalone/* deploy/
+          
+          # Copy static assets into standalone's .next folder
+          cp -r .next/static deploy/.next/static
+          
+          # Copy public folder if exists
           if [ -d "public" ]; then
             cp -r public deploy/public
           fi
           
-          # Create a startup wrapper script
-          cat > deploy/startup.sh << 'EOF'
-          #!/bin/sh
-          echo "Starting Next.js application..."
-          echo "Node version: $(node --version)"
-          echo "Current directory: $(pwd)"
-          echo "Files in directory:"
-          ls -la
-          echo "PORT environment variable: $PORT"
-          echo "Starting server on port ${PORT:-8080}"
-          node server.js
-          EOF
-          
-          chmod +x deploy/startup.sh
+          # Verify structure
+          echo "✅ Verifying deployment structure:"
+          ls -la deploy/
+          echo ""
+          echo "📁 .next folder contents:"
+          ls -la deploy/.next/ || echo "⚠️ .next missing!"
+          echo ""
+          echo "📄 server.js:"
+          test -f deploy/server.js && echo "✅ Found" || echo "❌ Missing!"
           
           cat > deploy/package.json << 'EOF'
           {
@@ -93,118 +82,48 @@ jobs:
             }
           }
           EOF
-          
-          # Verify deployment structure
-          echo "📦 Deployment structure:"
-          ls -la deploy/
-          echo ""
-          echo "📄 server.js exists:"
-          test -f deploy/server.js && echo "✅ Yes" || echo "❌ No"
-          echo ""
-          echo "📁 .next folder:"
-          ls -la deploy/.next/ || echo "❌ .next folder missing!"
 
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Deploy to Azure Web App
+      - name: Deploy to Azure
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CLIENT }}
           package: ${{ env.WORKING_DIRECTORY }}/deploy
 
-      - name: Set App Settings / Runtime Secrets
+      - name: Set App Settings
         run: |
-          # Set environment variables
+          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+          
           az webapp config appsettings set \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group hospital-rg \
             --settings \
-              NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }} \
-              WEBSITE_NODE_DEFAULT_VERSION="22-lts" \
               NODE_ENV="production" \
+              NEXT_PUBLIC_API_BASE_URL="${{ inputs.NEXT_PUBLIC_API_BASE_URL }}" \
               PORT="8080" \
               WEBSITES_PORT="8080"
           
-          # Set startup command (Azure expects app to listen on PORT env variable)
+          # Set startup command
           az webapp config set \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group hospital-rg \
             --startup-file "node server.js"
           
-          # Enable logging
-          az webapp log config \
-            --name ${{ env.AZURE_WEBAPP_NAME }} \
-            --resource-group hospital-rg \
-            --application-logging filesystem \
-            --detailed-error-messages true \
-            --web-server-logging filesystem
-          
-          # Restart app to apply changes
-          echo "Restarting app to apply configuration..."
+          # Restart to apply config
           az webapp restart \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group hospital-rg
 
-      - name: 🔍 Check Azure App Logs
-        if: always()
+      - name: Health Check
         run: |
-          echo "Fetching application logs..."
-          az webapp log tail --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group hospital-rg --only-show-errors || true
-          
-          echo ""
-          echo "Checking app settings..."
-          az webapp config appsettings list --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group hospital-rg || true
-
-      - name: Verify Deployment
-        run: |
-          echo "⏳ Waiting for app to start..."
-          MAX_RETRIES=12
-          RETRY_DELAY=20
-          
-          for i in $(seq 1 $MAX_RETRIES); do
-            echo "Attempt $i/$MAX_RETRIES..."
-            
-            # Try health endpoint first
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-              https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/health)
-            
-            echo "Health Check: $HTTP_CODE"
-            
-            # If health fails, try homepage
-            if [ $HTTP_CODE -ne 200 ]; then
-              echo "Health endpoint failed, trying homepage..."
-              HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-                https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
-              echo "Homepage Check: $HTTP_CODE"
-            fi
-            
-            if [ $HTTP_CODE -eq 200 ]; then
-              echo "✅ Frontend deployed successfully!"
-              echo "🌐 URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+          for i in {1..12}; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
+            if [ "$code" = "200" ]; then
+              echo "Frontend healthy"
               exit 0
             fi
-            
-            if [ $i -lt $MAX_RETRIES ]; then
-              echo "Service not ready, waiting ${RETRY_DELAY}s before retry..."
-              sleep $RETRY_DELAY
-            fi
+            echo "Waiting for frontend..."
+            sleep 10
           done
-          
-          echo "❌ Deployment verification failed after $MAX_RETRIES attempts!"
-          echo "Fetching recent logs for debugging..."
-          az webapp log download --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group hospital-rg --log-file app-logs.zip || true
+          echo "⚠️ Frontend did not start in time"
           exit 1
-
-      - name: 📊 Deployment Summary
-        if: always()
-        run: |
-          echo "# 🎨 Frontend App Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
-          echo "- [App](https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY
