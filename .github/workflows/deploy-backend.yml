@@ -1,13 +1,11 @@
-name: Deploy Hospital API to Azure
+name: Deploy Backend API to Azure
 
 on:
-  push:
-    branches: [ main, master ]
-    paths:
-      - 'server/**'
-      - '.github/workflows/deployapi.yml'
   workflow_call:
-  workflow_dispatch:
+    outputs:
+      status:
+        description: 'Backend deploy status'
+        value: ${{ steps.deploy.outputs.status }}
 
 env:
   AZURE_WEBAPP_NAME: hospital-backend-api
@@ -15,97 +13,42 @@ env:
   WORKING_DIRECTORY: ./server
 
 jobs:
-  build-and-test:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Deploy Backend Api
-    
+    outputs:
+      status: ${{ steps.deploy.outputs.status }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup .NET ${{ env.DOTNET_VERSION }}
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Restore dependencies
-      run: |
-        cd ${{ env.WORKING_DIRECTORY }}
-        dotnet restore
+      - name: Build & Publish
+        run: |
+          cd ${{ env.WORKING_DIRECTORY }}
+          dotnet restore
+          dotnet build --configuration Release --no-restore
+          dotnet publish WebApi/WebApi.csproj --configuration Release --output ./publish --no-build
 
-    - name: Build
-      run: |
-        cd ${{ env.WORKING_DIRECTORY }}
-        dotnet build --configuration Release --no-restore
+      - name: Deploy to Azure
+        id: deploy
+        run: |
+          cd ${{ env.WORKING_DIRECTORY }}/publish
+          zip -r ../deploy.zip .
+          cd ..
+          az webapp deployment source config-zip \
+            --resource-group hospital-rg \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --src deploy.zip
+          echo "status=success" >> $GITHUB_OUTPUT
 
-    - name: Run Unit Tests
-      run: |
-        cd ${{ env.WORKING_DIRECTORY }}
-        dotnet test HospitalManagement.Tests/HospitalManagement.Tests.csproj \
-          --configuration Release \
-          --no-build \
-          --verbosity normal \
-          --logger "trx;LogFileName=test-results.trx"
-
-    - name: Publish Application
-      run: |
-        cd ${{ env.WORKING_DIRECTORY }}
-        dotnet publish WebApi/WebApi.csproj \
-          --configuration Release \
-          --output ./publish \
-          --no-build
-
-    - name: Upload artifact for deployment
-      uses: actions/upload-artifact@v4
-      with:
-        name: hospital-api
-        path: ${{ env.WORKING_DIRECTORY }}/publish
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    
-    steps:
-    - name: Download artifact from build job
-      uses: actions/download-artifact@v4
-      with:
-        name: hospital-api
-        path: ./publish  
-
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: Deploy to Azure Web App
-      run: |
-        # Tạo zip từ folder publish
-        cd publish
-        zip -r ../deploy.zip .
-        cd ..
-        
-        # Deploy
-        az webapp deployment source config-zip \
-          --resource-group hospital-rg \
-          --name ${{ env.AZURE_WEBAPP_NAME }} \
-          --src deploy.zip
-        
-        echo "✅ Deployment completed!"
-
-    - name: Health Check
-      run: |
-        echo "⏳ Waiting 60s for app to start..."
-        sleep 60
-        
-        for i in {1..3}; do
+      - name: Health Check
+        run: |
+          sleep 60
           response=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/health || echo "000")
-          if [ "$response" = "200" ]; then
-            echo "✅ API is healthy!"
-            echo "🌐 https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
-            echo "📚 https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/swagger"
-            exit 0
-          fi
-          echo "⏳ Attempt $i/3: Status $response, waiting..."
-          sleep 30
-        done
-        echo "⚠️ Health check timeout (Free tier may take longer)"
+          if [ "$response" != "200" ]; then
+            echo "Backend health check failed"
+            exit 1

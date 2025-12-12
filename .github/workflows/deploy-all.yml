@@ -1,48 +1,29 @@
-name: Deploy Hospital Management System Medicare
+name: Deploy Full Stack
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Deployment environment'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-          - production
-          - staging
 
 jobs:
-  deploy-backend:
-    name: Deploy Backend
+  backend:
     uses: ./.github/workflows/deploy-backend.yml
     secrets: inherit
 
-  deploy-frontend:
-    name: Deploy Frontend
-    needs: deploy-backend  
+  frontend:
+    needs: backend
     uses: ./.github/workflows/deploy-frontend.yml
+    with:
+      api_url: https://hospital-backend-api.azurewebsites.net/api
     secrets: inherit
 
   summary:
-    name: Deployment Summary
-    needs: [deploy-backend, deploy-frontend]
+    needs: [backend, frontend]
     runs-on: ubuntu-latest
     if: always()
-    
     steps:
       - name: Generate Summary
         run: |
           echo "# 🚀 Full Stack Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment**: ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Services Status" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- Backend API: ${{ needs.deploy-backend.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Frontend App: ${{ needs.deploy-frontend.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend: ${{ needs.backend.outputs.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: ${{ needs.frontend.outputs.status }}" >> $GITHUB_STEP_SUMMARY
           echo "- [Frontend](https://hospital-nextjs-app.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY
-          echo "- [Backend API](https://hospital-backend-api.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY
-          echo "- [Swagger](https://hospital-backend-api.azurewebsites.net/swagger)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Backend](https://hospital-backend-api.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY

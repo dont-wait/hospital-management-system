@@ -1,47 +1,38 @@
 name: Deploy Frontend App
 
 on:
-  push:
-    branches: [main, master]
-    paths:
-      - 'client/**'
-      - '.github/workflows/deploy-frontend.yml'
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      api_url:
+        required: true
+        type: string
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
+      NEXT_PUBLIC_API_BASE_URL:
+        required: true
 
 env:
   AZURE_WEBAPP_NAME: hospital-nextjs-app
-  NODE_VERSION: '20.x'
+  NODE_VERSION: '22.x'
   WORKING_DIRECTORY: ./client
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy Frontend App
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Enable Corepack & Yarn 4
+      - name: Enable Corepack & Yarn
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
-          yarn -v
-
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ env.WORKING_DIRECTORY }}/.yarn/cache
-            ${{ env.WORKING_DIRECTORY }}/.yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
 
       - name: Install dependencies
         run: |
@@ -53,79 +44,21 @@ jobs:
           cd ${{ env.WORKING_DIRECTORY }}
           yarn build
         env:
-          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ inputs.api_url }}
           NEXT_PUBLIC_APP_URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net
           NODE_ENV: production
 
-      - name: 📦 Prepare package for deployment
-        run: |
-          cd ${{ env.WORKING_DIRECTORY }}
-          
-          mkdir -p deploy
-          cp -r .next/standalone/* deploy/
-          mkdir -p deploy/.next/static
-          cp -r .next/static/* deploy/.next/static/
-          
-          if [ -d "public" ]; then
-            cp -r public deploy/public
-          fi
-          
-          cat > deploy/package.json << 'EOF'
-          {
-            "name": "hospital-nextjs-app",
-            "version": "1.0.0",
-            "scripts": {
-              "start": "node server.js"
-            },
-            "engines": {
-              "node": ">=20.0.0"
-            }
-          }
-          EOF
-
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Deploy to Azure Web App
+      - name: Deploy to Azure
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CLIENT }}
-          package: ${{ env.WORKING_DIRECTORY }}/deploy
+          publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
+          package: ${{ env.WORKING_DIRECTORY }}/.next/standalone
 
-      - name: Set App Settings / Runtime Secrets
+      - name: Health Check
         run: |
-          az webapp config appsettings set \
-            --name ${{ env.AZURE_WEBAPP_NAME }} \
-            --resource-group hospital-rg \
-            --settings NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
-
-      - name: Verify Deployment
-        run: |
-          echo "⏳ Waiting 30s for app to start..."
           sleep 30
-          
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-            https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
-          
-          echo "Health Check: $HTTP_CODE"
-          
-          if [ $HTTP_CODE -eq 200 ]; then
-            echo "✅ Frontend deployed successfully!"
-            echo "🌐 URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
-          else
-            echo "❌ Deployment verification failed!"
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
+          if [ $HTTP_CODE -ne 200 ]; then
+            echo "Frontend health check failed"
             exit 1
-          fi
-
-      - name: 📊 Deployment Summary
-        if: always()
-        run: |
-          echo "# 🎨 Frontend App Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
-          echo "- [App](https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY
