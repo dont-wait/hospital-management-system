@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # SQL Server Database
   sqlserver:
@@ -48,7 +46,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5000
-      - ConnectionStrings__SqlServerDb=Server=localhost,1433;Database=Hospital;User Id=sa;Password=${SQLSERVER_PASSWORD};TrustServerCertificate=True;MultipleActiveResultSets=true
+      - ConnectionStrings__SqlServerDb=Server=sqlserver,1433;Database=Hospital;User Id=sa;Password=${SQLSERVER_PASSWORD};TrustServerCertificate=True;MultipleActiveResultSets=true
       - ConnectionStrings__RedisConnection=redis:6379,password=${REDIS_PASSWORD:-YourRedisPassword123}
       - JwtSettings__Issuer=hospital.api
       - JwtSettings__Audience=hospital.frontend

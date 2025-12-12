@@ -7,6 +7,7 @@ using Application.Services.Admin;
 using WebApi.Services;
 using WebApi.Middleware;
 using Hangfire;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +77,12 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        logger.LogInformation("Applying migrations...");
+        await db.Database.MigrateAsync();
+        logger.LogInformation("Migrations applied successfully.");
     await DataSeeder.SeedDepartmentsAndRoomAsync(db);
     await DataSeeder.SeedAsync(db);
     await DataSeeder.SeedSysAdminAsync(db);
@@ -83,6 +90,13 @@ using (var scope = app.Services.CreateScope())
     await DataSeeder.SeedDoctorsAsync(db);
     await DataSeeder.SeedServicesAsync(db);
     await DataSeeder.SeedPatientsAsync(db);
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+    }
+
+
 }
 
 app.UseCors("CorsPolicy");
@@ -118,5 +132,12 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapGet("/", () => "Hello World!");
+app.MapGet("/health", () => Results.Ok(new 
+{ 
+    status = "Healthy",
+    timestamp = DateTime.UtcNow,
+    version = "1.0.0"
+}))
+.AllowAnonymous();
 
 app.Run();
