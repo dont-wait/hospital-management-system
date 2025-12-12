@@ -15,14 +15,42 @@ on:
           - staging
 
 jobs:
+  check-changes:
+    name: Check for changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'server/**'
+              - '.github/workflows/deploy-backend.yml'
+              - '.github/workflows/deploy-all.yml'
+            frontend:
+              - 'client/**'
+              - '.github/workflows/deploy-frontend.yml'
+              - '.github/workflows/deploy-all.yml'
+
   deploy-backend:
     name: Deploy Backend
+    needs: check-changes
+    if: needs.check-changes.outputs.backend == 'true'
     uses: ./.github/workflows/deploy-backend.yml
     secrets: inherit
 
   deploy-frontend:
     name: Deploy Frontend
-    needs: deploy-backend  
+    needs: [check-changes, deploy-backend]
+    if: |
+      always() &&
+      needs.check-changes.outputs.frontend == 'true' &&
+      (needs.deploy-backend.result == 'success' || needs.deploy-backend.result == 'skipped')
     uses: ./.github/workflows/deploy-frontend.yml
     secrets: inherit
     with:
@@ -30,7 +58,7 @@ jobs:
 
   summary:
     name: Deployment Summary
-    needs: [deploy-backend, deploy-frontend]
+    needs: [check-changes, deploy-backend, deploy-frontend]
     runs-on: ubuntu-latest
     if: always()
     
@@ -39,7 +67,11 @@ jobs:
         run: |
           echo "# 🚀 Full Stack Deployment" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment**: ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: ${{ inputs.environment || 'production' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Changes Detected" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend: ${{ needs.check-changes.outputs.backend == 'true' && '✅ Changed' || '⏭️ No changes' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: ${{ needs.check-changes.outputs.frontend == 'true' && '✅ Changed' || '⏭️ No changes' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Services Status" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

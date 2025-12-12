@@ -47,7 +47,7 @@ jobs:
           cd ${{ env.WORKING_DIRECTORY }}
           
           echo "📦 Preparing standalone deployment..."
-          mkdir -p deploy
+          mkdir -p deploy/.next
           
           # Copy standalone build (includes server.js and .next)
           cp -r .next/standalone/* deploy/
