@@ -1,3 +1,4 @@
+[![Deploy Hospital API to Azure (Student)](https://github.com/dont-wait/hospital-management-system/actions/workflows/deployapi.yml/badge.svg)](https://github.com/dont-wait/hospital-management-system/actions/workflows/deployapi.yml)
 # 🏥 Hospital Management System
 
 Hệ thống quản lý bệnh viện được xây dựng với .NET 8 và Next.js.
