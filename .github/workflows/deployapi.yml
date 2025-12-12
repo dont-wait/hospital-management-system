@@ -62,9 +62,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-test
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
     - name: Download artifact from build job
@@ -72,21 +69,36 @@ jobs:
       with:
         name: hospital-api
 
-    - name: Deploy to Azure Web App
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v3
+    - name: Login to Azure
+      uses: azure/login@v1
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: .
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure Web App
+      run: |
+        cd hospital-api
+        zip -r ../deploy.zip .
+        cd ..
+        
+        az webapp deployment source config-zip \
+          --resource-group hospital-rg \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --src deploy.zip
 
     - name: Health Check
       run: |
-        echo "Checking API health..."
-        sleep 30
-        response=$(curl -s -o /dev/null -w "%{http_code}" ${{ steps.deploy-to-webapp.outputs.webapp-url }}/health || echo "000")
-        if [ "$response" = "200" ]; then
-          echo "✅ API is healthy"
-        else
-          echo "⚠️ Health check returned: $response (Free tier may take longer to start)"
-        fi
+        echo "⏳ Waiting 60s for app to start..."
+        sleep 60
+        
+        for i in {1..3}; do
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/health || echo "000")
+          if [ "$response" = "200" ]; then
+            echo "✅ API is healthy!"
+            echo "🌐 https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+            echo "📚 https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/swagger"
+            exit 0
+          fi
+          echo "⏳ Attempt $i/3: Status $response, waiting..."
+          sleep 30
+        done
+        echo "⚠️ Health check timeout (Free tier is slow)"
