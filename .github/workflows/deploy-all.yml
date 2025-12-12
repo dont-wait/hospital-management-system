@@ -25,6 +25,8 @@ jobs:
     needs: deploy-backend  
     uses: ./.github/workflows/deploy-frontend.yml
     secrets: inherit
+    with:
+      NEXT_PUBLIC_API_BASE_URL: https://hospital-backend-api.azurewebsites.net/api
 
   summary:
     name: Deployment Summary
