@@ -68,6 +68,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: hospital-api
+        path: ./publish  
 
     - name: Login to Azure
       uses: azure/login@v1
@@ -76,14 +77,18 @@ jobs:
 
     - name: Deploy to Azure Web App
       run: |
-        cd hospital-api
+        # Tạo zip từ folder publish
+        cd publish
         zip -r ../deploy.zip .
         cd ..
         
+        # Deploy
         az webapp deployment source config-zip \
           --resource-group hospital-rg \
           --name ${{ env.AZURE_WEBAPP_NAME }} \
           --src deploy.zip
+        
+        echo "✅ Deployment completed!"
 
     - name: Health Check
       run: |
@@ -101,4 +106,4 @@ jobs:
           echo "⏳ Attempt $i/3: Status $response, waiting..."
           sleep 30
         done
-        echo "⚠️ Health check timeout (Free tier is slow)"
+        echo "⚠️ Health check timeout (Free tier may take longer)"
