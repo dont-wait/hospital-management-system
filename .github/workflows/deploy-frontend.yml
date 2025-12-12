@@ -1,4 +1,4 @@
-name: 🎨 Deploy Frontend App
+name: Deploy Frontend App
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: ⚡ Enable Corepack
+      - name: Enable Corepack
         run: corepack enable
   
       - name: Setup Yarn
