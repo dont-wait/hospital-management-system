@@ -6,7 +6,6 @@ on:
     paths:
       - 'client/**'
       - '.github/workflows/deploy-frontend.yml'
-  workflow_call: 
   workflow_dispatch:
 
 env:
@@ -18,7 +17,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy Frontend App
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,13 +27,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Enable Corepack
-        run: corepack enable
-  
-      - name: Setup Yarn
+      - name: Enable Corepack & Yarn 4
         run: |
+          corepack enable
           corepack prepare yarn@stable --activate
-          yarn --version
+          yarn -v
 
       - name: Cache Yarn dependencies
         uses: actions/cache@v4
@@ -56,11 +53,11 @@ jobs:
           cd ${{ env.WORKING_DIRECTORY }}
           yarn build
         env:
-          NEXT_PUBLIC_API_BASE_URL: https://hospital-backend-api.azurewebsites.net/api
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
           NEXT_PUBLIC_APP_URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net
           NODE_ENV: production
 
-      - name: 📦 Package for deployment
+      - name: 📦 Prepare package for deployment
         run: |
           cd ${{ env.WORKING_DIRECTORY }}
           
@@ -86,16 +83,30 @@ jobs:
           }
           EOF
 
-      - name: Deploy to Azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CLIENT }}
           package: ${{ env.WORKING_DIRECTORY }}/deploy
 
+      - name: Set App Settings / Runtime Secrets
+        run: |
+          az webapp config appsettings set \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group hospital-rg \
+            --settings NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+
       - name: Verify Deployment
         run: |
+          echo "⏳ Waiting 30s for app to start..."
           sleep 30
+          
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
             https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
           
