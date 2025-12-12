@@ -1,10 +1,19 @@
-name: Build and deploy Node.js app to Azure Web App - hospital-nextjs-app
+name: Deploy Frontend to Azure
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'client/**'
+      - '.github/workflows/deploy-frontend.yml'
   workflow_dispatch:
+  workflow_call:  # ← THÊM DÒNG NÀY để cho phép gọi từ workflow khác
+    secrets:
+      NEXT_PUBLIC_API_BASE_URL:
+        required: true
+      AZURE_CREDENTIALS:
+        required: true
 
 jobs:
   build:
@@ -41,20 +50,20 @@ jobs:
         run: |
           mkdir -p deploy
           
-          # BƯỚC 1: Copy TOÀN BỘ standalone (có server.js, node_modules, etc.)
+          # BƯỚC 1: Copy TOÀN BỘ standalone
           cp -r .next/standalone/* deploy/
           cp -r .next/standalone/.* deploy/ 2>/dev/null || true
           
-          # BƯỚC 2: Tạo thư mục .next trong deploy (nếu chưa có)
+          # BƯỚC 2: Tạo thư mục .next
           mkdir -p deploy/.next
           
-          # BƯỚC 3: Copy static assets vào đúng chỗ
+          # BƯỚC 3: Copy static assets
           cp -r .next/static deploy/.next/static
           
-          # BƯỚC 4: Copy public (nếu có)
+          # BƯỚC 4: Copy public
           [ -d "public" ] && cp -r public deploy/public || true
           
-          # BƯỚC 5: Copy BUILD_ID (quan trọng!)
+          # BƯỚC 5: Copy BUILD_ID
           cp .next/BUILD_ID deploy/.next/BUILD_ID
           
           # Quick verify
