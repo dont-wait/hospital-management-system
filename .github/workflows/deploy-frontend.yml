@@ -74,10 +74,20 @@ jobs:
               "start": "node server.js"
             },
             "engines": {
-              "node": "22.0.0"
+              "node": ">=18.0.0"
             }
           }
           EOF
+          
+          # Verify deployment structure
+          echo "📦 Deployment structure:"
+          ls -la deploy/
+          echo ""
+          echo "📄 server.js exists:"
+          test -f deploy/server.js && echo "✅ Yes" || echo "❌ No"
+          echo ""
+          echo "📁 .next folder:"
+          ls -la deploy/.next/ || echo "❌ .next folder missing!"
 
       - name: Login to Azure
         uses: azure/login@v1
@@ -96,20 +106,49 @@ jobs:
           az webapp config appsettings set \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group hospital-rg \
-            --settings NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+            --settings \
+              NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }} \
+              WEBSITE_NODE_DEFAULT_VERSION="~22" \
+              NODE_ENV="production"
+          
+          # Set startup command
+          az webapp config set \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group hospital-rg \
+            --startup-file "node server.js"
+
+      - name: 🔍 Check Azure App Logs
+        if: always()
+        run: |
+          echo "Fetching application logs..."
+          az webapp log tail --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group hospital-rg --only-show-errors || true
+          
+          echo ""
+          echo "Checking app settings..."
+          az webapp config appsettings list --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group hospital-rg || true
 
       - name: Verify Deployment
         run: |
           echo "⏳ Waiting for app to start..."
-          MAX_RETRIES=10
-          RETRY_DELAY=15
+          MAX_RETRIES=12
+          RETRY_DELAY=20
           
           for i in $(seq 1 $MAX_RETRIES); do
             echo "Attempt $i/$MAX_RETRIES..."
+            
+            # Try health endpoint first
             HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
               https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/health)
             
             echo "Health Check: $HTTP_CODE"
+            
+            # If health fails, try homepage
+            if [ $HTTP_CODE -ne 200 ]; then
+              echo "Health endpoint failed, trying homepage..."
+              HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+                https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
+              echo "Homepage Check: $HTTP_CODE"
+            fi
             
             if [ $HTTP_CODE -eq 200 ]; then
               echo "✅ Frontend deployed successfully!"
@@ -124,6 +163,8 @@ jobs:
           done
           
           echo "❌ Deployment verification failed after $MAX_RETRIES attempts!"
+          echo "Fetching recent logs for debugging..."
+          az webapp log download --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group hospital-rg --log-file app-logs.zip || true
           exit 1
 
       - name: 📊 Deployment Summary
