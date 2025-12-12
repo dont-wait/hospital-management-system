@@ -9,7 +9,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: hospital-nextjs-app
-  NODE_VERSION: '22.x'
+  NODE_VERSION: '20.x'
   WORKING_DIRECTORY: ./client
 
 jobs:
@@ -17,7 +17,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -45,23 +46,23 @@ jobs:
       - name: Package for Azure
         run: |
           cd ${{ env.WORKING_DIRECTORY }}
-          
+
           echo "📦 Preparing standalone deployment..."
           mkdir -p deploy/.next
-          
-          # Copy standalone build (includes server.js and .next)
+
+          # Copy standalone build (server.js + .next)
           cp -r .next/standalone/* deploy/
-          
-          # Copy static assets into standalone's .next folder
+
+          # Copy static assets into .next folder
           cp -r .next/static deploy/.next/static
-          
+
           # Copy public folder if exists
           if [ -d "public" ]; then
             cp -r public deploy/public
           fi
-          
+
           # Verify structure
-          echo "✅ Verifying deployment structure:"
+          echo "✅ Deployment structure:"
           ls -la deploy/
           echo ""
           echo "📁 .next folder contents:"
@@ -69,7 +70,8 @@ jobs:
           echo ""
           echo "📄 server.js:"
           test -f deploy/server.js && echo "✅ Found" || echo "❌ Missing!"
-          
+
+          # Create package.json for deployment
           cat > deploy/package.json << 'EOF'
           {
             "name": "hospital-nextjs-app",
@@ -78,7 +80,7 @@ jobs:
               "start": "node server.js"
             },
             "engines": {
-              "node": "22.x"
+              "node": "20.x"
             }
           }
           EOF
@@ -88,7 +90,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
@@ -106,7 +108,7 @@ jobs:
               PORT="8080" \
               WEBSITES_PORT="8080"
           
-          # Set startup command
+          # Set startup command for Azure to use standalone server.js
           az webapp config set \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group hospital-rg \
@@ -122,10 +124,10 @@ jobs:
           for i in {1..12}; do
             code=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
             if [ "$code" = "200" ]; then
-              echo "Frontend healthy"
+              echo "✅ Frontend healthy"
               exit 0
             fi
-            echo "Waiting for frontend..."
+            echo "⏳ Waiting for frontend..."
             sleep 10
           done
           echo "⚠️ Frontend did not start in time"
