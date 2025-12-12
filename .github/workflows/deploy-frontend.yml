@@ -104,21 +104,31 @@ jobs:
 
       - name: Verify Deployment
         run: |
-          echo "⏳ Waiting 30s for app to start..."
-          sleep 30
+          echo "⏳ Waiting for app to start..."
+          MAX_RETRIES=10
+          RETRY_DELAY=15
           
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-            https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
+          for i in $(seq 1 $MAX_RETRIES); do
+            echo "Attempt $i/$MAX_RETRIES..."
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+              https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
+            
+            echo "Health Check: $HTTP_CODE"
+            
+            if [ $HTTP_CODE -eq 200 ]; then
+              echo "✅ Frontend deployed successfully!"
+              echo "🌐 URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+              exit 0
+            fi
+            
+            if [ $i -lt $MAX_RETRIES ]; then
+              echo "Service not ready, waiting ${RETRY_DELAY}s before retry..."
+              sleep $RETRY_DELAY
+            fi
+          done
           
-          echo "Health Check: $HTTP_CODE"
-          
-          if [ $HTTP_CODE -eq 200 ]; then
-            echo "✅ Frontend deployed successfully!"
-            echo "🌐 URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
-          else
-            echo "❌ Deployment verification failed!"
-            exit 1
-          fi
+          echo "❌ Deployment verification failed after $MAX_RETRIES attempts!"
+          exit 1
 
       - name: 📊 Deployment Summary
         if: always()
