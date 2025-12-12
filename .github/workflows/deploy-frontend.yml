@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: cd ${{ env.WORKING_DIRECTORY }} && yarn install --immutable
 
-      - name: Build Next.js
+      - name: Build Next.js standalone
         run: |
           cd ${{ env.WORKING_DIRECTORY }}
           yarn build
@@ -43,35 +43,30 @@ jobs:
           NEXT_PUBLIC_APP_URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net
           NODE_ENV: production
 
-      - name: Package for Azure
+      - name: Prepare deployment package
         run: |
           cd ${{ env.WORKING_DIRECTORY }}
-
           echo "📦 Preparing standalone deployment..."
           mkdir -p deploy/.next
-
+          
           # Copy standalone build (server.js + .next)
           cp -r .next/standalone/* deploy/
-
+          
           # Copy static assets into .next folder
           cp -r .next/static deploy/.next/static
-
+          
           # Copy public folder if exists
           if [ -d "public" ]; then
             cp -r public deploy/public
           fi
-
+          
           # Verify structure
           echo "✅ Deployment structure:"
           ls -la deploy/
-          echo ""
-          echo "📁 .next folder contents:"
           ls -la deploy/.next/ || echo "⚠️ .next missing!"
-          echo ""
-          echo "📄 server.js:"
-          test -f deploy/server.js && echo "✅ Found" || echo "❌ Missing!"
+          test -f deploy/server.js && echo "✅ server.js found" || echo "❌ server.js missing!"
 
-          # Create package.json for deployment
+          # Create minimal package.json for Azure
           cat > deploy/package.json << 'EOF'
           {
             "name": "hospital-nextjs-app",
@@ -97,7 +92,7 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CLIENT }}
           package: ${{ env.WORKING_DIRECTORY }}/deploy
 
-      - name: Set App Settings
+      - name: Set App Settings & Startup
         run: |
           az webapp config appsettings set \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
@@ -107,14 +102,12 @@ jobs:
               NEXT_PUBLIC_API_BASE_URL="${{ inputs.NEXT_PUBLIC_API_BASE_URL }}" \
               PORT="8080" \
               WEBSITES_PORT="8080"
-          
-          # Set startup command for Azure to use standalone server.js
+
           az webapp config set \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group hospital-rg \
             --startup-file "node server.js"
-          
-          # Restart to apply config
+
           az webapp restart \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group hospital-rg
@@ -124,10 +117,10 @@ jobs:
           for i in {1..12}; do
             code=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)
             if [ "$code" = "200" ]; then
-              echo "✅ Frontend healthy"
+              echo "Frontend healthy"
               exit 0
             fi
-            echo "⏳ Waiting for frontend..."
+            echo "Waiting for frontend..."
             sleep 10
           done
           echo "⚠️ Frontend did not start in time"
