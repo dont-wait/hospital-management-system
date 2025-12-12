@@ -1,10 +1,11 @@
-name: Build and deploy Node.js app to Azure Web App - hospital-nextjs-app
+name: Deploy Frontend App
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      NEXT_PUBLIC_API_BASE_URL:
+        required: true
+        type: string
 
 jobs:
   build:
