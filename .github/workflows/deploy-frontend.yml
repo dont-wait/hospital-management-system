@@ -1,11 +1,10 @@
-name: Deploy Frontend App
+name: Build and deploy Node.js app to Azure Web App - hospital-nextjs-app
 
 on:
-  workflow_call:
-    inputs:
-      NEXT_PUBLIC_API_BASE_URL:
-        required: true
-        type: string
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -34,16 +33,25 @@ jobs:
         run: yarn build
         env:
           NODE_ENV: production
-          NEXT_PUBLIC_API_BASE_URL: ${{ inputs.NEXT_PUBLIC_API_BASE_URL }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
 
       - name: Prepare deployment package
         run: |
-          mkdir -p deploy/.next
+          mkdir -p deploy
+          
+          # Copy standalone build
           cp -r .next/standalone/* deploy/
-          cp -r .next/static deploy/.next/static
-          [ -d public ] && cp -r public deploy/public
-
-          # Minimal package.json for Azure
+          
+          # Copy static assets
+          mkdir -p deploy/.next/static
+          cp -r .next/static/* deploy/.next/static/
+          
+          # Copy public folder if exists
+          if [ -d "public" ]; then
+            cp -r public deploy/public
+          fi
+          
+          # Create package.json for Azure
           cat > deploy/package.json << 'EOF'
           {
             "name": "hospital-nextjs-app",
@@ -56,6 +64,10 @@ jobs:
             }
           }
           EOF
+          
+          # Verify structure
+          echo "Deployment package structure:"
+          ls -la deploy/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -67,13 +79,23 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      contents: read  # ❌ xóa id-token: write
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
+
+      - name: Verify downloaded artifact
+        run: |
+          echo "Downloaded files:"
+          ls -la
+          if [ ! -f "server.js" ]; then
+            echo "ERROR: server.js not found!"
+            exit 1
+          fi
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -87,14 +109,18 @@ jobs:
         with:
           app-name: 'hospital-nextjs-app'
           slot-name: 'Production'
-          package: deploy/
+          package: .
 
       - name: Set App Settings & Startup
         run: |
           az webapp config appsettings set \
             --name hospital-nextjs-app \
             --resource-group hospital-rg \
-            --settings NODE_ENV="production" NEXT_PUBLIC_API_BASE_URL="${{ inputs.NEXT_PUBLIC_API_BASE_URL }}" PORT="8080" WEBSITES_PORT="8080"
+            --settings \
+              NODE_ENV="production" \
+              NEXT_PUBLIC_API_BASE_URL="${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" \
+              PORT="8080" \
+              WEBSITES_PORT="8080"
 
           az webapp config set \
             --name hospital-nextjs-app \
@@ -104,3 +130,14 @@ jobs:
           az webapp restart \
             --name hospital-nextjs-app \
             --resource-group hospital-rg
+
+      - name: Wait for restart
+        run: sleep 30
+
+      - name: Check deployment status
+        run: |
+          az webapp show \
+            --name hospital-nextjs-app \
+            --resource-group hospital-rg \
+            --query state \
+            --output tsv
