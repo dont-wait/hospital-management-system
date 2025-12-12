@@ -16,13 +16,14 @@ on:
 
 jobs:
   check-changes:
+    name: Check for changes
     runs-on: ubuntu-latest
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
     steps:
       - uses: actions/checkout@v4
-
+      
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -37,12 +38,14 @@ jobs:
               - '.github/workflows/deploy-all.yml'
 
   deploy-backend:
+    name: Deploy Backend
     needs: check-changes
     if: needs.check-changes.outputs.backend == 'true'
     uses: ./.github/workflows/deploy-backend.yml
     secrets: inherit
 
   deploy-frontend:
+    name: Deploy Frontend
     needs: [check-changes, deploy-backend]
     if: |
       always() &&
@@ -54,21 +57,28 @@ jobs:
       NEXT_PUBLIC_API_BASE_URL: https://hospital-backend-api.azurewebsites.net/api
 
   summary:
+    name: Deployment Summary
     needs: [check-changes, deploy-backend, deploy-frontend]
     runs-on: ubuntu-latest
     if: always()
+    
     steps:
       - name: Generate Summary
         run: |
           echo "# 🚀 Full Stack Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment**: ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
-          echo "## Changes Detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: ${{ inputs.environment || 'production' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Changes Detected" >> $GITHUB_STEP_SUMMARY
           echo "- Backend: ${{ needs.check-changes.outputs.backend == 'true' && '✅ Changed' || '⏭️ No changes' }}" >> $GITHUB_STEP_SUMMARY
           echo "- Frontend: ${{ needs.check-changes.outputs.frontend == 'true' && '✅ Changed' || '⏭️ No changes' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Services Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "- Backend API: ${{ needs.deploy-backend.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- Frontend App: ${{ needs.deploy-frontend.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "## Quick Links" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
           echo "- [Frontend](https://hospital-nextjs-app.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY
           echo "- [Backend API](https://hospital-backend-api.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY
           echo "- [Swagger](https://hospital-backend-api.azurewebsites.net/swagger)" >> $GITHUB_STEP_SUMMARY
