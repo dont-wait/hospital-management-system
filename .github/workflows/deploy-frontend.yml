@@ -75,14 +75,14 @@ jobs:
           echo "Creating deployment package..."
           mkdir -p deploy
           
-          # Copy standalone build
+          # IMPORTANT: Copy everything from standalone to deploy root
           echo "Copying standalone files..."
-          cp -r .next/standalone/* deploy/
+          cp -r .next/standalone/. deploy/
           
-          # Copy static assets
+          # Create .next directory in deploy and copy static assets
           echo "Copying static assets..."
           mkdir -p deploy/.next/static
-          cp -r .next/static/* deploy/.next/static/
+          cp -r .next/static/. deploy/.next/static/
           
           # Copy public folder if exists
           if [ -d "public" ]; then
@@ -90,25 +90,13 @@ jobs:
             cp -r public deploy/public
           fi
           
-          # Create package.json for Azure
-          echo "Creating package.json..."
-          cat > deploy/package.json << 'EOF'
-          {
-            "name": "hospital-nextjs-app",
-            "version": "1.0.0",
-            "scripts": {
-              "start": "node server.js"
-            },
-            "engines": {
-              "node": "20.x"
-            }
-          }
-          EOF
-          
-          # Verify structure
+          # Verify critical structure
           echo ""
           echo "Deployment package structure:"
           ls -la deploy/
+          echo ""
+          echo "Checking .next directory:"
+          ls -la deploy/.next/ || echo "⚠️ .next directory missing!"
           echo ""
           echo "Checking server.js:"
           if [ -f "deploy/server.js" ]; then
@@ -117,6 +105,19 @@ jobs:
             echo "✗ server.js NOT found - BUILD FAILED!"
             exit 1
           fi
+          
+          # NO NEED to create package.json - standalone already has it!
+          # Just verify structure
+          echo ""
+          echo "Final deployment structure:"
+          echo "Files in deploy/:"
+          ls -la deploy/
+          echo ""
+          echo "Files in deploy/.next/:"
+          ls -la deploy/.next/
+          echo ""
+          echo "Static assets:"
+          ls -la deploy/.next/static/ | head -5
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
