@@ -1,4 +1,4 @@
-name: Deploy Hospital API to Azure (Student)
+name: Deploy Hospital API to Azure
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
       - 'server/**'
       - '.github/workflows/deployapi.yml'
   workflow_dispatch:
+  workflow_call
 
 env:
   AZURE_WEBAPP_NAME: hospital-backend-api
@@ -16,6 +17,7 @@ env:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    name: Deploy Backend Api
     
     steps:
     - name: Checkout code

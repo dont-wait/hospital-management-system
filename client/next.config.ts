@@ -7,7 +7,7 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: "standalone", // Enable standalone output for Docker
+  output: "standalone", // Already configured - Enable standalone output for Docker/Azure
   
   compiler: {
     removeConsole:
@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["motion/react", "lucide-react"],
     esmExternals: true,
+    // Server actions for Next.js 16
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
 
   images: {
@@ -37,12 +41,70 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      // Allow any HTTPS images (for Azure Storage, etc.)
+      {
+        protocol: "https",
+        hostname: "**",
+      },
     ],
     minimumCacheTTL: 60,
+    // Unoptimized images for Azure (tránh lỗi image optimization)
+    unoptimized: process.env.NODE_ENV === "production",
   },
-
+  
   compress: true,
   poweredByHeader: false,
+  
+  // Environment variables
+  env: {
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api',
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  },
+  
+  // Headers for security
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin'
+          },
+        ],
+      },
+    ];
+  },
+  
+  // Rewrites for API proxy (optional - nếu cần proxy API calls)
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/:path*`,
+      },
+    ];
+  },
 };
 
 export default bundleAnalyzer(nextConfig);
