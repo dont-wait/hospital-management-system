@@ -72,7 +72,6 @@ public class AuthController : ControllerBase
                     SameSite = SameSiteMode.None,
                     Secure = true,
                     Path = "/",
-                    Domain = "hospital-management-system-mu-six.vercel.app"
                 };
 
                 var refreshTokenOption = new CookieOptions
@@ -82,7 +81,6 @@ public class AuthController : ControllerBase
                     SameSite = SameSiteMode.None,
                     Secure = true,
                     Path = "/",
-                    Domain = "hospital-management-system-mu-six.vercel.app"
                 };
 
                 _httpContextAccessor.HttpContext?.Response.Cookies.Append("accessToken", result.Data!.AccessToken, accessTokenOption);

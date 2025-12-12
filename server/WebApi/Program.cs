@@ -18,7 +18,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "http://localhost:3000",
-                "https://hospital-management-system-mu-six.vercel.app"
+                "https://hospital-management-system-mu-six.vercel.app",
+                "https://hospital-nextjs-app.azurewebsites.net"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
