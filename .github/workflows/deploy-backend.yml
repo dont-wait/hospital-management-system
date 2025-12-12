@@ -1,11 +1,6 @@
 name: Deploy Hospital API to Azure
 
 on:
-  push:
-    branches: [ main, master ]
-    paths:
-      - 'server/**'
-      - '.github/workflows/deployapi.yml'
   workflow_call:
   workflow_dispatch:
 

@@ -1,6 +1,8 @@
 name: Deploy Hospital Management System Medicare
 
 on:
+  push:
+    branches: [main, master]
   workflow_dispatch:
     inputs:
       environment:
