@@ -6,8 +6,8 @@ on:
     paths:
       - 'server/**'
       - '.github/workflows/deployapi.yml'
+  workflow_call:
   workflow_dispatch:
-  workflow_call
 
 env:
   AZURE_WEBAPP_NAME: hospital-backend-api

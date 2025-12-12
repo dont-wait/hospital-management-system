@@ -6,8 +6,8 @@ on:
     paths:
       - 'client/**'
       - '.github/workflows/deploy-frontend.yml'
+  workflow_call: 
   workflow_dispatch:
-  workflow_call:  # Allow other workflows to call this
 
 env:
   AZURE_WEBAPP_NAME: hospital-nextjs-app
