@@ -8,7 +8,7 @@ on:
       - 'client/**'
       - '.github/workflows/deploy-frontend.yml'
   workflow_dispatch:
-  workflow_call:  # ← THÊM DÒNG NÀY để cho phép gọi từ workflow khác
+  workflow_call:
     secrets:
       NEXT_PUBLIC_API_BASE_URL:
         required: true
@@ -48,26 +48,75 @@ jobs:
       - name: Prepare deployment package
         working-directory: ./client
         run: |
+          echo "=== Preparing deployment package ==="
+          rm -rf deploy
           mkdir -p deploy
           
-          # BƯỚC 1: Copy TOÀN BỘ standalone
-          cp -r .next/standalone/* deploy/
-          cp -r .next/standalone/.* deploy/ 2>/dev/null || true
+          echo "Copying standalone output..."
+          cp -r .next/standalone/. deploy/
           
-          # BƯỚC 2: Tạo thư mục .next
+          echo "Setting up .next directory..."
           mkdir -p deploy/.next
           
-          # BƯỚC 3: Copy static assets
+          echo "Copying static assets..."
           cp -r .next/static deploy/.next/static
           
-          # BƯỚC 4: Copy public
-          [ -d "public" ] && cp -r public deploy/public || true
-          
-          # BƯỚC 5: Copy BUILD_ID
+          echo "Copying BUILD_ID..."
           cp .next/BUILD_ID deploy/.next/BUILD_ID
           
-          # Quick verify
+          if [ -f ".next/routes-manifest.json" ]; then
+            cp .next/routes-manifest.json deploy/.next/
+          fi
+          
+          if [ -f ".next/prerender-manifest.json" ]; then
+            cp .next/prerender-manifest.json deploy/.next/
+          fi
+          
+          if [ -d "public" ]; then
+            echo "Copying public folder..."
+            cp -r public deploy/public
+          fi
+          
+          echo "Creating package.json..."
+          cat > deploy/package.json << 'PKGJSON'
+          {
+            "name": "hospital-nextjs-app",
+            "version": "1.0.0",
+            "private": true,
+            "scripts": {
+              "start": "node server.js"
+            },
+            "engines": {
+              "node": ">=20.0.0"
+            }
+          }
+          PKGJSON
+          
+          cat > deploy/.deployment << 'DEPLOYFILE'
+          [config]
+          SCM_DO_BUILD_DURING_DEPLOYMENT = false
+          DEPLOYFILE
+          
+          cat > deploy/.npmrc << 'NPMRCFILE'
+          package-lock=false
+          NPMRCFILE
+          
+          echo ""
+          echo "=== VERIFICATION ==="
+          [ -f "deploy/server.js" ] && echo "✓ server.js present" || exit 1
+          [ -f "deploy/.next/BUILD_ID" ] && echo "✓ BUILD_ID present" || exit 1
+          [ -d "deploy/.next/static" ] && echo "✓ static directory present" || exit 1
+          [ -f "deploy/package.json" ] && echo "✓ package.json present" || exit 1
+          
+          echo ""
+          echo "BUILD_ID content:"
+          cat deploy/.next/BUILD_ID
+          
+          echo ""
+          echo "Directory structure:"
           ls -la deploy/
+          echo ""
+          echo ".next directory:"
           ls -la deploy/.next/
 
       - name: Upload artifact for deployment job
@@ -75,6 +124,7 @@ jobs:
         with:
           name: node-app
           path: client/deploy/
+          retention-days: 1
 
   deploy:
     runs-on: ubuntu-latest
@@ -82,6 +132,9 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
       - name: Download artifact from build job
@@ -89,41 +142,88 @@ jobs:
         with:
           name: node-app
       
+      - name: Verify downloaded artifact
+        run: |
+          echo "=== Artifact Verification ==="
+          [ -f "server.js" ] || exit 1
+          [ -f "package.json" ] || exit 1
+          [ -f ".next/BUILD_ID" ] || exit 1
+          [ -d ".next/static" ] || exit 1
+          echo "✓ All critical files present"
+          echo ""
+          echo "BUILD_ID content:"
+          cat .next/BUILD_ID
+      
       - name: Login to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Web App
+      - name: Configure Azure App Settings
         run: |
-          zip -r deploy.zip . -x "*.git*"
-          az webapp deployment source config-zip \
-            --resource-group hospital-rg \
-            --name hospital-nextjs-app \
-            --src deploy.zip \
-            --timeout 600
-
-      - name: Configure Azure Web App
-        run: |
+          echo "Configuring app settings..."
           az webapp config appsettings set \
             --name hospital-nextjs-app \
             --resource-group hospital-rg \
             --settings \
               NODE_ENV="production" \
               NEXT_PUBLIC_API_BASE_URL="${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" \
-              NEXT_PUBLIC_APP_URL="https://hospital-nextjs-app.azurewebsites.net" \
               PORT="8080" \
               WEBSITES_PORT="8080" \
-              HOSTNAME="0.0.0.0" \
+              WEBSITE_NODE_DEFAULT_VERSION="~20" \
               SCM_DO_BUILD_DURING_DEPLOYMENT="false" \
-              WEBSITE_HEALTHCHECK_MAXPINGFAILURES="10"
-
+              ENABLE_ORYX_BUILD="false" \
+              DISABLE_COLLECTSTATIC="true" \
+              WEBSITE_RUN_FROM_PACKAGE="0"
+          
+          echo "Setting startup command..."
           az webapp config set \
             --name hospital-nextjs-app \
             --resource-group hospital-rg \
             --startup-file "node server.js" \
-            --always-on true
+            --use-32bit-worker-process false
 
-          az webapp restart \
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        run: |
+          echo "Creating deployment package..."
+          zip -r deploy.zip . -x "*.git*"
+          
+          echo "Deploying to Azure..."
+          az webapp deployment source config-zip \
+            --resource-group hospital-rg \
             --name hospital-nextjs-app \
-            --resource-group hospital-rg
+            --src deploy.zip \
+            --timeout 600
+          
+          echo "webapp-url=https://hospital-nextjs-app.azurewebsites.net" >> $GITHUB_OUTPUT
+
+      - name: Restart and warm up
+        run: |
+          echo "Restarting web app..."
+          az webapp restart --name hospital-nextjs-app --resource-group hospital-rg
+          
+          echo "Waiting 45 seconds for app to start..."
+          sleep 45
+          
+          echo "Testing app endpoint..."
+          curl -f https://hospital-nextjs-app.azurewebsites.net/ -m 30 || echo "App not responding yet"
+
+      - name: Enable logging
+        run: |
+          az webapp log config \
+            --name hospital-nextjs-app \
+            --resource-group hospital-rg \
+            --application-logging filesystem \
+            --detailed-error-messages true \
+            --failed-request-tracing true \
+            --web-server-logging filesystem
+
+      - name: Show logs
+        if: always()
+        run: |
+          echo "=== Application Logs ==="
+          az webapp log tail \
+            --name hospital-nextjs-app \
+            --resource-group hospital-rg \
+            --timeout 30 || echo "Could not fetch logs"
