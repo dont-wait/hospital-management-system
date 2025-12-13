@@ -7,4 +7,7 @@ public interface IAuthService
     Task<ServiceResult<ResponseVerifyOtp>> VerifyOtpAsync(RequestVerifyOtp request);
 
     Task<ServiceResult<string>> ResetPasswordAsync(RequestResetPasswordFinal request, string resetToken);
+
+    
+
 }
