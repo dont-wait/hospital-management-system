@@ -111,14 +111,18 @@ jobs:
             --settings \
               NODE_ENV="production" \
               NEXT_PUBLIC_API_BASE_URL="${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" \
+              NEXT_PUBLIC_APP_URL="https://hospital-nextjs-app.azurewebsites.net" \
               PORT="8080" \
               WEBSITES_PORT="8080" \
-              SCM_DO_BUILD_DURING_DEPLOYMENT="false"
+              HOSTNAME="0.0.0.0" \
+              SCM_DO_BUILD_DURING_DEPLOYMENT="false" \
+              WEBSITE_HEALTHCHECK_MAXPINGFAILURES="10"
 
           az webapp config set \
             --name hospital-nextjs-app \
             --resource-group hospital-rg \
-            --startup-file "node server.js"
+            --startup-file "node server.js" \
+            --always-on true
 
           az webapp restart \
             --name hospital-nextjs-app \
