@@ -72,6 +72,7 @@ public class AuthController : ControllerBase
                     SameSite = SameSiteMode.None,
                     Secure = true,
                     Path = "/",
+                    // Don't set Domain for cross-origin cookies to work
                 };
 
                 var refreshTokenOption = new CookieOptions
@@ -81,6 +82,7 @@ public class AuthController : ControllerBase
                     SameSite = SameSiteMode.None,
                     Secure = true,
                     Path = "/",
+                    // Don't set Domain for cross-origin cookies to work
                 };
 
                 _httpContextAccessor.HttpContext?.Response.Cookies.Append("accessToken", result.Data!.AccessToken, accessTokenOption);
@@ -102,8 +104,17 @@ public class AuthController : ControllerBase
     {
         try
         {
-            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("accessToken");
-            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("refreshToken");
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Path = "/",
+                Expires = DateTime.UtcNow.AddDays(-1)
+            };
+
+            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("accessToken", cookieOptions);
+            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("refreshToken", cookieOptions);
 
             return new JsonResult(new ApiResponse<string>(200, "Đăng xuất thành công.")) { StatusCode = 200 };
         }
@@ -147,10 +158,11 @@ public class AuthController : ControllerBase
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    Expires = DateTime.UtcNow.AddDays(7),
+                    Expires = DateTime.UtcNow.AddMinutes(10),
                     SameSite = SameSiteMode.None,
                     Secure = true,
-                    Domain = "hospital-management-system-mu-six.vercel.app"
+                    Path = "/",
+                    // Don't set Domain for cross-origin cookies to work
                 }; 
 
                 _httpContextAccessor.HttpContext?.Response.Cookies.Append("resetToken", result.Data.ResetToken!, cookieOptions);
