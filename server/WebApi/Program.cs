@@ -1,4 +1,5 @@
 using Infrastructure;
+using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories.Account;
 using Infrastructure.Persistence.Repositories.EmployeeRepository;
 using Application.Services.Auth;
