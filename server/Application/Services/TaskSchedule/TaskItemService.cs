@@ -173,10 +173,10 @@ public class TaskItemService : ITaskItemService
         }
         
         List<TaskItem> taskItem = await _taskItemRepository.GetTaskItemByEmployeeId(employeeId);
-        if (taskItem == null || !taskItem.Any() || taskItem.Count == 0)
-        {
-            return ServiceResult<List<ResponseTaskItemDTO>>.Fail("Không tìm thấy lịch làm việc cho nhân viên này");
-        }
+        // if (taskItem == null || !taskItem.Any() || taskItem.Count == 0)
+        // {
+        //     return ServiceResult<List<ResponseTaskItemDTO>>.Fail("Không tìm thấy lịch làm việc cho nhân viên này");
+        // }
 
         List<ResponseTaskItemDTO> response = taskItem.Select(t => new ResponseTaskItemDTO
         {
