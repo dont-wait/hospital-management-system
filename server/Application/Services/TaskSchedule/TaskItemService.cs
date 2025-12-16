@@ -173,44 +173,45 @@ public class TaskItemService : ITaskItemService
         }
         
         List<TaskItem> taskItem = await _taskItemRepository.GetTaskItemByEmployeeId(employeeId);
-        // if (taskItem == null || !taskItem.Any() || taskItem.Count == 0)
-        // {
-        //     return ServiceResult<List<ResponseTaskItemDTO>>.Fail("Không tìm thấy lịch làm việc cho nhân viên này");
-        // }
-
-        List<ResponseTaskItemDTO> response = taskItem.Select(t => new ResponseTaskItemDTO
+        try
         {
-            ScheduleId = t.Id,
-            StartTime = t.Date.ToDateTime(t.StartTime),
-            EndTime = t.Date.ToDateTime(t.EndTime),
-            ScheduleStatus = t.TaskStatus,
-            Name = t.Name,
-            Description = t.Description,
-            DepartmentId = t.DepartmentId ?? 0,
-            DepartmentName = t.Department!.Name,
-            DepartmentDescription =  t.Department.Description,
-            RoomName = t.Room?.Name ?? string.Empty,
-            TaskRegistrations = t.TaskRegistrations
-                .Where(tr => tr.EmployeeId == employeeId)
-                .Select(tr => new ResponseTaskRegistrationDTO
-                {
-                    EmployeeId = tr.EmployeeId,
-                })
-                .ToList(),
-            Slots = t.TaskRegistrations
-                .Where(tr => tr.EmployeeId == employeeId)
-                .SelectMany(tr => tr.SlotTimes)
-                .Select(s => new ResponseSlotTimeDTO
-                {
-                    SlotId = s.Id,
-                    SlotStartTime = s.SlotStartTime,
-                    SlotEndTime = s.SlotEndTime,
-                    SlotStatus = s.SlotStatus
-                })
-                .ToList()
-        }).ToList();
+            List<ResponseTaskItemDTO> response = taskItem.Select(t => new ResponseTaskItemDTO
+            {
+                ScheduleId = t.Id,
+                StartTime = t.Date.ToDateTime(t.StartTime),
+                EndTime = t.Date.ToDateTime(t.EndTime),
+                ScheduleStatus = t.TaskStatus,
+                Name = t.Name,
+                Description = t.Description,
+                DepartmentId = t.DepartmentId ?? 0,
+                DepartmentName = t.Department!.Name,
+                DepartmentDescription =  t.Department.Description,
+                RoomName = t.Room?.Name ?? string.Empty,
+                TaskRegistrations = t.TaskRegistrations
+                    .Where(tr => tr.EmployeeId == employeeId)
+                    .Select(tr => new ResponseTaskRegistrationDTO
+                    {
+                        EmployeeId = tr.EmployeeId,
+                    })
+                    .ToList(),
+                Slots = t.TaskRegistrations
+                    .Where(tr => tr.EmployeeId == employeeId)
+                    .SelectMany(tr => tr.SlotTimes)
+                    .Select(s => new ResponseSlotTimeDTO
+                    {
+                        SlotId = s.Id,
+                        SlotStartTime = s.SlotStartTime,
+                        SlotEndTime = s.SlotEndTime,
+                        SlotStatus = s.SlotStatus
+                    })
+                    .ToList()
+            }).ToList();
 
-        return ServiceResult<List<ResponseTaskItemDTO>>.Success(response);
+            return ServiceResult<List<ResponseTaskItemDTO>>.Success(response);
+        } catch
+        {
+            return ServiceResult<List<ResponseTaskItemDTO>>.Fail("Lỗi khi lấy lịch làm việc của nhân viên");
+        }
     }
 
     private List<SlotTime> GenerateSlotTimes(RequestTaskItemDTO task)
