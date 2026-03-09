@@ -12,6 +12,7 @@
           pkgs.dotnet-sdk_8
           pkgs.omnisharp-roslyn
           pkgs.dotnet-ef
+          pkgs.sqlcmd
         ];
 
         # Fix dotnet hay bị lỗi SSL trên NixOS

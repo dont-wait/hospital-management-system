@@ -87,13 +87,15 @@ using (var scope = app.Services.CreateScope())
         logger.LogInformation("Applying migrations...");
         await db.Database.MigrateAsync();
         logger.LogInformation("Migrations applied successfully.");
-    await DataSeeder.SeedDepartmentsAndRoomAsync(db);
-    await DataSeeder.SeedAsync(db);
-    await DataSeeder.SeedSysAdminAsync(db);
-    await DataSeeder.SeedAdminAsync(db);
-    await DataSeeder.SeedDoctorsAsync(db);
-    await DataSeeder.SeedServicesAsync(db);
-    await DataSeeder.SeedPatientsAsync(db);
+        await DataSeeder.SeedDepartmentsAndRoomAsync(db);
+        await DataSeeder.SeedAsync(db);
+        await DataSeeder.SeedSysAdminAsync(db);
+        await DataSeeder.SeedAdminAsync(db);
+        await DataSeeder.SeedDoctorsAsync(db);
+        await DataSeeder.SeedServicesAsync(db);
+        await DataSeeder.SeedPatientsAsync(db);
+
+        logger.LogInformation("Database seeding completed successfully.");
     }
     catch (Exception ex)
     {
@@ -123,7 +125,6 @@ else
     app.UseHsts();
 }
 
-
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = new[] { new HangfireAuthorizationFilter() },
@@ -136,8 +137,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapGet("/", () => "Hello World!");
-app.MapGet("/health", () => Results.Ok(new 
-{ 
+app.MapGet("/health", () => Results.Ok(new
+{
     status = "Healthy",
     timestamp = DateTime.UtcNow,
     version = "1.0.0"
