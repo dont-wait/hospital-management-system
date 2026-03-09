@@ -35,6 +35,12 @@ builder.Services.AddRouting(options =>
     options.LowercaseQueryStrings = true;
 });
 
+builder.Logging.AddSimpleConsole(opts =>
+{
+    opts.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] ";
+    opts.IncludeScopes = true;
+    opts.SingleLine = true;
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
