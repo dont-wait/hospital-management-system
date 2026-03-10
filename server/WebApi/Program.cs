@@ -1,5 +1,4 @@
 using Infrastructure;
-using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories.Account;
 using Infrastructure.Persistence.Repositories.EmployeeRepository;
 using Application.Services.Auth;
@@ -39,7 +38,6 @@ builder.Logging.AddSimpleConsole(opts =>
 {
     opts.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] ";
     opts.IncludeScopes = true;
-    opts.SingleLine = true;
 });
 
 builder.Services.AddAuthorization();

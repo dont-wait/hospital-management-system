@@ -44,13 +44,12 @@ public static class DependencyInjection
             Console.WriteLine($"Lỗi khi thiết lập kết nối cơ sở dữ liệu: {ex.Message}");
             throw;
         }
-
         services.AddTokenService(configuration);
         services.AddSwaggerDocumentation();
         services.AddRedisService(configuration);
         services.AddSlotTimeService(configuration);
         services.AddExcelExporter();
-        
+
         if (configuration.GetValue<string>("EmailSettings:Provider") == "Smtp")
         {
             services.AddSmtpEmailProvider(configuration);
@@ -59,13 +58,18 @@ public static class DependencyInjection
         {
             services.AddSendGridEmailProvider(configuration);
         }
-
+        //Hangfire configuration
         services.AddHangfire(config =>
         {
-            config.UseSqlServerStorage(configuration.GetConnectionString("SqlServerDb"));
+            config
+                .UseSqlServerStorage(configuration.GetConnectionString("SqlServerDb"))
+                .UseSimpleAssemblyNameTypeSerializer() //serialize shortname class
+                .UseRecommendedSerializerSettings() // normallize json setting
+                ;
+
         });
         services.AddHangfireServer();
-        
+
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IOTPService, SendOTPService>();
         services.AddScoped<IEmailTemplateService, SendEmailTemplateService>();

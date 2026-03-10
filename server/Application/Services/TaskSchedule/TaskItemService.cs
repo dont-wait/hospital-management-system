@@ -8,14 +8,18 @@ public class TaskItemService : ITaskItemService
     private readonly ISlotTimeService _slotTimeService;
     private readonly IEmployeeAccountService _employeeAccountService;
     private readonly IDepartmentRepository _departmentRepository;
-
-    public TaskItemService(ITaskItemRepository taskItemRepository, ISlotTimeService slotTimeService, IEmployeeAccountService employeeAccountService, IDepartmentRepository departmentRepository)
+    public TaskItemService(ITaskItemRepository taskItemRepository,
+                            ISlotTimeService slotTimeService,
+                            IEmployeeAccountService employeeAccountService,
+                            IDepartmentRepository departmentRepository
+                            )
     {
         _taskItemRepository = taskItemRepository;
         _slotTimeService = slotTimeService;
         _employeeAccountService = employeeAccountService;
         _departmentRepository = departmentRepository;
     }
+
 
     public async Task<ServiceResult<ResponseAvailableAppointment>> GetAvailableAppointments(DateOnly? date,
         int? departmentId,
@@ -84,15 +88,15 @@ public class TaskItemService : ITaskItemService
         RequestTaskItemDTO requestTaskItemDTO,
         List<RequestTaskRegistrationDTO> taskRegistrations
     )
-    {  
+    {
         var today = DateOnly.FromDateTime(DateTime.Now);
         if (requestTaskItemDTO.Date < today)
             return ServiceResult<ResponseTaskItemDTO>.Fail("Ngày chọn phải lớn hơn hoặc bằng hôm nay");
 
         // Lấy thông tin ca làm việc từ config
         SlotTimeConfig slotTimeConfig = _slotTimeService.GetSlotTimeConfig<SlotTimeConfig>();
-        var shiftConfig = requestTaskItemDTO.WorkShift == WorkShiftEnum.Morning 
-            ? slotTimeConfig.MorningShift 
+        var shiftConfig = requestTaskItemDTO.WorkShift == WorkShiftEnum.Morning
+            ? slotTimeConfig.MorningShift
             : slotTimeConfig.AfternoonShift;
 
         var employeeIds = taskRegistrations.Select(tr => tr.EmployeeId).ToList();
@@ -101,8 +105,9 @@ public class TaskItemService : ITaskItemService
         var employeeDepartmentMap = employees.Data?
             .Where(e => e.Employee != null)
             .ToDictionary(e => e.Employee!.EmployeeId, e => e.Employee!.DepartmentId);
- 
-        foreach (var taskReg in taskRegistrations) {
+
+        foreach (var taskReg in taskRegistrations)
+        {
             if (!employeeDepartmentMap!.TryGetValue(taskReg.EmployeeId, out var empDepartmentId) || empDepartmentId != requestTaskItemDTO.DepartmentId)
             {
                 return ServiceResult<ResponseTaskItemDTO>.Fail($"Nhân viên {taskReg.EmployeeId} không thuộc khoa đã chọn.");
@@ -120,7 +125,8 @@ public class TaskItemService : ITaskItemService
         {
             string shiftName = requestTaskItemDTO.WorkShift == WorkShiftEnum.Morning ? "sáng" : "chiều";
             var conflictEmployeeNames = employeesWithSchedule
-                .Select(id => {
+                .Select(id =>
+                {
                     var emp = employees.Data?.FirstOrDefault(e => e.Employee?.EmployeeId == id)?.Employee;
                     return emp != null ? $"{emp.FirstName} {emp.LastName}" : id.ToString();
                 })
@@ -162,16 +168,16 @@ public class TaskItemService : ITaskItemService
         };
 
         return ServiceResult<ResponseTaskItemDTO>.Success(response);
-    } 
+    }
 
     public async Task<ServiceResult<List<ResponseTaskItemDTO>>> GetTaskItemByEmployeeIdAsync(Guid employeeId)
     {
-        
-        if(employeeId == Guid.Empty)
+
+        if (employeeId == Guid.Empty)
         {
             return ServiceResult<List<ResponseTaskItemDTO>>.Fail("Mã nhân viên không được để trống");
         }
-        
+
         List<TaskItem> taskItem = await _taskItemRepository.GetTaskItemByEmployeeId(employeeId);
         try
         {
@@ -185,7 +191,7 @@ public class TaskItemService : ITaskItemService
                 Description = t.Description,
                 DepartmentId = t.DepartmentId ?? 0,
                 DepartmentName = t.Department!.Name,
-                DepartmentDescription =  t.Department.Description,
+                DepartmentDescription = t.Department.Description,
                 RoomName = t.Room?.Name ?? string.Empty,
                 TaskRegistrations = t.TaskRegistrations
                     .Where(tr => tr.EmployeeId == employeeId)
@@ -208,7 +214,8 @@ public class TaskItemService : ITaskItemService
             }).ToList();
 
             return ServiceResult<List<ResponseTaskItemDTO>>.Success(response);
-        } catch
+        }
+        catch
         {
             return ServiceResult<List<ResponseTaskItemDTO>>.Fail("Lỗi khi lấy lịch làm việc của nhân viên");
         }
@@ -217,10 +224,10 @@ public class TaskItemService : ITaskItemService
     private List<SlotTime> GenerateSlotTimes(RequestTaskItemDTO task)
     {
         SlotTimeConfig slotTimeConfig = _slotTimeService.GetSlotTimeConfig<SlotTimeConfig>();
-    
+
         // Lấy thông tin ca làm việc từ config
-        var shiftConfig = task.WorkShift == WorkShiftEnum.Morning 
-            ? slotTimeConfig.MorningShift 
+        var shiftConfig = task.WorkShift == WorkShiftEnum.Morning
+            ? slotTimeConfig.MorningShift
             : slotTimeConfig.AfternoonShift;
 
         List<SlotTime>? slots = new List<SlotTime>();
