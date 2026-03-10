@@ -68,7 +68,13 @@ public static class DependencyInjection
                 ;
 
         });
-        services.AddHangfireServer();
+        services.AddHangfireServer(opts =>
+        {
+            opts.ServerName = "Hospital Scheduler Worker"; // Tên của hangfire server
+            opts.WorkerCount = Math.Min(Environment.ProcessorCount * 5, 10); // Số lượng worker để xử lý công việc
+            opts.SchedulePollingInterval = TimeSpan.FromSeconds(15); // Khoảng thời gian để hangfire server kiểm tra job trong db 
+            opts.CancellationCheckInterval = TimeSpan.FromSeconds(5); // Khoảng thời gian để hangfire server kiểm tra job có bị hủy hay không để dùng job tránh lãng phí worker và tài nguyên hệ thống
+        });
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IOTPService, SendOTPService>();
