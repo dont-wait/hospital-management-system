@@ -15,15 +15,20 @@ namespace Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(
+            this IServiceCollection services,
+            IConfiguration configuration)
     {
         try
         {
-            string DbProvider = configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
+            string DbProvider = configuration
+                .GetValue<string>("DatabaseProvider") ?? "SqlServer";
             if (DbProvider == "SqlServer")
             {
                 services.AddDbContext<AppDbContext>(options =>
-                    options.UseSqlServer(configuration.GetConnectionString("SqlServerDb")));
+                    options
+                        .UseSqlServer(configuration
+                        .GetConnectionString("SqlServerDb")));
 
                 Console.WriteLine("Đã kết nối với SQL Server");
             }
