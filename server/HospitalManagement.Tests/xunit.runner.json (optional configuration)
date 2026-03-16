@@ -1,5 +1,0 @@
-{
-  "parallelizeAssembly": true,
-  "maxParallelThreads": 4,
-  "diagnosticMessages": true
-}

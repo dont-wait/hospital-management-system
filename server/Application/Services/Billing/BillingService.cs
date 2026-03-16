@@ -84,9 +84,8 @@ public class BillingService : IBillingService
         {
             var transactions = await _billingRepository.GetLatestTransactionsAsync(page, count, fromDate, toDate);
             return ServiceResult<List<ResponseLatestTransactionDTO>>.Success(transactions);   
-        } catch(Exception ex)
+        } catch
         {
-            Console.WriteLine("Error fetching latest transactions: " + ex.Message);
             return ServiceResult<List<ResponseLatestTransactionDTO>>.Fail("Lỗi khi lấy giao dịch mới nhất");
         }
     }
@@ -104,9 +103,8 @@ public class BillingService : IBillingService
             var revenues = await _billingRepository.GetAllRevenueAsync(timeRange, referenceDate, toDate);
             return ServiceResult<List<ResponseRevenueDTO>>.Success(revenues);
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine("Error fetching revenues: " + ex.Message);
             return ServiceResult<List<ResponseRevenueDTO>>.Fail("Lỗi khi lấy dữ liệu doanh thu");
         }
     }
@@ -124,9 +122,8 @@ public class BillingService : IBillingService
             var revenues = await _billingRepository.GetRevenueByCategoryAsync(timeRange, fromDate, toDate);
             return ServiceResult<ResponseRevenueByCategoryDTO>.Success(revenues);
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine("Error fetching revenue by category: " + ex.Message);
             return ServiceResult<ResponseRevenueByCategoryDTO>.Fail("Lỗi khi lấy dữ liệu doanh thu theo danh mục");
         }
     }
