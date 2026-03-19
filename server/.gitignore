@@ -51,4 +51,3 @@ Desktop.ini
 #-- Config version SDK
 global.json 
 .env
-flake.lock
