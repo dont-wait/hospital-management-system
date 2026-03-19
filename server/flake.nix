@@ -12,6 +12,7 @@
           pkgs.dotnet-sdk_8
           pkgs.omnisharp-roslyn
           pkgs.dotnet-ef
+          pkgs.csharp-ls
           pkgs.sqlcmd
         ];
 
