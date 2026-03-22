@@ -13,4 +13,10 @@ public class NotificationHub : Hub
 
         await base.OnConnectedAsync();
     }
+
+    public async Task SendNotification(string targetUser, string message)
+    {
+        await Clients.Group(targetUser)
+            .SendAsync("ReceiveNotification", targetUser, message);
+    }
 }
