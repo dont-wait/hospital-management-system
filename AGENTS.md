@@ -66,7 +66,11 @@ yarn lint            # Run ESLint (next lint)
 yarn analyze         # Bundle analysis (ANALYZE=true next build)
 ```
 
-There is no frontend test framework configured — do not add test scripts without explicit instruction.
+Vitest is configured (`vitest.config.mts`) but no test scripts are in `package.json`. Run tests manually with:
+```bash
+npx vitest            # Run tests in watch mode
+npx vitest run        # Run tests once
+```
 
 ---
 
