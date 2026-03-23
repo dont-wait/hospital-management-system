@@ -1,0 +1,9 @@
+@reference "./globals.css";
+
+.schedule-container {
+	@apply p-4 border-2 border-gray-200 shadow-md rounded-xl bg-white;
+}
+
+.schedule-container-header {
+	@apply flex text-xl font-bold mb-4 items-center gap-2 border-b border-gray-100 pb-4 -mx-4 px-4;
+}
