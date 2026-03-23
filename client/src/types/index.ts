@@ -512,3 +512,10 @@ export interface RestoreDatabaseResponse {
   status: "SUCCESS" | "FAILED" | "PARTIAL";
   message: string;
 }
+
+export interface SoftConstraint {
+  title: string;
+  description: string;
+  inputType: "text" | "select" | "multiselect" | "date" | "time" | "number";
+  options?: string[]; // Chỉ cần nếu inputType là select hoặc multiselect
+}
