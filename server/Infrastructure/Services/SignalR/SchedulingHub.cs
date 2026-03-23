@@ -1,6 +1,7 @@
+
 using Microsoft.AspNetCore.SignalR;
 
-public class NotificationHub : Hub
+public class SchedulingHub : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -14,9 +15,9 @@ public class NotificationHub : Hub
         await base.OnConnectedAsync();
     }
 
-
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
+        // Khi client mất kết nối
         await base.OnDisconnectedAsync(exception);
     }
 
@@ -25,5 +26,10 @@ public class NotificationHub : Hub
     {
         await Clients.Group(targetUser)
             .SendAsync("ReceiveNotification", targetUser, message);
+    }
+
+    public async Task SendEmployeeOfDepartment(int departmentId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"dept_{departmentId}");
     }
 }
