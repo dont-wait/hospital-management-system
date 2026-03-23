@@ -80,6 +80,11 @@ builder.Services.AddScoped<IEmployeeMapper, EmployeeMapper>();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
+
+// signalR
+//builder.Services.AddSignalRCustom(builder.Configuration);
+builder.Services.AddSignalRCustom();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -148,5 +153,8 @@ app.MapGet("/health", () => Results.Ok(new
     version = "1.0.0"
 }))
 .AllowAnonymous();
+
+// SignalR hub
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();
