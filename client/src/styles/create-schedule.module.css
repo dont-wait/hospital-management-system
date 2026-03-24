@@ -1,5 +1,9 @@
 @reference "./globals.css";
 
+.auto-schedule-button {
+	@apply px-4 py-2 bg-east-bay text-white rounded-md font-semibold transition-colors duration-200 hover:bg-east-bay/90;
+}
+
 .schedule-container {
 	@apply p-8 border-2 border-gray-200 shadow-md rounded-xl bg-white;
 }
