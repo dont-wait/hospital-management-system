@@ -116,6 +116,130 @@
 	@apply text-xs text-gray-500;
 }
 
+.preview-schedule-container {
+	@apply w-full;
+}
+
+.preview-schedule-header {
+	@apply flex-col lg:flex-row lg:items-start lg:justify-between gap-4;
+}
+
+.preview-schedule-title-group {
+	@apply flex items-start gap-3;
+}
+
+.preview-schedule-icon {
+	@apply text-orange-500 h-5 w-5 mt-1;
+}
+
+.preview-schedule-title {
+	@apply text-lg font-semibold text-gray-800;
+}
+
+.preview-schedule-subtitle {
+	@apply text-sm text-gray-500 font-normal mt-1;
+}
+
+.preview-schedule-actions {
+	@apply flex items-center gap-2;
+}
+
+.preview-secondary-btn {
+	@apply px-4 py-2 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm font-medium flex items-center gap-2 transition-colors duration-200;
+}
+
+.preview-primary-btn {
+	@apply px-4 py-2 rounded-lg text-white bg-east-bay hover:bg-east-bay/90 text-sm font-semibold transition-colors duration-200;
+}
+
+.preview-status-row {
+	@apply flex flex-wrap items-center gap-2 mb-4;
+}
+
+.preview-status-pill {
+	@apply text-xs px-3 py-1 rounded-full bg-east-bay/10 text-east-bay font-medium;
+}
+
+.preview-metric-grid {
+	@apply grid grid-cols-1 md:grid-cols-3 gap-3 mb-4;
+}
+
+.preview-metric-item {
+	@apply rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 flex items-center justify-between;
+}
+
+.preview-metric-label {
+	@apply text-sm text-gray-500;
+}
+
+.preview-metric-value {
+	@apply text-lg font-semibold text-gray-800;
+}
+
+.preview-week-nav {
+	@apply flex items-center justify-between mb-3;
+}
+
+.preview-week-btn {
+	@apply text-sm px-3 py-1.5 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1;
+}
+
+.preview-week-label {
+	@apply text-sm font-medium text-gray-600;
+}
+
+.preview-table-wrapper {
+	@apply overflow-x-auto rounded-xl border border-gray-200;
+}
+
+.preview-table {
+	@apply w-full min-w-[900px] border-collapse;
+}
+
+.preview-table thead th {
+	@apply bg-gray-50 text-gray-500 text-sm font-semibold p-3 text-center border-b border-gray-200;
+}
+
+.preview-table tbody td {
+	@apply p-3 text-center border-b border-gray-100;
+}
+
+.preview-table thead th.preview-doctor-col {
+	@apply text-left pl-4;
+}
+
+.preview-table tbody td.preview-doctor-cell {
+	@apply text-left pl-4 align-middle;
+}
+
+.preview-doctor-name {
+	@apply text-sm font-semibold text-gray-800 leading-6 whitespace-nowrap;
+}
+
+.preview-shift-stack {
+	@apply flex flex-wrap items-center justify-center gap-1.5;
+}
+
+.preview-shift-chip {
+	@apply inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold;
+}
+
+.preview-shift-morning {
+	@apply bg-green-100 text-green-700;
+}
+
+.preview-shift-afternoon {
+	@apply bg-blue-100 text-blue-700;
+}
+
+.preview-shift-empty {
+	@apply text-gray-400 font-medium;
+}
+
+.preview-empty-row {
+	@apply text-center text-gray-500 py-6;
+}
+
 @media (max-width: 768px) {
 	.approve-leave-item-container {
 		@apply items-start;
@@ -128,5 +252,22 @@
 	.approve-leave-reject-btn,
 	.approve-leave-approve-btn {
 		@apply w-full;
+	}
+
+	.preview-schedule-actions {
+		@apply w-full;
+	}
+
+	.preview-secondary-btn,
+	.preview-primary-btn {
+		@apply flex-1 justify-center;
+	}
+
+	.preview-week-nav {
+		@apply gap-2;
+	}
+
+	.preview-week-label {
+		@apply hidden;
 	}
 }
