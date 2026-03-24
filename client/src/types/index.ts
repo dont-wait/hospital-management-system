@@ -519,3 +519,15 @@ export interface SoftConstraint {
   inputType: "text" | "select" | "multiselect" | "date" | "time" | "number";
   options?: string[]; // Chỉ cần nếu inputType là select hoặc multiselect
 }
+
+export type LeaveRequestType = "annual" | "personal" | "other";
+
+export interface ApproveLeaveItemData {
+  requestId: string;
+  doctorName: string;
+  startDate: string;
+  endDate: string;
+  totalDays: number;
+  leaveType: LeaveRequestType;
+  leaveTypeLabel?: string;
+}

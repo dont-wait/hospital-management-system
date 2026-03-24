@@ -13,7 +13,7 @@
 }
 
 .approve-leave-container {
-	@apply w-full lg:w-2/3;
+	@apply w-full lg:w-2/3 flex flex-col;
 }
 
 .approve-leave-header {
@@ -42,4 +42,87 @@
 
 .soft-constraint-item-control {
 	@apply w-32 md:w-40 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-east-bay;
+}
+
+.approve-leave-item-container {
+	@apply border border-gray-200 rounded-xl p-4 mb-4 flex items-center justify-between gap-3;
+}
+
+.approve-leave-item-left {
+	@apply flex items-center gap-3;
+}
+
+.approve-leave-item-avatar {
+	@apply h-12 w-12 rounded-full bg-teal-100 text-teal-700 text-sm font-bold flex items-center justify-center;
+}
+
+.approve-leave-item-info {
+	@apply flex flex-col gap-1;
+}
+
+.approve-leave-item-name {
+	@apply text-lg font-semibold text-gray-800 leading-none;
+}
+
+.approve-leave-item-period {
+	@apply text-sm text-gray-500;
+}
+
+.approve-leave-item-type-badge {
+	@apply w-fit text-xs font-semibold px-2 py-1 rounded-md uppercase tracking-wide;
+}
+
+.leave-type-annual {
+	@apply bg-blue-100 text-blue-700;
+}
+
+.leave-type-personal {
+	@apply bg-orange-100 text-orange-700;
+}
+
+.leave-type-other {
+	@apply bg-gray-100 text-gray-700;
+}
+
+.approve-leave-item-actions {
+	@apply flex items-center gap-3;
+}
+
+.approve-leave-reject-btn {
+	@apply min-w-24 px-4 py-2 rounded-xl text-red-500 border border-red-200 font-semibold transition-colors duration-200 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed;
+}
+
+.approve-leave-approve-btn {
+	@apply min-w-24 px-4 py-2 rounded-xl text-white bg-east-bay font-semibold transition-colors duration-200 hover:bg-east-bay/90 disabled:opacity-60 disabled:cursor-not-allowed;
+}
+
+.approve-leave-empty-state {
+	@apply flex-1 min-h-44 border border-dashed border-gray-300 rounded-xl bg-gray-50/70 flex flex-col items-center justify-center gap-2 text-center px-4;
+}
+
+.approve-leave-empty-icon {
+	@apply h-10 w-10 text-east-bay/70;
+}
+
+.approve-leave-empty-title {
+	@apply text-sm font-semibold text-gray-700;
+}
+
+.approve-leave-empty-subtitle {
+	@apply text-xs text-gray-500;
+}
+
+@media (max-width: 768px) {
+	.approve-leave-item-container {
+		@apply items-start;
+	}
+
+	.approve-leave-item-actions {
+		@apply flex-col;
+	}
+
+	.approve-leave-reject-btn,
+	.approve-leave-approve-btn {
+		@apply w-full;
+	}
 }
