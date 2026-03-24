@@ -531,3 +531,30 @@ export interface ApproveLeaveItemData {
   leaveType: LeaveRequestType;
   leaveTypeLabel?: string;
 }
+
+export type PreviewShiftCode = "morning" | "afternoon";
+
+export interface PreviewShiftAssignment {
+  date: string;
+  shift: string;
+  doctor_ids: string[];
+}
+
+export interface PreviewSelectedSchedule {
+  start_date: string;
+  num_days: number;
+  required_doctors_per_shift: number;
+  shifts_per_day: number;
+  assignments: PreviewShiftAssignment[];
+}
+
+export interface PreviewScheduleResult {
+  selected_option_id: string;
+  selected_schedule: PreviewSelectedSchedule;
+}
+
+export interface PreviewScheduleResponse {
+  status: "queued" | "processing" | "completed" | string;
+  progress_percent: number;
+  result: PreviewScheduleResult;
+}
