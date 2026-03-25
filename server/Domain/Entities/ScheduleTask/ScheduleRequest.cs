@@ -13,9 +13,13 @@ public class ScheduleRequest : BaseEntity
     public Guid RequestedBy { get; set; }
     public virtual Employee? Employee { get; set; }
 
-    public string Status { get; set; } = ScheduleEnum.PENDING.ToString();
+    public string Status { get; set; } = ScheduleEnum.QUEUED.ToString();
 
     public string? HangfireJobId { get; set; }
+
+    public string? ServerlessRequestId { get; set; }
+
+    public int ProgressPercent { get; set; }
 
     public string? RequestPayload { get; set; }
 

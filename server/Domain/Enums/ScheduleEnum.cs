@@ -3,5 +3,7 @@ public enum ScheduleEnum
    PENDING,
    APPROVED,
    REJECTED,
-   READY
+   READY,
+   FAILED,
+   QUEUED
 }
