@@ -156,5 +156,6 @@ app.MapGet("/health", () => Results.Ok(new
 
 // SignalR hub
 app.MapHub<NotificationHub>("/notificationHub");
+app.MapHub<SchedulingHub>("/schedulingHub");
 
 app.Run();

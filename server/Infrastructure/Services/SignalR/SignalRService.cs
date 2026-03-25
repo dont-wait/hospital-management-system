@@ -2,24 +2,32 @@ using Microsoft.AspNetCore.SignalR;
 
 public class SignalRService
 {
-    private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly IHubContext<NotificationHub> _notificationHub;
+    private readonly IHubContext<SchedulingHub> _schedulingHub;
 
-    public SignalRService(IHubContext<NotificationHub> hubContext)
+    public SignalRService(
+        IHubContext<NotificationHub> notificationHub,
+        IHubContext<SchedulingHub> schedulingHub)
     {
-        _hubContext = hubContext;
+        _notificationHub = notificationHub;
+        _schedulingHub = schedulingHub;
     }
 
-    // gửi cho 1 doctor
     public async Task SendToUser(string userId, string message)
     {
-        await _hubContext.Clients.Group(userId)
+        await _notificationHub.Clients.Group(userId)
             .SendAsync("ReceiveNotification", userId, message);
     }
 
-    // gửi cho tất cả
+    public async Task SendToDepartment(int departmentId, string message)
+    {
+        await _schedulingHub.Clients.Group($"dept_{departmentId}")
+            .SendAsync("ReceiveNotification", $"dept_{departmentId}", message);
+    }
+
     public async Task SendToAll(string message)
     {
-        await _hubContext.Clients.All
+        await _notificationHub.Clients.All
             .SendAsync("ReceiveNotification", "ALL", message);
     }
 }
