@@ -1,20 +1,12 @@
 import { AuthUserWithoutTokens, PreviewShiftAssignment, PreviewShiftCode } from "@/types";
 
 export const PREVIEW_SHIFT_LABELS: Record<PreviewShiftCode, string> = {
-    am: "Sáng",
-    pm: "Chiều",
+    morning: "Sáng",
+    afternoon: "Chiều",
 };
 
 const VI_SHORT_WEEKDAY = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 
-export function toShiftCode(rawShift: string): PreviewShiftCode | null {
-    const normalized = rawShift.trim().toLowerCase();
-
-    if (["morning", "sang", "sáng", "1", "am"].includes(normalized)) return "am";
-    if (["afternoon", "chieu", "chiều", "2", "pm"].includes(normalized)) return "pm";
-
-    return null;
-}
 
 export function toDateKey(date: Date) {
     return date.toISOString().split("T")[0];

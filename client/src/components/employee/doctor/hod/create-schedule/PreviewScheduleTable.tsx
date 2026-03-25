@@ -3,7 +3,7 @@ import { AuthUserWithoutTokens, PreviewShiftCode } from "@/types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { formatDayLabel, PREVIEW_SHIFT_LABELS, toDateKey } from "../../../../../lib/client/previewSchedule.utils";
 
-const SHIFT_ORDER: PreviewShiftCode[] = ["am", "pm"];
+const SHIFT_ORDER: PreviewShiftCode[] = ["morning", "afternoon"];
 
 interface PreviewScheduleTableProps {
     doctors: AuthUserWithoutTokens[];
