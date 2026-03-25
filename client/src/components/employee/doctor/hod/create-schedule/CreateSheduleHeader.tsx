@@ -6,7 +6,11 @@ import { Employee } from "@/types";
 import styles from "@/styles/admin.module.css";
 import createScheduleStyles from "@/styles/create-schedule.module.css";
 
-export function CreateSheduleHeader() {
+interface CreateSheduleHeaderProps {
+	formId: string;
+}
+
+export function CreateSheduleHeader({ formId }: CreateSheduleHeaderProps) {
     const { user } = useUserAuthContext();
     const doctor = user as Employee;
 
@@ -20,7 +24,7 @@ export function CreateSheduleHeader() {
                     Chuyên khoa: {doctor?.specialization || "Đa khoa"}
                 </p>
             </div>
-            <button className={createScheduleStyles["auto-schedule-button"]}>
+            <button form={formId} type="submit" className={createScheduleStyles["auto-schedule-button"]}>
                 Xếp lịch tự động
             </button>
       </div>

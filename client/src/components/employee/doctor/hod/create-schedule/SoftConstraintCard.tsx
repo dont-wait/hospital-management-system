@@ -8,11 +8,11 @@ export function SoftConstraintCard(
   { softConstraints }: { softConstraints: SoftConstraintField[] }
 ) {
   return (
-    <div className={styles["schedule-container"] + " w-full lg:w-1/3"}>
+    <div className={styles["soft-constraint-content"]}>
       <div className={styles["schedule-container-header"]}>
         <ListTodo className="text-east-bay" /> Ràng buộc mềm
       </div>
-      <div className="flex flex-col gap-4">
+      <div className={`${styles["card-scroll-area"]} ${styles["soft-constraint-scroll"]}`}>
         {softConstraints.map((constraint) => <SoftConstraintItem key={constraint.key} softConstraint={constraint} />)}
       </div>
     </div>

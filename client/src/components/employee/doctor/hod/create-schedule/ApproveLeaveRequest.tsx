@@ -50,7 +50,7 @@ export function ApproveLeaveRequestCard({
 	const pendingCount = requests.length;
 
 	return (
-		<div className={`${styles["schedule-container"]} ${styles["approve-leave-container"]}`}>
+		<div className={`${styles["schedule-container"]} ${styles["approve-leave-container"]} lg:h-full`}>
 			<div className={`${styles["schedule-container-header"]} ${styles["approve-leave-header"]}`}>
 				<div className={styles["approve-leave-title-group"]}>
 					<FileUser className={styles["approve-leave-icon"]} /> Phê duyệt nghỉ phép
@@ -60,27 +60,29 @@ export function ApproveLeaveRequestCard({
 				</div>
 			</div>
 
-			{requests.length === 0 ? (
-				<div className={styles["approve-leave-empty-state"]}>
-					<CalendarDays className={styles["approve-leave-empty-icon"]} />
-					<p className={styles["approve-leave-empty-title"]}>
-						Không có yêu cầu nghỉ phép nào đang chờ duyệt.
-					</p>
-					<p className={styles["approve-leave-empty-subtitle"]}>
-						Yêu cầu mới sẽ xuất hiện ở đây khi bác sĩ gửi đơn nghỉ phép.
-					</p>
-				</div>
-			) : (
-				requests.map((request) => (
-					<ApproveLeaveItem
-						key={request.requestId}
-						request={request}
-						onApprove={onApprove}
-						onReject={onReject}
-						disabled={isActionDisabled}
-					/>
-				))
-			)}
+			<div className={styles["card-scroll-area"]}>
+				{requests.length === 0 ? (
+					<div className={styles["approve-leave-empty-state"]}>
+						<CalendarDays className={styles["approve-leave-empty-icon"]} />
+						<p className={styles["approve-leave-empty-title"]}>
+							Không có yêu cầu nghỉ phép nào đang chờ duyệt.
+						</p>
+						<p className={styles["approve-leave-empty-subtitle"]}>
+							Yêu cầu mới sẽ xuất hiện ở đây khi bác sĩ gửi đơn nghỉ phép.
+						</p>
+					</div>
+				) : (
+					requests.map((request) => (
+						<ApproveLeaveItem
+							key={request.requestId}
+							request={request}
+							onApprove={onApprove}
+							onReject={onReject}
+							disabled={isActionDisabled}
+						/>
+					))
+				)}
+			</div>
 		</div>
 	);
 }
