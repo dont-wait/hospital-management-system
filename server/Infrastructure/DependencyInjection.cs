@@ -9,6 +9,8 @@ using Infrastructure.Services.Redis;
 using Infrastructure.Services.Email;
 using Infrastructure.Services.SlotTime;
 using Infrastructure.Services.Excel;
+using Infrastructure.HangfireJobs;
+using Application.Common.Interface.Scheduling;
 using Hangfire;
 
 namespace Infrastructure;
@@ -75,15 +77,28 @@ public static class DependencyInjection
         });
         services.AddHangfireServer(opts =>
         {
-            opts.ServerName = "Hospital Scheduler Worker"; // Tên của hangfire server
-            opts.WorkerCount = Math.Min(Environment.ProcessorCount * 5, 10); // Số lượng worker để xử lý công việc
-            opts.SchedulePollingInterval = TimeSpan.FromSeconds(15); // Khoảng thời gian để hangfire server kiểm tra job trong db 
-            opts.CancellationCheckInterval = TimeSpan.FromSeconds(5); // Khoảng thời gian để hangfire server kiểm tra job có bị hủy hay không để dùng job tránh lãng phí worker và tài nguyên hệ thống
+            opts.ServerName = "Hospital Scheduler Worker";
+            opts.WorkerCount = Math.Min(Environment.ProcessorCount * 5, 10);
+            opts.SchedulePollingInterval = TimeSpan.FromSeconds(15);
+            opts.CancellationCheckInterval = TimeSpan.FromSeconds(5);
+            opts.Queues = new[] { "scheduling", "default" };
         });
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IOTPService, SendOTPService>();
         services.AddScoped<IEmailTemplateService, SendEmailTemplateService>();
+
+        services.AddScoped<IScheduleRequestRepository, ScheduleRequestRepository>();
+        services.AddScoped<SignalRService>();
+        services.AddScoped<AutoSchedulingHangfireJob>();
+
+        services.AddHttpClient("ServerlessScheduling", client =>
+        {
+            var baseUrl = configuration.GetValue<string>("ServerlessService:BaseUrl")
+                ?? throw new InvalidOperationException("ServerlessService:BaseUrl not configured");
+            client.BaseAddress = new Uri(baseUrl);
+            client.Timeout = TimeSpan.FromSeconds(20000);
+        });
 
         return services;
     }
