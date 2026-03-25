@@ -532,7 +532,7 @@ export interface ApproveLeaveItemData {
   leaveTypeLabel?: string;
 }
 
-export type PreviewShiftCode = "morning" | "afternoon";
+export type PreviewShiftCode = "am" | "pm";
 
 export interface PreviewShiftAssignment {
   date: string;
