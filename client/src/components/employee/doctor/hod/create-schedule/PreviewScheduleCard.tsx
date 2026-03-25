@@ -30,33 +30,10 @@ const PREVIEW_RESPONSE_MOCK: PreviewScheduleResponse = {
     },
 };
 
-export function PreviewScheduleCard() {
-    const [doctors, setDoctors] = useState<AuthUserWithoutTokens[]>([]);
+export function PreviewScheduleCard({ doctors }: { doctors: AuthUserWithoutTokens[] }) {
     const [activeWeekIndex, setActiveWeekIndex] = useState<number>(0);
-    
-    const { user } = useUserAuthContext();
-    const hod = user as Employee;
-
     const previewResponse = PREVIEW_RESPONSE_MOCK;
     const selectedSchedule = previewResponse.result.selected_schedule;
-        
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const employeesData = await EmployeeService.getAllEmployees(
-                    "doctor",
-                    hod.departmentId,
-                );
-                setDoctors(employeesData);
-
-            } catch (error) {
-                void error;
-                toast.error("Không thể tải dữ liệu");
-            }
-        };
-
-        fetchData();
-    }, [hod?.departmentId]);
 
     const allDays = useMemo(() => {
         const startDate = new Date(selectedSchedule.start_date);

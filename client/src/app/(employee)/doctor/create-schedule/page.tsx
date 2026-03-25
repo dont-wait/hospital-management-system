@@ -7,8 +7,47 @@ import { SoftConstraintConfig, SoftConstraintScheduleConfig } from '@/config';
 import { PreviewScheduleCard } from '@/components/employee/doctor/hod/create-schedule/PreviewScheduleCard';
 import { useForm, FormProvider } from 'react-hook-form';
 import styles from "@/styles/create-schedule.module.css";
+import { useEffect, useState } from 'react';
+import { AuthUserWithoutTokens, Employee } from '@/types';
+import { useUserAuthContext } from '@/contexts';
+import { EmployeeService } from '@/services/employee.service';
+import { toast } from 'react-toastify';
+
+type DoctorRequest = {
+	id: string;
+	name: string;
+	experiences: number;
+	department_id: string;
+	specialization: string;
+	days_off: string[];
+	preferred_extra_days: string[];	
+	has_valid_license: true,
+	is_intern: false
+}
 
 export default function CreateSchedulePage() {
+	const [doctors, setDoctors] = useState<AuthUserWithoutTokens[]>([]);
+	
+	const { user } = useUserAuthContext();
+	const hod = user as Employee;
+	
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const employeesData = await EmployeeService.getAllEmployees(
+					"doctor",
+					hod.departmentId,
+				);
+				setDoctors(employeesData);
+
+			} catch (error) {
+				void error;
+				toast.error("Không thể tải dữ liệu");
+			}
+		};
+
+		fetchData();
+	}, [hod?.departmentId]);
 	const SOFT_CONSTRAINT_FORM_ID = 'soft-constraint-form';
 
 	const method = useForm<SoftConstraintScheduleConfig>({
@@ -22,7 +61,41 @@ export default function CreateSchedulePage() {
 	});
 
 	const onSubmit = (data: SoftConstraintScheduleConfig) => {
-		console.log("Soft Constraint Form Data:", data);
+		const doctorsData = doctors.map<DoctorRequest>(doc => {
+			if (doc.employee) {
+				const d = doc.employee;
+				return {
+					id: d.employeeId,
+					name: `${d.firstName} ${d.lastName}`,
+					experiences: Date.now() - new Date(d.hireDate).getTime(),
+					department_id: String(d.departmentId),
+					specialization: d.specialization,
+					days_off: [],
+					preferred_extra_days: [],
+					has_valid_license: true,
+					is_intern: false
+				}
+			}
+
+			return {
+				id: '',
+				name: '',
+				experiences: 0,
+				department_id: '',
+				specialization: '',
+				days_off: [],
+				preferred_extra_days: [],
+				has_valid_license: true,
+				is_intern: false
+			};
+		});
+
+		const requestData = {
+			...data,
+			doctors: doctorsData
+		}
+
+		console.log("Soft Constraint Form Data:", requestData);
 	}
 
 	return (
@@ -40,7 +113,7 @@ export default function CreateSchedulePage() {
 					<ApproveLeaveRequestCard />
 				</div>
 			</FormProvider>
-			<PreviewScheduleCard />
+			<PreviewScheduleCard doctors={doctors} />
 		</>
 	);
 }
