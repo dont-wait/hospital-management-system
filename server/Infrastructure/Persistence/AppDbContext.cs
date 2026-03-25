@@ -82,6 +82,7 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("schedule_requests");
             entity.Property(e => e.Status).HasMaxLength(20);
+            entity.Property(e => e.ServerlessRequestId).HasMaxLength(100);
             entity.HasOne(e => e.Department)
                 .WithMany()
                 .HasForeignKey(e => e.DepartmentId)
