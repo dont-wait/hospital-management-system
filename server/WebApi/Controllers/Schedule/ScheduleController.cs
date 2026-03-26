@@ -52,6 +52,15 @@ public class ScheduleController : ControllerBase
 
         try
         {
+            // Mặc định: dưới 5 năm kinh nghiệm là intern
+            foreach (var doctor in payload.Doctors)
+            {
+                if (doctor.Experiences < 5)
+                {
+                    doctor.IsIntern = true;
+                }
+            }
+
             var scheduleRequest = new ScheduleRequest
             {
                 Status = "queued",
