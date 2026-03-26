@@ -5,5 +5,6 @@ public enum ScheduleEnum
    REJECTED,
    READY,
    FAILED,
-   QUEUED
+   QUEUED,
+   COMPLETED
 }
