@@ -512,3 +512,49 @@ export interface RestoreDatabaseResponse {
   status: "SUCCESS" | "FAILED" | "PARTIAL";
   message: string;
 }
+
+export interface SoftConstraint {
+  title: string;
+  description: string;
+  inputType: "text" | "select" | "multiselect" | "date" | "time" | "number";
+  options?: string[]; // Chỉ cần nếu inputType là select hoặc multiselect
+}
+
+export type LeaveRequestType = "annual" | "personal" | "other";
+
+export interface ApproveLeaveItemData {
+  requestId: string;
+  doctorName: string;
+  startDate: string;
+  endDate: string;
+  totalDays: number;
+  leaveType: LeaveRequestType;
+  leaveTypeLabel?: string;
+}
+
+export type PreviewShiftCode = "morning" | "afternoon";
+
+export interface PreviewShiftAssignment {
+  date: string;
+  shift: string;
+  doctor_ids: string[];
+}
+
+export interface PreviewSelectedSchedule {
+  start_date: string;
+  num_days: number;
+  required_doctors_per_shift: number;
+  shifts_per_day: number;
+  assignments: PreviewShiftAssignment[];
+}
+
+export interface PreviewScheduleResult {
+  selected_option_id: string;
+  selected_schedule: PreviewSelectedSchedule;
+}
+
+export interface PreviewScheduleResponse {
+  status: "queued" | "processing" | "completed" | string;
+  progress_percent: number;
+  result: PreviewScheduleResult;
+}
