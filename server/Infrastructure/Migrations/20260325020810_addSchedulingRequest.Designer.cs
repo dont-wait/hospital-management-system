@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260325020810_addSchedulingRequest")]
+    partial class addSchedulingRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -304,9 +307,6 @@ namespace server.Migrations
                     b.Property<int>("NumDays")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProgressPercent")
-                        .HasColumnType("int");
-
                     b.Property<string>("RequestPayload")
                         .HasColumnType("nvarchar(max)");
 
@@ -315,10 +315,6 @@ namespace server.Migrations
 
                     b.Property<string>("ResultData")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ServerlessRequestId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
