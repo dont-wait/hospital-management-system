@@ -15,4 +15,10 @@ public class RoomRepository : IRoomRepository
             .Where(r => r.DepartmentId == departmentId)
             .ToListAsync();
     }
+
+    public async Task<Room?> GetByNameAsync(string name)
+    {
+        return await _context.rooms
+            .FirstOrDefaultAsync(r => r.Name == name);
+    }
 }

@@ -1,3 +1,5 @@
+namespace Domain.Enums;
+
 public enum ScheduleEnum
 {
    PENDING,
@@ -6,5 +8,6 @@ public enum ScheduleEnum
    READY,
    FAILED,
    QUEUED,
+   RUNNING,
    COMPLETED
 }

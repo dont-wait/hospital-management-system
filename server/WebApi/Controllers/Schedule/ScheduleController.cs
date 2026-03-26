@@ -6,6 +6,7 @@ using Infrastructure.Http;
 using Microsoft.AspNetCore.Authorization;
 using Hangfire;
 using Domain.Entities.ScheduleTask;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers.Schedule;
@@ -65,8 +66,11 @@ public class ScheduleController : ControllerBase
             await _scheduleRequestRepo.AddAsync(scheduleRequest);
 
             // Đẩy vào Hangfire, trả về ngay không block
-            _backgroundJobClient.Enqueue<AutoSchedulingHangfireJob>(
+            var hangfireJobId = _backgroundJobClient.Enqueue<AutoSchedulingHangfireJob>(
                 job => job.ExecuteAsync(scheduleRequest.Id));
+
+            scheduleRequest.HangfireJobId = hangfireJobId;
+            await _scheduleRequestRepo.UpdateAsync(scheduleRequest);
 
             return new JsonResult(new ApiResponse<ResponseSchedulingDTO>(202, "Yêu cầu xếp lịch đã được tiếp nhận", new ResponseSchedulingDTO
             {
@@ -89,7 +93,14 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var result = await _serverless.GetProgressAsync(requestId);
+            if (!long.TryParse(requestId, out var id))
+                return new JsonResult(new ApiResponse<string>(400, "requestId không hợp lệ.")) { StatusCode = 400 };
+
+            var request = await _scheduleRequestRepo.GetByIdAsync(id);
+            if (request?.ServerlessRequestId == null)
+                return new JsonResult(new ApiResponse<string>(404, "Không tìm thấy request hoặc chưa có serverless ID.")) { StatusCode = 404 };
+
+            var result = await _serverless.GetProgressAsync(request.ServerlessRequestId);
             return Ok(result);
         }
         catch
@@ -107,7 +118,17 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var result = await _serverless.GetScheduleAsync(requestId);
+            if (!long.TryParse(requestId, out var id))
+                return new JsonResult(new ApiResponse<string>(400, "requestId không hợp lệ.")) { StatusCode = 400 };
+
+            var request = await _scheduleRequestRepo.GetByIdAsync(id);
+            if (request?.ServerlessRequestId == null)
+                return new JsonResult(new ApiResponse<string>(404, "Không tìm thấy request hoặc chưa có serverless ID.")) { StatusCode = 404 };
+
+            if (request.Status != ScheduleEnum.COMPLETED.ToString())
+                return new JsonResult(new ApiResponse<string>(409, "Lịch chưa sẵn sàng hoặc job đang chạy.")) { StatusCode = 409 };
+
+            var result = await _serverless.GetScheduleAsync(request.ServerlessRequestId);
             return Ok(result);
         }
         catch

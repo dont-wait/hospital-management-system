@@ -7,9 +7,9 @@ public class ScheduleServerlessService
 {
     private readonly HttpClient _http;
 
-    public ScheduleServerlessService(IHttpClientFactory factory)
+    public ScheduleServerlessService(HttpClient http)
     {
-        _http = factory.CreateClient("ServerlessScheduling");
+        _http = http;
     }
 
     public async Task<JsonElement> RunAsync(object requestBody)

@@ -31,8 +31,9 @@ public class AutoSchedulingHangfireJob
 
         using var scope = _scopeFactory.CreateScope();
         var requestRepo = scope.ServiceProvider.GetRequiredService<IScheduleRequestRepository>();
-        var serverless = scope.ServiceProvider.GetRequiredService<ScheduleServerlessService>(); // dùng service thay vì httpClient thô
+        var serverless = scope.ServiceProvider.GetRequiredService<ScheduleServerlessService>();
         var taskItemService = scope.ServiceProvider.GetRequiredService<ITaskItemService>();
+        var roomRepo = scope.ServiceProvider.GetRequiredService<IRoomRepository>();
         var signalRService = scope.ServiceProvider.GetRequiredService<SignalRService>();
 
         var request = await requestRepo.GetByIdAsync(scheduleRequestId);
@@ -77,18 +78,36 @@ public class AutoSchedulingHangfireJob
 
             _logger.LogInformation("Processing {Count} assignments...", assignments.GetArrayLength());
 
+            // Load rooms của department, map theo index (P-01 → room đầu tiên, P-02 → room thứ 2...)
+            var departmentRooms = await roomRepo.GetRoomByDepartmentIdAsync(request.DepartmentId);
+            var roomsByIndex = departmentRooms.OrderBy(r => r.Id).ToList();
+
             foreach (var assignment in assignments.EnumerateArray())
             {
                 var shift = assignment.GetProperty("shift").GetString() ?? "";
                 var date = DateOnly.Parse(assignment.GetProperty("date").GetString()!);
+                var roomCode = assignment.TryGetProperty("room", out var roomProp)
+                    ? roomProp.GetString() ?? ""
+                    : "";
                 var doctorIds = assignment.GetProperty("doctor_ids")
                     .EnumerateArray()
                     .Select(x => x.GetString()!)
                     .ToList();
 
-                var workShift = shift.Contains("1") || shift.ToLower().Contains("morning")
+                var workShift = shift.ToLower() == "morning"
                     ? WorkShiftEnum.Morning
                     : WorkShiftEnum.Afternoon;
+
+                // "P-01" → index 0, "P-02" → index 1, ...
+                int? roomId = null;
+                if (!string.IsNullOrEmpty(roomCode))
+                {
+                    var parts = roomCode.Split('-');
+                    if (parts.Length >= 2 && int.TryParse(parts.Last(), out var roomIndex) && roomIndex >= 1 && roomIndex <= roomsByIndex.Count)
+                    {
+                        roomId = roomsByIndex[roomIndex - 1].Id;
+                    }
+                }
 
                 var taskItemDto = new RequestTaskItemDTO
                 {
@@ -97,6 +116,7 @@ public class AutoSchedulingHangfireJob
                     WorkShift = workShift,
                     Description = "Tự động xếp lịch",
                     DepartmentId = request.DepartmentId,
+                    RoomId = roomId,
                     TaskRegistrations = doctorIds
                         .Where(id => Guid.TryParse(id, out _))
                         .Select(id => new RequestTaskRegistrationDTO { EmployeeId = Guid.Parse(id) })
