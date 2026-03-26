@@ -10,6 +10,7 @@ using Infrastructure.Services.Email;
 using Infrastructure.Services.SlotTime;
 using Infrastructure.Services.Excel;
 using Infrastructure.HangfireJobs;
+using Infrastructure.Http;
 using Application.Common.Interface.Scheduling;
 using Hangfire;
 
@@ -92,7 +93,7 @@ public static class DependencyInjection
         services.AddScoped<SignalRService>();
         services.AddScoped<AutoSchedulingHangfireJob>();
 
-        services.AddHttpClient("ServerlessScheduling", client =>
+        services.AddHttpClient<ScheduleServerlessService>("ServerlessScheduling", client =>
         {
             var baseUrl = configuration.GetValue<string>("ServerlessService:BaseUrl")
                 ?? throw new InvalidOperationException("ServerlessService:BaseUrl not configured");
