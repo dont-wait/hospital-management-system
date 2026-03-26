@@ -19,13 +19,15 @@ public class ScheduleController : ControllerBase
     private readonly IBackgroundJobClient _backgroundJobClient;
     private readonly ScheduleServerlessService _serverless;
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly ILogger<ScheduleController> _logger;
 
     public ScheduleController(
         ITaskItemService taskItemService,
         IScheduleRequestRepository scheduleRequestRepo,
         IBackgroundJobClient backgroundJobClient,
         ScheduleServerlessService serverless,
-        IEmployeeRepository employeeRepository
+        IEmployeeRepository employeeRepository,
+        ILogger<ScheduleController> logger
         )
     {
         _taskItemService = taskItemService;
@@ -33,6 +35,7 @@ public class ScheduleController : ControllerBase
         _backgroundJobClient = backgroundJobClient;
         _serverless = serverless;
         _employeeRepository = employeeRepository;
+        _logger = logger;
     }
 
     //Auto Scheduling
@@ -50,8 +53,18 @@ public class ScheduleController : ControllerBase
                     new ApiResponse<string>(401, 
                         "Không tìm thấy thông tin người dùng.")) { StatusCode = 401 };
 
+        _logger.LogInformation("AutoSchedule — User: {Name} (ID: {Id}), Department: {DeptName} (ID: {DeptId}), Role: {Role}", 
+            $"{user.Employee?.FirstName} {user.Employee?.LastName}", 
+            user.Employee?.Id, 
+            user.Employee?.Department?.Name, 
+            user.Employee?.DepartmentId,
+            user.Employee?.RoleId);
+
         try
         {
+            if (!DateOnly.TryParse(payload.StartDate, out var startDate))
+                return new JsonResult(new ApiResponse<string>(400, "Định dạng ngày StartDate không hợp lệ. Vui lòng dùng định dạng yyyy-MM-dd.")) { StatusCode = 400 };
+
             // Mặc định: dưới 5 năm kinh nghiệm là intern
             foreach (var doctor in payload.Doctors)
             {
@@ -66,7 +79,7 @@ public class ScheduleController : ControllerBase
                 Status = "queued",
                 RequestPayload = System.Text.Json.JsonSerializer.Serialize(payload),
                 DepartmentId = user.Employee!.DepartmentId,
-                StartDate = DateOnly.Parse(payload.StartDate),
+                StartDate = startDate,
                 NumDays = payload.NumDays,
                 RequestedBy = user.Employee.Id,
                 CreatedAt = DateTime.UtcNow
@@ -87,8 +100,9 @@ public class ScheduleController : ControllerBase
             }))
             { StatusCode = 202 };
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Error starting auto schedule. Payload: {Payload}", System.Text.Json.JsonSerializer.Serialize(payload));
             return new JsonResult(new ApiResponse<string>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
         }
     }
@@ -112,8 +126,9 @@ public class ScheduleController : ControllerBase
             var result = await _serverless.GetProgressAsync(request.ServerlessRequestId);
             return Ok(result);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Error getting progress for requestId: {ReqId}", requestId);
             return new JsonResult(new ApiResponse<string>(500, "Không thể lấy tiến độ từ serverless.")) { StatusCode = 500 };
         }
     }
@@ -140,8 +155,9 @@ public class ScheduleController : ControllerBase
             var result = await _serverless.GetScheduleAsync(request.ServerlessRequestId);
             return Ok(result);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Error getting schedule result for requestId: {ReqId}", requestId);
             return new JsonResult(new ApiResponse<string>(500, "Không thể lấy kết quả lịch từ serverless.")) { StatusCode = 500 };
         }
     }

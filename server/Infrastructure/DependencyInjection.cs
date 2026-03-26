@@ -97,6 +97,9 @@ public static class DependencyInjection
         {
             var baseUrl = configuration.GetValue<string>("ServerlessService:BaseUrl")
                 ?? throw new InvalidOperationException("ServerlessService:BaseUrl not configured");
+
+            if (!baseUrl.EndsWith("/")) baseUrl += "/";
+
             client.BaseAddress = new Uri(baseUrl);
             client.Timeout = TimeSpan.FromSeconds(20000);
         });

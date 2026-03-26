@@ -14,21 +14,21 @@ public class ScheduleServerlessService
 
     public async Task<JsonElement> RunAsync(object requestBody)
     {
-        var response = await _http.PostAsJsonAsync("/run", requestBody);
+        var response = await _http.PostAsJsonAsync("run", requestBody);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<JsonElement>();
     }
 
     public async Task<JsonElement> GetProgressAsync(string requestId)
     {
-        var response = await _http.GetAsync($"/progress/{requestId}");
+        var response = await _http.GetAsync($"progress/{requestId}");
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<JsonElement>();
     }
 
     public async Task<JsonElement> GetScheduleAsync(string requestId)
     {
-        var response = await _http.GetAsync($"/jobs/{requestId}/schedule");
+        var response = await _http.GetAsync($"jobs/{requestId}/schedule");
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<JsonElement>();
     }
