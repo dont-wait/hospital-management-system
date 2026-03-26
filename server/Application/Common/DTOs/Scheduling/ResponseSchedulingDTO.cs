@@ -1,7 +1,5 @@
 using System.Text.Json.Serialization;
 
-namespace Application.Common.DTOs.Scheduling;
-
 /*
     Gửi client id của request xếp lịch vừa tạo thôi, rồi client lấy id này để query tiếp,
     Lúc này server sẽ lấy response từ serverless xếp lịch, quăng full cho client

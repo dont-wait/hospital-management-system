@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 public class RequestSchedulingDTO
 {
     [JsonPropertyName("start_date")]
-    public DateOnly StartDate { get; set; }
+    public string StartDate { get; set; } = default!;
 
     [JsonPropertyName("num_days")]
     public int NumDays { get; set; }
@@ -17,8 +17,8 @@ public class RequestSchedulingDTO
     [JsonPropertyName("rooms_per_shift")]
     public int RoomsPerShift { get; set; }
 
-    [JsonPropertyName("doctors_per_shift")]
-    public int DoctorsPerShift { get; set; }
+    [JsonPropertyName("doctors_per_room")]
+    public int DoctorsPerRoom { get; set; }
 
     [JsonPropertyName("shifts_per_day")]
     public int ShiftsPerDay { get; set; }
