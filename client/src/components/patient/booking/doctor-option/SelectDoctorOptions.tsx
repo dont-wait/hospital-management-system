@@ -16,12 +16,12 @@ export default function SelectDoctorOptions({
   const { changeToStepThree } = useBookingExamContext();
   return (
     <>
-      {schedules.map((schedule) => {
+      {schedules.map((schedule, index) => {
         const start: DateTime | string = formatDateTime(schedule.startTime);
         const end: DateTime | string = formatDateTime(schedule.endTime);
         return (
           <div
-            key={schedule.scheduleId}
+            key={index}
             className="w-full rounded-xl border bg-white p-4 text-left shadow-sm"
           >
             <div className="mb-2">
