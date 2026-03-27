@@ -33,7 +33,8 @@ public class EmployeeMapper : IEmployeeMapper
                 HireDate = employee.HireDate,
                 RoleId = RoleEnum.admin.ToString().ToLower(),
                 ExperienceYears = employee.ExperienceYears,
-                DepartmentName = employee.Department.Name
+                DepartmentId = employee.DepartmentId,
+                DepartmentName = employee.Department?.Name ?? string.Empty
             };
         }
         else
@@ -49,7 +50,9 @@ public class EmployeeMapper : IEmployeeMapper
                 DateOfBirth = employee.DateOfBirth,
                 Gender = employee.Gender,
                 HireDate = employee.HireDate,
-                RoleId = employee.RoleId
+                RoleId = employee.RoleId,
+                DepartmentId = employee.DepartmentId,
+                DepartmentName = employee.Department?.Name ?? string.Empty
             };
         }
     }

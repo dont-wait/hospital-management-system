@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
 [JsonDerivedType(typeof(ResponseDoctorDTO), typeDiscriminator: "doctor")]
+[JsonDerivedType(typeof(ResponseHodDTO), typeDiscriminator: "hod")]
 [JsonDerivedType(typeof(ResponseAdminDto), typeDiscriminator: "admin")]
 public class ResponseEmployeeDTO
 {

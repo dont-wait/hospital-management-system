@@ -7,4 +7,5 @@ public interface IEmployeeRepository
     Task UpdateEmployeeAsync<T>(T employee, UserAccount userAccount) where T : Employee;
     Task<bool> DeleteEmployeeByIdAsync(Employee employee);
     Task<UserAccount?> GetDoctorByDoctorIdAsync(Guid doctorId);
+    Task<Dictionary<Guid, Guid>> GetDoctorEmployeeMapByDepartmentIdAsync(int departmentId);
 }

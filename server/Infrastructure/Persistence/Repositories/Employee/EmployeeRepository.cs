@@ -237,4 +237,11 @@ public class EmployeeRepository : IEmployeeRepository
 
         return await _context.SaveChangesAsync() > 0;
     }
+    public async Task<Dictionary<Guid, Guid>> GetDoctorEmployeeMapByDepartmentIdAsync(int departmentId)
+    {
+        return await _context.doctors
+            .Include(d => d.Employee)
+            .Where(d => d.Employee != null && d.Employee.DepartmentId == departmentId && d.DeletedAt == null && d.Employee.DeletedAt == null)
+            .ToDictionaryAsync(d => d.Id, d => d.EmployeeId);
+    }
 }
