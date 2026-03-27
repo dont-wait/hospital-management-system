@@ -7,4 +7,5 @@ public interface ITaskItemService
         List<RequestTaskRegistrationDTO> taskRegistrations
     );
     Task<ServiceResult<List<ResponseTaskItemDTO>>> GetTaskItemByEmployeeIdAsync(Guid employeeId);
+    Task<ServiceResult<bool>> ValidateSchedulingRequestAsync(RequestSchedulingDTO payload, Guid requesterEmployeeId);
 }

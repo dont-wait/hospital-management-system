@@ -8,16 +8,19 @@ public class TaskItemService : ITaskItemService
     private readonly ISlotTimeService _slotTimeService;
     private readonly IEmployeeAccountService _employeeAccountService;
     private readonly IDepartmentRepository _departmentRepository;
+    private readonly IEmployeeRepository _employeeRepository;
     public TaskItemService(ITaskItemRepository taskItemRepository,
                             ISlotTimeService slotTimeService,
                             IEmployeeAccountService employeeAccountService,
-                            IDepartmentRepository departmentRepository
+                            IDepartmentRepository departmentRepository,
+                            IEmployeeRepository employeeRepository
                             )
     {
         _taskItemRepository = taskItemRepository;
         _slotTimeService = slotTimeService;
         _employeeAccountService = employeeAccountService;
         _departmentRepository = departmentRepository;
+        _employeeRepository = employeeRepository;
     }
 
 
@@ -285,5 +288,45 @@ public class TaskItemService : ITaskItemService
             return false;
 
         return true;
+    }
+
+    public async Task<ServiceResult<bool>> ValidateSchedulingRequestAsync(RequestSchedulingDTO payload, Guid requesterEmployeeId)
+    {
+        // 1. Kiểm tra thông tin người yêu cầu (HOD)
+        var requester = await _employeeAccountService.GetEmployeeByIdAsync(requesterEmployeeId);
+        if (requester?.Data?.Employee == null)
+            return ServiceResult<bool>.Fail("Không tìm thấy thông tin Trưởng khoa.");
+        
+        var deptId = requester.Data.Employee.DepartmentId;
+
+        // 2. Kiểm tra danh sách bác sĩ
+        foreach (var doctor in payload.Doctors)
+        {
+            if (!Guid.TryParse(doctor.Id, out var dId))
+                return ServiceResult<bool>.Fail($"Định dạng ID {doctor.Id} không hợp lệ.");
+
+            // Kiểm tra xem ID có phải là EmployeeId hay DoctorId không
+            var account = await _employeeRepository.GetEmployeeByIdAsync(dId);
+            if (account == null) account = await _employeeRepository.GetDoctorByDoctorIdAsync(dId);
+
+            if (account?.Employee == null)
+                return ServiceResult<bool>.Fail($"Bác sĩ với ID {doctor.Id} không tồn tại trên hệ thống.");
+
+            if (account.Employee.DepartmentId != deptId)
+            {
+                var currentDeptName = account.Employee.Department?.Name ?? account.Employee.DepartmentId.ToString();
+                var requesterDeptName = requester.Data.Employee.DepartmentName ?? requester.Data.Employee.DepartmentId?.ToString() ?? "của bạn";
+                return ServiceResult<bool>.Fail($"Bác sĩ {account.Employee.FirstName} {account.Employee.LastName} (ID: {doctor.Id}) thuộc khoa {currentDeptName}, không thuộc khoa {requesterDeptName}.");
+            }
+            
+            // Kiểm tra role
+            if (!account.Employee.RoleId.Equals(RoleEnum.doctor.ToString(), StringComparison.OrdinalIgnoreCase) &&
+                !account.Employee.RoleId.Equals(RoleEnum.hod.ToString(), StringComparison.OrdinalIgnoreCase))
+            {
+                return ServiceResult<bool>.Fail($"Nhân viên {account.Employee.FirstName} {account.Employee.LastName} không phải là bác sĩ.");
+            }
+        }
+        
+        return ServiceResult<bool>.Success(true);
     }
 }
