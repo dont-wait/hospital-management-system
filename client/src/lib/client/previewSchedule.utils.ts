@@ -9,7 +9,65 @@ const VI_SHORT_WEEKDAY = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Th�
 
 
 export function toDateKey(date: Date) {
-    return date.toISOString().split("T")[0];
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear().toString().padStart(4, "0");
+
+    return `${day}/${month}/${year}`;
+}
+
+export function normalizeDateKey(dateKey: string) {
+    if (!dateKey) return "";
+
+    if (dateKey.includes("-")) {
+        const [year, month, day] = dateKey.split("-");
+        if (!year || !month || !day) return dateKey;
+
+        const normalizedYear = year.length === 2
+            ? `20${year}`
+            : year.padStart(4, "0");
+
+        return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${normalizedYear}`;
+    }
+
+    if (dateKey.includes("/")) {
+        const [day, month, year] = dateKey.split("/");
+        if (!day || !month || !year) return dateKey;
+
+        const normalizedYear = year.length === 2
+            ? `20${year}`
+            : year.padStart(4, "0");
+
+        return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${normalizedYear}`;
+    }
+
+    return dateKey;
+}
+
+export function parseDateKeyToDate(dateKey: string) {
+    const normalized = normalizeDateKey(dateKey);
+    const [day, month, year] = normalized.split("/");
+    if (!day || !month || !year) return null;
+
+    const fullYear = year.length === 2 ? Number(year) + 2000 : Number(year);
+    const monthIndex = Number(month) - 1;
+    const dayNumber = Number(day);
+
+    const parsed = new Date(fullYear, monthIndex, dayNumber);
+    if (Number.isNaN(parsed.getTime())) return null;
+
+    return parsed;
+}
+
+export function compareDateKeys(a: string, b: string) {
+    const dateA = parseDateKeyToDate(a);
+    const dateB = parseDateKeyToDate(b);
+
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return 1;
+    if (!dateB) return -1;
+
+    return dateA.getTime() - dateB.getTime();
 }
 
 export function formatDayLabel(date: Date) {

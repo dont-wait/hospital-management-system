@@ -17,6 +17,9 @@ import { useEffect, useMemo, useState } from "react";
 import {
     buildAutoAssignments,
     chunkDays,
+    compareDateKeys,
+    normalizeDateKey,
+    parseDateKeyToDate,
     PREVIEW_SHIFT_LABELS,
     toDateKey,
 } from "../../../../../lib/client/previewSchedule.utils";
@@ -115,10 +118,11 @@ export function PreviewScheduleCard({
             if (shiftCode !== "morning" && shiftCode !== "afternoon") return;
 
             const normalizedShift = shiftCode as PreviewShiftCode;
+            const normalizedDateKey = normalizeDateKey(assignment.date);
             const roomLabel = assignment.room && assignment.room.trim().length > 0
                 ? assignment.room.trim()
                 : "P-01";
-            const slotKey = `${assignment.date}_${normalizedShift}_${roomLabel}`;
+            const slotKey = `${normalizedDateKey}_${normalizedShift}_${roomLabel}`;
 
             const doctorIds = groupedSlots.get(slotKey) ?? new Set<string>();
             assignment.doctor_ids.forEach((doctorId) => doctorIds.add(doctorId));
@@ -136,7 +140,7 @@ export function PreviewScheduleCard({
                 };
             })
             .sort((a, b) => {
-                if (a.dateKey !== b.dateKey) return a.dateKey.localeCompare(b.dateKey);
+                if (a.dateKey !== b.dateKey) return compareDateKeys(a.dateKey, b.dateKey);
                 if (a.shift !== b.shift) return a.shift.localeCompare(b.shift);
                 return a.roomLabel.localeCompare(b.roomLabel);
             });
@@ -154,7 +158,7 @@ export function PreviewScheduleCard({
 
         const firstVisibleDate = visibleWeek[0] ? toDateKey(visibleWeek[0]) : null;
         const firstVisibleSlot = firstVisibleDate
-            ? roomSlots.find((slot) => slot.dateKey >= firstVisibleDate)
+            ? roomSlots.find((slot) => compareDateKeys(slot.dateKey, firstVisibleDate) >= 0)
             : roomSlots[0];
 
         const fallback = firstVisibleSlot ?? roomSlots[0];
@@ -185,7 +189,9 @@ export function PreviewScheduleCard({
     const selectedSlotTitle = useMemo(() => {
         if (!selectedSlot) return "";
 
-        const date = new Date(`${selectedSlot.dateKey}T00:00:00`);
+        const date = parseDateKeyToDate(selectedSlot.dateKey);
+        if (!date) return `Ca trực ${PREVIEW_SHIFT_LABELS[selectedSlot.shift]} (${selectedSlot.dateKey})`;
+
         const weekday = new Intl.DateTimeFormat("vi-VN", { weekday: "long" }).format(date);
         const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
 
