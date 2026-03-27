@@ -12,6 +12,7 @@ import { AuthUserWithoutTokens, Employee } from '@/types';
 import { useUserAuthContext } from '@/contexts';
 import { EmployeeService } from '@/services/employee.service';
 import { toast } from 'react-toastify';
+import { DepartmentService } from '@/services/department.service';
 
 type DoctorRequest = {
 	id: string;
@@ -25,20 +26,32 @@ type DoctorRequest = {
 	is_intern: false
 }
 
+type CreateScheduleRequest = SoftConstraintScheduleConfig & {
+	rooms_per_shift: number;
+	doctors: DoctorRequest[];
+}
+
+const SOFT_CONSTRAINT_FORM_ID = 'soft-constraint-form';
+
+
 export default function CreateSchedulePage() {
 	const [doctors, setDoctors] = useState<AuthUserWithoutTokens[]>([]);
-	
+	const [roomQuantity, setRoomQuantity] = useState<number>(0);
+
 	const { user } = useUserAuthContext();
 	const hod = user as Employee;
 	
 	useEffect(() => {
+		if (!hod?.departmentId) return;
+
 		const fetchData = async () => {
 			try {
-				const employeesData = await EmployeeService.getAllEmployees(
-					"doctor",
-					hod.departmentId,
-				);
+				const [employeesData, roomData] = await Promise.all([
+					EmployeeService.getAllEmployees("doctor", hod.departmentId),
+					DepartmentService.getRoomsByDepartmentId(hod.departmentId),
+				]);
 				setDoctors(employeesData);
+				setRoomQuantity(roomData.length);
 
 			} catch (error) {
 				void error;
@@ -48,7 +61,6 @@ export default function CreateSchedulePage() {
 
 		fetchData();
 	}, [hod?.departmentId]);
-	const SOFT_CONSTRAINT_FORM_ID = 'soft-constraint-form';
 
 	const method = useForm<SoftConstraintScheduleConfig>({
 		defaultValues: {
@@ -90,8 +102,9 @@ export default function CreateSchedulePage() {
 			};
 		});
 
-		const requestData = {
+		const requestData: CreateScheduleRequest = {
 			...data,
+			rooms_per_shift: roomQuantity,
 			doctors: doctorsData
 		}
 
