@@ -76,7 +76,7 @@ public class ScheduleController : ControllerBase
 
             var scheduleRequest = new ScheduleRequest
             {
-                Status = "queued",
+                Status = ScheduleEnum.QUEUED.ToString(),
                 RequestPayload = System.Text.Json.JsonSerializer.Serialize(payload),
                 DepartmentId = user.Employee!.DepartmentId,
                 StartDate = startDate,

@@ -95,22 +95,31 @@ public class TaskItemService : ITaskItemService
 
         // Lấy thông tin ca làm việc từ config
         SlotTimeConfig slotTimeConfig = _slotTimeService.GetSlotTimeConfig<SlotTimeConfig>();
+        if (slotTimeConfig == null)
+            return ServiceResult<ResponseTaskItemDTO>.Fail("Không tìm thấy cấu hình khung giờ làm việc (SlotTimeConfig).");
+
         var shiftConfig = requestTaskItemDTO.WorkShift == WorkShiftEnum.Morning
             ? slotTimeConfig.MorningShift
             : slotTimeConfig.AfternoonShift;
 
+        if (shiftConfig == null)
+            return ServiceResult<ResponseTaskItemDTO>.Fail($"Không tìm thấy cấu hình cho ca {requestTaskItemDTO.WorkShift}.");
+
         var employeeIds = taskRegistrations.Select(tr => tr.EmployeeId).ToList();
         var employees = await _employeeAccountService.GetEmployeeByIdsAsync(employeeIds);
 
-        var employeeDepartmentMap = employees.Data?
+        if (employees.Data == null)
+            return ServiceResult<ResponseTaskItemDTO>.Fail("Không tìm thấy thông tin nhân viên.");
+
+        var employeeDepartmentMap = employees.Data
             .Where(e => e.Employee != null)
             .ToDictionary(e => e.Employee!.EmployeeId, e => e.Employee!.DepartmentId);
 
         foreach (var taskReg in taskRegistrations)
         {
-            if (!employeeDepartmentMap!.TryGetValue(taskReg.EmployeeId, out var empDepartmentId) || empDepartmentId != requestTaskItemDTO.DepartmentId)
+            if (employeeDepartmentMap == null || !employeeDepartmentMap.TryGetValue(taskReg.EmployeeId, out var empDepartmentId) || empDepartmentId != requestTaskItemDTO.DepartmentId)
             {
-                return ServiceResult<ResponseTaskItemDTO>.Fail($"Nhân viên {taskReg.EmployeeId} không thuộc khoa đã chọn.");
+                return ServiceResult<ResponseTaskItemDTO>.Fail($"Nhân viên {taskReg.EmployeeId} không thuộc khoa đã chọn hoặc không tồn tại.");
             }
         }
 
@@ -149,6 +158,7 @@ public class TaskItemService : ITaskItemService
             EndTime = createdTaskItem.Date.ToDateTime(createdTaskItem.EndTime),
             ScheduleStatus = createdTaskItem.TaskStatus,
             DepartmentId = createdTaskItem.DepartmentId ?? 0,
+            DepartmentName = createdTaskItem.Department?.Name ?? string.Empty,
             RoomName = createdTaskItem.Room?.Name ?? string.Empty,
             TaskRegistrations = createdTaskItem.TaskRegistrations
                 .Select(tr => new ResponseTaskRegistrationDTO
@@ -233,12 +243,12 @@ public class TaskItemService : ITaskItemService
         List<SlotTime>? slots = new List<SlotTime>();
         TimeOnly current = shiftConfig.StartTime;
         TimeOnly endTime = shiftConfig.EndTime;
-        TimeSpan slotDuration = TimeSpan.FromHours(1);
+        TimeSpan slotDuration = TimeSpan.FromMinutes(slotTimeConfig.SlotDurationMinutes);
 
         while (current < endTime)
         {
             var next = current.Add(slotDuration);
-            if (next > endTime)
+            if (next > endTime || next < current) // Handle midnight wrap if any
                 next = endTime;
 
             slots.Add(new SlotTime
