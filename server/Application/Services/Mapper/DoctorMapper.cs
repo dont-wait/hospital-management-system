@@ -4,24 +4,34 @@ public class DoctorMapper : IDoctorMapper
 {
     public ResponseDoctorDTO MapToDto(Doctor doctor, bool isHeadOfDepartment)
     {
-        return new ResponseDoctorDTO
+        ResponseDoctorDTO dto = isHeadOfDepartment ? new ResponseHodDTO() : new ResponseDoctorDTO();
+
+        dto.DoctorId = doctor.Employee.Doctor.Id;
+        dto.EmployeeId = doctor.Employee.Id;
+        dto.FirstName = doctor.Employee.FirstName;
+        dto.LastName = doctor.Employee.LastName;
+        dto.Email = doctor.Employee.Email;
+        dto.PhoneNumber = doctor.Employee.PhoneNumber;
+        dto.Specialization = doctor.Employee.Doctor.Specialization;
+        dto.CertificateNumber = doctor.Employee.CertificateNumber;
+        dto.DateOfBirth = doctor.Employee.DateOfBirth;
+        dto.Gender = doctor.Employee.Gender;
+        dto.HireDate = doctor.Employee.HireDate;
+        dto.ExperienceYears = doctor.Employee.ExperienceYears;
+        dto.DepartmentId = doctor.Employee.DepartmentId;
+        dto.DepartmentName = doctor.Employee.Department.Name;
+        dto.RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower();
+        
+        if (isHeadOfDepartment && dto is ResponseHodDTO hodDto)
         {
-            DoctorId = doctor.Employee.Doctor.Id,
-            EmployeeId = doctor.Employee.Id,
-            FirstName = doctor.Employee.FirstName,
-            LastName = doctor.Employee.LastName,
-            Email = doctor.Employee.Email,
-            PhoneNumber = doctor.Employee.PhoneNumber,
-            Specialization = doctor.Employee.Doctor.Specialization,
-            CertificateNumber = doctor.Employee.CertificateNumber,
-            DateOfBirth = doctor.Employee.DateOfBirth,
-            Gender = doctor.Employee.Gender,
-            HireDate = doctor.Employee.HireDate,
-            ExperienceYears = doctor.Employee.ExperienceYears,
-            DepartmentId = doctor.Employee.DepartmentId,
-            DepartmentName = doctor.Employee.Department.Name,
-            RoleId = isHeadOfDepartment ? RoleEnum.hod.ToString().ToLower() : RoleEnum.doctor.ToString().ToLower(),
-        };
+            hodDto.FullName = $"{doctor.Employee.FirstName} {doctor.Employee.LastName}";
+        }
+        else
+        {
+            dto.FullName = $"{doctor.Employee.FirstName} {doctor.Employee.LastName}";
+        }
+
+        return dto;
     }
 
     public Doctor MapToEntity(RequestDoctorDTO doctorDto)

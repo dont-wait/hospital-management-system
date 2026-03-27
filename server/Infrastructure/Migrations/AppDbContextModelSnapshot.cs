@@ -269,6 +269,80 @@ namespace server.Migrations
                     b.ToTable("doctors");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ScheduleTask.ScheduleRequest", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CreatedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("DeletedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HangfireJobId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ModifiedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("NumDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProgressPercent")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequestPayload")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RequestedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ResultData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServerlessRequestId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("RequestedBy");
+
+                    b.ToTable("schedule_requests", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.ScheduleTask.TaskItem", b =>
                 {
                     b.Property<long>("Id")
@@ -1142,6 +1216,25 @@ namespace server.Migrations
                         .HasForeignKey("Doctor", "EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ScheduleTask.ScheduleRequest", b =>
+                {
+                    b.HasOne("Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("RequestedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Department");
 
                     b.Navigation("Employee");
                 });

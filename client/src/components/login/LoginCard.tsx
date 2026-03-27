@@ -7,7 +7,7 @@ import { LoginForm } from "./LoginForm";
 import { LoginFooterLink } from "./LoginFooterLink";
 import styles from "@/styles/auth.module.css";
 
-const CardMotion = motion(Card);
+const CardMotion = motion.create(Card);
 
 function LoginCard() {
   return (

@@ -1,5 +1,4 @@
 using Infrastructure;
-using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories.Account;
 using Infrastructure.Persistence.Repositories.EmployeeRepository;
 using Application.Services.Auth;
@@ -39,7 +38,6 @@ builder.Logging.AddSimpleConsole(opts =>
 {
     opts.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] ";
     opts.IncludeScopes = true;
-    opts.SingleLine = true;
 });
 
 builder.Services.AddAuthorization();
@@ -81,6 +79,11 @@ builder.Services.AddScoped<IEmployeeMapper, EmployeeMapper>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+
+
+// signalR
+//builder.Services.AddSignalRCustom(builder.Configuration);
+builder.Services.AddSignalRCustom();
 
 var app = builder.Build();
 
@@ -150,5 +153,9 @@ app.MapGet("/health", () => Results.Ok(new
     version = "1.0.0"
 }))
 .AllowAnonymous();
+
+// SignalR hub
+app.MapHub<NotificationHub>("/notificationHub");
+app.MapHub<SchedulingHub>("/schedulingHub");
 
 app.Run();

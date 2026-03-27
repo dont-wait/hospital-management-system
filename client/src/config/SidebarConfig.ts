@@ -90,9 +90,14 @@ export const HODSidebarItems = [
     title: "Xem lịch làm việc",
     icon: Calendar,
   },
+  // {
+  //   route: "/doctor/create-shift",
+  //   title: "Tạo ca làm việc",
+  //   icon: Pencil,
+  // },
   {
-    route: "/doctor/create-shift",
-    title: "Tạo ca làm việc",
+    route: "/doctor/create-schedule",
+    title: "Tạo lịch làm việc",
     icon: Pencil,
   },
 ];

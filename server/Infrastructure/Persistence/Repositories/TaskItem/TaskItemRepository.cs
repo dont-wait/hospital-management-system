@@ -100,8 +100,10 @@ public class TaskItemRepository : ITaskItemRepository
         };
 
         Room? Room = await _context.rooms.FindAsync(requestTaskItemDTO.RoomId);
+        Department? Dept = await _context.departments.FindAsync(requestTaskItemDTO.DepartmentId);
 
         taskItem.Room = Room;
+        taskItem.Department = Dept;
 
         _context.tasks.Add(taskItem);
         await _context.SaveChangesAsync();

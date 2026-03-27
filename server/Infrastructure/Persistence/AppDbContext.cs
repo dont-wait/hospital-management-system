@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<TaskItem> tasks { get; set; } = null!;
     public DbSet<TaskRegistration> task_registrations { get; set; } = null!;
     public DbSet<SlotTime> slot_times { get; set; } = null!;
+    public DbSet<ScheduleRequest> schedule_requests { get; set; } = null!;
     public DbSet<Appointment> appointments { get; set; } = null!;
     public DbSet<Service> services { get; set; } = null!;
     public DbSet<Department> departments { get; set; } = null!;
@@ -75,6 +76,21 @@ public class AppDbContext : DbContext
                 t.HasCheckConstraint("CK_Slot_Status",
                     "[SlotStatus] IN ('Opened', 'Closed', 'Full')");
             });
+        });
+
+        modelBuilder.Entity<ScheduleRequest>(entity =>
+        {
+            entity.ToTable("schedule_requests");
+            entity.Property(e => e.Status).HasMaxLength(20);
+            entity.Property(e => e.ServerlessRequestId).HasMaxLength(100);
+            entity.HasOne(e => e.Department)
+                .WithMany()
+                .HasForeignKey(e => e.DepartmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(e => e.Employee)
+                .WithMany()
+                .HasForeignKey(e => e.RequestedBy)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Patient>()
