@@ -5,7 +5,7 @@ export const PREVIEW_SHIFT_LABELS: Record<PreviewShiftCode, string> = {
     afternoon: "Chiều",
 };
 
-const VI_SHORT_WEEKDAY = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+const VI_SHORT_WEEKDAY = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
 
 
 export function toDateKey(date: Date) {
@@ -14,8 +14,8 @@ export function toDateKey(date: Date) {
 
 export function formatDayLabel(date: Date) {
     const day = VI_SHORT_WEEKDAY[date.getDay()];
-    const dayOfMonth = date.getDate().toString().padStart(2, "0");
-    return `${day} (${dayOfMonth})`;
+    
+    return `${day}`;
 }
 
 export function chunkDays(days: Date[], size: number) {

@@ -10,7 +10,7 @@ export interface SoftConstraintScheduleConfig {
     num_days: number;
     max_weekly_hours_per_doctor: number;
     max_days_off_per_doctor: number;
-    doctors_per_shift: number;
+    doctors_per_room: number;
     shifts_per_day: number;
 }
 
@@ -46,9 +46,9 @@ export const SoftConstraintConfig: SoftConstraintField[] = [
         defaultValue: 5,
     },
     {
-        key: "doctors_per_shift",
-        title: "Bác sĩ mỗi ca",
-        description: "Số bác sĩ cần có trong một ca trực",
+        key: "doctors_per_room",
+        title: "Bác sĩ mỗi phòng",
+        description: "Số bác sĩ cần có trong một phòng trực",
         inputType: "number",
         defaultValue: 5,
     },
