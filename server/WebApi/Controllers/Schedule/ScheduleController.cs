@@ -47,7 +47,7 @@ public class ScheduleController : ControllerBase
     public async Task<IActionResult> RunAutoSchedule([FromBody] RequestSchedulingDTO payload)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        UserAccount user = await _employeeRepository.GetEmployeeByIdAsync(Guid.Parse(userId.ToString()));
+        UserAccount? user = await _employeeRepository.GetEmployeeByIdAsync(Guid.Parse(userId.ToString()));
         if (user == null)
             return new JsonResult(
                     new ApiResponse<string>(401, 
@@ -156,8 +156,31 @@ public class ScheduleController : ControllerBase
             if (request?.ServerlessRequestId == null)
                 return new JsonResult(new ApiResponse<string>(404, "Không tìm thấy request hoặc chưa có serverless ID.")) { StatusCode = 404 };
 
-            if (request.Status != ScheduleEnum.COMPLETED.ToString())
-                return new JsonResult(new ApiResponse<string>(409, "Lịch chưa sẵn sàng hoặc job đang chạy.")) { StatusCode = 409 };
+            if (!request.Status.Equals(ScheduleEnum.COMPLETED.ToString(), StringComparison.OrdinalIgnoreCase))
+            {
+                var progress = await _serverless.GetProgressAsync(request.ServerlessRequestId);
+                var status = progress.GetProperty("status").GetString() ?? string.Empty;
+
+                if (status.Equals(ScheduleEnum.COMPLETED.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    request.Status = ScheduleEnum.COMPLETED.ToString();
+                    request.ProgressPercent = 100;
+                    request.ErrorMessage = null;
+                    await _scheduleRequestRepo.UpdateAsync(request);
+                }
+                else if (status.Equals(ScheduleEnum.FAILED.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    var error = progress.TryGetProperty("error", out var e) ? e.GetString() : "Unknown error";
+                    request.Status = ScheduleEnum.FAILED.ToString();
+                    request.ErrorMessage = error;
+                    await _scheduleRequestRepo.UpdateAsync(request);
+                    return new JsonResult(new ApiResponse<string>(409, $"Xếp lịch thất bại: {error}")) { StatusCode = 409 };
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>(409, "Lịch chưa sẵn sàng hoặc job đang chạy.")) { StatusCode = 409 };
+                }
+            }
 
             var result = await _serverless.GetScheduleAsync(request.ServerlessRequestId);
             return Ok(result);
