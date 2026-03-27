@@ -65,6 +65,35 @@ public class ScheduleController : ControllerBase
             if (!DateOnly.TryParse(payload.StartDate, out var startDate))
                 return new JsonResult(new ApiResponse<string>(400, "Định dạng ngày StartDate không hợp lệ. Vui lòng dùng định dạng yyyy-MM-dd.")) { StatusCode = 400 };
 
+            foreach (var doctor in payload.Doctors)
+            {
+                if (!Guid.TryParse(doctor.Id, out var dId))
+                {
+                    return new JsonResult(new ApiResponse<string>(400, $"Định dạng ID {doctor.Id} không hợp lệ.")) { StatusCode = 400 };
+                }
+
+                // Kiểm tra trực tiếp từng bác sĩ
+                var account = await _employeeRepository.GetEmployeeByIdAsync(dId);
+                if (account == null) account = await _employeeRepository.GetDoctorByDoctorIdAsync(dId);
+
+                if (account?.Employee == null)
+                {
+                    return new JsonResult(new ApiResponse<string>(400, $"Bác sĩ với ID {doctor.Id} không tồn tại trên hệ thống.")) { StatusCode = 400 };
+                }
+
+                if (account.Employee.DepartmentId != user.Employee!.DepartmentId)
+                {
+                    return new JsonResult(new ApiResponse<string>(400, $"Bác sĩ {account.Employee.FirstName} {account.Employee.LastName} (ID: {doctor.Id}) thuộc khoa {account.Employee.Department?.Name ?? account.Employee.DepartmentId.ToString()}, không thuộc khoa {user.Employee.Department?.Name ?? user.Employee.DepartmentId.ToString()} của bạn.")) { StatusCode = 400 };
+                }
+                
+                // Kiểm tra role
+                if (!account.Employee.RoleId.Equals(RoleEnum.doctor.ToString(), StringComparison.OrdinalIgnoreCase) &&
+                    !account.Employee.RoleId.Equals(RoleEnum.hod.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                     return new JsonResult(new ApiResponse<string>(400, $"Nhân viên {account.Employee.FirstName} {account.Employee.LastName} không phải là bác sĩ.")) { StatusCode = 400 };
+                }
+            }
+
             // Mặc định: dưới 5 năm kinh nghiệm là intern
             foreach (var doctor in payload.Doctors)
             {

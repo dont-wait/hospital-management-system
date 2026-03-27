@@ -2016,6 +2016,22 @@
     "HireDate": "2022-05-10",
     "ExperienceYears": 3,
     "DepartmentId": 10
+  },
+   {
+    "CitizenID": "010000000135",
+    "Password": "Password123!",
+    "Email": "nguyenthihanhchibi@medicare.hospital.com",
+    "FirstName": "Trần ",
+    "LastName": "Thị Hạnh Chibi",
+    "DateOfBirth": "1993-12-14",
+    "Gender": "F",
+    "PhoneNumber": "0901308104",
+    "CertificateNumber": "CERT000135",
+    "Specialization": "Khám tổng quát",
+    "HireDate": "2022-05-10",
+    "ExperienceYears": 3,
+    "DepartmentId": 10
   }
+
 
 ]

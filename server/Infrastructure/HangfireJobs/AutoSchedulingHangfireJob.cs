@@ -13,14 +13,16 @@ namespace Infrastructure.HangfireJobs;
 public class AutoSchedulingHangfireJob
 {
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IEmployeeRepository _employeeRepository;
     private readonly ILogger<AutoSchedulingHangfireJob> _logger;
     private const int PollIntervalSeconds = 3;
-    private const int MaxPollAttempts = 100; // tăng lên vì NSGA-II chạy lâu
+    private const int MaxPollAttempts = 100;
 
-    public AutoSchedulingHangfireJob(IServiceScopeFactory scopeFactory, ILogger<AutoSchedulingHangfireJob> logger)
+    public AutoSchedulingHangfireJob(IServiceScopeFactory scopeFactory, IEmployeeRepository employeeRepository, ILogger<AutoSchedulingHangfireJob> logger)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
+        _employeeRepository = employeeRepository;
     }
 
     [AutomaticRetry(Attempts = 2, DelaysInSeconds = new[] { 30, 120 })]
@@ -51,8 +53,10 @@ public class AutoSchedulingHangfireJob
 
             _logger.LogInformation("Calling serverless /run...");
 
-            var payload = JsonSerializer.Deserialize<object>(request.RequestPayload!);
-            var runResult = await serverless.RunAsync(payload!);
+            var schedulingPayload = JsonSerializer.Deserialize<RequestSchedulingDTO>(request.RequestPayload!);
+            _logger.LogInformation("Initial Payload IDs: {Ids}", 
+                string.Join(", ", schedulingPayload?.Doctors.Select(d => d.Id) ?? new List<string>()));
+            var runResult = await serverless.RunAsync(schedulingPayload!);
 
             var serverlessRequestId = runResult.GetProperty("request_id").GetString()
                 ?? throw new Exception("Serverless did not return request_id");
@@ -82,14 +86,17 @@ public class AutoSchedulingHangfireJob
             var departmentRooms = await roomRepo.GetRoomByDepartmentIdAsync(request.DepartmentId);
             var roomsByIndex = departmentRooms.OrderBy(r => r.Id).ToList();
 
+            var employeeRepo = scope.ServiceProvider.GetRequiredService<IEmployeeRepository>();
+
             foreach (var assignment in assignments.EnumerateArray())
             {
                 var shift = assignment.GetProperty("shift").GetString() ?? "";
-                var date = DateOnly.Parse(assignment.GetProperty("date").GetString()!);
+                var dateStr = assignment.GetProperty("date").GetString()!;
+                var date = DateOnly.Parse(dateStr);
                 var roomCode = assignment.TryGetProperty("room", out var roomProp)
                     ? roomProp.GetString() ?? ""
                     : "";
-                var doctorIds = assignment.GetProperty("doctor_ids")
+                var doctorIdsFromResponse = assignment.GetProperty("doctor_ids")
                     .EnumerateArray()
                     .Select(x => x.GetString()!)
                     .ToList();
@@ -98,7 +105,7 @@ public class AutoSchedulingHangfireJob
                     ? WorkShiftEnum.Morning
                     : WorkShiftEnum.Afternoon;
 
-                // "P-01" → index 0, "P-02" → index 1, ...
+                // Map RoomId theo index P-01...
                 int? roomId = null;
                 if (!string.IsNullOrEmpty(roomCode))
                 {
@@ -106,6 +113,28 @@ public class AutoSchedulingHangfireJob
                     if (parts.Length >= 2 && int.TryParse(parts.Last(), out var roomIndex) && roomIndex >= 1 && roomIndex <= roomsByIndex.Count)
                     {
                         roomId = roomsByIndex[roomIndex - 1].Id;
+                    }
+                }
+
+                var taskRegistrations = new List<RequestTaskRegistrationDTO>();
+                foreach (var dIdStr in doctorIdsFromResponse)
+                {
+                    if (Guid.TryParse(dIdStr, out var dId))
+                    {
+                        // Kiểm tra trực tiếp xem ID là EmployeeId hay DoctorId
+                        var account = await employeeRepo.GetEmployeeByIdAsync(dId);
+                        if (account == null) account = await employeeRepo.GetDoctorByDoctorIdAsync(dId);
+
+                        if (account?.Employee != null && (
+                            account.Employee.RoleId.Equals(RoleEnum.doctor.ToString(), StringComparison.OrdinalIgnoreCase) ||
+                            account.Employee.RoleId.Equals(RoleEnum.hod.ToString(), StringComparison.OrdinalIgnoreCase)))
+                        {
+                            taskRegistrations.Add(new RequestTaskRegistrationDTO { EmployeeId = account.Employee.Id });
+                        }
+                        else
+                        {
+                            _logger.LogWarning("ID {Id} could not be resolved to a valid doctor/hod in Dept {DeptId}. SKIPPING.", dId, request.DepartmentId);
+                        }
                     }
                 }
 
@@ -117,15 +146,21 @@ public class AutoSchedulingHangfireJob
                     Description = "Tự động xếp lịch",
                     DepartmentId = request.DepartmentId,
                     RoomId = roomId,
-                    TaskRegistrations = doctorIds
-                        .Where(id => Guid.TryParse(id, out _))
-                        .Select(id => new RequestTaskRegistrationDTO { EmployeeId = Guid.Parse(id) })
-                        .ToList()
+                    TaskRegistrations = taskRegistrations
                 };
 
-                var createResult = await taskItemService.CreateTaskItemAsync(taskItemDto, taskItemDto.TaskRegistrations);
-                if (!createResult.IsSuccess)
-                    _logger.LogWarning("Failed to create TaskItem: {Msg}", createResult.Message);
+                if (taskItemDto.TaskRegistrations.Any()) 
+                {
+                    var createResult = await taskItemService.CreateTaskItemAsync(taskItemDto, taskItemDto.TaskRegistrations);
+                    if (!createResult.IsSuccess)
+                    {
+                        _logger.LogError("Failed to create TaskItem for {Date} {Shift}: {Msg}", date, shift, createResult.Message);
+                    }
+                }
+                else 
+                {
+                    _logger.LogWarning("Skipping TaskItem for {Date} {Shift} - No valid doctors mapped.", date, shift);
+                }
             }
 
             // Lưu toàn bộ result vào DB
