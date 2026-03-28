@@ -25,6 +25,18 @@ public class SignalRService
             .SendAsync("ReceiveNotification", $"dept_{departmentId}", message);
     }
 
+    public async Task SendSchedulingToUser(string userId, string message)
+    {
+        await _schedulingHub.Clients.Group(userId)
+            .SendAsync("ReceiveSchedulingUpdate", userId, message);
+    }
+
+    public async Task SendSchedulingToDepartment(int departmentId, string message)
+    {
+        await _schedulingHub.Clients.Group($"dept_{departmentId}")
+            .SendAsync("ReceiveSchedulingUpdate", $"dept_{departmentId}", message);
+    }
+
     public async Task SendToAll(string message)
     {
         await _notificationHub.Clients.All

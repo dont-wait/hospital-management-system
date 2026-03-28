@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import type Lucide from "lucide-react";
+import { SoftConstraintScheduleConfig } from "@/config";
 
 export interface ApiResponse<T> {
   status: number;
@@ -61,6 +62,7 @@ export interface Employee {
   phoneNumber: string;
   email: string;
   hireDate: string;
+  experienceYears: number;
   certificateNumber: string;
   specialization: string;
   departmentId: number;
@@ -513,6 +515,23 @@ export interface RestoreDatabaseResponse {
   message: string;
 }
 
+export type DoctorRequest = {
+  id: string;
+  name: string;
+  experiences: number;
+  department_id: string;
+  specialization: string;
+  days_off: string[];
+  preferred_extra_days: string[];	
+  has_valid_license: true,
+  is_intern: false
+}
+
+export type CreateScheduleRequest = SoftConstraintScheduleConfig & {
+  rooms_per_shift: number;
+  doctors: DoctorRequest[];
+}
+
 export interface SoftConstraint {
   title: string;
   description: string;
@@ -543,18 +562,19 @@ export interface PreviewShiftAssignment {
 export interface PreviewSelectedSchedule {
   start_date: string;
   num_days: number;
-  required_doctors_per_shift: number;
+  doctors_per_rooom: number;
+  rooms_per_shift: number;
   shifts_per_day: number;
   assignments: PreviewShiftAssignment[];
 }
 
 export interface PreviewScheduleResult {
   selected_option_id: string;
-  selected_schedule: PreviewSelectedSchedule;
+  selected: PreviewSelectedSchedule;
 }
 
-export interface PreviewScheduleResponse {
-  status: "queued" | "processing" | "completed" | string;
-  progress_percent: number;
-  result: PreviewScheduleResult;
+export interface PreviewScheduleErrorResult {
+  status: number;
+  message: string;
+  data: null;
 }

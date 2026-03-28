@@ -14,15 +14,22 @@ public class AutoSchedulingHangfireJob
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IBackgroundJobClient _backgroundJobClient;
     private readonly ILogger<AutoSchedulingHangfireJob> _logger;
     private const int PollIntervalSeconds = 3;
-    private const int MaxPollAttempts = 100;
+    private const int MaxPollAttempts = 200;
+    private const int ResumePollingDelaySeconds = 30;
 
-    public AutoSchedulingHangfireJob(IServiceScopeFactory scopeFactory, IEmployeeRepository employeeRepository, ILogger<AutoSchedulingHangfireJob> logger)
+    public AutoSchedulingHangfireJob(
+        IServiceScopeFactory scopeFactory,
+        IEmployeeRepository employeeRepository,
+        IBackgroundJobClient backgroundJobClient,
+        ILogger<AutoSchedulingHangfireJob> logger)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
         _employeeRepository = employeeRepository;
+        _backgroundJobClient = backgroundJobClient;
     }
 
     [AutomaticRetry(Attempts = 2, DelaysInSeconds = new[] { 30, 120 })]
@@ -47,30 +54,53 @@ public class AutoSchedulingHangfireJob
 
         try
         {
-            // Bước 1: Gọi POST /run
-            request.Status = ScheduleEnum.QUEUED.ToString();
-            await requestRepo.UpdateAsync(request);
+            string serverlessRequestId;
+            if (string.IsNullOrWhiteSpace(request.ServerlessRequestId))
+            {
+                // Bước 1: Gọi POST /run cho request mới
+                request.Status = ScheduleEnum.QUEUED.ToString();
+                await requestRepo.UpdateAsync(request);
 
-            _logger.LogInformation("Calling serverless /run...");
+                _logger.LogInformation("Calling serverless /run...");
 
-            var schedulingPayload = JsonSerializer.Deserialize<RequestSchedulingDTO>(request.RequestPayload!);
-            _logger.LogInformation("Initial Payload IDs: {Ids}", 
-                string.Join(", ", schedulingPayload?.Doctors.Select(d => d.Id) ?? new List<string>()));
-            var runResult = await serverless.RunAsync(schedulingPayload!);
+                var schedulingPayload = JsonSerializer.Deserialize<RequestSchedulingDTO>(request.RequestPayload!);
+                _logger.LogInformation("Initial Payload IDs: {Ids}",
+                    string.Join(", ", schedulingPayload?.Doctors.Select(d => d.Id) ?? new List<string>()));
+                var runResult = await serverless.RunAsync(schedulingPayload!);
 
-            var serverlessRequestId = runResult.GetProperty("request_id").GetString()
-                ?? throw new Exception("Serverless did not return request_id");
+                serverlessRequestId = runResult.GetProperty("request_id").GetString()
+                    ?? throw new Exception("Serverless did not return request_id");
 
-            request.ServerlessRequestId = serverlessRequestId;
-            request.Status = runResult.GetProperty("status").GetString() ?? ScheduleEnum.QUEUED.ToString();
-            await requestRepo.UpdateAsync(request);
+                request.ServerlessRequestId = serverlessRequestId;
+                request.Status = runResult.GetProperty("status").GetString() ?? ScheduleEnum.QUEUED.ToString();
+                await requestRepo.UpdateAsync(request);
 
-            _logger.LogInformation("Serverless request_id={RequestId}, polling...", serverlessRequestId);
+                _logger.LogInformation("Serverless request_id={RequestId}, polling...", serverlessRequestId);
+            }
+            else
+            {
+                serverlessRequestId = request.ServerlessRequestId;
+                _logger.LogInformation("Resuming polling for existing serverless request_id={RequestId}", serverlessRequestId);
+            }
 
             // Bước 2: Poll GET /progress cho đến khi completed/failed
-            await PollProgressAsync(serverless, serverlessRequestId, request, requestRepo, signalRService);
+            var reachedTerminalState = await PollProgressAsync(serverless, serverlessRequestId, request, requestRepo, signalRService);
 
-            if (request.Status.ToLower() == "failed")
+            if (!reachedTerminalState)
+            {
+                _backgroundJobClient.Schedule<AutoSchedulingHangfireJob>(
+                    job => job.ExecuteAsync(scheduleRequestId),
+                    TimeSpan.FromSeconds(ResumePollingDelaySeconds));
+
+                _logger.LogWarning(
+                    "Polling timed out after {Attempts} attempts for request {RequestId}. Re-scheduled after {Delay}s.",
+                    MaxPollAttempts,
+                    scheduleRequestId,
+                    ResumePollingDelaySeconds);
+                return;
+            }
+
+            if (request.Status.Equals(ScheduleEnum.FAILED.ToString(), StringComparison.OrdinalIgnoreCase))
                 throw new Exception(request.ErrorMessage ?? "Serverless job failed");
 
             // Bước 3: Lấy lịch GET /jobs/{id}/schedule
@@ -187,7 +217,7 @@ public class AutoSchedulingHangfireJob
         }
     }
 
-    private async Task PollProgressAsync(
+    private async Task<bool> PollProgressAsync(
         ScheduleServerlessService serverless,
         string serverlessRequestId,
         ScheduleRequest request,
@@ -210,7 +240,7 @@ public class AutoSchedulingHangfireJob
 
             _logger.LogInformation("Progress: {Status} - {Percent}%", status, percent);
 
-            await signalRService.SendToUser(
+            await signalRService.SendSchedulingToUser(
                 request.RequestedBy.ToString(),
                 JsonSerializer.Serialize(new NotificationDTO
                 {
@@ -226,18 +256,19 @@ public class AutoSchedulingHangfireJob
                     }
                 }));
 
-            if (status.ToLower() is "completed" or "failed")
+            if (status.Equals(ScheduleEnum.COMPLETED.ToString(), StringComparison.OrdinalIgnoreCase)
+                || status.Equals(ScheduleEnum.FAILED.ToString(), StringComparison.OrdinalIgnoreCase))
             {
-                if (status.ToLower() == "failed")
+                if (status.Equals(ScheduleEnum.FAILED.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     var error = progress.TryGetProperty("error", out var e) ? e.GetString() : "Unknown error";
                     request.ErrorMessage = error;
                 }
-                return;
+                return true;
             }
         }
 
-        throw new Exception("Serverless timeout - max poll attempts reached");
+        return false;
     }
 
     private async Task NotifyCompleted(SignalRService signalRService, ScheduleRequest request)
@@ -252,12 +283,13 @@ public class AutoSchedulingHangfireJob
             {
                 ["requestId"] = request.Id,
                 ["departmentId"] = request.DepartmentId,
-                ["progressPercent"] = 100
+                ["progressPercent"] = 100,
+                ["status"] = ScheduleEnum.COMPLETED.ToString().ToLower()
             }
         });
 
-        await signalRService.SendToUser(request.RequestedBy.ToString(), payload);
-        await signalRService.SendToDepartment(request.DepartmentId, JsonSerializer.Serialize(new NotificationDTO
+        await signalRService.SendSchedulingToUser(request.RequestedBy.ToString(), payload);
+        await signalRService.SendSchedulingToDepartment(request.DepartmentId, JsonSerializer.Serialize(new NotificationDTO
         {
             Title = "Lịch ca trực mới",
             Message = $"Lịch ca trực từ {request.StartDate:dd/MM} ({request.NumDays} ngày) đã có. Xem ngay!",
@@ -274,14 +306,20 @@ public class AutoSchedulingHangfireJob
 
     private async Task NotifyFailed(SignalRService signalRService, ScheduleRequest request, string errorMessage)
     {
-        await signalRService.SendToUser(
+        await signalRService.SendSchedulingToUser(
             request.RequestedBy.ToString(),
             JsonSerializer.Serialize(new NotificationDTO
             {
                 Title = "Xếp lịch thất bại",
                 Message = $"Xếp lịch thất bại: {errorMessage}",
                 NotificationType = NotificationTypeEnum.Error.ToString(),
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                Data = new Dictionary<string, object>
+                {
+                    ["requestId"] = request.Id,
+                    ["progressPercent"] = request.ProgressPercent,
+                    ["status"] = ScheduleEnum.FAILED.ToString().ToLower()
+                }
             }));
     }
 }
