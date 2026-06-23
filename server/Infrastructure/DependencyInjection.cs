@@ -73,7 +73,7 @@ public static class DependencyInjection
         services.AddScoped<IScheduleRequestRepository, ScheduleRequestRepository>();
         services.AddScoped<SignalRService>();
 
-        services.AddHttpClient<ScheduleServerlessService>("ServerlessScheduling", client =>
+        services.AddHttpClient<IScheduleServerlessService, ScheduleServerlessService>("ServerlessScheduling", client =>
         {
             var baseUrl = configuration.GetValue<string>("ServerlessService:BaseUrl")
                 ?? throw new InvalidOperationException("ServerlessService:BaseUrl not configured");

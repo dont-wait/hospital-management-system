@@ -3,7 +3,6 @@ using System.Text.Json;
 using Domain.Entities.ScheduleTask;
 using Domain.Enums;
 using Hangfire;
-using Infrastructure.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Application.Common.Interface.Scheduling;
@@ -40,7 +39,7 @@ public class AutoSchedulingHangfireJob
 
         using var scope = _scopeFactory.CreateScope();
         var requestRepo = scope.ServiceProvider.GetRequiredService<IScheduleRequestRepository>();
-        var serverless = scope.ServiceProvider.GetRequiredService<ScheduleServerlessService>();
+        var serverless = scope.ServiceProvider.GetRequiredService<IScheduleServerlessService>();
         var taskItemService = scope.ServiceProvider.GetRequiredService<ITaskItemService>();
         var roomRepo = scope.ServiceProvider.GetRequiredService<IRoomRepository>();
         var signalRService = scope.ServiceProvider.GetRequiredService<SignalRService>();
@@ -218,7 +217,7 @@ public class AutoSchedulingHangfireJob
     }
 
     private async Task<bool> PollProgressAsync(
-        ScheduleServerlessService serverless,
+        IScheduleServerlessService serverless,
         string serverlessRequestId,
         ScheduleRequest request,
         IScheduleRequestRepository requestRepo,

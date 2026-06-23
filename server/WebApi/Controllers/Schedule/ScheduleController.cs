@@ -1,7 +1,6 @@
 using Application.Common.Utils;
 using Application.Common.Interface.Scheduling;
 using System.Security.Claims;
-using Infrastructure.Http;
 using Microsoft.AspNetCore.Authorization;
 using Domain.Entities.ScheduleTask;
 using Domain.Enums;
@@ -15,7 +14,7 @@ public class ScheduleController : ControllerBase
     private readonly ITaskItemService _taskItemService;
     private readonly IScheduleRequestRepository _scheduleRequestRepo;
     private readonly IAutoSchedulingBackgroundService _autoSchedulingBackgroundService;
-    private readonly ScheduleServerlessService _serverless;
+    private readonly IScheduleServerlessService _serverless;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly ILogger<ScheduleController> _logger;
 
@@ -23,7 +22,7 @@ public class ScheduleController : ControllerBase
         ITaskItemService taskItemService,
         IScheduleRequestRepository scheduleRequestRepo,
         IAutoSchedulingBackgroundService autoSchedulingBackgroundService,
-        ScheduleServerlessService serverless,
+        IScheduleServerlessService serverless,
         IEmployeeRepository employeeRepository,
         ILogger<ScheduleController> logger
         )

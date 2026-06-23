@@ -1,9 +1,10 @@
 using System.Net.Http.Json;
 using System.Text.Json;
+using Application.Common.Interface.Scheduling;
 
 namespace Infrastructure.Http;
 
-public class ScheduleServerlessService
+public class ScheduleServerlessService : IScheduleServerlessService
 {
     private readonly HttpClient _http;
 
