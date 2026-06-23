@@ -51,3 +51,6 @@ Desktop.ini
 #-- Config version SDK
 global.json 
 .env
+.direnv
+AGENTS.md
+
