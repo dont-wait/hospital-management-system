@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Application.Common.Interface.Scheduling;
 
-namespace Infrastructure.HangfireJobs;
+namespace Infrastructure.Services.Hangfire;
 
 public class AutoSchedulingHangfireJob
 {
@@ -323,4 +323,3 @@ public class AutoSchedulingHangfireJob
             }));
     }
 }
-

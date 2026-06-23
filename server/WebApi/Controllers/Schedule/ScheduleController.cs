@@ -1,10 +1,8 @@
 using Application.Common.Utils;
 using Application.Common.Interface.Scheduling;
 using System.Security.Claims;
-using Infrastructure.HangfireJobs;
 using Infrastructure.Http;
 using Microsoft.AspNetCore.Authorization;
-using Hangfire;
 using Domain.Entities.ScheduleTask;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +14,7 @@ public class ScheduleController : ControllerBase
 {
     private readonly ITaskItemService _taskItemService;
     private readonly IScheduleRequestRepository _scheduleRequestRepo;
-    private readonly IBackgroundJobClient _backgroundJobClient;
+    private readonly IAutoSchedulingBackgroundService _autoSchedulingBackgroundService;
     private readonly ScheduleServerlessService _serverless;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly ILogger<ScheduleController> _logger;
@@ -24,7 +22,7 @@ public class ScheduleController : ControllerBase
     public ScheduleController(
         ITaskItemService taskItemService,
         IScheduleRequestRepository scheduleRequestRepo,
-        IBackgroundJobClient backgroundJobClient,
+        IAutoSchedulingBackgroundService autoSchedulingBackgroundService,
         ScheduleServerlessService serverless,
         IEmployeeRepository employeeRepository,
         ILogger<ScheduleController> logger
@@ -32,7 +30,7 @@ public class ScheduleController : ControllerBase
     {
         _taskItemService = taskItemService;
         _scheduleRequestRepo = scheduleRequestRepo;
-        _backgroundJobClient = backgroundJobClient;
+        _autoSchedulingBackgroundService = autoSchedulingBackgroundService;
         _serverless = serverless;
         _employeeRepository = employeeRepository;
         _logger = logger;
@@ -94,11 +92,14 @@ public class ScheduleController : ControllerBase
 
             await _scheduleRequestRepo.AddAsync(scheduleRequest);
 
-            // Đẩy vào Hangfire, trả về ngay không block
-            var hangfireJobId = _backgroundJobClient.Enqueue<AutoSchedulingHangfireJob>(
-                job => job.ExecuteAsync(scheduleRequest.Id));
+            // Đẩy vào background queue, trả về ngay không block
+            var enqueueResult = _autoSchedulingBackgroundService.EnqueueAutoScheduling(scheduleRequest.Id);
+            if (!enqueueResult.IsSuccess)
+            {
+                return new JsonResult(new ApiResponse<string>(500, enqueueResult.Message)) { StatusCode = 500 };
+            }
 
-            scheduleRequest.HangfireJobId = hangfireJobId;
+            scheduleRequest.HangfireJobId = enqueueResult.Data;
             await _scheduleRequestRepo.UpdateAsync(scheduleRequest);
 
             return new JsonResult(new ApiResponse<ResponseSchedulingDTO>(202, "Yêu cầu xếp lịch đã được tiếp nhận", new ResponseSchedulingDTO

@@ -18,7 +18,9 @@ public class ScheduleServerlessService
         if (!response.IsSuccessStatusCode)
         {
             var errorBody = await response.Content.ReadAsStringAsync();
-            throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Content: {errorBody}");
+            throw new HttpRequestException(
+                $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Content: {errorBody}"
+            );
         }
         return await response.Content.ReadFromJsonAsync<JsonElement>();
     }
@@ -26,10 +28,12 @@ public class ScheduleServerlessService
     public async Task<JsonElement> GetProgressAsync(string requestId)
     {
         var response = await _http.GetAsync($"progress/{requestId}");
-        if (!response.IsSuccessStatusCode) 
+        if (!response.IsSuccessStatusCode)
         {
             var errorBody = await response.Content.ReadAsStringAsync();
-            throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Content: {errorBody}");
+            throw new HttpRequestException(
+                $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Content: {errorBody}"
+            );
         }
         return await response.Content.ReadFromJsonAsync<JsonElement>();
     }
@@ -40,7 +44,9 @@ public class ScheduleServerlessService
         if (!response.IsSuccessStatusCode)
         {
             var errorBody = await response.Content.ReadAsStringAsync();
-            throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Content: {errorBody}");
+            throw new HttpRequestException(
+                $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Content: {errorBody}"
+            );
         }
         return await response.Content.ReadFromJsonAsync<JsonElement>();
     }

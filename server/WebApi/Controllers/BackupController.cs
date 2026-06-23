@@ -1,6 +1,5 @@
 using Application.Common.DTOs.Backup;
 using Application.Common.Utils;
-using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -10,12 +9,10 @@ namespace WebApi.Controllers;
 public class BackupController : ControllerBase
 {
     private readonly IBackupService _backupService;
-    private readonly IRecurringJobManager _recurringJobManager;
 
-    public BackupController(IBackupService backupService, IRecurringJobManager recurringJobManager)
+    public BackupController(IBackupService backupService)
     {
         _backupService = backupService;
-        _recurringJobManager = recurringJobManager;
     }
 
     [HttpPost]
