@@ -10,7 +10,7 @@
       devShells.x86_64-linux.default = pkgs.mkShell {
         packages = [
           pkgs.dotnet-sdk_8
-          pkgs.omnisharp-roslyn
+          pkgs.roslyn
           pkgs.dotnet-ef
           pkgs.csharp-ls
           pkgs.sqlcmd

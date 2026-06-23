@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Application.Common.Utils;
 
 namespace WebApi.Controllers.Admin;
+
 [Route("api/[controller]")]
 [ApiController]
 public class AdminController : ControllerBase
