@@ -7,12 +7,20 @@ namespace Infrastructure.Services.Hangfire;
 
 public static class HangfireExtension
 {
-    public static IServiceCollection AddHangfireService(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddHangfireService(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
+        var hangfireConnection =
+            configuration.GetConnectionString("SqlServerDb")
+            ?? throw new InvalidOperationException(
+                "Connection string 'SqlServerDb' is not configured."
+            );
         services.AddHangfire(config =>
         {
             config
-                .UseSqlServerStorage(configuration.GetConnectionString("SqlServerDb"))
+                .UseSqlServerStorage(hangfireConnection)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings();
         });
