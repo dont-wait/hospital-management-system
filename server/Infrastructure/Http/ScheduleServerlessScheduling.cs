@@ -1,16 +1,19 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using Application.Common.Interface.Scheduling;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Http;
 
 public class ScheduleServerlessService : IScheduleServerlessService
 {
     private readonly HttpClient _http;
+    private readonly ILogger<ScheduleServerlessService> _logger;
 
-    public ScheduleServerlessService(HttpClient http)
+    public ScheduleServerlessService(HttpClient http, ILogger<ScheduleServerlessService> logger)
     {
         _http = http;
+        _logger = logger;
     }
 
     public async Task<JsonElement> RunAsync(object requestBody)
@@ -19,8 +22,13 @@ public class ScheduleServerlessService : IScheduleServerlessService
         if (!response.IsSuccessStatusCode)
         {
             var errorBody = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning(
+                "Serverless scheduling request failed. StatusCode: {StatusCode}, Body: {ErrorBody}",
+                (int)response.StatusCode,
+                errorBody);
+
             throw new HttpRequestException(
-                $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Content: {errorBody}"
+                $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode})."
             );
         }
         return await response.Content.ReadFromJsonAsync<JsonElement>();
