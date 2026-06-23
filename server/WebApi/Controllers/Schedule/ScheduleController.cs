@@ -47,13 +47,14 @@ public class ScheduleController : ControllerBase
         UserAccount? user = await _employeeRepository.GetEmployeeByIdAsync(Guid.Parse(userId.ToString()));
         if (user == null)
             return new JsonResult(
-                    new ApiResponse<string>(401, 
-                        "Không tìm thấy thông tin người dùng.")) { StatusCode = 401 };
+                    new ApiResponse<string>(401,
+                        "Không tìm thấy thông tin người dùng."))
+            { StatusCode = 401 };
 
-        _logger.LogInformation("AutoSchedule — User: {Name} (ID: {Id}), Department: {DeptName} (ID: {DeptId}), Role: {Role}", 
-            $"{user.Employee?.FirstName} {user.Employee?.LastName}", 
-            user.Employee?.Id, 
-            user.Employee?.Department?.Name, 
+        _logger.LogInformation("AutoSchedule — User: {Name} (ID: {Id}), Department: {DeptName} (ID: {DeptId}), Role: {Role}",
+            $"{user.Employee?.FirstName} {user.Employee?.LastName}",
+            user.Employee?.Id,
+            user.Employee?.Department?.Name,
             user.Employee?.DepartmentId,
             user.Employee?.RoleId);
 
@@ -93,8 +94,11 @@ public class ScheduleController : ControllerBase
 
             // Đẩy vào background queue, trả về ngay không block
             var enqueueResult = _autoSchedulingBackgroundService.EnqueueAutoScheduling(scheduleRequest.Id);
-            if (!enqueueResult.IsSuccess)
+            if (!enqueueResult.IsSuccess || string.IsNullOrWhiteSpace(enqueueResult.Data))
             {
+                scheduleRequest.Status = ScheduleEnum.FAILED.ToString();
+                scheduleRequest.ErrorMessage = enqueueResult.Message ?? "Không thể enqueue tác vụ.";
+                await _scheduleRequestRepo.UpdateAsync(scheduleRequest);
                 return new JsonResult(new ApiResponse<string>(500, enqueueResult.Message)) { StatusCode = 500 };
             }
 
