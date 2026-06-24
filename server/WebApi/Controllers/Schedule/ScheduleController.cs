@@ -1,10 +1,7 @@
 using Application.Common.Utils;
 using Application.Common.Interface.Scheduling;
 using System.Security.Claims;
-using Infrastructure.HangfireJobs;
-using Infrastructure.Http;
 using Microsoft.AspNetCore.Authorization;
-using Hangfire;
 using Domain.Entities.ScheduleTask;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -16,23 +13,23 @@ public class ScheduleController : ControllerBase
 {
     private readonly ITaskItemService _taskItemService;
     private readonly IScheduleRequestRepository _scheduleRequestRepo;
-    private readonly IBackgroundJobClient _backgroundJobClient;
-    private readonly ScheduleServerlessService _serverless;
+    private readonly IAutoSchedulingBackgroundService _autoSchedulingBackgroundService;
+    private readonly IScheduleServerlessService _serverless;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly ILogger<ScheduleController> _logger;
 
     public ScheduleController(
         ITaskItemService taskItemService,
         IScheduleRequestRepository scheduleRequestRepo,
-        IBackgroundJobClient backgroundJobClient,
-        ScheduleServerlessService serverless,
+        IAutoSchedulingBackgroundService autoSchedulingBackgroundService,
+        IScheduleServerlessService serverless,
         IEmployeeRepository employeeRepository,
         ILogger<ScheduleController> logger
         )
     {
         _taskItemService = taskItemService;
         _scheduleRequestRepo = scheduleRequestRepo;
-        _backgroundJobClient = backgroundJobClient;
+        _autoSchedulingBackgroundService = autoSchedulingBackgroundService;
         _serverless = serverless;
         _employeeRepository = employeeRepository;
         _logger = logger;
@@ -50,13 +47,14 @@ public class ScheduleController : ControllerBase
         UserAccount? user = await _employeeRepository.GetEmployeeByIdAsync(Guid.Parse(userId.ToString()));
         if (user == null)
             return new JsonResult(
-                    new ApiResponse<string>(401, 
-                        "Không tìm thấy thông tin người dùng.")) { StatusCode = 401 };
+                    new ApiResponse<string>(401,
+                        "Không tìm thấy thông tin người dùng."))
+            { StatusCode = 401 };
 
-        _logger.LogInformation("AutoSchedule — User: {Name} (ID: {Id}), Department: {DeptName} (ID: {DeptId}), Role: {Role}", 
-            $"{user.Employee?.FirstName} {user.Employee?.LastName}", 
-            user.Employee?.Id, 
-            user.Employee?.Department?.Name, 
+        _logger.LogInformation("AutoSchedule — User: {Name} (ID: {Id}), Department: {DeptName} (ID: {DeptId}), Role: {Role}",
+            $"{user.Employee?.FirstName} {user.Employee?.LastName}",
+            user.Employee?.Id,
+            user.Employee?.Department?.Name,
             user.Employee?.DepartmentId,
             user.Employee?.RoleId);
 
@@ -94,11 +92,17 @@ public class ScheduleController : ControllerBase
 
             await _scheduleRequestRepo.AddAsync(scheduleRequest);
 
-            // Đẩy vào Hangfire, trả về ngay không block
-            var hangfireJobId = _backgroundJobClient.Enqueue<AutoSchedulingHangfireJob>(
-                job => job.ExecuteAsync(scheduleRequest.Id));
+            // Đẩy vào background queue, trả về ngay không block
+            var enqueueResult = _autoSchedulingBackgroundService.EnqueueAutoScheduling(scheduleRequest.Id);
+            if (!enqueueResult.IsSuccess || string.IsNullOrWhiteSpace(enqueueResult.Data))
+            {
+                scheduleRequest.Status = ScheduleEnum.FAILED.ToString();
+                scheduleRequest.ErrorMessage = enqueueResult.Message ?? "Không thể enqueue tác vụ.";
+                await _scheduleRequestRepo.UpdateAsync(scheduleRequest);
+                return new JsonResult(new ApiResponse<string>(500, enqueueResult.Message)) { StatusCode = 500 };
+            }
 
-            scheduleRequest.HangfireJobId = hangfireJobId;
+            scheduleRequest.HangfireJobId = enqueueResult.Data;
             await _scheduleRequestRepo.UpdateAsync(scheduleRequest);
 
             return new JsonResult(new ApiResponse<ResponseSchedulingDTO>(202, "Yêu cầu xếp lịch đã được tiếp nhận", new ResponseSchedulingDTO

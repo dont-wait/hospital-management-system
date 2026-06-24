@@ -9,10 +9,9 @@ using Infrastructure.Services.Redis;
 using Infrastructure.Services.Email;
 using Infrastructure.Services.SlotTime;
 using Infrastructure.Services.Excel;
-using Infrastructure.HangfireJobs;
+using Infrastructure.Services.Hangfire;
 using Infrastructure.Http;
 using Application.Common.Interface.Scheduling;
-using Hangfire;
 
 namespace Infrastructure;
 
@@ -57,6 +56,7 @@ public static class DependencyInjection
         services.AddRedisService(configuration);
         services.AddSlotTimeService(configuration);
         services.AddExcelExporter();
+        services.AddHangfireService(configuration);
 
         if (configuration.GetValue<string>("EmailSettings:Provider") == "Smtp")
         {
@@ -66,34 +66,14 @@ public static class DependencyInjection
         {
             services.AddSendGridEmailProvider(configuration);
         }
-        //Hangfire configuration
-        services.AddHangfire(config =>
-        {
-            config
-                .UseSqlServerStorage(configuration.GetConnectionString("SqlServerDb"))
-                .UseSimpleAssemblyNameTypeSerializer() //serialize shortname class
-                .UseRecommendedSerializerSettings() // normallize json setting
-                ;
-
-        });
-        services.AddHangfireServer(opts =>
-        {
-            opts.ServerName = "Hospital Scheduler Worker";
-            opts.WorkerCount = Math.Min(Environment.ProcessorCount * 5, 10);
-            opts.SchedulePollingInterval = TimeSpan.FromSeconds(15);
-            opts.CancellationCheckInterval = TimeSpan.FromSeconds(5);
-            opts.Queues = new[] { "scheduling", "default" };
-        });
-
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IOTPService, SendOTPService>();
         services.AddScoped<IEmailTemplateService, SendEmailTemplateService>();
 
         services.AddScoped<IScheduleRequestRepository, ScheduleRequestRepository>();
         services.AddScoped<SignalRService>();
-        services.AddScoped<AutoSchedulingHangfireJob>();
 
-        services.AddHttpClient<ScheduleServerlessService>("ServerlessScheduling", client =>
+        services.AddHttpClient<IScheduleServerlessService, ScheduleServerlessService>("ServerlessScheduling", client =>
         {
             var baseUrl = configuration.GetValue<string>("ServerlessService:BaseUrl")
                 ?? throw new InvalidOperationException("ServerlessService:BaseUrl not configured");
