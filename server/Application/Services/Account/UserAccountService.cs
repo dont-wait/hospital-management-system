@@ -90,9 +90,6 @@ public class UserAccountService : IUserAccountService
     {
         var patients = await _userAccountRepository.GetAllPatientsAsync();
 
-        if (patients.Count == 0)
-            return ServiceResult<List<ResponseUserDTO>>.Fail("Không tìm thấy bệnh nhân nào.");
-
         var responseUsers = patients
             .Where(patient => patient.UserAccount != null)
             .Select(patient => _userAccountMapper.MapToDto(patient.UserAccount!))

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useUserManagementContext } from "@/contexts";
 import { AuthUserWithoutTokens } from "@/types";
 import { EmployeeService } from "@/services/employee.service";
@@ -18,8 +18,12 @@ export default function UserTableContainer() {
   const [users, setUsers] = useState<AuthUserWithoutTokens[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
+    let isActive = true;
+    const requestId = ++requestIdRef.current;
+
     const fetchUsers = async () => {
       setIsLoading(true);
 
@@ -28,13 +32,31 @@ export default function UserTableContainer() {
           state.selectedRole === "patient"
             ? await PatientService.getAllPatients()
             : await EmployeeService.getAllEmployees(state.selectedRole);
+
+        if (!isActive || requestId !== requestIdRef.current) {
+          return;
+        }
+
         setUsers(data ?? []);
+      } catch (error) {
+        if (!isActive || requestId !== requestIdRef.current) {
+          return;
+        }
+
+        console.error("Failed to fetch users:", error);
+        setUsers([]);
       } finally {
-        setIsLoading(false);
+        if (isActive && requestId === requestIdRef.current) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchUsers();
+
+    return () => {
+      isActive = false;
+    };
   }, [state.selectedRole, state.refreshKey]);
 
   const filteredUsers = useMemo(() => {

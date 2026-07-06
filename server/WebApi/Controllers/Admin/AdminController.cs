@@ -23,11 +23,18 @@ public class AdminController : ControllerBase
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> GetAllPatientsAsync()
     {
-        var result = await _userAccountService.GetAllPatientsAsync();
+        try
+        {
+            var result = await _userAccountService.GetAllPatientsAsync();
 
-        if (!result.IsSuccess)
-            return new JsonResult(new ApiResponse<List<ResponseUserDTO>>(404, result.Message)) { StatusCode = 404 };
+            if (!result.IsSuccess)
+                return new JsonResult(new ApiResponse<List<ResponseUserDTO>>(404, result.Message)) { StatusCode = 404 };
 
-        return new JsonResult(new ApiResponse<List<ResponseUserDTO>>(200, "Lấy danh sách bệnh nhân thành công", result.Data)) { StatusCode = 200 };
+            return new JsonResult(new ApiResponse<List<ResponseUserDTO>>(200, "Lấy danh sách bệnh nhân thành công", result.Data)) { StatusCode = 200 };
+        }
+        catch
+        {
+            return new JsonResult(new ApiResponse<List<ResponseUserDTO>>(500, "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.")) { StatusCode = 500 };
+        }
     }
 }

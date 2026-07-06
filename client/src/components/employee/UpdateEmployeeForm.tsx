@@ -92,22 +92,26 @@ export function UpdateEmployeeForm({
   });
 
   const handleFormSubmit = async (data: EmployeeUpdateDto) => {
-    const payload = isAdmin
-      ? data
-      : {
-          phoneNumber: data.phoneNumber,
-          avatarUrl: data.avatarUrl || "",
-        };
+    try {
+      const payload = isAdmin
+        ? data
+        : {
+            phoneNumber: data.phoneNumber,
+            avatarUrl: data.avatarUrl || "",
+          };
 
-    const response = await EmployeeService.updateEmployee(
-      employee.employee?.employeeId || "",
-      payload,
-    );
+      const response = await EmployeeService.updateEmployee(
+        employee.employee?.employeeId || "",
+        payload,
+      );
 
-    toast.success("Cập nhật người dùng thành công");
+      toast.success("Cập nhật người dùng thành công");
 
-    if (onSuccess) {
-      onSuccess(response);
+      if (onSuccess) {
+        onSuccess(response);
+      }
+    } catch (error) {
+      console.error("Failed to update employee:", error);
     }
   };
 
