@@ -11,7 +11,8 @@ type UserListAction =
   | { type: "SET_SEARCH"; payload: string }
   | { type: "OPEN_VIEW_MODAL"; payload: AuthUserWithoutTokens }
   | { type: "OPEN_UPDATE_MODAL"; payload: AuthUserWithoutTokens }
-  | { type: "CLOSE_MODAL" };
+  | { type: "CLOSE_MODAL" }
+  | { type: "REFRESH_USERS" };
 
 function reducer(state: UserListState, action: UserListAction): UserListState {
   switch (action.type) {
@@ -29,6 +30,8 @@ function reducer(state: UserListState, action: UserListAction): UserListState {
       return { ...state, selectedUser: action.payload, activeModal: "update" };
     case "CLOSE_MODAL":
       return { ...state, activeModal: null };
+    case "REFRESH_USERS":
+      return { ...state, refreshKey: state.refreshKey + 1 };
     default:
       return state;
   }
@@ -43,6 +46,7 @@ interface UserManagementContext {
   closeModal: () => void;
   viewUser: (user: AuthUserWithoutTokens) => void;
   updateUser: (user: AuthUserWithoutTokens) => void;
+  refreshUsers: () => void;
 }
 
 const UserManagementContext = createContext<UserManagementContext | null>(null);
@@ -78,6 +82,10 @@ export function UserManagementProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "OPEN_UPDATE_MODAL", payload: user });
   };
 
+  const refreshUsers = () => {
+    dispatch({ type: "REFRESH_USERS" });
+  };
+
   return (
     <UserManagementContext.Provider
       value={{
@@ -89,6 +97,7 @@ export function UserManagementProvider({ children }: { children: ReactNode }) {
         closeModal,
         viewUser,
         updateUser,
+        refreshUsers,
       }}
     >
       {children}

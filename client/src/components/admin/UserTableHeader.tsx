@@ -2,8 +2,8 @@ export default function UserTableHeader() {
   return (
     <thead>
       <tr>
-        <th>Họ và tên</th>
         <th>Avatar</th>
+        <th>Họ và tên</th>
         <th>CCCD</th>
         <th>Email</th>
         <th>Số điện thoại</th>
