@@ -1,0 +1,155 @@
+[
+  {
+    "purpose": "Bắt đầu tạo lịch trực bác sĩ bằng NSGA-II cải tiến (xử lý bất đồng bộ)",
+    "method": "POST",
+    "endpoint": "/api/v1/schedules/run",
+    "note": "Server nhận payload và trả về ngay request_id. Job được đưa vào ThreadPoolExecutor.",
+    "request_body": {
+      "start_date": "2026-07-01",
+      "num_days": 7,
+      "max_weekly_hours_per_doctor": 48,
+      "max_days_off_per_doctor": 5,
+      "rooms_per_shift": 1,
+      "doctors_per_room": 5,
+      "shifts_per_day": 2,
+      "doctors": [
+        {
+          "id": "DOC-001",
+          "name": "Nguyen Van A",
+          "experiences": 5.0,
+          "department_id": "DEPT-A",
+          "specialization": "Internal Medicine",
+          "days_off": ["2026-07-03"],
+          "preferred_extra_days": ["2026-07-05"],
+          "has_valid_license": true,
+          "is_intern": false
+        }
+      ]
+    },
+    "response": {
+      "request_id": "uuid-string",
+      "status": "queued",
+      "progress_percent": 0,
+      "message": "Yêu cầu đã được đưa vào hàng đợi"
+    },
+    "errors": {
+      "400": "ValueError từ validation ràng buộc cứng (ví dụ: trùng ID bác sĩ, quá số ngày nghỉ)",
+      "422": "Pydantic validation (thiếu trường, sai kiểu dữ liệu)"
+    }
+  },
+  {
+    "purpose": "Theo dõi tiến độ job tối ưu (không kèm lịch/chỉ số)",
+    "method": "GET",
+    "endpoint": "/api/v1/schedules/progress/{request_id}",
+    "note": "Gọi polling để kiểm tra trạng thái job. Dùng để hiển thị progress bar trên UI.",
+    "request_body": null,
+    "response": {
+      "request_id": "uuid-string",
+      "status": "queued | running | completed | failed",
+      "progress_percent": 45,
+      "message": "Đang tối ưu bằng NSGA-II cải tiến (thế hệ 180/400)",
+      "error": null
+    },
+    "errors": {
+      "404": "Không tìm thấy request_id"
+    }
+  },
+  {
+    "purpose": "Lấy lịch sau khi xếp xong hoặc các metrics để đo mức tin cậy của kết quả",
+    "method": "GET",
+    "endpoint": "/api/v1/schedules/jobs/{request_id}/{type}",
+    "note": "type = 'schedule' hoặc 'metrics'. Gọi sau khi job completed (status = 'completed').",
+    "request_body": null,
+    "response_schedule": {
+      "request_id": "uuid-string",
+      "selected_option_id": "OPT-01",
+      "selected": {
+        "start_date": "2026-07-01",
+        "num_days": 7,
+        "rooms_per_shift": 1,
+        "doctors_per_room": 5,
+        "shifts_per_day": 2,
+        "assignments": [
+          {
+            "date": "2026-07-01",
+            "shift": "morning",
+            "room": "P-01",
+            "doctor_ids": ["DOC-001", "DOC-003", "DOC-005", "DOC-007", "DOC-009"]
+          }
+        ]
+      },
+      "pareto_options": [
+        {
+          "option_id": "OPT-01",
+          "assignments": [],
+          "doctor_workload_balances": [
+            {
+              "doctor_id": "DOC-001",
+              "doctor_name": "Nguyen Van A",
+              "weekly_shift_count": 5,
+              "monthly_shift_count": 21,
+              "yearly_estimated_shift_count": 260,
+              "holiday_shift_count": 0,
+              "day_off_count": 2
+            }
+          ]
+        }
+      ]
+    },
+    "response_metrics": {
+      "request_id": "uuid-string",
+      "algorithm_run_metrics": {
+        "elapsed_seconds": 12.34,
+        "n_generations": 400,
+        "population_size": 250,
+        "pareto_front_size": 15,
+        "best_hard_objective": 0.0,
+        "best_soft_objective": 23.5,
+        "best_workload_std_objective": 0.12,
+        "best_fairness_objective": 0.12,
+        "convergence_hard_ratio": null,
+        "convergence_soft_ratio": 0.45,
+        "convergence_workload_ratio": 0.32,
+        "convergence_fairness_ratio": 0.32
+      },
+      "pareto_options": [
+        {
+          "option_id": "OPT-01",
+          "metrics": {
+            "hard_violation_score": 0.0,
+            "soft_violation_score": 23.5,
+            "fairness_std": 0.8,
+            "shift_fairness_std": 0.8,
+            "day_off_fairness_std": 0.0,
+            "day_off_fairness_jain": 1.0,
+            "weekly_fairness_jain": 0.98,
+            "monthly_fairness_jain": 0.97,
+            "yearly_fairness_jain": 0.96,
+            "holiday_fairness_jain": 0.96,
+            "f3_workload_std": 0.8,
+            "f4_fairness": 0.04,
+            "gini_workload": 0.05,
+            "jfi_overall": 0.96,
+            "hard_score_visual": 100,
+            "soft_score_visual": 85,
+            "workload_score_visual": 90,
+            "fairness_score_visual": 88,
+            "overall_score_visual": 86,
+            "score_badges": {
+              "hard": "excellent",
+              "soft": "good",
+              "workload": "good",
+              "fairness": "good",
+              "overall": "good"
+            },
+            "weekly_underwork_doctors": []
+          }
+        }
+      ]
+    },
+    "errors": {
+      "404": "Không tìm thấy request_id",
+      "409": "Lịch chưa sẵn sàng hoặc job đang chạy / Sinh lịch thất bại"
+    }
+  }
+]
