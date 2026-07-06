@@ -8,6 +8,7 @@ public interface IUserAccountRepository
     Task<bool> IsPhoneNumberExistsAsync(string phoneNumber);
     Task<UserAccount?> GetUserAccountByEmailAsync(string email);
     Task<Patient?> FindPatientWithAccountByIdAsync(Guid patientId);
+    Task<List<Patient>> GetAllPatientsAsync();
     Task UpdateSync(UserAccount userAccount);
     Task UpdateAccountAndPatientAsync(Patient patient, UserAccount userAccount);
     Task<bool> DeletePatientByIdAsync(Guid patientId);

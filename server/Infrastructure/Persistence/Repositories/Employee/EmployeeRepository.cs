@@ -186,12 +186,14 @@ public class EmployeeRepository : IEmployeeRepository
         switch (employee.RoleId.ToLower())
         {
             case "doctor":
+            case "hod":
                 if (employee.Doctor != null)
                 {
                     _context.doctors.Update(employee.Doctor);
                 }
                 break;
             case "admin":
+            case "sys":
                 if (employee.Admin != null)
                 {
                     _context.admins.Update(employee.Admin);
