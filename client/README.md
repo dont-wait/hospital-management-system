@@ -6,24 +6,27 @@ Frontend application for the Hospital Management System built with Next.js and T
 
 ```bash
 # Install dependencies
-npm install
+yarn install
 
-# Run development server
-npm run dev
+# Run development server (webpack, safer on machines with low file watch limits)
+yarn dev
+
+# Run development server with Turbopack
+yarn dev:turbo
 
 # Build for production
-npm run build
+yarn build
 
 # Start production server
-npm start
+yarn start
 
 # Run linting
-npm run lint
+yarn lint
 ```
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 15.5.2
+- **Framework**: Next.js 16.2.1
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **UI Components**: Radix UI
@@ -125,5 +128,6 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 1. **API Connection**: Ensure backend is running on port 5001
 2. **CORS Issues**: Check CORS configuration in backend
 3. **Token Expiry**: Refresh token implementation handles this automatically
+4. **OS file watch limit reached**: If HMR logs `TurbopackInternalError` with `Unable to watch ... node_modules`, use `yarn dev` to run webpack mode. Use `yarn dev:turbo` only after increasing the OS inotify watch limit.
 
 For more details, see the main project README.

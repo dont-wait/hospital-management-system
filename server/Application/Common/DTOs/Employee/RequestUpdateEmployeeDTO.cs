@@ -27,4 +27,7 @@ public class RequestUpdateEmployeeDTO
     public string Specialization { get; set; } = string.Empty;
 
     public string AvatarUrl { get; set; } = string.Empty;
+
+    [StringLength(20)]
+    public string? RoleId { get; set; } = null;
 }

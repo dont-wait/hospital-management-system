@@ -1,19 +1,12 @@
-import { cookies } from "next/headers";
 import AdminContentHeader from "@/components/admin/AdminContentHeader";
 import UserSearch from "@/components/admin/UserSearch";
 import UserRoleButton from "@/components/admin/UserRoleButton";
 import UserAddButton from "@/components/admin/UserAddButton";
-import UserTableHeader from "@/components/admin/UserTableHeader";
-import UserTableBody from "@/components/admin/UserTableBody";
-import { EmployeeService } from "@/services/employee.service";
+import UserTableContainer from "@/components/admin/UserTableContainer";
 import userStyles from "@/styles/admin-user-management.module.css";
 import styles from "@/styles/admin.module.css";
 
-async function UsersManagementPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  const users =
-    (await EmployeeService.getAllEmployees("doctor", undefined, token)) ?? [];
+function UsersManagementPage() {
   return (
     <div className={styles["admin-container"]}>
       <AdminContentHeader
@@ -30,12 +23,7 @@ async function UsersManagementPage() {
               <UserAddButton />
             </div>
           </div>
-          <div className={userStyles["table-wrapper"]}>
-            <table className={userStyles["users-table"]}>
-              <UserTableHeader />
-              <UserTableBody users={users} />
-            </table>
-          </div>
+          <UserTableContainer />
         </div>
       </div>
     </div>

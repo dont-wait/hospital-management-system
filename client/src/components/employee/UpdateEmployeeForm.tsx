@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
+import { toast } from "react-toastify";
 import { SubmitButton } from "@/components/shared/Button";
 import {
   FormField,
@@ -12,10 +13,16 @@ import {
 } from "@/components/shared/FormField";
 import { GENDER_OPTIONS } from "@/config";
 import { EmployeeUpdateDto, employeeUpdateSchema } from "@/schemas/employee";
-import { AuthUserWithoutTokens } from "@/types";
+import {
+  AuthUserWithoutTokens,
+  EmployeeEditableRole,
+  EmployeeEditableRolesList,
+} from "@/types";
 import { EmployeeService } from "@/services/employee.service";
+import { UserManagementUtils } from "@/lib/client";
 import authStyles from "@/styles/auth.module.css";
 import styles from "@/styles/employee-update.module.css";
+import inputStyles from "@/styles/input.module.css";
 
 interface UpdateEmployeeFormProps {
   employee: AuthUserWithoutTokens;
@@ -30,6 +37,26 @@ export function UpdateEmployeeForm({
   onSuccess,
   onCancel,
 }: UpdateEmployeeFormProps) {
+  const roleOptions = useMemo(() => {
+    const currentRole = employee.employee?.roleId;
+
+    if (currentRole === "doctor" || currentRole === "hod") {
+      return EmployeeEditableRolesList.filter(
+        (role): role is Extract<EmployeeEditableRole, "doctor" | "hod"> =>
+          role === "doctor" || role === "hod",
+      );
+    }
+
+    if (currentRole === "admin" || currentRole === "sys") {
+      return EmployeeEditableRolesList.filter(
+        (role): role is Extract<EmployeeEditableRole, "admin" | "sys"> =>
+          role === "admin" || role === "sys",
+      );
+    }
+
+    return [];
+  }, [employee.employee?.roleId]);
+
   const defaultValues = useMemo((): Partial<EmployeeUpdateDto> => {
     const baseValues: Partial<EmployeeUpdateDto> = {
       phoneNumber: employee.employee?.phoneNumber || "",
@@ -46,6 +73,7 @@ export function UpdateEmployeeForm({
         gender: (employee.employee?.gender as "M" | "F" | "O") || "M",
         specialization: employee.employee?.specialization || "",
         certificateNumber: employee.employee?.certificateNumber || "",
+        roleId: employee.employee?.roleId as EmployeeEditableRole | undefined,
       };
     }
 
@@ -64,20 +92,26 @@ export function UpdateEmployeeForm({
   });
 
   const handleFormSubmit = async (data: EmployeeUpdateDto) => {
-    const payload = isAdmin
-      ? data
-      : {
-          phoneNumber: data.phoneNumber,
-          avatarUrl: data.avatarUrl || "",
-        };
+    try {
+      const payload = isAdmin
+        ? data
+        : {
+            phoneNumber: data.phoneNumber,
+            avatarUrl: data.avatarUrl || "",
+          };
 
-    const response = await EmployeeService.updateEmployee(
-      employee.employee?.employeeId || "",
-      payload,
-    );
+      const response = await EmployeeService.updateEmployee(
+        employee.employee?.employeeId || "",
+        payload,
+      );
 
-    if (onSuccess) {
-      onSuccess(response);
+      toast.success("Cập nhật người dùng thành công");
+
+      if (onSuccess) {
+        onSuccess(response);
+      }
+    } catch (error) {
+      console.error("Failed to update employee:", error);
     }
   };
 
@@ -138,6 +172,28 @@ export function UpdateEmployeeForm({
                 errors={errors}
                 register={register}
               />
+
+              {roleOptions.length > 0 && (
+                <div className={authStyles["form-group"]}>
+                  <label htmlFor="roleId">Vai trò</label>
+                  <select
+                    id="roleId"
+                    {...register("roleId")}
+                    className={inputStyles["input"]}
+                  >
+                    {roleOptions.map((role) => (
+                      <option key={role} value={role}>
+                        {UserManagementUtils.RoleNames[role] || role}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.roleId && (
+                    <p className={authStyles["error-message"]}>
+                      {errors.roleId.message}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <DateField<EmployeeUpdateDto>
                 name="dateOfBirth"

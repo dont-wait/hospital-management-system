@@ -25,6 +25,15 @@ export const RolesList = [
 
 export type Roles = (typeof RolesList)[number];
 
+export const EmployeeEditableRolesList = [
+  "doctor",
+  "hod",
+  "admin",
+  "sys",
+] as const;
+
+export type EmployeeEditableRole = (typeof EmployeeEditableRolesList)[number];
+
 export interface Patient {
   patientId: string;
   firstName: string;
@@ -268,6 +277,7 @@ export interface UserListState {
   searchTerm: string;
   selectedUser: AuthUserWithoutTokens | null;
   activeModal: ModalType;
+  refreshKey: number;
 }
 
 export interface Room {

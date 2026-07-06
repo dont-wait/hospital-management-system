@@ -85,6 +85,19 @@ public class UserAccountService : IUserAccountService
 
         return ServiceResult<ResponseUserDTO?>.Success(userAccountDto);
     }
+
+    public async Task<ServiceResult<List<ResponseUserDTO>>> GetAllPatientsAsync()
+    {
+        var patients = await _userAccountRepository.GetAllPatientsAsync();
+
+        var responseUsers = patients
+            .Where(patient => patient.UserAccount != null)
+            .Select(patient => _userAccountMapper.MapToDto(patient.UserAccount!))
+            .ToList();
+
+        return ServiceResult<List<ResponseUserDTO>>.Success(responseUsers);
+    }
+
     public async Task<ServiceResult<bool>> DeletePatientByIdAsync(Guid patientId)
     {
         var patient = await _userAccountRepository.FindPatientWithAccountByIdAsync(patientId);

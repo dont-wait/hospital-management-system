@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { EmployeeEditableRolesList } from "@/types";
 
 export const employeeUpdateSchema = z.object({
   phoneNumber: z
@@ -28,6 +29,7 @@ export const employeeUpdateSchema = z.object({
     .string()
     .length(10, "Chứng chỉ hành nghề phải có đúng 10 ký tự")
     .optional(),
+  roleId: z.enum(EmployeeEditableRolesList).optional(),
 });
 
 export type EmployeeUpdateDto = z.infer<typeof employeeUpdateSchema>;

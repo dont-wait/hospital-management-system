@@ -4,7 +4,7 @@ import { EmployeeUpdateModal } from "@/components/employee/EmployeeUpdateModal";
 import { useUserManagementContext } from "@/contexts";
 
 export default function UserUpdateModal() {
-  const { state, closeModal } = useUserManagementContext();
+  const { state, closeModal, refreshUsers } = useUserManagementContext();
   return (
     <>
       {state.selectedUser && state.selectedUser.employee && (
@@ -13,7 +13,10 @@ export default function UserUpdateModal() {
           setIsOpen={(isOpen) => !isOpen && closeModal()}
           employee={state.selectedUser}
           isAdmin={true}
-          onSuccess={closeModal}
+          onSuccess={() => {
+            refreshUsers();
+            closeModal();
+          }}
         />
       )}
     </>

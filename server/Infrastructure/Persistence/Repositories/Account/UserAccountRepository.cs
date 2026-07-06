@@ -100,6 +100,14 @@ public class UserAccountRepository : IUserAccountRepository
         return existingPatient;
     }
 
+    public async Task<List<Patient>> GetAllPatientsAsync()
+    {
+        return await _context.patients
+            .Where(p => p.DeletedAt == null && p.UserAccount != null && p.UserAccount.DeletedAt == null)
+            .Include(p => p.UserAccount)
+            .ToListAsync();
+    }
+
     // Cập nhật thông tin tài khoản cũng như thông tin của bệnh nhân
     public async Task UpdateAccountAndPatientAsync(Patient patient, UserAccount userAccount)
     {

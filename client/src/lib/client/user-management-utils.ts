@@ -4,7 +4,9 @@ export class UserManagementUtils {
   public static RoleNames: Record<string, string> = {
     admin: "Quản trị viên",
     doctor: "Bác sĩ",
+    hod: "Trưởng khoa",
     patient: "Bệnh nhân",
+    sys: "Quản trị hệ thống",
   };
 
   public static getVisibleRoles(): Exclude<Roles, "admin" | "guest">[] {

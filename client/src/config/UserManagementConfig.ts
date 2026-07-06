@@ -6,4 +6,5 @@ export const initialUserManagementState: UserListState = {
   searchTerm: "",
   selectedUser: null,
   activeModal: null,
+  refreshKey: 0,
 } as const;

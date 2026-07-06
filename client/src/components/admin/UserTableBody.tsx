@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import Image from "next/image";
 import Icon from "@/components/shared/Icon";
 import { useUserManagementContext } from "@/contexts";
@@ -13,39 +12,11 @@ interface UserTableBodyProps {
 }
 
 export default function UserTableBody({ users }: UserTableBodyProps) {
-  const { state, viewUser, updateUser } = useUserManagementContext();
-  const filteredUsers: AuthUserWithoutTokens[] = useMemo(() => {
-    return users.filter((user) => {
-      const name = UserManagementUtils.getUserName(user).toLowerCase();
-      const email = UserManagementUtils.getUserEmail(user).toLowerCase();
-      const phone = UserManagementUtils.getUserPhone(user);
-      const citizenID = user.citizenID.toLowerCase();
-      const search = state.searchTerm.toLowerCase();
-
-      return (
-        name.includes(search) ||
-        email.includes(search) ||
-        phone.includes(search) ||
-        citizenID.includes(search)
-      );
-    });
-  }, [users, state.searchTerm]);
-
-  if (!filteredUsers.length) {
-    return (
-      <tr className={userStyles["empty-state"]}>
-        <td colSpan={8}>
-          {state.searchTerm
-            ? `Không tìm thấy người dùng nào với từ khóa "${state.searchTerm}"`
-            : "Không có người dùng nào trong hệ thống"}
-        </td>
-      </tr>
-    );
-  }
+  const { viewUser, updateUser } = useUserManagementContext();
 
   return (
     <tbody>
-      {filteredUsers.map((user) => (
+      {users.map((user) => (
         <tr key={user.userAccountId}>
           <td>
             <Image
