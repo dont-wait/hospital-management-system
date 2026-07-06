@@ -70,6 +70,18 @@ public class EmployeeAccountService : IEmployeeAccountService
 
         Employee employee = existingUserAccount.Employee;
         UserAccount userAccount = existingUserAccount;
+        string? requestedRole = request.RoleId?.Trim().ToLowerInvariant();
+
+        if (!string.IsNullOrWhiteSpace(requestedRole))
+        {
+            bool isDoctorGroup = employee.RoleId is "doctor" or "hod";
+            bool isAdminGroup = employee.RoleId is "admin" or "sys";
+            bool isDoctorTarget = requestedRole is "doctor" or "hod";
+            bool isAdminTarget = requestedRole is "admin" or "sys";
+
+            if ((!isDoctorGroup || !isDoctorTarget) && (!isAdminGroup || !isAdminTarget))
+                return ServiceResult<ResponseEmployeeDTO>.Fail("Chỉ hỗ trợ chuyển đổi vai trò trong cùng nhóm doctor/hod hoặc admin/sys.");
+        }
 
         _employeeMapper.Update(employee, request, currentUserRole);
         await _employeeRepository.UpdateEmployeeAsync(employee, userAccount);

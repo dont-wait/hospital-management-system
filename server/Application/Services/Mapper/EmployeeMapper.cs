@@ -60,6 +60,7 @@ public class EmployeeMapper : IEmployeeMapper
     public void Update(Employee employee, RequestUpdateEmployeeDTO request, string currentUserRole)
     {
         bool isAdmin = currentUserRole.Equals(RoleEnum.admin.ToString(), StringComparison.CurrentCultureIgnoreCase);
+        string? targetRole = request.RoleId?.Trim().ToLowerInvariant();
 
         employee.PhoneNumber = request.PhoneNumber;
         if (employee.UserAccount != null)
@@ -75,8 +76,12 @@ public class EmployeeMapper : IEmployeeMapper
             employee.Gender = request.Gender;
             employee.HireDate = request.HireDate;
             employee.CertificateNumber = request.CertificateNumber;
+            employee.RoleId = string.IsNullOrWhiteSpace(targetRole)
+                ? employee.RoleId
+                : targetRole;
 
-            if (employee.RoleId.Equals(RoleEnum.doctor.ToString(), StringComparison.CurrentCultureIgnoreCase) 
+            if ((employee.RoleId.Equals(RoleEnum.doctor.ToString(), StringComparison.CurrentCultureIgnoreCase)
+                || employee.RoleId.Equals(RoleEnum.hod.ToString(), StringComparison.CurrentCultureIgnoreCase))
                 && employee.Doctor != null)
             {
                 employee.Doctor.Specialization = request.Specialization;
