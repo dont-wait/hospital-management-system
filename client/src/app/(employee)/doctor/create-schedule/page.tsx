@@ -8,6 +8,7 @@ import { PreviewScheduleCard } from '@/components/employee/doctor/hod/create-sch
 import { useForm, FormProvider } from 'react-hook-form';
 import styles from "@/styles/create-schedule.module.css";
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { AuthUserWithoutTokens, CreateScheduleRequest, DoctorRequest, Employee, PreviewScheduleResult } from '@/types';
 import { useUserAuthContext } from '@/contexts';
 import { EmployeeService } from '@/services/employee.service';
@@ -23,6 +24,7 @@ import {
 const SOFT_CONSTRAINT_FORM_ID = 'soft-constraint-form';
 const SCHEDULE_REQUEST_ID_KEY = "schedule_request_id";
 const SCHEDULE_PREVIEW_CACHE_KEY = "schedule_preview_cache";
+const SCHEDULE_RESULT_REQUEST_ID_KEY = "schedule_result_request_id";
 
 type ScheduleRealtimePayload = {
 	title: string;
@@ -81,6 +83,10 @@ export default function CreateSchedulePage() {
 	const [progressPercent, setProgressPercent] = useState<number>(0);
 	const [progressMessage, setProgressMessage] = useState<string>("");
 	const [previewSchedule, setPreviewSchedule] = useState<PreviewScheduleResult | null>(null);
+	const [resultRequestId, setResultRequestId] = useState<string | null>(() => {
+		if (typeof window === "undefined") return null;
+		return window.localStorage.getItem(SCHEDULE_RESULT_REQUEST_ID_KEY);
+	});
 	const terminalStatusRef = useRef<"completed" | "failed" | null>(null);
 	const requestIdRef = useRef<string | null>(null);
 
@@ -100,6 +106,8 @@ export default function CreateSchedulePage() {
 
 		setPreviewSchedule(scheduleResponse);
 		window.localStorage.setItem(SCHEDULE_PREVIEW_CACHE_KEY, JSON.stringify(scheduleResponse));
+		window.localStorage.setItem(SCHEDULE_RESULT_REQUEST_ID_KEY, currentRequestId);
+		setResultRequestId(currentRequestId);
 	}, []);
 
 	const startRealtimeTracking = useCallback((nextRequestId: string, initialMessage?: string) => {
@@ -263,6 +271,8 @@ export default function CreateSchedulePage() {
 		terminalStatusRef.current = null;
 		window.localStorage.removeItem(SCHEDULE_PREVIEW_CACHE_KEY);
 		window.localStorage.removeItem(SCHEDULE_REQUEST_ID_KEY);
+		window.localStorage.removeItem(SCHEDULE_RESULT_REQUEST_ID_KEY);
+		setResultRequestId(null);
 
 		const doctorsData = doctors.map<DoctorRequest>(doc => {
 			if (doc.employee) {
@@ -330,6 +340,17 @@ export default function CreateSchedulePage() {
 				isPollingProgress={isPollingProgress}
 				progressPercent={progressPercent}
 			/>
+
+			{previewSchedule && (requestId || resultRequestId) ? (
+				<div className="mt-6 flex justify-end">
+					<Link
+						href={`/doctor/schedule-result/${requestId ?? resultRequestId}`}
+						className="bg-teal-700 rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-teal-800"
+					>
+						Xem chi tiết kết quả (Pareto · Chỉ số · Thống kê)
+					</Link>
+				</div>
+			) : null}
 		</>
 	);
 }

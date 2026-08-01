@@ -166,6 +166,29 @@ button {
   cursor: pointer;
 }
 
+/* --- Schedule result dashboard panels (ported from NSGA_II_OT) --- */
+.glass {
+  background: color-mix(in srgb, var(--color-card) 92%, white 8%);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgb(18 32 37 / 8%);
+}
+
+.stagger-in {
+  animation: rise-in 0.6s ease both;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none !important;
