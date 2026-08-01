@@ -13,6 +13,7 @@ public class ScheduleServerlessService : IScheduleServerlessService
     private readonly string _runEndpoint;
     private readonly string _progressEndpointTemplate;
     private readonly string _scheduleEndpointTemplate;
+    private readonly string _metricsEndpointTemplate;
 
     public ScheduleServerlessService(
         HttpClient http,
@@ -27,6 +28,8 @@ public class ScheduleServerlessService : IScheduleServerlessService
             ?? "/progress/{request_id}";
         _scheduleEndpointTemplate = configuration.GetValue<string>("ServerlessService:ScheduleEndpointTemplate")
             ?? "/jobs/{request_id}/schedule";
+        _metricsEndpointTemplate = configuration.GetValue<string>("ServerlessService:MetricsEndpointTemplate")
+            ?? "/jobs/{request_id}/metrics";
     }
 
     public async Task<JsonElement> RunAsync(object requestBody)
@@ -64,6 +67,20 @@ public class ScheduleServerlessService : IScheduleServerlessService
     public async Task<JsonElement> GetScheduleAsync(string requestId)
     {
         var endpoint = _scheduleEndpointTemplate.Replace("{request_id}", requestId);
+        var response = await _http.GetAsync(endpoint);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorBody = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException(
+                $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Content: {errorBody}"
+            );
+        }
+        return await response.Content.ReadFromJsonAsync<JsonElement>();
+    }
+
+    public async Task<JsonElement> GetMetricsAsync(string requestId)
+    {
+        var endpoint = _metricsEndpointTemplate.Replace("{request_id}", requestId);
         var response = await _http.GetAsync(endpoint);
         if (!response.IsSuccessStatusCode)
         {

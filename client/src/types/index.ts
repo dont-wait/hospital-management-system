@@ -566,6 +566,7 @@ export type PreviewShiftCode = "morning" | "afternoon";
 export interface PreviewShiftAssignment {
   date: string;
   shift: string;
+  room?: string;
   doctor_ids: string[];
 }
 
@@ -579,12 +580,135 @@ export interface PreviewSelectedSchedule {
 }
 
 export interface PreviewScheduleResult {
+  request_id?: string;
   selected_option_id: string;
   selected: PreviewSelectedSchedule;
+  pareto_options?: ParetoScheduleOption[];
 }
 
 export interface PreviewScheduleErrorResult {
   status: number;
   message: string;
   data: null;
+}
+
+// ---- NSGA-II schedule result DTOs (mirror NSGA_II_OT server schemas) ----
+
+export interface DoctorWorkloadBalance {
+  doctor_id: string;
+  doctor_name: string;
+  assigned_shift_count: number;
+  weekly_shift_count: number;
+  monthly_shift_count: number;
+  yearly_estimated_shift_count: number;
+  holiday_shift_count: number;
+  day_off_count: number;
+}
+
+export interface ParetoScheduleOption {
+  option_id: string;
+  assignments: PreviewShiftAssignment[];
+  doctor_workload_balances: DoctorWorkloadBalance[];
+}
+
+export interface DoctorComplianceStats {
+  total_doctors: number;
+  meet_weekly_hours: number;
+  meet_consecutive_days: number;
+  meet_preferred_days_ratio: number;
+}
+
+export interface SoftConstraintBreakdown {
+  consecutive_days_violators: number;
+  weekly_hours_violators: number;
+  preferred_days_not_met: number;
+  weekend_off_insufficient: number;
+  zero_shift_doctors: number;
+  target_deviation_doctors: number;
+  max_consecutive_days: number;
+  max_weekly_hours: number;
+  max_shift_deviation: number;
+  preferred_days_fulfilled_ratio: number;
+  total_shift_slots: number;
+  shift_slots_formula: string;
+  avg_shifts_per_doctor: number;
+}
+
+export interface ScheduleQualityMetrics {
+  hard_violation_score: number;
+  soft_violation_score: number;
+  fairness_std: number;
+  shift_fairness_std: number;
+  day_off_fairness_std: number;
+  day_off_fairness_jain: number;
+  weekly_fairness_jain: number;
+  monthly_fairness_jain: number;
+  yearly_fairness_jain: number;
+  holiday_fairness_jain: number;
+  f3_workload_std: number;
+  f4_fairness: number;
+  gini_workload: number;
+  jfi_overall: number;
+  soft_breakdown: SoftConstraintBreakdown;
+  compliance: DoctorComplianceStats;
+  weekly_underwork_doctors: string[];
+}
+
+export interface AlgorithmRunMetrics {
+  elapsed_seconds: number;
+  n_generations: number;
+  population_size: number;
+  pareto_front_size: number;
+  best_hard_objective: number;
+  best_soft_objective: number;
+  best_workload_std_objective: number;
+  best_fairness_objective: number;
+  convergence_hard_ratio: number | null;
+  convergence_soft_ratio: number | null;
+  convergence_workload_ratio: number | null;
+  convergence_fairness_ratio: number | null;
+}
+
+export interface ParetoMetricsOption {
+  option_id: string;
+  metrics: ScheduleQualityMetrics;
+}
+
+export interface ScheduleJobMetricsResult {
+  request_id: string;
+  algorithm_run_metrics: AlgorithmRunMetrics | null;
+  pareto_options: ParetoMetricsOption[];
+}
+
+// ---- Schedule request history DTOs (lịch sử xếp lịch tự động) ----
+
+export interface ScheduleRequestHistoryItem {
+  id: number;
+  department_id: number;
+  department_name: string;
+  requested_by: string;
+  requested_by_name: string;
+  status: string;
+  start_date: string;
+  num_days: number;
+  progress_percent: number;
+  serverless_request_id: string | null;
+  error_message: string | null;
+  created_at: string;
+}
+
+export interface ScheduleRequestHistoryResponse {
+  items: ScheduleRequestHistoryItem[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface ScheduleRequestHistoryParams {
+  department_id?: number | null;
+  status?: string | null;
+  from_date?: string | null;
+  to_date?: string | null;
+  page?: number;
+  page_size?: number;
 }

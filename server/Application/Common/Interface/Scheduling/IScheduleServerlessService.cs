@@ -9,4 +9,6 @@ public interface IScheduleServerlessService
     Task<JsonElement> GetProgressAsync(string requestId);
 
     Task<JsonElement> GetScheduleAsync(string requestId);
+
+    Task<JsonElement> GetMetricsAsync(string requestId);
 }

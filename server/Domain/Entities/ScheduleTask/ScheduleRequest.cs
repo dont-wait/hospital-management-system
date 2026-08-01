@@ -26,6 +26,8 @@ public class ScheduleRequest : BaseEntity
 
     public string? ResultData { get; set; }
 
+    public string? MetricsData { get; set; }
+
     public string? ErrorMessage { get; set; }
 
     public DateOnly StartDate { get; set; }

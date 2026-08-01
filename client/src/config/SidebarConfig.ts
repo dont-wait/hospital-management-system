@@ -4,7 +4,8 @@ import {
   Pencil, 
   LayoutDashboard, 
   Calendar, 
-  Settings 
+  Settings,
+  CalendarCheck 
 } from "@/lib/client";
 
 export const patientSidebarVariants = {
@@ -99,6 +100,11 @@ export const HODSidebarItems = [
     route: "/doctor/create-schedule",
     title: "Tạo lịch làm việc",
     icon: Pencil,
+  },
+  {
+    route: "/doctor/schedule-result",
+    title: "Kết quả xếp lịch",
+    icon: CalendarCheck,
   },
 ];
 

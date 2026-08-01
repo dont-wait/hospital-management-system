@@ -301,6 +301,9 @@ namespace server.Migrations
                     b.Property<Guid?>("ModifiedId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("MetricsData")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("NumDays")
                         .HasColumnType("int");
 

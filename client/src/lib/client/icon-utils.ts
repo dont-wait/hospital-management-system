@@ -135,3 +135,7 @@ export const Save = dynamic(() =>
 export const X = dynamic(() =>
   import("lucide-react").then((mod) => mod.X),
 );
+
+export const CalendarCheck = dynamic(() =>
+  import("lucide-react").then((mod) => mod.CalendarCheck),
+);

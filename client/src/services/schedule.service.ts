@@ -1,6 +1,13 @@
 import { getApiInstance, getConfig } from "@/axios";
 import { CreateShiftPayload } from "@/schemas/create-shift";
-import { CreateScheduleRequest, PreviewScheduleErrorResult, PreviewScheduleResult } from "@/types";
+import {
+  CreateScheduleRequest,
+  PreviewScheduleErrorResult,
+  PreviewScheduleResult,
+  ScheduleJobMetricsResult,
+  ScheduleRequestHistoryParams,
+  ScheduleRequestHistoryResponse,
+} from "@/types";
 
 export class ScheduleService {
     public static async createShift(data: CreateShiftPayload, token?: string) {
@@ -64,5 +71,40 @@ export class ScheduleService {
         );
 
         return response.data;
+    }
+
+    public static async getScheduleMetrics(requestId: string): Promise<ScheduleJobMetricsResult> {
+        const apiInstance = getApiInstance();
+        const config = getConfig();
+
+        const response = await apiInstance.get(
+            `/schedules/auto/${requestId}/metrics`,
+            config
+        );
+
+        return response.data;
+    }
+
+    public static async getScheduleHistory(
+        params: ScheduleRequestHistoryParams = {}
+    ): Promise<ScheduleRequestHistoryResponse> {
+        const apiInstance = getApiInstance();
+        const config = getConfig();
+
+        const query = new URLSearchParams();
+        if (params.department_id != null) query.set("departmentId", String(params.department_id));
+        if (params.status) query.set("status", params.status);
+        if (params.from_date) query.set("fromDate", params.from_date);
+        if (params.to_date) query.set("toDate", params.to_date);
+        if (params.page) query.set("page", String(params.page));
+        if (params.page_size) query.set("pageSize", String(params.page_size));
+
+        const qs = query.toString();
+        const response = await apiInstance.get(
+            `/schedules/auto/history${qs ? `?${qs}` : ""}`,
+            config
+        );
+
+        return response.data.data;
     }
 }
