@@ -105,6 +105,17 @@ public class AutoSchedulingHangfireJob
             // Bước 3: Lấy lịch GET /jobs/{id}/schedule
             _logger.LogInformation("Fetching schedule result...");
             var scheduleResult = await serverless.GetScheduleAsync(serverlessRequestId);
+            string? metricsRaw = null;
+
+            try
+            {
+                var metricsResult = await serverless.GetMetricsAsync(serverlessRequestId);
+                metricsRaw = metricsResult.GetRawText();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Could not fetch metrics for serverless request_id={RequestId}. Schedule result will still be persisted.", serverlessRequestId);
+            }
 
             var selected = scheduleResult.GetProperty("selected");
             var assignments = selected.GetProperty("assignments");
@@ -196,6 +207,7 @@ public class AutoSchedulingHangfireJob
             request.Status = ScheduleEnum.COMPLETED.ToString();
             request.ProgressPercent = 100;
             request.ResultData = scheduleResult.GetRawText(); // lưu raw JSON
+            request.MetricsData = metricsRaw;
             await requestRepo.UpdateAsync(request);
 
             _logger.LogInformation("AutoSchedulingJob DONE — RequestId={Id}", scheduleRequestId);
